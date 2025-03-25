@@ -1,0 +1,17 @@
+.disable-list {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.disable-empty {
+  margin-top: 15vh;
+  .disable-empty-desc {
+    width: 100%;
+    text-align: center;
+    font-size: 30rpx;
+    color: #808080;
+  }
+}

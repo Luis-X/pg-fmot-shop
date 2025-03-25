@@ -1,0 +1,21 @@
+.service-list {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.service-wrap {
+  margin-top: 20rpx;
+  .service-item {
+    width: 700rpx;
+    margin-top: 0rpx;
+    .nut-cell-left {
+      flex: 0.4;
+    }
+  }
+}
+
+
+

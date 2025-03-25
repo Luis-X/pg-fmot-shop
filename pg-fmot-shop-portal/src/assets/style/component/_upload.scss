@@ -1,0 +1,36 @@
+.upload-btn {
+  width: 100%;
+  height: auto;
+  text-align: center;
+
+  .form {
+    position: relative;
+    width: 140px;
+    height: 70px;
+    line-height: 30px;
+    display: inline-block;
+    overflow: hidden;
+    font-size: 15px;
+    color: #feffff;
+    background: #1890ff;
+    //border-color: #1890ff;
+    border: 20px solid #ffffff;
+    border-radius: 26px;
+    vertical-align: middle;
+    font-family: sans-serif;
+
+    > input {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      right: 0;
+      top: 0;
+      opacity: 0;
+    }
+  }
+
+  .form:hover {
+    color: #fff;
+    background: #40a9ff;
+  }
+}

@@ -1,0 +1,41 @@
+.exchange-list {
+  width: 100vw;
+  height: 100vh;
+  padding: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #ffffff;  
+}
+
+.exchange-bg-wrap {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  .exchange-wrap {
+    width: 700rpx;
+    height: 150rpx;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1rpx solid #808080;
+    .exchange-info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      .exchange-name {
+        font-size: 28rpx;
+        color: black;
+      }
+      .exchange-desc {
+        font-size: 24rpx;
+        color: #808080;
+      }
+    }
+    .exchange-arrow {
+      width: 30rpx;
+      height: 30rpx;
+    }
+  }  
+}

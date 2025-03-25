@@ -1,0 +1,68 @@
+.home-tab-list {
+  width: 100vw;
+  height: calc(100vh - 88rpx);
+  padding: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.home-list {
+  width: 100vw;
+  height: 100vh;
+  padding: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.home-search-wrap {
+  width: 100%;
+  // background: transparent;
+}
+
+.home-swiper-wrap {
+  margin-top: 10rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 480rpx;
+  .swiper-item-indicator {
+    position: absolute;
+    bottom: 10rpx;
+    right: 10rpx;
+    padding: 0 15rpx;
+    color: #ffffff;
+    font-size: 22rpx;
+    background-color: rgba(0, 0, 0, .4);
+    border-radius: 10rpx;
+  }
+  .swiper-item {
+    width: 700rpx;
+    height: 100%;
+  }
+}
+
+.home-grid-bg-wrap {
+  margin-top: 20rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .home-grid-wrap {
+    width: 700rpx;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+}
+
+.home-alert {
+  .home-alert-content {
+    color: #808080;
+    font-size: 24rpx;
+  }
+  .nut-dialog-footer-ok {
+    font-size: 34rpx;
+    width: 100%;
+    --nutui-dialog-footer-ok-max-width: 100%;
+  }
+}
+

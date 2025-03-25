@@ -1,0 +1,98 @@
+.pg-privacy-alert-wrap {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  .alert-content {
+    position: relative;
+    width: 685rpx;
+    height: 450rpx;
+    border-radius: 24rpx;
+    overflow: hidden;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .alert-bg-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+    }
+    .text-title {
+      z-index: 99999;
+      margin-top: 40rpx;
+      width: 380rpx;
+      text-align: center;      
+      font-size: 40rpx;
+      color: #000000;      
+    }
+    .text-desc {
+      z-index: 99999; 
+      margin-top: 20rpx;     
+      width: 580rpx;
+      text-align: center;
+      font-size: 28rpx;
+      color: #000000;
+    }
+    .check-box-wrap {
+      z-index: 99999; 
+      margin-top: 20rpx;
+      width: 580rpx;
+      display: flex;
+      flex-direction: row;
+      .check-box-img {
+        margin-right: 10rpx;
+        width: 30rpx;
+        height: 30rpx;
+      }
+      .check-box-desc {                    
+        font-size: 22rpx;
+        line-height: 30rpx;
+        color: #000000;
+      }
+      .check-box-desc-line {           
+        font-size: 22rpx;
+        line-height: 30rpx;
+        color: #000000;
+        text-decoration: underline;
+      }
+    }
+    .btn-wrap {
+      position: absolute;
+      bottom: 35rpx;
+      width: 580rpx;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      .confirm-btn {
+        padding: 0rpx 25rpx 0rpx 25rpx;
+        min-width: 218rpx;
+        height: 82rpx;
+        line-height: 82rpx;
+        font-size: 36rpx;
+        text-align: center;
+        border-radius: 41rpx;
+        color: #ffffff;
+        background: #00A3E0;
+      }
+      .cancel-btn {
+        padding: 0rpx 25rpx 0rpx 25rpx;
+        min-width: 218rpx;
+        height: 82rpx;
+        line-height: 82rpx;
+        font-size: 36rpx;
+        text-align: center;
+        border-radius: 41rpx;
+        border: 2rpx solid #00A3E0;
+        color: #00A3E0;
+      }
+    }
+    
+  }
+}
+

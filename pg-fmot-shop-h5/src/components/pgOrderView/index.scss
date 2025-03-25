@@ -1,0 +1,97 @@
+.pg-order-bg-wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #ffffff;
+
+  .pg-order-wrap  {
+    position: relative;
+    margin: 20rpx auto;
+    width: calc(100% - 40rpx);
+    display: flex;
+    flex-direction: column;  
+    align-items: flex-start;  
+    .pg-order-num {
+      width: calc(100% - 120rpx);
+      font-size: 30rpx;
+      color: #808080;
+      word-break: break-all;
+    }
+  
+    .pg-order-date {
+      width: calc(100% - 120rpx);
+      font-size: 30rpx;
+      color: #808080;
+      word-break: break-all;
+    }
+  
+    .pg-order-status {
+      width: 120rpx;
+      text-align: right;
+      position: absolute;
+      top: 0rpx;
+      right: 0rpx;
+      font-size: 30rpx;
+      color: black;
+    }
+  
+    .pg-order-goods-wrap {
+      position: relative;
+      margin-top: 10rpx;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      .pg-order-goods-img {
+        width: 150rpx;
+        height: 150rpx;
+      }    
+      .pg-order-goods-info {
+        margin-left: 20rpx;
+        width: 480rpx;
+        height: 150rpx;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        .pg-order-goods-name {
+          font-size: 32rpx;
+          color: black;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .pg-order-goods-price {
+          font-size: 32rpx;
+          color: black;
+        }
+      }   
+      .pg-order-goods-count {
+        position: absolute;
+        top: 0rpx;
+        right: 0rpx;
+        font-size: 32rpx;
+        color: black;
+      }
+    }
+  
+    .pg-order-total-wrap {
+      position: relative;
+      margin-top: 10rpx;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-end;
+      .pg-order-total-count {
+        font-size: 30rpx;
+        color: black;
+      }
+      .pg-order-total-amount {
+        margin-left: 20rpx;
+        font-size: 30rpx;
+        color: black;
+      }
+    }
+  }
+}

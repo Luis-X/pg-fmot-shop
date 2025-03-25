@@ -1,0 +1,106 @@
+.cart-list {
+  width: 100vw;
+  height: calc(100vh - 288rpx);
+  padding: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.cart-item-wrap {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;  
+  align-items: center;
+  background: #ffffff;  
+  .goods-wrap {
+    position: relative;
+    margin: 10rpx auto;
+    width: 700rpx;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    .goods-select {
+      margin-right: 20rpx;
+    }
+    .goods-img {
+      width: 150rpx;
+      height: 150rpx;
+    }    
+    .goods-info {
+      margin-left: 20rpx;
+      width: 320rpx;
+      height: 150rpx;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      .goods-name {
+        font-size: 30rpx;
+        color: black;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .goods-price {
+        font-size: 30rpx;
+        color: black;
+      }
+    }   
+    .goods-count {
+      position: absolute;
+      top: 10rpx;
+      right: 0rpx;
+    }
+  }
+}
+
+.cart-tools-wrap {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 88rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #ffffff;
+  .total-wrap {
+    position: relative;
+    margin: 10rpx 0 20rpx 0;
+    width: 700rpx;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    .select-wrap {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      .select-all {
+        margin-right: 5rpx;
+      }
+      .select-all-text  {
+        font-size: 30rpx;
+        color: black;
+      }
+    }
+    .total-text-wrap {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      .total-count {
+        font-size: 30rpx;
+        color: black;
+      }
+      .total-amount {
+        margin-left: 20rpx;
+        font-size: 30rpx;
+        color: black;
+      }
+    }   
+  }
+  .next-step-btn {
+    width: 700rpx;
+    margin-bottom: 20rpx;
+  }   
+}
+

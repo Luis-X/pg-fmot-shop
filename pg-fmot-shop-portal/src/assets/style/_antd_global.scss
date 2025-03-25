@@ -1,0 +1,131 @@
+.ant-switch-checked {
+  background-color: #87d068;
+}
+
+.ant-descriptions-item-container .ant-descriptions-item-label {
+  font-weight: bold;
+}
+
+.ant-table-thead > tr > th {
+  color: #000;
+  padding: 13px 13px;
+  background: #ddd;
+}
+
+.bg-row {
+  background-color: #F8F8F9;
+
+  .ant-table-cell-fix-right {
+    background-color: #F8F8F9;
+  }
+}
+
+.row-font {
+  font-weight: bold;
+}
+
+.ant-table-tbody > tr.ant-table-row:hover > td {
+  //background: rgba(26, 118, 210, 0.08);
+  background: #edf4fb
+}
+
+.ant-input {
+  border-radius: 4px;
+}
+
+.ant-picker {
+  border-radius: 4px;
+}
+
+.ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  border-radius: 4px;
+}
+
+.user_par .ant-typography {
+  margin-bottom: 0;
+}
+
+.lineup-groups {
+  .ant-form-item-label > label::before {
+    display: inline-block;
+    margin-right: 4px;
+    color: #ff4d4f;
+    font-size: 14px;
+    font-family: SimSun, sans-serif;
+    line-height: 1;
+    content: "*";
+  }}
+
+.pro-list {
+  .pro-field-md {
+    width: 385px !important;
+  }
+
+  .ant-pro-card {
+    background-color: rgb(240, 242, 244);
+  }
+
+  .ant-pro-card-body {
+    padding: 0 24px;
+    margin-top: -30px;
+  }
+
+  .ant-pro-card-header {
+    padding: 5px 15px;
+  }
+}
+
+.pro-list-INIT {
+  .pro-field-md {
+    width: 410px !important;
+  }
+
+  .ant-pro-card {
+    background-color: rgb(240, 242, 244);
+  }
+
+  .ant-pro-card-body {
+    padding: 0 24px;
+    margin-top: 10px;
+  }
+}
+
+//.pro-list .ant-pro-card-header {
+//  padding: 5px 15px;
+//}
+
+.text-package {
+  .ant-form-item-label > label {
+    height: 40px;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.add-event-picker {
+  .ant-picker {
+    width: 100%;
+  }
+}
+
+.execution {
+  pre {
+    width: 100% !important;
+    background-color: rgb(230 232 234) !important;
+  }
+}
+
+.add-event-porForm {
+  select[disabled], textarea[disabled], input[disabled], input:disabled, input.disabled {
+    color: #676666;
+    -webkit-text-fill-color: #676666;
+    -webkit-opacity: 1;
+    opacity: 1;
+  }
+
+  .ant-select-disabled.ant-select:not(.ant-select-customize-input) .ant-select-selector {
+    color: #676666;
+  }
+}

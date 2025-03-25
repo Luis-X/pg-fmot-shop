@@ -1,0 +1,5 @@
+urlPrefix: https://ehome-qa.shenghuojia.com
+# urlPrefix: http://192.168.120.252:8082
+# urlPrefix: https://xy.5hospital.com
+contentPath: portal
+buildDir: E:\enterprise\workspace\FSD-1357-eHOME-Solution\eHOME-Solution-portal\build

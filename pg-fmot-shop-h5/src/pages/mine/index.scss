@@ -1,0 +1,51 @@
+.mine-list {
+  width: 100vw;
+  height: calc(100vh - 88rpx);
+  padding: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.mine-point-wrap {
+  margin-top: 20rpx;
+  width: 100%;
+  height: 100rpx;
+  background: #ffffff;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  .point-title {
+    margin-left: 25rpx;
+    font-size: 30rpx;
+    color: black;
+  }
+  .point-btn {
+    margin-right: 25rpx;
+    font-size: 30rpx;
+    color: blue;
+    text-decoration: underline;
+  }
+}
+
+.mine-order-wrap {
+  margin-top: 20rpx;
+  width: 100%;
+  height: 100rpx;
+  background: #ffffff;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  .order-title {
+    margin-left: 25rpx;
+    font-size: 30rpx;
+    color: black;
+  }
+}
+
+.mine-tab-wrap {
+  width: 100%;
+  background: #ffffff;
+}
+
