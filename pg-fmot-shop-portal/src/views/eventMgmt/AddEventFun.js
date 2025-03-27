@@ -13,6 +13,8 @@ import {
   ProFormRadio,
   ProFormUploadButton,
   ProFormCheckbox,
+  EditableProTable,
+  ProFormField
 } from '@ant-design/pro-components';
 import '@ant-design/pro-components/dist/components.css';
 import * as api from '../../api/api';
@@ -27,12 +29,14 @@ export function AddEventFun({
   updateList,
 }) {
   const [orgCodeData, setOrgCodeData] = useState([]);
+  const [goodsListData, setGoodsListData] = useState([]);
   const [Loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
   useEffect(() => {
     async function fetchData() {
       await requestOrgCodeData();
+      await requestGoodsListData();
     }
     fetchData();
   }, []);
@@ -133,7 +137,7 @@ export function AddEventFun({
           {
             id: 2,
             name: '机构2',
-          },
+          }
         ],
       },
     };
@@ -148,6 +152,53 @@ export function AddEventFun({
               });
             }
             setOrgCodeData(list || []);
+          }
+        } else {
+          MyAlert({ errorMsg: res.data.message });
+        }
+      }
+    // }).catch((err) => {
+    //     message.error(err ? err : 'link failure！', 2);
+    // })
+  };
+
+  /**
+   * 商品数据
+   */
+  const requestGoodsListData = () => {
+    let list = [];
+    const res = {
+      data: {
+        code: 0,
+        data: [
+          {
+            id: 1,
+            goodsCode: 111,
+            goodsName: '商品名称1',
+            goodsPrice: '100',
+            goodsActivityPrice: '100',
+          },
+          {
+            id: 2,
+            goodsCode: 222,
+            goodsName: '商品名称2',
+            goodsPrice: '200',
+            goodsActivityPrice: '200',
+          },
+        ],
+      },
+    };
+    // api.marketData().then((res) => {
+      if (res) {
+        if (0 === res.data.code) {
+          if (res.data.data.length > 0) {
+            for (let i in res.data.data) {
+              list.push({
+                label: res.data.data[i].name,
+                value: res.data.data[i].id,
+              });
+            }
+            setGoodsListData(list || []);
           }
         } else {
           MyAlert({ errorMsg: res.data.message });
@@ -264,6 +315,70 @@ export function AddEventFun({
     wrapperCol: { span: 20 },
   };
 
+  const columns = [
+    {
+      title: '商品编码',
+      dataIndex: 'goodsCode',
+      readonly: true,
+      width: '30%',
+    },
+    {
+      title: '商品名称',
+      dataIndex: 'goodsName',
+      readonly: true,
+      width: '30%',
+    },
+    {
+      title: '原价',
+      dataIndex: 'goodsPrice',
+      readonly: true,
+      width: '20%',
+    },
+    {
+      title: '活动价',
+      dataIndex: 'goodsActivityPrice',
+      editable: true,
+      width: '20%',
+    },
+    {
+      title: '操作',
+      valueType: 'option',
+      width: 200,
+      render: (text, record, _, action) => [
+        <a key="editable" onClick={() => { action?.startEditable?.(record.id) }}>编辑</a>,
+        <a key="delete" onClick={() => { setDataSource(dataSource.filter((item) => item.id !== record.id)) }}>删除</a>,
+      ],
+    },
+  ];
+
+  const waitTime = (time) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(true);
+      }, time);
+    });
+  };
+
+  const [editableKeys, setEditableRowKeys] = useState([]);
+  const [dataSource, setDataSource] = useState([]);
+
+  const goodsSelectChange = (value) => {
+    console.log(`selected ${value}`);
+
+    let newData = [];
+    value.forEach(element => {
+      newData.push({
+        id: element,
+        goodsCode: element,
+        goodsName: '商品名称',
+        goodsPrice: '100',
+        goodsActivityPrice: '100',
+      })
+    });
+    console.log(newData)
+    setDataSource(newData);
+  };
+
   return (
     <React.Fragment>
       <Drawer 
@@ -280,7 +395,7 @@ export function AddEventFun({
             <Button onClick={onHide}>取消</Button>
           </div>
         } 
-        width={720} 
+        width={920} 
         visible={show} 
         onClose={() => { onHide() }} 
         bodyStyle={{ paddingBottom: 80 }}
@@ -435,11 +550,32 @@ export function AddEventFun({
             fieldProps={{ precision: 0 }}
           />
           <ProFormSelect
-            options={orgCodeData}
+            mode="multiple"
+            allowClear
+            options={goodsListData}
+            labelInValue
             name="activityGoods"
             label="活动商品"
             rules={[{ required: true, message: '请输入商品编号' }]}
             placeholder="请输入商品编号"
+            onChange={goodsSelectChange}
+          />
+          <EditableProTable
+            rowKey="id"
+            recordCreatorProps={false}
+            loading={false}
+            columns={columns}
+            value={dataSource}
+            onChange={setDataSource}
+            editable={{
+              type: 'multiple',
+              editableKeys,
+              onSave: async (rowKey, data, row) => {
+                console.log(rowKey, data, row);
+                await waitTime(2000);
+              },
+              onChange: setEditableRowKeys,
+            }}
           />
         </ProForm>
       </Drawer>

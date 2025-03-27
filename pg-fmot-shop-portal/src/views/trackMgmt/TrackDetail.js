@@ -5,8 +5,13 @@ import {
   Table,
   message,
   Pagination,
-  Form,
+  Form,  
   Row,
+  Col,
+  ConfigProvider,
+  DatePicker,
+  Tabs,
+  Input,
 } from 'antd';
 import {
   SearchOutlined,
@@ -16,6 +21,10 @@ import {
 import HomeLayout from '../../common/LayoutStyle';
 import * as api from '../../api/api';
 import MyAlert from '../../components/MyAlert';
+import en_GB from 'antd/es/locale/en_GB';
+import ReactECharts from 'echarts-for-react';
+
+const { RangePicker } = DatePicker;
 
 class TrackDetail extends Component {
   constructor(props) {
@@ -58,51 +67,54 @@ class TrackDetail extends Component {
               count: 100,
               times: 100,
             },
-          ]
-        }
-      }
-    }
+          ],
+        },
+      },
+    };
 
     // api.eventList({
     //   ...queryData,
     //   page: pageNo,
     //   size: pageSize,
     // }).then((res) => {
-      self.setState({ loadingShow: false });
-      if (res) {
-        if (0 === res.data.code) {
-          self.setState({
-            data: res.data.data.content,
-            totalNum: res.data.data.totalElements,
-          });
-        } else {
-          MyAlert({ errorMsg: res.data.message });
-        }
+    self.setState({ loadingShow: false });
+    if (res) {
+      if (0 === res.data.code) {
+        self.setState({
+          data: res.data.data.content,
+          totalNum: res.data.data.totalElements,
+        });
+      } else {
+        MyAlert({ errorMsg: res.data.message });
       }
+    }
     // }).catch((err) => {
     //   self.setState({ loadingShow: false });
     //   message.error(err ? err : '网络请求失败, 请重试!', 2);
     // });
-  }; 
+  };
 
   /**
    * 翻页OnChange
    */
   pageOnChange(pageNo, pageSize) {
     const self = this;
-    self.setState({
-      pageNo,
-      pageSize,
-      totalNum: self.state.totalNum,
-    },() => {
-      self.requestListData();
-    });
+    self.setState(
+      {
+        pageNo,
+        pageSize,
+        totalNum: self.state.totalNum,
+      },
+      () => {
+        self.requestListData();
+      }
+    );
   }
 
-  /**
+   /**
    * 渲染列表
    */
-  onFinish = () => {
+   onFinish = () => {
     const self = this;
     self.props.form.validateFields((err, values) => {
       if (!err) {
@@ -118,13 +130,16 @@ class TrackDetail extends Component {
    */
   clickSearchPeople = () => {
     const self = this;
-    self.setState({ 
-      tabIndex: 0,
-      pageNo: 0, 
-      queryFlg: true 
-    }, () => {
-      // self.requestListData()
-    });
+    self.setState(
+      {
+        tabIndex: 0,
+        pageNo: 0,
+        queryFlg: true,
+      },
+      () => {
+        // self.requestListData()
+      }
+    );
   };
 
   /**
@@ -132,24 +147,27 @@ class TrackDetail extends Component {
    */
   clickSearchTimes = () => {
     const self = this;
-    self.setState({ 
-      tabIndex: 1,
-      pageNo: 0, 
-      queryFlg: true 
-    }, () => {
-      // self.requestListData()
-    });
+    self.setState(
+      {
+        tabIndex: 1,
+        pageNo: 0,
+        queryFlg: true,
+      },
+      () => {
+        // self.requestListData()
+      }
+    );
   };
 
   /**
    * 返回
    */
   clickBackBtn = () => {
-    window.history.back()
-  }
+    window.history.back();
+  };
 
-  render() {
-    const { tabIndex } = this.state;
+  // 人数列表
+  peopleTableView = () => {
     const peopleColumns = [
       {
         title: '商品名称',
@@ -257,7 +275,37 @@ class TrackDetail extends Component {
         align: 'center',
       },
     ];
+    return (
+      <>
+        <Table
+          size="middle"
+          loading={this.state.loadingShow}
+          pagination={false}
+          rowKey="id"
+          columns={peopleColumns}
+          dataSource={this.state.data}
+          rowClassName={(record, idx) => {
+            if (idx % 2 === 1) return 'bg-row';
+          }}
+        />
+        {this.state.data.length > 0 && (
+          <Pagination
+            style={{ paddingTop: '25px' }}
+            // scroll={{ x: 1366}}
+            pageSize={this.state.pageSize}
+            current={this.state.pageNo + 1}
+            total={this.state.totalNum}
+            onChange={(pageNo, pageSize) =>
+              this.pageOnChange(pageNo - 1, pageSize)
+            }
+          />
+        )}
+      </>
+    );
+  };
 
+  // 次数数列表
+  timesTableView = () => {
     const timesColumns = [
       {
         title: '商品名称',
@@ -366,56 +414,162 @@ class TrackDetail extends Component {
       },
     ];
     return (
+      <>
+        <Table
+          size="middle"
+          loading={this.state.loadingShow}
+          pagination={false}
+          rowKey="id"
+          columns={timesColumns}
+          dataSource={this.state.data}
+          rowClassName={(record, idx) => {
+            if (idx % 2 === 1) return 'bg-row';
+          }}
+        />
+        {this.state.data.length > 0 && (
+          <Pagination
+            style={{ paddingTop: '25px' }}
+            // scroll={{ x: 1366}}
+            pageSize={this.state.pageSize}
+            current={this.state.pageNo + 1}
+            total={this.state.totalNum}
+            onChange={(pageNo, pageSize) =>
+              this.pageOnChange(pageNo - 1, pageSize)
+            }
+          />
+        )}
+      </>
+    );
+  };
+
+  // 图表
+  lineChartView = () => {
+    const options = {
+      grid: { top: 8, right: 8, bottom: 24, left: 36 },
+      xAxis: {
+        type: 'category',
+        // data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      },
+      yAxis: {
+        type: 'value',
+      },
+      series: [
+        {
+          data: [820, 932, 901, 934, 1290, 1330, 1320],
+          type: 'line',
+          smooth: true,
+        },
+        {
+          data: [10, 932, 901, 934, 1290, 1330, 1320],
+          type: 'line',
+          smooth: true,
+        },
+      ],
+      tooltip: {
+        trigger: 'axis',
+      },
+    };
+  
+    return <ReactECharts option={options} />;
+  };
+
+  /**
+   * 查询
+   */
+  clickSearchBtn = () => {
+    const self = this;
+    self.setState({ 
+      pageNo: 0, 
+      queryFlg: true 
+    }, () => {
+      // self.requestListData()
+    });
+  };
+
+  render() {
+    const {
+      form: { resetFields, getFieldDecorator }
+    } = this.props;
+    return (
       <HomeLayout>
-        <button className="current-btn" onClick={() => { this.clickBackBtn(); }}>
+        <button
+          className="current-btn"
+          onClick={() => {
+            this.clickBackBtn();
+          }}
+        >
           <LeftOutlined />
           <span>返回</span>
         </button>
-        {/* <p className="list-title">数据详情</p> */}        
+        <p className="list-title">数据详情</p>
         <Divider style={{ margin: '3px 0' }} />
-        <div className="common-list">
-          <div className="item1">
-            <Form className="user_search" onFinish={() => { this.onFinish(); }}>
-              <div className="flex1">
-                <Row gutter={24}>
-                <div>
-                  <button className={tabIndex === 0 ? "current-btn" : "current-border-btn"} onClick={() => { this.clickSearchPeople(); }}>
-                    <span>人数</span>
-                  </button>
-                  <button className={tabIndex === 1 ? "current-btn" : "current-border-btn"} onClick={() => { this.clickSearchTimes(); }}>
-                    <span>次数</span>
-                  </button>
+        
+            <Tabs>
+              <Tabs.TabPane tab="人数" key="item-1">
+                <div className="common-list">          
+                  <div className="item2">
+                    {this.peopleTableView()}
+                  </div>
                 </div>
-                </Row>
-              </div>
-            </Form>
-          </div>
-          <div className="item2">         
-            <Table
-              size="middle"
-              loading={this.state.loadingShow}
-              pagination={false}
-              rowKey="id"
-              columns={tabIndex === 0 ? peopleColumns : timesColumns}
-              dataSource={this.state.data}
-              rowClassName={(record, idx) => {
-                if (idx % 2 === 1) return 'bg-row';
-              }}
-            />
-            {this.state.data.length > 0 && (
-              <Pagination
-                style={{ paddingTop: '25px' }}
-                // scroll={{ x: 1366}}
-                pageSize={this.state.pageSize}
-                current={this.state.pageNo + 1}
-                total={this.state.totalNum}
-                onChange={(pageNo, pageSize) =>
-                  this.pageOnChange(pageNo - 1, pageSize)
-                }
-              />
-            )}
-          </div>
-        </div>
+              </Tabs.TabPane>
+              <Tabs.TabPane tab="次数" key="item-2">
+                <div className="common-list">          
+                  <div className="item2">
+                    {this.timesTableView()}
+                  </div>
+                </div>
+              </Tabs.TabPane>
+              <Tabs.TabPane tab="图表" key="item-3">
+                <div className="common-list">  
+                  <div className="item1">
+                    <Form className="user_search" onFinish={() => { this.onFinish(); }}>
+                      <div className="flex1">
+                        <Row gutter={24}>
+                          <Col span={8}>
+                            <ConfigProvider locale={en_GB}>
+                              <Form.Item>{getFieldDecorator('date',{})(
+                                <RangePicker style={{ width: '100%' }} placeholder={['请选择查询时间段', '请选择查询时间段']} />
+                              )}
+                              </Form.Item>
+                            </ConfigProvider>
+                          </Col>
+                          <Col span={8}>
+                            <Form.Item>{getFieldDecorator('searchValue',{})(
+                              <Input placeholder="请输入商品编号" maxLength={50} />
+                            )}
+                            </Form.Item>
+                          </Col>
+                        </Row>                        
+                        <Row gutter={24}>
+                          <div className="btn-width">
+                            <button className="current-btn" onClick={() => { this.clickSearchBtn(); }}>
+                              <SearchOutlined />
+                              <span>查询</span>
+                            </button>
+                            <button className="current-btn bg-gray" onClick={() => {
+                              this.setState({ 
+                                pageNo: 0, 
+                                pageSize: 10 
+                              }, () => {
+                                resetFields();
+                                // this.requestListData()
+                              });
+                            }}>
+                              <ReloadOutlined />
+                              <span>重置</span>
+                            </button>
+                          </div>
+                        </Row>
+                      </div>
+                    </Form>
+                  </div>        
+                  <div className="item2">
+                    {this.lineChartView()}
+                  </div>
+                </div>
+              </Tabs.TabPane>
+            </Tabs>
+          
       </HomeLayout>
     );
   }
