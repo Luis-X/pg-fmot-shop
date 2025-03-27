@@ -18,20 +18,30 @@ let dict = {
     PUBLISHED: 'Created',
     INIT: 'To Be Created',
   },
-  eventMgmtType: {
-    PUBLISHED: '内部活动',
-    INIT: '外部活动',
+
+  // 活动
+  activityType: {
+    1: '内部活动',
+    2: '外部活动',
   },
-  eventMgmtStatus: {
-    PUBLISHED: '未开始',
-    INIT: '进行中',
-    FINISHED: '已结束',
+  activityStatus: {
+    1: '未开始',
+    2: '进行中',
+    3: '已结束',
   },
-  internalAccountStatus: {
-    NORMAL: '已绑定',
-    DISABLE: '未绑定',
+
+  // 账号
+  accountBindStatus: {
+    1: '已绑定',
+    2: '未绑定',
   },
-  goodsMgmtCategory: {
+  accountLoginStatus: {
+    1: '正常',
+    2: '锁定',
+  },
+
+  // 商品
+  goodsCategory: {
     1: '洗发护理',
     2: '女性护理',
     3: '口腔护理',
@@ -42,10 +52,23 @@ let dict = {
     8: '婴儿护理',
     9: 'Grooming',
   },
-  goodsMgmtType: {
-    PUBLISHED: '实物',
-    INIT: '虚拟',
+  goodsType: {
+    1: '实物',
+    2: '虚拟',
   },
+
+  // 订单
+  orderStatus: {
+    1: '待支付',
+    2: '待发货',
+    3: '待收货',
+    4: '已完成',
+    5: '已取消',
+  },
+  deliveryType: {
+    1: '自取',
+    2: '邮寄',
+  }
 };
 
 export default {

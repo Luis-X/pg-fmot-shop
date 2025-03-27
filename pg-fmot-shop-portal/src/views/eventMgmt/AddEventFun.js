@@ -1,456 +1,448 @@
-/**
- * Created by mp on 2022/7/26.
- */
-import React, {useState, useEffect} from 'react';
-import {Drawer, Form, message, Button, ConfigProvider} from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Drawer, Form, message, Button, ConfigProvider } from 'antd';
 import {
-    ProCard,
-    ProForm,
-    ProFormGroup,
-    ProFormList,
-    ProFormText,
-    ProFormSelect,
-    ProFormTextArea,
-    ProFormDateRangePicker,
-    ProFormDigit,
-    // ProFormDigitRange
+  ProCard,
+  ProForm,
+  ProFormGroup,
+  ProFormList,
+  ProFormText,
+  ProFormSelect,
+  ProFormTextArea,
+  ProFormDateTimePicker,
+  ProFormDigit,
+  ProFormRadio,
+  ProFormUploadButton,
+  ProFormCheckbox,
 } from '@ant-design/pro-components';
 import '@ant-design/pro-components/dist/components.css';
-import {CloseOutlined} from '@ant-design/icons';
-import * as api from "../../api/api";
-import MyAlert from "../../components/MyAlert";
-import en_GB from "antd/es/locale/en_GB";
+import * as api from '../../api/api';
+import MyAlert from '../../components/MyAlert';
+import en_GB from 'antd/es/locale/en_GB';
 import moment from 'moment';
 
-export function AddEventFun({eventId, eventStatus, show, onHide, updateList}) {
-    const [marketData, setMarketData] = useState([]);
-    const [Loading, setLoading] = useState(false);
-    const [form] = Form.useForm();
-    // useEffect(()=>{
-    //     return ()=>{
-    //         console.log("WillUnmount")
-    //     }
-    // })
+export function AddEventFun({
+  eventId,
+  show,
+  onHide,
+  updateList,
+}) {
+  const [orgCodeData, setOrgCodeData] = useState([]);
+  const [Loading, setLoading] = useState(false);
+  const [form] = Form.useForm();
 
-    useEffect(() => {
-        async function fetchData() {
-            await marketDataFun();
+  useEffect(() => {
+    async function fetchData() {
+      await requestOrgCodeData();
+    }
+    fetchData();
+  }, []);
+
+   // urls转files
+   function imgUrlsToFiles(imgUrls) {
+    let list = [];
+    imgUrls.forEach((item) => {
+      const url = item || '';
+      if (url) {
+        list.push({
+          url: url,
+        });
+      }
+    });
+
+    return list;
+  }
+
+  // files转urls
+  function filesToImgUrls(files) {
+    let list = [];
+    files.forEach((item) => {
+      const url = item.url || '';
+      if (url) {
+        list.push(url);
+      }
+    });
+    return list;
+  }
+
+  /**
+   * 详情数据
+   */
+  const requestDetailData = async () => {
+    let detailData = {};
+    const res = {
+      data: {
+        code: 0,
+        data: {
+          activityType: '1',
+          activityName: "活动名称",
+          orgCode: "123456789",
+          startTime: "2023-01-01",
+          endTime: "2023-01-31",
+          deliveryType: ['1', '2'],
+          informNote: "活动通知",
+          serviceNote: "活动服务",
+          activityDesc: "活动描述",
+          activityBanner: [{
+            bannerImg: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+            bannerLink: "https://www.baidu.com"
+          }],
+          goodsLimitCount: 10,
         }
-
-        fetchData();
-    }, []);
-
-    /**
-     * eventDetail数据准备
-     */
-    const eventDetailFun = async () => {
-        let evenDetail = {}
-        let lineUpGroups = []
-        let lineupIds = [];
-        try {
-            const res = await api.eventDetail(eventId);
-            if (res) {
-                if (0 === res.data.code) {
-                    evenDetail = res.data.data;
-                    evenDetail.eventPeriod = Object.values(evenDetail.eventPeriod);
-                    for (let i in evenDetail.lineUpGroups) {
-                        for (let j in evenDetail.lineUpGroups[i].lineupIds) {
-                            lineupIds.push({
-                                'lId': evenDetail.lineUpGroups[i].lineupIds[j]
-                            })
-                        }
-                        lineUpGroups.push(
-                            {
-                                "name": evenDetail.lineUpGroups[i].name,
-                                "writeOffQuantity": evenDetail.lineUpGroups[i].writeOffQuantity,
-                                "lineupIds": lineupIds
-                            }
-                        )
-                        lineupIds = [];
-                    }
-                    evenDetail.lineUpGroups = lineUpGroups;
-                    // values.id = null;
-                } else {
-                    MyAlert({errorMsg: res.data.message});
-                }
-            }
-        } catch (err) {
-            message.error(err ? err : 'link failure！', 2);
-        }
-        console.log("---evenDetail---", evenDetail)
-        return evenDetail;
-    };
-
-    /**
-     * marketData数据准备
-     */
-    const marketDataFun = () => {
-        let marketData = [];
-        api.marketData().then((res) => {
-            if (res) {
-                if (0 === res.data.code) {
-                    if (res.data.data.length > 0) {
-                        for (let i in res.data.data) {
-                            marketData.push({
-                                label: res.data.data[i].name,
-                                value: res.data.data[i].id
-                            });
-                        }
-                        setMarketData(marketData || [])
-                    }
-                } else {
-                    MyAlert({errorMsg: res.data.message});
-                }
-            }
-        }).catch((err) => {
-            message.error(err ? err : 'link failure！', 2);
-        })
-    };
-
-    /**
-     * form.validateFields数据准备
-     */
-    const saveAndCreateEvent = (type) => {
-        setLoading(true)
-        form.validateFields().then((values) => {
-            let lineUpGroups = []
-            let lineupIds = [];
-
-            for (let i in values.lineUpGroups) {
-                for (let j in values.lineUpGroups[i].lineupIds) {
-                    lineupIds.push(values.lineUpGroups[i].lineupIds[j].lId);
-                }
-                lineUpGroups.push(
-                    {
-                        "name": values.lineUpGroups[i].name,
-                        "writeOffQuantity": values.lineUpGroups[i].writeOffQuantity,
-                        "lineupIds": lineupIds
-                    }
-                )
-                lineupIds = [];
-            }
-            values.eventPeriod = {
-                // "beginDate": values.eventPeriod[0],
-                // "endDate": values.eventPeriod[1],
-                "beginDate": moment(new Date(values.eventPeriod[0])).format('YYYY-MM-DD'),
-                "endDate": moment(new Date(values.eventPeriod[1])).format('YYYY-MM-DD'),
-            };
-            values.lineUpGroups = lineUpGroups;
-            if (eventId && 'INIT' === eventStatus) {
-                values.id = eventId;
-            } else if (!eventId && !eventStatus) {
-                values.id = null;
-            }
-            if ('save' === type) {
-                saveFun(values)
-            } else if ('create' === type) {
-                createEventFun(values)
-            }
-        }).catch((error) => {
-            setLoading(false);
-        })
-    };
-
-    /**
-     * Save折扣
-     */
-    const saveFun = (values) => {
-        api.saveEvent({
-            ...values,
-        }).then((res) => {
-            if (res) {
-                setLoading(false)
-                if (0 === res.data.code) {
-                    onHide()
-                    updateList()
-                    message.success('Added successfully!', 3);
-                } else {
-                    MyAlert({errorMsg: res.data.message});
-                }
-            }
-        }).catch((err) => {
-            setLoading(false)
-            message.error(err ? err : 'link failure！', 2);
-        })
-    };
-
-    /**
-     * create折扣
-     */
-    const createEventFun = (values) => {
-        api.publishEvent({
-            ...values,
-        }).then((res) => {
-            if (res) {
-                setLoading(false)
-                if (0 === res.data.code) {
-                    onHide()
-                    updateList()
-                    message.success('Added successfully!', 3);
-                } else {
-                    MyAlert({errorMsg: res.data.message});
-                }
-            }
-        }).catch((err) => {
-            setLoading(false)
-            message.error(err ? err : 'link failure！', 2);
-        })
-    };
-
-
-    /**
-     * Lineup ID下拉框防抖异步搜索
-     */
-    const requestLineup = async (params) => {
-        let requestData = [];
-        try {
-            const res = await api.lineupList({
-                "searchKey": params ? params.keyWords : null,
-                "page": 0,
-                "size": 500
+      }
+    }
+    try {
+      // const res = await api.eventDetail(eventId);
+      if (res) {
+        if (0 === res.data.code) {
+            detailData = res.data.data;
+            // 轮播图
+            let bannerList = [];
+            detailData.activityBanner.forEach((item) => {
+              const imgUrls = item.bannerImg ? [item.bannerImg] : [];
+              let newItem = {
+                bannerImg: imgUrlsToFiles(imgUrls),
+                bannerLink: item.bannerLink,
+              }
+              bannerList.push(newItem);
             });
-            if (res) {
-                if (0 === res.data.code) {
-                    if (res.data.data.content.length > 0) {
-                        for (let i in res.data.data.content) {
-                            requestData.push({
-                                // name:res.data.data.content[i].name,
-                                label: res.data.data.content[i].name + '-' + res.data.data.content[i].id,
-                                value: res.data.data.content[i].id
-                            });
-                        }
-                    }
-                } else {
-                    MyAlert({errorMsg: res.data.message});
-                }
-            }
-        } catch (err) {
-            message.error(err ? err : 'link failure！', 2);
+            detailData.activityBanner = bannerList;
+        } else {
+            MyAlert({errorMsg: res.data.message});
         }
-        return requestData;
-    };
+      }
+    } catch (err) {
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    }
+    console.log('---detailData---', detailData);
+    return detailData;
+  };
 
-    /**
-     * Form布局
-     */
-    const formItemLayout = {
-        labelCol: {span: 6},
-        wrapperCol: {span: 17},
+  /**
+   * 机构代码数据
+   */
+  const requestOrgCodeData = () => {
+    let list = [];
+    const res = {
+      data: {
+        code: 0,
+        data: [
+          {
+            id: 1,
+            name: '机构1',
+          },
+          {
+            id: 2,
+            name: '机构2',
+          },
+        ],
+      },
     };
+    // api.marketData().then((res) => {
+      if (res) {
+        if (0 === res.data.code) {
+          if (res.data.data.length > 0) {
+            for (let i in res.data.data) {
+              list.push({
+                label: res.data.data[i].name,
+                value: res.data.data[i].id,
+              });
+            }
+            setOrgCodeData(list || []);
+          }
+        } else {
+          MyAlert({ errorMsg: res.data.message });
+        }
+      }
+    // }).catch((err) => {
+    //     message.error(err ? err : 'link failure！', 2);
+    // })
+  };
 
-    return (
-        <React.Fragment>
-            <Drawer
-                title={
-                    eventStatus ?
-                        'PUBLISHED' === eventStatus ? 'Event Info' : 'Edit Event'
-                        : 'Add Event'
-                }
-                footer={(eventStatus && 'PUBLISHED' === eventStatus) ? null :
-                    <div className='create-event-btn'>
-                        <Button type="dashed"
-                                disabled={Loading}
-                                // style={{backgroundColor: '#7f7f7f'}}
-                                onClick={() => {
-                                    saveAndCreateEvent('save')
-                                }}>
-                            Save
-                        </Button>
-                        <Button type='primary'
-                                disabled={Loading}
-                                onClick={() => {
-                                    saveAndCreateEvent('create')
-                                }}>
-                            Create Event
-                        </Button>
-                        <Button onClick={onHide}>Cancel</Button>
-                    </div>
-                }
-                width={720}
-                visible={show}
-                onClose={() => {
-                    onHide()
+  /**
+   * form.validateFields数据准备
+   */
+  const saveAndCreateEvent = (type) => {
+    setLoading(true);
+    form.validateFields().then((values) => {
+      console.log('处理前：', values);
+      // 开始时间
+      if (values.startTime) {
+        let startTime = moment(new Date(values.startTime)).format('YYYY-MM-DD')
+        values.startTime = startTime;
+      }      
+      // 结束时间
+      if (values.endTime) {
+        let endTime = moment(new Date(values.endTime)).format('YYYY-MM-DD')
+        values.endTime = endTime;
+      }      
+      // 轮播图
+      let bannerList = [];
+      values.activityBanner.forEach((item) => {
+        const imgFiles = item.bannerImg ? item.bannerImg : [];
+        const imgUrl = filesToImgUrls(imgFiles)[0] || '';
+        let newItem = {
+          bannerImg: imgUrl,
+          bannerLink: item.bannerLink,
+        }
+        bannerList.push(newItem);
+      });
+      values.activityBanner = bannerList;
+      // 操作
+      if ('save' === type) {
+        saveHandler(values);
+      } else if ('create' === type) {
+        createHandler(values);
+      }
+    }).catch((error) => {
+      setLoading(false);
+    });
+  };
+
+  /**
+   * 新增
+   */
+  const createHandler = (values) => {
+    console.log('处理后，创建：', values);
+    const res = {
+      data: {
+        code: 0,
+      },
+    };
+    // api.publishEvent({
+    //   ...values,
+    // }).then((res) => {
+      if (res) {
+        setLoading(false);
+        if (0 === res.data.code) {
+          onHide();
+          updateList();
+          message.success('创建成功!', 3);
+        } else {
+          MyAlert({ errorMsg: res.data.message });
+        }
+      }
+    // }).catch((err) => {
+    //   setLoading(false)
+    //   message.error(err ? err : '网络请求失败, 请重试!', 2);
+    // })
+  };
+
+  /**
+   * 保存
+   */
+  const saveHandler = (values) => {
+    console.log('处理后，保存：', values);
+    const res = {
+      data: {
+        code: 0,
+      },
+    };
+    // api.saveEvent({
+    //   ...values,
+    // }).then((res) => {
+      if (res) {
+        setLoading(false);
+        if (0 === res.data.code) {
+          onHide();
+          updateList();
+          message.success('保存成功!', 3);
+        } else {
+          MyAlert({ errorMsg: res.data.message });
+        }
+      }
+    // }).catch((err) => {
+    //   setLoading(false);
+    //   message.error(err ? err : '网络请求失败, 请重试!', 2);
+    // });
+  };
+
+  /**
+   * Form布局
+   */
+  const formItemLayout = {
+    labelCol: { span: 4 },
+    wrapperCol: { span: 20 },
+  };
+
+  return (
+    <React.Fragment>
+      <Drawer 
+        title={eventId ? '活动信息' : '新增活动'} 
+        footer={
+          <div className="create-event-btn">
+            {
+              eventId ? (
+                <Button type="primary" disabled={Loading} onClick={() => { saveAndCreateEvent('save') }}>保存</Button>
+              ) : (
+                <Button type="primary" disabled={Loading} onClick={() => { saveAndCreateEvent('create')}}>新增活动</Button>
+              )
+            }
+            <Button onClick={onHide}>取消</Button>
+          </div>
+        } 
+        width={720} 
+        visible={show} 
+        onClose={() => { onHide() }} 
+        bodyStyle={{ paddingBottom: 80 }}
+      >
+        <ProForm
+          form={form}
+          className="add-event-porForm"
+          disabled={false}
+          {...formItemLayout}
+          layout="LAYOUT_TYPE_HORIZONTAL"
+          // layout='horizontal'//horizontal
+          name="sonForm"
+          submitter={{
+            submitButtonProps: {
+              style: {
+                display: 'none', // 隐藏提交按钮
+              },
+            },
+            resetButtonProps: {
+              // 配置按钮的属性
+              style: {
+                display: 'none', // 隐藏重置按钮
+              },
+            },
+          }}
+          params={{}} //网络请求参数
+          request={eventId ? requestDetailData : null}
+        >
+          <ProFormRadio.Group
+            name="activityType"
+            label="活动类型"
+            rules={[{ required: true, message: '请选择活动类型' }]}
+            initialValue="1"
+            options={[
+              {
+                label: '内部活动',
+                value: '1',
+              },
+              {
+                label: '外部活动',
+                value: '2',
+              },
+            ]}
+          />
+          <ProFormText
+            name="activityName"
+            label="活动名称"
+            rules={[{ required: true, message: '请输入活动名称' }]}
+            placeholder="请输入活动名称"
+          />
+          <ProFormSelect
+            options={orgCodeData}
+            name="orgCode"
+            label="机构代码"
+            rules={[{ required: true, message: '请选择机构代码' }]}
+            placeholder="请选择机构代码"
+          />
+          <ConfigProvider locale={en_GB}>
+            <ProFormDateTimePicker 
+            name="startTime"
+            label="开始时间"
+            rules={[{ required: true, message: '请选择活动开始时间' }]}
+            placeholder={'请选择活动开始时间'}
+            />
+          </ConfigProvider>
+          <ConfigProvider locale={en_GB}>
+            <ProFormDateTimePicker 
+            name="endTime"
+            label="结束时间"
+            rules={[{ required: true, message: '请选择活动结束时间' }]}
+            placeholder={'请选择活动结束时间'}
+            />
+          </ConfigProvider>          
+          <ProFormCheckbox.Group
+            name="deliveryType"
+            label="发货方式"
+            rules={[{ required: true, message: '请选择发货方式' }]}
+            initialValue={['1']}
+            options={[
+              {
+                label: '自提',
+                value: '1',
+              },
+              {
+                label: '邮寄',
+                value: '2',
+              },
+            ]}
+          />
+          <ProFormTextArea
+            name="informNote"
+            label="知情同意条款"
+            rules={[{ required: true, message: '请输入知情同意弹框内展示的文本内容' }]}
+            placeholder={'请输入知情同意弹框内展示的文本内容'}
+          />
+          <ProFormTextArea
+            name="serviceNote"
+            label="联系客服"
+            rules={[{ required: true, message: '请输入联系客服页面内展示的文本内容' }]}
+            placeholder={'请输入联系客服页面内展示的文本内容'}
+          />
+          <ProFormTextArea
+            name="activityDesc"
+            label="领取说明"
+            rules={[{ required: true, message: '请输入活动领取说明展示的文本内容' }]}
+            placeholder={'请输入活动领取说明展示的文本内容'}
+          />
+          <ProFormList
+            name="activityBanner"
+            label="首页轮播图"
+            initialValue={[
+              {
+                bannerImg: [],
+                bannerLink: '',
+              }
+            ]}
+            creatorButtonProps={{
+              creatorButtonText: '新增图片',
+            }}
+            copyIconProps={false}
+            itemRender={({ listDom, action }, { record }) => {
+              return (
+                <ProCard bordered extra={action} title={record?.name} style={{ marginBlockEnd: 8 }}>{listDom}</ProCard>
+              );
+            }}
+          >
+            <ProFormGroup key="group" min={1}>
+              <ProFormUploadButton
+                name="bannerImg"
+                max={1}
+                fieldProps={{
+                  name: 'file',
+                  listType: 'picture-card',
                 }}
-                bodyStyle={{paddingBottom: 80}}
-            >
-                <ProForm form={form}
-                         className='add-event-porForm'
-                         disabled={eventStatus && 'PUBLISHED' === eventStatus}
-                         {...formItemLayout}
-                         layout='LAYOUT_TYPE_HORIZONTAL'
-                    // layout='horizontal'//horizontal
-                         name='sonForm'
-                         submitter={{
-                             submitButtonProps: {
-                                 style: {
-                                     display: 'none',  // 隐藏提交按钮
-                                 },
-                             },
-                             resetButtonProps: { // 配置按钮的属性
-                                 style: {
-                                     display: 'none',   // 隐藏重置按钮
-                                 },
-                             }
-                         }}
-                         params={{}} //网络请求参数
-                         request={eventId ? eventDetailFun : null}
-                >
-                    <ProFormText name="name"
-                                 label="Event Name"
-                                 rules={[{required: true, message: 'Please input the event name.'}]}
-                                 placeholder="Please input the event name."
-                    />
-                    <ProFormTextArea name="description"
-                                     label="Event Description"
-                        // rules={[{required: true, message: 'Please input event description.'}]}
-                                     placeholder={(eventStatus && 'PUBLISHED' === eventStatus) || "Please input event description."}/>
-                    <div className='add-event-picker'>
-                        <ConfigProvider locale={en_GB}>
-                            <ProFormDateRangePicker name="eventPeriod"
-                                                    label="Event Period"
-                                                    rules={[{
-                                                        required: true,
-                                                        message: 'Please input event Period.'
-                                                    }]}
-                                                    placeholder={['Start Time', 'End Time']}
-                            />
-                        </ConfigProvider>
-                    </div>
-
-                    <ProFormDigit name="couponAmount"
-                                  label="Issued Coupons Qty"
-                                  rules={[{required: true, message: 'Please input the amount.'}]}
-                                  placeholder="Please input the amount."
-                                  min={1}
-                                  max={100000}
-                                  fieldProps={{precision: 0}}
-                        // precision={0}
-                    />
-                    <ProFormDigit name="couponValue"
-                                  label="Coupon value (HKD$)"
-                                  rules={[{required: true, message: 'Please input value.'}]}
-                                  placeholder="Please input the value."
-                                  min={0}
-                                  fieldProps={{precision: 2}}
-                    />
-                    <div className='text-package'>
-                        <ProFormDigit
-                            name="totalProductsQuantity"
-                            label={
-                                <div>
-                                    <p>Total Lineup</p>
-                                    <p>Quantity in Package</p>
-                                </div>
-                            }
-                            rules={[{required: true, message: 'Total Lineup Quantity in Package'}]}
-                            placeholder="Total Lineup Quantity in Package."
-                            min={1}
-                            // max={10}
-                            fieldProps={{precision: 0}}
-                        />
-                    </div>
-                    <ProFormSelect
-                        options={marketData}
-                        name="shopMarketId"
-                        label="Market"
-                        rules={[{required: true, message: 'Please select.'}]}
-                        placeholder="Please select."
-                    />
-                    <ProFormList
-                        className={!eventStatus || (eventStatus && 'INIT' === eventStatus) ? "lineup-groups pro-list" : 'lineup-groups pro-list-INIT'}
-                        name="lineUpGroups"
-                        label="Lineup Details"
-                        copyIconProps={false} //隐藏复制这行
-                        creatorButtonProps={!eventStatus || (eventStatus && 'INIT' === eventStatus) ? { //按钮文字
-                            creatorButtonText: 'Add Group',
-                        } : false}
-                        // creatorButtonProps={false}
-                        deleteIconProps={!eventStatus || (eventStatus && 'INIT' === eventStatus) ? {
-                            Icon: CloseOutlined,
-                            tooltipText: 'Delete group',
-                        } : false}
-                        itemRender={({listDom, action}, {record}) => {
-                            return (
-                                <ProCard bordered
-                                         extra={action}
-                                         style={{marginBottom: 8}}
-                                >
-                                    {listDom}
-                                </ProCard>
-                            );
-                        }}
-                        initialValue={[{name: ''}]}
-                    >
-                        <ProFormGroup>
-                            <ProFormText
-                                width="md"
-                                name="name"
-                                label="Group Name"
-                                rules={[{required: true, message: 'Please input the Group Name.'}]}
-                                placeholder="Please input the Group Name."
-                            />
-                        </ProFormGroup>
-                        <div>
-                            <span className='lineup-title'>* </span>
-                            Lineup：
-                        </div>
-                        <ProFormList
-                            width="md"
-                            name="lineupIds"
-                            creatorButtonProps={!eventStatus || (eventStatus && 'INIT' === eventStatus) ? { //按钮文字
-                                creatorButtonText: 'Add Lineup',
-                            } : false}
-                            copyIconProps={false}//隐藏复制这行
-                            deleteIconProps={!eventStatus || (eventStatus && 'INIT' === eventStatus) ? {
-                                tooltipText: 'Delete Lineup',
-                            } : false}
-                            initialValue={[
-                                {
-                                    lId: null,
-                                },
-                            ]}
-                        >
-                            <ProFormGroup key="requestLineup">
-                                <ProFormSelect style={{width: 200}}
-                                               width="md"
-                                               showSearch
-                                               debounceTime={500}
-                                               name="lId"
-                                    // label="Lineup"
-                                               valueType="select"
-                                               request={requestLineup}
-                                    // fieldProps={{
-                                    //     optionItemRender(item) {
-                                    //         return item.label + ' - ' + item.value;
-                                    //     },
-                                    // }}
-                                               placeholder="Please input the lineup ID or lineup name to search."
-                                               rules={[{
-                                                   required: true,
-                                                   message: 'Please input the lineup ID or lineup name to search.'
-                                               }]}
-                                />
-                            </ProFormGroup>
-                        </ProFormList>
-                        <ProFormGroup
-                            style={{marginTop: !eventStatus || (eventStatus && 'INIT' === eventStatus) ? '0px' : '-25px'}}>
-                            <ProFormDigit
-                                width="md"
-                                name="writeOffQuantity"
-                                label="Minimum Lineup Quantity"
-                                rules={[{
-                                    required: true,
-                                    message: 'Please input the minimum products quantity within the group.'
-                                }]}
-                                placeholder="Please input the minimum products quantity within the group."
-                                min={1}
-                                // max={10}
-                                fieldProps={{precision: 0}}
-                            />
-                        </ProFormGroup>
-                    </ProFormList>
-                </ProForm>
-            </Drawer>
-        </React.Fragment>
-    );
+                title="上传文件"
+                extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：100x100"
+              />
+              <ProFormText
+                name="bannerLink"
+                rules={[{ required: true, message: '请填写点击跳转URL' }]}
+                placeholder={'请填写点击跳转URL'}
+              />
+            </ProFormGroup>
+          </ProFormList>
+          <ProFormDigit
+            name="goodsLimitCount"
+            label="商品限购数量"
+            rules={[{ required: true, message: '请输入商品限购数量' }]}
+            placeholder="请输入商品限购数量"
+            min={1}
+            max={100000}
+            fieldProps={{ precision: 0 }}
+          />
+          <ProFormSelect
+            options={orgCodeData}
+            name="activityGoods"
+            label="活动商品"
+            rules={[{ required: true, message: '请输入商品编号' }]}
+            placeholder="请输入商品编号"
+          />
+        </ProForm>
+      </Drawer>
+    </React.Fragment>
+  );
 }

@@ -58,11 +58,35 @@ class TrackMgmt extends Component {
     const { pageNo, pageSize, queryData } = self.state;
     self.setState({ loadingShow: true });
 
-    api.eventList({
-      ...queryData,
-      page: pageNo,
-      size: pageSize,
-    }).then((res) => {
+    const res = {
+      data: {
+        code: 0,
+        data: {
+          content: [
+            {
+              id: 1,
+              activityId: 1,
+              activityName: '活动1',
+              createTime: '2022-01-01 12:00:00',
+              startTime: '2020-08-10 11:11:11',
+              endTime: '2021-08-10 11:11:11',
+              orgCode: '123456',                      
+              activityType: 1,
+              count: 100,  
+              times: 200,
+            }
+          ],
+          totalElements: 2,
+          message: 'success',
+        }
+      }
+    };
+
+  //   api.eventList({
+  //     ...queryData,
+  //     page: pageNo,
+  //     size: pageSize,
+  //   }).then((res) => {
       self.setState({ loadingShow: false });
       if (res) {
         if (0 === res.data.code) {
@@ -74,10 +98,10 @@ class TrackMgmt extends Component {
           MyAlert({ errorMsg: res.data.message });
         }
       }
-    }).catch((err) => {
-      self.setState({ loadingShow: false });
-      message.error(err ? err : '网络请求失败, 请重试!', 2);
-    });
+  //   }).catch((err) => {
+  //     self.setState({ loadingShow: false });
+  //     message.error(err ? err : '网络请求失败, 请重试!', 2);
+  //   });
   }; 
 
   /**
@@ -113,10 +137,8 @@ class TrackMgmt extends Component {
    */
   clickItemDetail = (record) => {
     const self = this;
-    self.setState({
-      eventID: record.id,
-      eventStatus: record.status,
-    });
+    const { id } = record;
+    window.location.href = '/portal/trackDetail/3'
   }
 
   /**
@@ -139,23 +161,23 @@ class TrackMgmt extends Component {
     const columns = [
       {
         title: '活动ID',
-        width: 80,
-        dataIndex: 'id',
-        key: 'id',
+        width: 100,
+        dataIndex: 'activityId',
+        key: 'activityId',
         align: 'center',
       },
       {
         title: '活动名称',
-        width: 50,
-        dataIndex: 'name',
-        key: 'name',
+        width: 100,
+        dataIndex: 'activityName',
+        key: 'activityName',
         align: 'center',
       },
       {
         title: '创建时间',
-        dataIndex: 'syncCouponDate',
+        dataIndex: 'createTime',
         width: 100,
-        key: 'syncCouponDate',
+        key: 'createTime',
         align: 'center',
         render: (text) => (
           <>{text ? moment(text).format('YYYY.MM.DD HH:mm:ss') : '--'}</>
@@ -163,60 +185,54 @@ class TrackMgmt extends Component {
       },      
       {
         title: '活动时间',
-        dataIndex: 'Period',
-        width: 150,
-        key: 'Period',
+        dataIndex: 'activityTime',
+        width: 100,
+        key: 'activityTime',
         align: 'center',
         render: (text, record) => (
-          <>
-            {
-              <div>
-                {moment(record.beginDate).format('YYYY.MM.DD HH:mm:ss')}{' '}
-                <span style={{ fontWeight: 'bold' }}>-</span>{' '}
-                {moment(record.endDate).format('YYYY.MM.DD HH:mm:ss')}
-              </div>
-            }
-          </>
+          <div className='activity-time-wrap'>
+            {<span>{record.startTime ? moment(record.startTime).format('YYYY.MM.DD HH:mm:ss') : '--'}</span>}
+            {/* <span style={{ fontWeight: 'bold' }}>-</span> */}
+            {<span>{record.endTime ? moment(record.endTime).format('YYYY.MM.DD HH:mm:ss') : '--'}</span>}
+          </div>
         ),
       },      
       {
         title: '机构代码',
-        dataIndex: 'confirmedQuantity',
+        dataIndex: 'orgCode',
         width: 50,
-        key: 'confirmedQuantity',
+        key: 'orgCode',
         align: 'center',
       },
       {
         title: '活动类型',
-        dataIndex: 'status',
+        dataIndex: 'activityType',
         width: 50,
-        key: 'status',
+        key: 'activityType',
         align: 'center',
-        render: (text) => (
-          <Tag color={'DISABLE' === text ? 'red' : 'green'}>
-            {Dict.getValue('eventMgmtType', text, '')}
-          </Tag>
+         render: (text) => (
+          <>{Dict.getValue('activityType', text, '')}</>
         ),
       },
       {
         title: '浏览人数',
-        dataIndex: 'confirmedQuantity',
+        dataIndex: 'count',
         width: 50,
-        key: 'confirmedQuantity',
+        key: 'count',
         align: 'center',
       },
       {
         title: '浏览次数',
-        dataIndex: 'confirmedQuantity',
+        dataIndex: 'times',
         width: 50,
-        key: 'confirmedQuantity',
+        key: 'times',
         align: 'center',
       },
       {
         title: '操作',
         width: 100,
-        dataIndex: 'status',
-        key: 'status',
+        dataIndex: 'operation',
+        key: 'operation',
         ellipsis: true,
         align: 'center',
         render: (text, record) => (
@@ -228,7 +244,7 @@ class TrackMgmt extends Component {
     ];
     return (
       <HomeLayout>
-        <p className="list-title">活动管理</p>
+        <p className="list-title">数据统计</p>
         <Divider style={{ margin: '3px 0' }} />
         <div className="common-list">
           <div className="item1">

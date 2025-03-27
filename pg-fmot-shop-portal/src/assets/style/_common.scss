@@ -109,6 +109,22 @@
 //  background-color: #006EA9;
 //}
 
+.current-border-btn {
+  border: 3px solid #D1EAF7;
+  padding: 7px 20px 7px 17px;
+  //margin-right: 10px;
+  font-size: 0.8125rem;
+  color: #008FD9;
+  box-shadow: none;
+  border-radius: 30px;
+  background-color: #ffffff;
+  cursor: pointer;
+
+  span {
+    margin-left: 5px;
+  }
+}
+
 .bg-gray {
   background-color: #666;
   border-color: #e1e1e1;
@@ -159,6 +175,19 @@
   }
 }
 
+.activity-time-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.goods-list-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .event-setting {
   margin-right: 15px;
   color: #1890ff;
@@ -187,4 +216,16 @@
   font-family: SimSun, sans-serif;
   line-height: 1;
   content: "*";
+}
+
+
+
+.goods-banner-row-wrap {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  .goods-banner-row {
+    width: 49%;
+  }
 }

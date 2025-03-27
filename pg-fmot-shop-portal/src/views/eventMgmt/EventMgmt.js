@@ -10,7 +10,6 @@ import {
   Input,
   Row,
   Col,
-  Tag,
   notification,
   Tooltip,
   ConfigProvider,
@@ -62,11 +61,34 @@ class EventMgmt extends Component {
     const { pageNo, pageSize, queryData } = self.state;
     self.setState({ loadingShow: true });
 
-    api.eventList({
-      ...queryData,
-      page: pageNo,
-      size: pageSize,
-    }).then((res) => {
+    const res = {
+      data: {
+        code: 0,
+        data: {
+          content: [
+            {
+              createTime: '2020-08-10 11:11:11',
+              id: 1,
+              startTime: '2020-08-10 11:11:11',
+              endTime: '2021-08-10 11:11:11',
+              name: '活动1',
+              type: '1',
+              status: '1',
+              link: 'https://www.baidu.com',
+              orgCode: '123456',              
+            }
+          ],
+          totalElements: 2,
+          message: 'success',
+        }
+      }
+    };
+
+    // api.eventList({
+    //   ...queryData,
+    //   page: pageNo,
+    //   size: pageSize,
+    // }).then((res) => {
       self.setState({ loadingShow: false });
       if (res) {
         if (0 === res.data.code) {
@@ -78,10 +100,10 @@ class EventMgmt extends Component {
           MyAlert({ errorMsg: res.data.message });
         }
       }
-    }).catch((err) => {
-      self.setState({ loadingShow: false });
-      message.error(err ? err : '网络请求失败, 请重试!', 2);
-    });
+    // }).catch((err) => {
+    //   self.setState({ loadingShow: false });
+    //   message.error(err ? err : '网络请求失败, 请重试!', 2);
+    // });
   }; 
 
   /**
@@ -167,9 +189,9 @@ class EventMgmt extends Component {
     const columns = [
       {
         title: '创建时间',
-        dataIndex: 'syncCouponDate',
+        dataIndex: 'createTime',
         width: 100,
-        key: 'syncCouponDate',
+        key: 'createTime',
         align: 'center',
         render: (text) => (
           <>{text ? moment(text).format('YYYY.MM.DD HH:mm:ss') : '--'}</>
@@ -177,46 +199,40 @@ class EventMgmt extends Component {
       },
       {
         title: '活动ID',
-        width: 80,
+        width: 50,
         dataIndex: 'id',
         key: 'id',
         align: 'center',
       },
       {
         title: '活动时间',
-        dataIndex: 'Period',
-        width: 150,
-        key: 'Period',
+        dataIndex: 'activityTime',
+        width: 100,
+        key: 'activityTime',
         align: 'center',
         render: (text, record) => (
-          <>
-            {
-              <div>
-                {moment(record.beginDate).format('YYYY.MM.DD HH:mm:ss')}{' '}
-                <span style={{ fontWeight: 'bold' }}>-</span>{' '}
-                {moment(record.endDate).format('YYYY.MM.DD HH:mm:ss')}
-              </div>
-            }
-          </>
+          <div className='activity-time-wrap'>
+            {<span>{record.startTime ? moment(record.startTime).format('YYYY.MM.DD HH:mm:ss') : '--'}</span>}
+            {/* <span style={{ fontWeight: 'bold' }}>-</span> */}
+            {<span>{record.endTime ? moment(record.endTime).format('YYYY.MM.DD HH:mm:ss') : '--'}</span>}
+          </div>
         ),
       },
       {
         title: '活动名称',
-        width: 50,
+        width: 100,
         dataIndex: 'name',
         key: 'name',
         align: 'center',
       },
       {
         title: '活动类型',
-        dataIndex: 'status',
+        dataIndex: 'type',
         width: 50,
-        key: 'status',
+        key: 'type',
         align: 'center',
         render: (text) => (
-          <Tag color={'DISABLE' === text ? 'red' : 'green'}>
-            {Dict.getValue('eventMgmtType', text, '')}
-          </Tag>
+          <>{Dict.getValue('activityType', text, '')}</>
         ),
       },
       {
@@ -226,30 +242,28 @@ class EventMgmt extends Component {
         key: 'status',
         align: 'center',
         render: (text) => (
-          <Tag color={'DISABLE' === text ? 'red' : 'green'}>
-            {Dict.getValue('eventMgmtStatus', text, '')}
-          </Tag>
+          <>{Dict.getValue('activityStatus', text, '')}</>
         ),
       },
       {
         title: '活动入口链接',
-        dataIndex: 'couponValue',
+        dataIndex: 'link',
         width: 100,
-        key: 'couponValue',
+        key: 'link',
         align: 'center',
       },
       {
         title: '机构代码',
-        dataIndex: 'confirmedQuantity',
+        dataIndex: 'orgCode',
         width: 50,
-        key: 'confirmedQuantity',
+        key: 'orgCode',
         align: 'center',
       },
       {
         title: '操作',
         width: 100,
-        dataIndex: 'status',
-        key: 'status',
+        dataIndex: 'operation',
+        key: 'operation',
         ellipsis: true,
         align: 'center',
         render: (text, record) => (
@@ -319,8 +333,8 @@ class EventMgmt extends Component {
                   <Col span={8}>
                     <Form.Item>{getFieldDecorator('activityType',{})(
                       <Select placeholder="请选择活动类型" style={{ width: '100%' }}>
-                        <Option value="INTERNAL">内部活动</Option>
-                        <Option value="EXTERNAL">外部活动</Option>
+                        <Option value="1">内部活动</Option>
+                        <Option value="2">外部活动</Option>
                       </Select>
                     )}
                     </Form.Item>
@@ -328,9 +342,9 @@ class EventMgmt extends Component {
                   <Col span={8}>
                     <Form.Item>{getFieldDecorator('status',{})(
                       <Select placeholder="请选择活动状态" style={{ width: '100%' }}>
-                        <Option value="START">未开始</Option>
-                        <Option value="ING">进行中</Option>
-                        <Option value="END">已结束</Option>
+                        <Option value="1">未开始</Option>
+                        <Option value="2">进行中</Option>
+                        <Option value="3">已结束</Option>
                       </Select>
                     )}
                     </Form.Item>
@@ -338,8 +352,8 @@ class EventMgmt extends Component {
                   <Col span={8}>
                     <Form.Item>{getFieldDecorator('activityCode',{})(
                       <Select placeholder="请选择机构代码" style={{ width: '100%' }}>
-                        <Option value="ONE">100</Option>
-                        <Option value="TWO">200</Option>
+                        <Option value="1">100</Option>
+                        <Option value="2">200</Option>
                         <Option value={null}>全部</Option>
                       </Select>
                     )}

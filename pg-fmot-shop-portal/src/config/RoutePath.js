@@ -18,6 +18,7 @@ let RoutePath = {
     OrderMgmt: '/orderMgmt',
     GoodsMgmt: '/goodsMgmt',
     TrackMgmt: '/trackMgmt',
+    TrackDetail: '/trackDetail',
 
     SsoUrlJump: window.location.origin === 'https://dtiger.pg.com' ?
         'https://fedauth.pg.com/as/authorization.oauth2?client_id=dtiger&response_type=code&redirect_uri=https://dtiger.pg.com/portal/callback&scope=openid+profile&pfidpadapterid=OAuth&access_token_manager_id=OAuth3'//生产

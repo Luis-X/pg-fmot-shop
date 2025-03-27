@@ -21,7 +21,7 @@ import {
 import HomeLayout from '../../common/LayoutStyle';
 import * as api from '../../api/api';
 import MyAlert from '../../components/MyAlert';
-import { AddEventFun } from './AddEventFun';
+import { AddGoodsFun } from './AddGoodsFun';
 import Dict from '../../config/Dict';
 
 const { Option } = Select;
@@ -34,7 +34,6 @@ class GoodsMgmt extends Component {
       loadingShow: false,
       visible: false,
       eventID: '',
-      eventStatus: '',
       queryData: null,
 
       pageNo: 0,
@@ -56,11 +55,30 @@ class GoodsMgmt extends Component {
     const { pageNo, pageSize, queryData } = self.state;
     self.setState({ loadingShow: true });
 
-    api.eventList({
-      ...queryData,
-      page: pageNo,
-      size: pageSize,
-    }).then((res) => {
+    const res = {
+      data: {
+        code: 0,
+        data: {
+          content: [
+            {
+              id: '8888888',
+              name: '商品1',
+              price: '2000',
+              category: '1',
+              type: '1',              
+            }
+          ],
+          totalElements: 2,
+          message: 'success',
+        }
+      }
+    };
+
+    // api.eventList({
+    //   ...queryData,
+    //   page: pageNo,
+    //   size: pageSize,
+    // }).then((res) => {
       self.setState({ loadingShow: false });
       if (res) {
         if (0 === res.data.code) {
@@ -72,10 +90,10 @@ class GoodsMgmt extends Component {
           MyAlert({ errorMsg: res.data.message });
         }
       }
-    }).catch((err) => {
-      self.setState({ loadingShow: false });
-      message.error(err ? err : '网络请求失败, 请重试!', 2);
-    });
+    // }).catch((err) => {
+    //   self.setState({ loadingShow: false });
+    //   message.error(err ? err : '网络请求失败, 请重试!', 2);
+    // });
   }; 
 
   /**
@@ -113,8 +131,7 @@ class GoodsMgmt extends Component {
     const self = this;
     self.setState({
       visible: true,
-      eventID: record.id,
-      eventStatus: record.status,
+      eventID: record.id
     });
   }
 
@@ -138,8 +155,7 @@ class GoodsMgmt extends Component {
     const self = this;
     self.setState({
       visible: true,
-      eventID: '',
-      eventStatus: '',
+      eventID: ''
     });
   }
 
@@ -150,54 +166,54 @@ class GoodsMgmt extends Component {
     const columns = [
       {
         title: '商品编码',
-        width: 80,
+        width: 100,
         dataIndex: 'id',
         key: 'id',
         align: 'center',
       },
       {
         title: '商品名称',
-        width: 80,
+        width: 100,
         dataIndex: 'name',
         key: 'name',
         align: 'center',
       },
       {
         title: '价格',
-        width: 80,
-        dataIndex: 'name',
-        key: 'name',
+        width: 100,
+        dataIndex: 'price',
+        key: 'price',
         align: 'center',
       },
       {
         title: '所属类别',
-        dataIndex: 'status',
-        width: 50,
-        key: 'status',
+        dataIndex: 'category',
+        width: 100,
+        key: 'category',
         align: 'center',
         render: (text) => (
-          <Tag color={'DISABLE' === text ? 'red' : 'green'}>
-            {Dict.getValue('goodsMgmtCategory', text, '')}
-          </Tag>
+          <>
+            {Dict.getValue('goodsCategory', text, '')}
+          </>
         ),
       },
       {
         title: '商品类型',
-        dataIndex: 'status',
-        width: 50,
-        key: 'status',
+        dataIndex: 'type',
+        width: 100,
+        key: 'type',
         align: 'center',
         render: (text) => (
-          <Tag color={'DISABLE' === text ? 'red' : 'green'}>
-            {Dict.getValue('goodsMgmtType', text, '')}
-          </Tag>
+          <>
+            {Dict.getValue('goodsType', text, '')}
+          </>
         ),
       },
       {
         title: '操作',
         width: 100,
-        dataIndex: 'status',
-        key: 'status',
+        dataIndex: 'operation',
+        key: 'operation',
         ellipsis: true,
         align: 'center',
         render: (text, record) => (
@@ -211,21 +227,19 @@ class GoodsMgmt extends Component {
       <HomeLayout>
         {
           this.state.visible ? (
-            <AddEventFun
+            <AddGoodsFun
               eventId={this.state.eventID}
-              eventStatus={this.state.eventStatus}
               show={this.state.visible}
               onHide={() => {
                 this.setState({ visible: false });
               }}
               updateList={() => {
                 resetFields();
-                this.setState(
-                  {
-                    pageNo: 0,
-                  },
-                  () => this.requestListData()
-                );
+                this.setState({
+                  pageNo: 0
+                },() => {
+                  this.requestListData()
+                });
               }}
             />
           ) : null

@@ -23,6 +23,7 @@ import EventMgmt from "../views/eventMgmt/EventMgmt";
 import OrderMgmt from "../views/orderMgmt/OrderMgmt";
 import GoodsMgmt from "../views/goodsMgmt/GoodsMgmt";
 import TrackMgmt from "../views/trackMgmt/TrackMgmt";
+import TrackDetail from "../views/trackMgmt/TrackDetail";
 
 const Root = () => (
     <Router basename={'/portal'}>
@@ -48,6 +49,8 @@ const Root = () => (
             <AuthRoute exact path={RoutePath.OrderMgmt} component={OrderMgmt}/>
             <AuthRoute exact path={RoutePath.GoodsMgmt} component={GoodsMgmt}/>
             <AuthRoute exact path={RoutePath.TrackMgmt} component={TrackMgmt}/>
+            <AuthRoute exact path={RoutePath.TrackDetail+ "/:id"} component={TrackDetail}/>
+            
         </Switch>
     </Router>
 );

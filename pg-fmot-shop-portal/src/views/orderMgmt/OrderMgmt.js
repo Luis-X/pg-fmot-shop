@@ -24,6 +24,7 @@ import HomeLayout from '../../common/LayoutStyle';
 import * as api from '../../api/api';
 import MyAlert from '../../components/MyAlert';
 import en_GB from 'antd/es/locale/en_GB';
+import Dict from '../../config/Dict';
 import axios from 'axios';
 
 const { Option } = Select;
@@ -78,11 +79,48 @@ class OrderMgmt extends Component {
       delete reportQueryData.date;
     }
 
-    api.reportList({
-      ...reportQueryData,
-      page: pageNo,
-      size: pageSize,
-    }).then((res) => {
+    const res = {
+      data: {
+        code: 0,
+        data: {
+          content: [
+            {
+              id: '1',
+              createTime: '2022-01-01 12:00:00',
+              orderNO: '123456',
+              activityId: 1,
+              activityName: '活动1',
+              orgCode: '123456',
+              accountId: '7890',
+              deliveryType: '1',
+              orderStatus: '1',
+              goodsList: [
+                {
+                  id: '1',
+                  goodsName: '商品1',
+                  goodsNum: 1,
+                },
+                {
+                  id: '2',
+                  goodsName: '商品2',
+                  goodsNum: 2,
+                }
+              ],
+              goodsCount: 2,
+              totalPoints: 1000,
+            }
+          ],
+          totalElements: 2,
+          message: 'success',
+        }
+      }
+    }
+
+    // api.reportList({
+    //   ...reportQueryData,
+    //   page: pageNo,
+    //   size: pageSize,
+    // }).then((res) => {
       self.setState({ loadingShow: false });
       if (res) {
         if (0 === res.data.code) {
@@ -94,16 +132,37 @@ class OrderMgmt extends Component {
           MyAlert({ errorMsg: res.data.message });
         }
       }
-    }).catch((err) => {
-      self.setState({ loadingShow: false });
-      message.error(err ? err : '网络请求失败, 请重试!', 2);
-    });
+    // }).catch((err) => {
+    //   self.setState({ loadingShow: false });
+    //   message.error(err ? err : '网络请求失败, 请重试!', 2);
+    // });
   };
 
   // 机构代码
   requestOrgCodeListData = () => {
     const self = this;
-    api.marketData().then((res) => {
+
+    const res = {
+      data: {
+        code: 0,
+        data: [
+          {
+            id: '1',
+            name: '机构1',
+          },
+          {
+            id: '2',
+            name: '机构2',
+          },
+          {
+            id: '3',
+            name: '机构3',
+          },
+        ]
+      }
+    }
+
+    // api.marketData().then((res) => {
       if (res) {
         if (0 === res.data.code) {
           self.setState({
@@ -113,10 +172,10 @@ class OrderMgmt extends Component {
           MyAlert({ errorMsg: res.data.message });
         }
       }
-    }).catch((err) => {
-      self.setState({ loadingShow: false });
-      message.error(err ? err : '网络请求失败, 请重试!', 2);
-    });
+    // }).catch((err) => {
+    //   self.setState({ loadingShow: false });
+    //   message.error(err ? err : '网络请求失败, 请重试!', 2);
+    // });
   };
 
   // 选择机构代码
@@ -230,103 +289,108 @@ class OrderMgmt extends Component {
   
 
   render() {
-    const { orgCodeList, selectOrgCodeList, payStatusData } = this.state;
+    const { orgCodeList } = this.state;
     const {
       form: { resetFields, getFieldDecorator },
     } = this.props;
     const columns = [
       {
         title: '下单时间',
-        dataIndex: 'createDate',
-        width: 80,
-        key: 'createDate',
-        // ellipsis: true,
+        dataIndex: 'createTime',
+        width: 100,
+        key: 'createTime',
         align: 'center',
         render: (text) => <>{moment(text).format('YYYY-MM-DD HH:mm:ss')}</>,
       },
       {
         title: '订单编号',
-        dataIndex: 'couponCode',
-        width: 80,
-        key: 'couponCode',
-        // ellipsis: true,
+        dataIndex: 'orderNO',
+        width: 100,
+        key: 'orderNO',
         align: 'center',
       },
       {
         title: '活动ID',
-        dataIndex: 'eventName',
-        width: 80,
-        key: 'eventName',
-        // ellipsis: true,
+        dataIndex: 'activityId',
+        width: 100,
+        key: 'activityId',
         align: 'center',
       },
       {
         title: '活动名称',
-        dataIndex: 'writeOffQuantity',
-        width: 80,
-        key: 'writeOffQuantity',
-        // ellipsis: true,
+        dataIndex: 'activityName',
+        width: 100,
+        key: 'activityName',
         align: 'center',
       },
       {
         title: '机构代码',
-        dataIndex: 'shopId',
-        width: 80,
-        key: 'shopId',
-        // ellipsis: true,
+        dataIndex: 'orgCode',
+        width: 100,
+        key: 'orgCode',
         align: 'center',
       },
       {
         title: '用户账号',
-        dataIndex: 'shopMarketName',
-        width: 80,
-        key: 'shopMarketName',
-        ellipsis: true,
+        dataIndex: 'accountId',
+        width: 100,
+        key: 'accountId',
         align: 'center',
       },
       {
         title: '发货类型',
-        dataIndex: 'shopAreaName',
-        width: 80,
-        key: 'shopAreaName',
-        // ellipsis: true,
+        dataIndex: 'deliveryType',
+        width: 100,
+        key: 'deliveryType',
         align: 'center',
+        render: (text) => (
+          <>{Dict.getValue('deliveryType', text, '')}</>
+        ),
       },
       {
         title: '订单状态',
-        dataIndex: 'soldToStoreNo',
-        width: 80,
-        key: 'soldToStoreNo',
-        // ellipsis: true,
+        dataIndex: 'orderStatus',
+        width: 100,
+        key: 'orderStatus',
         align: 'center',
+        render: (text) => (
+          <>{Dict.getValue('orderStatus', text, '')}</>
+        ),
       },
       {
         title: '兑换商品',
-        dataIndex: 'janRainId',
-        width: 80,
-        key: 'janRainId',
-        // ellipsis: true,
+        dataIndex: 'goodsList',
+        width: 100,
+        key: 'goodsList',
         align: 'center',
+        render: (text, record) => {
+          // const findItem = text.find((item) => item.id === text);
+          const goodsListView = (
+            <div className='goods-list-wrap'>
+              {
+                record.goodsList.map((item, index) => (
+                  <span key={index}>{`${item.goodsName} x${item.goodsNum}`}</span>
+                ))
+              }              
+            </div>    
+          )                  
+          return goodsListView;
+        },
       },
       {
         title: '商品数量',
-        dataIndex: 'janRainId',
+        dataIndex: 'goodsCount',
         width: 80,
-        key: 'janRainId',
-        // ellipsis: true,
+        key: 'goodsCount',
         align: 'center',
       },
       {
         title: '合计积分',
-        dataIndex: 'payStatus',
+        dataIndex: 'totalPoints',
         width: 80,
-        key: 'payStatus',
+        key: 'totalPoints',
         ellipsis: true,
-        align: 'center',
-        render: (text) => {
-          const findItem = payStatusData.find((item) => item.id === text);
-          return <>{findItem.name}</>;
-        },
+        align: 'center',        
       },
     ];
     return (

@@ -25,6 +25,7 @@ import {
 import HomeLayout from '../../common/LayoutStyle';
 import * as api from '../../api/api';
 import MyAlert, { ConfirmAlert } from '../../components/MyAlert';
+import moment from 'moment';
 import { ImportStore } from './ImportStore';
 import en_GB from 'antd/es/locale/en_GB';
 import Dict from '../../config/Dict';
@@ -60,11 +61,34 @@ class ExternalAccount extends Component {
     const { pageNo, pageSize, queryData } = this.state;
     self.setState({ loadingShow: true });
 
-    api.storeList({
-      ...queryData,
-      page: pageNo,
-      size: pageSize,
-    }).then((res) => {
+    const res = {
+      data: {
+        code: 0,
+        data: {
+          content: [
+            {
+              createTime: '2020-08-10 11:11:11',
+              id: 1,
+              activityName: '活动1',
+              bindTime: '2020-08-10 11:11:11',
+              account: 'test',
+              openid: '2',
+              points: '2000',
+              status: '1',
+              permission: '1',              
+            }
+          ],
+          totalElements: 2,
+          message: 'success',
+        }
+      }
+    };
+
+    // api.storeList({
+    //   ...queryData,
+    //   page: pageNo,
+    //   size: pageSize,
+    // }).then((res) => {
       self.setState({ loadingShow: false });
       if (res) {
         if (0 === res.data.code) {
@@ -76,10 +100,10 @@ class ExternalAccount extends Component {
           MyAlert({ errorMsg: res.data.message });
         }
       }
-    }).catch((err) => {
-      self.setState({ loadingShow: false });
-      message.error(err ? err : '网络请求失败, 请重试!', 2);
-    });
+    // }).catch((err) => {
+    //   self.setState({ loadingShow: false });
+    //   message.error(err ? err : '网络请求失败, 请重试!', 2);
+    // });
   };
 
   /**
@@ -207,88 +231,90 @@ class ExternalAccount extends Component {
     const columns = [
       {
         title: '创建时间',
-        dataIndex: 'id',
-        width: 80,
-        key: 'id',
+        dataIndex: 'createTime',
+        width: 100,
+        key: 'createTime',
         align: 'center',
+        render: (text) => (
+          <>{text ? moment(text).format('YYYY.MM.DD HH:mm:ss') : '--'}</>
+        ),
       },
       {
         title: '活动ID',
         dataIndex: 'id',
-        width: 80,
+        width: 50,
         key: 'id',
         align: 'center',
       },
       {
         title: '活动名称',
-        dataIndex: 'id',
-        width: 80,
-        key: 'id',
+        dataIndex: 'activityName',
+        width: 100,
+        key: 'activityName',
         align: 'center',
       },
       {
         title: '绑定时间',
-        dataIndex: 'id',
-        width: 80,
-        key: 'id',
+        dataIndex: 'bindTime',
+        width: 100,
+        key: 'bindTime',
         align: 'center',
+        render: (text) => (
+          <>{text ? moment(text).format('YYYY.MM.DD HH:mm:ss') : '--'}</>
+        ),
       },
       {
         title: '账号',
-        dataIndex: 'id',
-        width: 80,
-        key: 'id',
+        dataIndex: 'account',
+        width: 100,
+        key: 'account',
         align: 'center',
       },
       {
         title: 'Openid',
-        dataIndex: 'id',
-        width: 80,
-        key: 'id',
+        dataIndex: 'openid',
+        width: 100,
+        key: 'openid',
         align: 'center',
       },
       {
         title: '可用积分',
-        dataIndex: 'id',
-        width: 80,
-        key: 'id',
+        dataIndex: 'points',
+        width: 50,
+        key: 'points',
         align: 'center',
       },
       {
         title: '绑定状态',
         dataIndex: 'status',
-        width: 80,
+        width: 50,
         key: 'status',
         ellipsis: true,
         align: 'center',
         render: (text) => (
           <>
-            <Tag color={'DISABLE' === text ? 'red' : 'green'}>
-              {Dict.getValue('internalAccountStatus', text, '')}
-            </Tag>
+            {Dict.getValue('accountBindStatus', text, '')}
           </>
         ),
       },
       {
         title: '登录权限',
         width: 100,
-        dataIndex: 'status',
-        key: 'status',
+        dataIndex: 'permission',
+        key: 'permission',
         ellipsis: true,
         align: 'center',
         render: (text, record) => (
           <div>
             {
-              'NORMAL' === text ? (
-                <div onClick={() => { this.clickAccountEnable(record); }}>
-                  <StopOutlined className="cursor-p" style={{ color: 'red' }} title="Deactivate" />
-                  <span>正常</span>
-                </div>                
+              text === '1' ? (
+                <Tag color='green' onClick={() => { this.clickAccountEnable(record); }}>
+                  <span>{Dict.getValue('accountLoginStatus', text, '')}</span>
+                </Tag>                
               ) : (
-                <div onClick={() => { this.clickAccountDisable(record); }} >
-                  <CheckCircleOutlined className="cursor-p" style={{ color: '#1890ff' }} title="Activate" />
-                  <span>锁定</span>
-                </div>
+                <Tag color='red' onClick={() => { this.clickAccountDisable(record); }} >
+                  <span>{Dict.getValue('accountLoginStatus', text, '')}</span>
+                </Tag>
               )
             }
           </div>
