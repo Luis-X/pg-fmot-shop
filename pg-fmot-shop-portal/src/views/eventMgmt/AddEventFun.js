@@ -13,13 +13,12 @@ import {
   ProFormRadio,
   ProFormUploadButton,
   ProFormCheckbox,
-  EditableProTable,
-  ProFormField
+  EditableProTable
 } from '@ant-design/pro-components';
 import '@ant-design/pro-components/dist/components.css';
 import * as api from '../../api/api';
 import MyAlert from '../../components/MyAlert';
-import en_GB from 'antd/es/locale/en_GB';
+import zhCN from 'antd/es/locale/zh_CN';
 import moment from 'moment';
 
 export function AddEventFun({
@@ -73,29 +72,9 @@ export function AddEventFun({
    */
   const requestDetailData = async () => {
     let detailData = {};
-    const res = {
-      data: {
-        code: 0,
-        data: {
-          activityType: '1',
-          activityName: "活动名称",
-          orgCode: "123456789",
-          startTime: "2023-01-01",
-          endTime: "2023-01-31",
-          deliveryType: ['1', '2'],
-          informNote: "活动通知",
-          serviceNote: "活动服务",
-          activityDesc: "活动描述",
-          activityBanner: [{
-            bannerImg: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-            bannerLink: "https://www.baidu.com"
-          }],
-          goodsLimitCount: 10,
-        }
-      }
-    }
+    
     try {
-      // const res = await api.eventDetail(eventId);
+      const res = await api.eventDetail(eventId);
       if (res) {
         if (0 === res.data.code) {
             detailData = res.data.data;
@@ -125,23 +104,8 @@ export function AddEventFun({
    * 机构代码数据
    */
   const requestOrgCodeData = () => {
-    let list = [];
-    const res = {
-      data: {
-        code: 0,
-        data: [
-          {
-            id: 1,
-            name: '机构1',
-          },
-          {
-            id: 2,
-            name: '机构2',
-          }
-        ],
-      },
-    };
-    // api.marketData().then((res) => {
+    let list = [];    
+    api.orgCodeList().then((res) => {
       if (res) {
         if (0 === res.data.code) {
           if (res.data.data.length > 0) {
@@ -157,38 +121,17 @@ export function AddEventFun({
           MyAlert({ errorMsg: res.data.message });
         }
       }
-    // }).catch((err) => {
-    //     message.error(err ? err : 'link failure！', 2);
-    // })
+    }).catch((err) => {
+        message.error(err ? err : '网络请求失败, 请重试!', 2);
+    })
   };
 
   /**
    * 商品数据
    */
   const requestGoodsListData = () => {
-    let list = [];
-    const res = {
-      data: {
-        code: 0,
-        data: [
-          {
-            id: 1,
-            goodsCode: 111,
-            goodsName: '商品名称1',
-            goodsPrice: '100',
-            goodsActivityPrice: '100',
-          },
-          {
-            id: 2,
-            goodsCode: 222,
-            goodsName: '商品名称2',
-            goodsPrice: '200',
-            goodsActivityPrice: '200',
-          },
-        ],
-      },
-    };
-    // api.marketData().then((res) => {
+    let list = [];    
+    api.eventGoodsList().then((res) => {
       if (res) {
         if (0 === res.data.code) {
           if (res.data.data.length > 0) {
@@ -204,9 +147,9 @@ export function AddEventFun({
           MyAlert({ errorMsg: res.data.message });
         }
       }
-    // }).catch((err) => {
-    //     message.error(err ? err : 'link failure！', 2);
-    // })
+    }).catch((err) => {
+        message.error(err ? err : '网络请求失败, 请重试!', 2);
+    })
   };
 
   /**
@@ -254,14 +197,9 @@ export function AddEventFun({
    */
   const createHandler = (values) => {
     console.log('处理后，创建：', values);
-    const res = {
-      data: {
-        code: 0,
-      },
-    };
-    // api.publishEvent({
-    //   ...values,
-    // }).then((res) => {
+    api.eventCreate({
+      ...values,
+    }).then((res) => {
       if (res) {
         setLoading(false);
         if (0 === res.data.code) {
@@ -272,10 +210,10 @@ export function AddEventFun({
           MyAlert({ errorMsg: res.data.message });
         }
       }
-    // }).catch((err) => {
-    //   setLoading(false)
-    //   message.error(err ? err : '网络请求失败, 请重试!', 2);
-    // })
+    }).catch((err) => {
+      setLoading(false)
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    })
   };
 
   /**
@@ -283,14 +221,9 @@ export function AddEventFun({
    */
   const saveHandler = (values) => {
     console.log('处理后，保存：', values);
-    const res = {
-      data: {
-        code: 0,
-      },
-    };
-    // api.saveEvent({
-    //   ...values,
-    // }).then((res) => {
+    api.eventSave({
+      ...values,
+    }).then((res) => {
       if (res) {
         setLoading(false);
         if (0 === res.data.code) {
@@ -301,10 +234,10 @@ export function AddEventFun({
           MyAlert({ errorMsg: res.data.message });
         }
       }
-    // }).catch((err) => {
-    //   setLoading(false);
-    //   message.error(err ? err : '网络请求失败, 请重试!', 2);
-    // });
+    }).catch((err) => {
+      setLoading(false);
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    });
   };
 
   /**
@@ -453,7 +386,7 @@ export function AddEventFun({
             rules={[{ required: true, message: '请选择机构代码' }]}
             placeholder="请选择机构代码"
           />
-          <ConfigProvider locale={en_GB}>
+          <ConfigProvider locale={zhCN}>
             <ProFormDateTimePicker 
             name="startTime"
             label="开始时间"
@@ -461,7 +394,7 @@ export function AddEventFun({
             placeholder={'请选择活动开始时间'}
             />
           </ConfigProvider>
-          <ConfigProvider locale={en_GB}>
+          <ConfigProvider locale={zhCN}>
             <ProFormDateTimePicker 
             name="endTime"
             label="结束时间"

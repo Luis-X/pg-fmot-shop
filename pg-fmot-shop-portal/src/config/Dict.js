@@ -1,24 +1,5 @@
 /* eslint-disable import/no-anonymous-default-export */
 let dict = {
-  qrCodeDetailType: {
-    DOING: 'Generating',
-    DONE: 'Ready',
-    DOWNLOAD: 'Downloaded',
-    FAIL: 'Failed',
-  },
-  userLock: {
-    NORMAL: 'Normal',
-    LOCK: 'Suspend',
-  },
-  storeLock: {
-    NORMAL: 'Normal',
-    DISABLE: 'Suspend',
-  },
-  eventStatus: {
-    PUBLISHED: 'Created',
-    INIT: 'To Be Created',
-  },
-
   // 活动
   activityType: {
     1: '内部活动',
@@ -68,7 +49,7 @@ let dict = {
   deliveryType: {
     1: '自取',
     2: '邮寄',
-  }
+  },
 };
 
 export default {

@@ -24,8 +24,8 @@ import HomeLayout from '../../common/LayoutStyle';
 import * as api from '../../api/api';
 import MyAlert, { ConfirmAlert } from '../../components/MyAlert';
 import moment from 'moment';
-import { ImportStore } from './ImportStore';
-import en_GB from 'antd/es/locale/en_GB';
+import { ImportDataPicker } from '../../components/ImportDataPicker';
+import zhCN from 'antd/es/locale/zh_CN';
 import Dict from '../../config/Dict';
 
 const { Option } = Select;
@@ -58,33 +58,11 @@ class InternalAccount extends Component {
     const self = this;
     const { pageNo, pageSize, queryData } = this.state;
     self.setState({ loadingShow: true });
-
-    const res = {
-      data: {
-        code: 0,
-        data: {
-          content: [
-            {
-              createTime: '2020-08-10 11:11:11',
-              bindTime: '2020-08-10 11:11:11',
-              email: 'test@163.com',
-              openid: '1',
-              points: '2000',
-              status: '1',
-              permission: '1',              
-            }
-          ],
-          totalElements: 2,
-          message: 'success',
-        }
-      }
-    };
-
-    // api.storeList({
-    //   ...queryData,
-    //   page: pageNo,
-    //   size: pageSize,
-    // }).then((res) => {
+    api.internalAccountList({
+      ...queryData,
+      page: pageNo,
+      size: pageSize,
+    }).then((res) => {
       self.setState({ loadingShow: false });
       if (res) {
         if (0 === res.data.code) {
@@ -96,10 +74,10 @@ class InternalAccount extends Component {
           MyAlert({ errorMsg: res.data.message });
         }
       }
-    // }).catch((err) => {
-    //   self.setState({ loadingShow: false });
-    //   message.error(err ? err : '网络请求失败, 请重试!', 2);
-    // });
+    }).catch((err) => {
+      self.setState({ loadingShow: false });
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    });
   };
 
   /**
@@ -203,18 +181,18 @@ class InternalAccount extends Component {
       title: '温馨提示',
       errorMsg: `您确定修改登录权限为 ${'NORMAL' === status ? '锁定' : '正常'} 吗?`,
       callbackOK: () => {
-        // api.storeChangeStatus({
-        //   id: id,
-        //   status: 'NORMAL' === status ? 'DISABLE' : 'NORMAL',
-        // }).then((res) => {
-        //   if (res) {
-        //     if (0 === res.data.code) {
-        //       self.requestListData();
-        //     } else {
-        //       MyAlert({ errorMsg: res.data.message });
-        //     }
-        //   }
-        // });
+        api.internalAccountChangeStatus({
+          id: id,
+          status: 'NORMAL' === status ? 'DISABLE' : 'NORMAL',
+        }).then((res) => {
+          if (res) {
+            if (0 === res.data.code) {
+              self.requestListData();
+            } else {
+              MyAlert({ errorMsg: res.data.message });
+            }
+          }
+        });
       },
       callbackCancel: () => {},
     });
@@ -307,19 +285,18 @@ class InternalAccount extends Component {
     return (
       <HomeLayout>
 
-        <ImportStore
+        <ImportDataPicker
           show={this.state.importVisible}
+          title="导入内部账号"
+          type="account"
           onHide={() => {
             this.setState({ importVisible: false });
           }}
           updateList={() => {
             resetFields();
-            this.setState(
-              {
-                pageNo: 0,
-              },
-              () => this.requestListData()
-            );
+            this.setState({
+              pageNo: 0,
+            }, () => this.requestListData());
           }}
         />
 
@@ -331,7 +308,7 @@ class InternalAccount extends Component {
               <div className="flex1">
                 <Row gutter={24}>
                   <Col span={8}>
-                    <ConfigProvider locale={en_GB}>
+                    <ConfigProvider locale={zhCN}>
                       <Form.Item>{getFieldDecorator('date',{})(
                         <RangePicker style={{ width: '100%' }} placeholder={['请选择查询时间段', '请选择查询时间段']} />
                       )}

@@ -21,8 +21,8 @@ import {
 import HomeLayout from '../../common/LayoutStyle';
 import * as api from '../../api/api';
 import MyAlert from '../../components/MyAlert';
-import en_GB from 'antd/es/locale/en_GB';
-import ReactECharts from 'echarts-for-react';
+import zhCN from 'antd/es/locale/zh_CN';
+// import ReactECharts from 'echarts-for-react';
 
 const { RangePicker } = DatePicker;
 
@@ -33,7 +33,6 @@ class TrackDetail extends Component {
       data: [],
       loadingShow: false,
       eventID: '',
-      eventStatus: '',
       queryData: null,
       tabIndex: 0, // 0: 人数 1: 次数
 
@@ -55,43 +54,26 @@ class TrackDetail extends Component {
     const self = this;
     const { pageNo, pageSize, queryData } = self.state;
     self.setState({ loadingShow: true });
-
-    const res = {
-      data: {
-        code: 0,
-        data: {
-          content: [
-            {
-              id: 1,
-              name: '商品1',
-              count: 100,
-              times: 100,
-            },
-          ],
-        },
-      },
-    };
-
-    // api.eventList({
-    //   ...queryData,
-    //   page: pageNo,
-    //   size: pageSize,
-    // }).then((res) => {
-    self.setState({ loadingShow: false });
-    if (res) {
-      if (0 === res.data.code) {
-        self.setState({
-          data: res.data.data.content,
-          totalNum: res.data.data.totalElements,
-        });
-      } else {
-        MyAlert({ errorMsg: res.data.message });
+    api.eventList({
+      ...queryData,
+      page: pageNo,
+      size: pageSize,
+    }).then((res) => {
+      self.setState({ loadingShow: false });
+      if (res) {
+        if (0 === res.data.code) {
+          self.setState({
+            data: res.data.data.content,
+            totalNum: res.data.data.totalElements,
+          });
+        } else {
+          MyAlert({ errorMsg: res.data.message });
+        }
       }
-    }
-    // }).catch((err) => {
-    //   self.setState({ loadingShow: false });
-    //   message.error(err ? err : '网络请求失败, 请重试!', 2);
-    // });
+    }).catch((err) => {
+      self.setState({ loadingShow: false });
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    });
   };
 
   /**
@@ -99,16 +81,13 @@ class TrackDetail extends Component {
    */
   pageOnChange(pageNo, pageSize) {
     const self = this;
-    self.setState(
-      {
-        pageNo,
-        pageSize,
-        totalNum: self.state.totalNum,
-      },
-      () => {
-        self.requestListData();
-      }
-    );
+    self.setState({
+      pageNo,
+      pageSize,
+      totalNum: self.state.totalNum,
+    }, () => {
+      self.requestListData();
+    });
   }
 
    /**
@@ -130,16 +109,13 @@ class TrackDetail extends Component {
    */
   clickSearchPeople = () => {
     const self = this;
-    self.setState(
-      {
-        tabIndex: 0,
-        pageNo: 0,
-        queryFlg: true,
-      },
-      () => {
-        // self.requestListData()
-      }
-    );
+    self.setState({
+      tabIndex: 0,
+      pageNo: 0,
+      queryFlg: true,
+    }, () => {
+      // self.requestListData()
+    });
   };
 
   /**
@@ -147,16 +123,13 @@ class TrackDetail extends Component {
    */
   clickSearchTimes = () => {
     const self = this;
-    self.setState(
-      {
-        tabIndex: 1,
-        pageNo: 0,
-        queryFlg: true,
-      },
-      () => {
-        // self.requestListData()
-      }
-    );
+    self.setState({
+      tabIndex: 1,
+      pageNo: 0,
+      queryFlg: true,
+    }, () => {
+      // self.requestListData()
+    });
   };
 
   /**
@@ -444,33 +417,33 @@ class TrackDetail extends Component {
 
   // 图表
   lineChartView = () => {
-    const options = {
-      grid: { top: 8, right: 8, bottom: 24, left: 36 },
-      xAxis: {
-        type: 'category',
-        // data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-      },
-      yAxis: {
-        type: 'value',
-      },
-      series: [
-        {
-          data: [820, 932, 901, 934, 1290, 1330, 1320],
-          type: 'line',
-          smooth: true,
-        },
-        {
-          data: [10, 932, 901, 934, 1290, 1330, 1320],
-          type: 'line',
-          smooth: true,
-        },
-      ],
-      tooltip: {
-        trigger: 'axis',
-      },
-    };
+    // const options = {
+    //   grid: { top: 8, right: 8, bottom: 24, left: 36 },
+    //   xAxis: {
+    //     type: 'category',
+    //     // data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    //   },
+    //   yAxis: {
+    //     type: 'value',
+    //   },
+    //   series: [
+    //     {
+    //       data: [820, 932, 901, 934, 1290, 1330, 1320],
+    //       type: 'line',
+    //       smooth: true,
+    //     },
+    //     {
+    //       data: [10, 932, 901, 934, 1290, 1330, 1320],
+    //       type: 'line',
+    //       smooth: true,
+    //     },
+    //   ],
+    //   tooltip: {
+    //     trigger: 'axis',
+    //   },
+    // };
   
-    return <ReactECharts option={options} />;
+    // return <ReactECharts option={options} />;
   };
 
   /**
@@ -503,73 +476,71 @@ class TrackDetail extends Component {
         </button>
         <p className="list-title">数据详情</p>
         <Divider style={{ margin: '3px 0' }} />
-        
-            <Tabs>
-              <Tabs.TabPane tab="人数" key="item-1">
-                <div className="common-list">          
-                  <div className="item2">
-                    {this.peopleTableView()}
-                  </div>
+          <Tabs>
+            <Tabs.TabPane tab="人数" key="item-1">
+              <div className="common-list">          
+                <div className="item2">
+                  {this.peopleTableView()}
                 </div>
-              </Tabs.TabPane>
-              <Tabs.TabPane tab="次数" key="item-2">
-                <div className="common-list">          
-                  <div className="item2">
-                    {this.timesTableView()}
-                  </div>
+              </div>
+            </Tabs.TabPane>
+            <Tabs.TabPane tab="次数" key="item-2">
+              <div className="common-list">          
+                <div className="item2">
+                  {this.timesTableView()}
                 </div>
-              </Tabs.TabPane>
-              <Tabs.TabPane tab="图表" key="item-3">
-                <div className="common-list">  
-                  <div className="item1">
-                    <Form className="user_search" onFinish={() => { this.onFinish(); }}>
-                      <div className="flex1">
-                        <Row gutter={24}>
-                          <Col span={8}>
-                            <ConfigProvider locale={en_GB}>
-                              <Form.Item>{getFieldDecorator('date',{})(
-                                <RangePicker style={{ width: '100%' }} placeholder={['请选择查询时间段', '请选择查询时间段']} />
-                              )}
-                              </Form.Item>
-                            </ConfigProvider>
-                          </Col>
-                          <Col span={8}>
-                            <Form.Item>{getFieldDecorator('searchValue',{})(
-                              <Input placeholder="请输入商品编号" maxLength={50} />
+              </div>
+            </Tabs.TabPane>
+            <Tabs.TabPane tab="图表" key="item-3">
+              <div className="common-list">  
+                <div className="item1">
+                  <Form className="user_search" onFinish={() => { this.onFinish(); }}>
+                    <div className="flex1">
+                      <Row gutter={24}>
+                        <Col span={8}>
+                          <ConfigProvider locale={zhCN}>
+                            <Form.Item>{getFieldDecorator('date',{})(
+                              <RangePicker style={{ width: '100%' }} placeholder={['请选择查询时间段', '请选择查询时间段']} />
                             )}
                             </Form.Item>
-                          </Col>
-                        </Row>                        
-                        <Row gutter={24}>
-                          <div className="btn-width">
-                            <button className="current-btn" onClick={() => { this.clickSearchBtn(); }}>
-                              <SearchOutlined />
-                              <span>查询</span>
-                            </button>
-                            <button className="current-btn bg-gray" onClick={() => {
-                              this.setState({ 
-                                pageNo: 0, 
-                                pageSize: 10 
-                              }, () => {
-                                resetFields();
-                                // this.requestListData()
-                              });
-                            }}>
-                              <ReloadOutlined />
-                              <span>重置</span>
-                            </button>
-                          </div>
-                        </Row>
-                      </div>
-                    </Form>
-                  </div>        
-                  <div className="item2">
-                    {this.lineChartView()}
-                  </div>
+                          </ConfigProvider>
+                        </Col>
+                        <Col span={8}>
+                          <Form.Item>{getFieldDecorator('searchValue',{})(
+                            <Input placeholder="请输入商品编号" maxLength={50} />
+                          )}
+                          </Form.Item>
+                        </Col>
+                      </Row>                        
+                      <Row gutter={24}>
+                        <div className="btn-width">
+                          <button className="current-btn" onClick={() => { this.clickSearchBtn(); }}>
+                            <SearchOutlined />
+                            <span>查询</span>
+                          </button>
+                          <button className="current-btn bg-gray" onClick={() => {
+                            this.setState({ 
+                              pageNo: 0, 
+                              pageSize: 10 
+                            }, () => {
+                              resetFields();
+                              // this.requestListData()
+                            });
+                          }}>
+                            <ReloadOutlined />
+                            <span>重置</span>
+                          </button>
+                        </div>
+                      </Row>
+                    </div>
+                  </Form>
+                </div>        
+                <div className="item2">
+                  {this.lineChartView()}
                 </div>
-              </Tabs.TabPane>
-            </Tabs>
-          
+              </div>
+            </Tabs.TabPane>
+          </Tabs>          
       </HomeLayout>
     );
   }

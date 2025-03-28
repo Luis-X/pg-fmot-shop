@@ -6,9 +6,7 @@ import { LoginOutlined } from '@ant-design/icons';
 class SsoLogout extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      // errorMsg: ""
-    };
+    this.state = {};
   }
 
   async componentDidMount() {
@@ -19,19 +17,14 @@ class SsoLogout extends Component {
   render() {
     return (
       <>
-        <iframe id="myIframe" />
+        <iframe id="myIframe"/>
         <div className="sso_callback">
           <Result
             status="success"
             title="您已成功退出本次登录！"
             subTitle="重新登录请点击下方按钮。"
             extra={
-              <button
-                className="current-btn"
-                onClick={() => {
-                  window.location.href = RoutePath.SsoUrlJump;
-                }}
-              >
+              <button className="current-btn" onClick={() => {window.location.href = RoutePath.SsoUrlJump;}}>
                 <LoginOutlined />
                 <span>重新登录</span>
               </button>

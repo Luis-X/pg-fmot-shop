@@ -23,7 +23,7 @@ import {
 import HomeLayout from '../../common/LayoutStyle';
 import * as api from '../../api/api';
 import MyAlert from '../../components/MyAlert';
-import en_GB from 'antd/es/locale/en_GB';
+import zhCN from 'antd/es/locale/zh_CN';
 import Dict from '../../config/Dict';
 import axios from 'axios';
 
@@ -78,104 +78,51 @@ class OrderMgmt extends Component {
       ).format('YYYY-MM-DD');
       delete reportQueryData.date;
     }
-
-    const res = {
-      data: {
-        code: 0,
-        data: {
-          content: [
-            {
-              id: '1',
-              createTime: '2022-01-01 12:00:00',
-              orderNO: '123456',
-              activityId: 1,
-              activityName: '活动1',
-              orgCode: '123456',
-              accountId: '7890',
-              deliveryType: '1',
-              orderStatus: '1',
-              goodsList: [
-                {
-                  id: '1',
-                  goodsName: '商品1',
-                  goodsNum: 1,
-                },
-                {
-                  id: '2',
-                  goodsName: '商品2',
-                  goodsNum: 2,
-                }
-              ],
-              goodsCount: 2,
-              totalPoints: 1000,
-            }
-          ],
-          totalElements: 2,
-          message: 'success',
+    api
+      .orderList({
+        ...reportQueryData,
+        page: pageNo,
+        size: pageSize,
+      })
+      .then((res) => {
+        self.setState({ loadingShow: false });
+        if (res) {
+          if (0 === res.data.code) {
+            self.setState({
+              data: res.data.data.content,
+              totalNum: res.data.data.totalElements,
+            });
+          } else {
+            MyAlert({ errorMsg: res.data.message });
+          }
         }
-      }
-    }
-
-    // api.reportList({
-    //   ...reportQueryData,
-    //   page: pageNo,
-    //   size: pageSize,
-    // }).then((res) => {
-      self.setState({ loadingShow: false });
-      if (res) {
-        if (0 === res.data.code) {
-          self.setState({
-            data: res.data.data.content,
-            totalNum: res.data.data.totalElements,
-          });
-        } else {
-          MyAlert({ errorMsg: res.data.message });
-        }
-      }
-    // }).catch((err) => {
-    //   self.setState({ loadingShow: false });
-    //   message.error(err ? err : '网络请求失败, 请重试!', 2);
-    // });
+      })
+      .catch((err) => {
+        self.setState({ loadingShow: false });
+        message.error(err ? err : '网络请求失败, 请重试!', 2);
+      });
   };
 
   // 机构代码
   requestOrgCodeListData = () => {
     const self = this;
-
-    const res = {
-      data: {
-        code: 0,
-        data: [
-          {
-            id: '1',
-            name: '机构1',
-          },
-          {
-            id: '2',
-            name: '机构2',
-          },
-          {
-            id: '3',
-            name: '机构3',
-          },
-        ]
-      }
-    }
-
-    // api.marketData().then((res) => {
-      if (res) {
-        if (0 === res.data.code) {
-          self.setState({
-            orgCodeList: res.data.data,
-          });
-        } else {
-          MyAlert({ errorMsg: res.data.message });
+    api
+      .orgCodeList()
+      .then((res) => {
+        if (res) {
+          if (0 === res.data.code) {
+            self.setState({
+              orgCodeList: res.data.data,
+            });
+          } else {
+            MyAlert({ errorMsg: res.data.message });
+          }
         }
-      }
-    // }).catch((err) => {
-    //   self.setState({ loadingShow: false });
-    //   message.error(err ? err : '网络请求失败, 请重试!', 2);
-    // });
+      })
+      .catch((err) => {
+        self.setState({ loadingShow: false });
+        message.error(err ? err : '网络请求失败, 请重试!', 2);
+      });
   };
 
   // 选择机构代码
@@ -199,13 +146,16 @@ class OrderMgmt extends Component {
    */
   pageOnChange(pageNo, pageSize) {
     const self = this;
-    self.setState({
-      pageNo,
-      pageSize,
-      totalNum: self.state.totalNum,
-    },() => {
-      self.requestListData();
-    });
+    self.setState(
+      {
+        pageNo,
+        pageSize,
+        totalNum: self.state.totalNum,
+      },
+      () => {
+        self.requestListData();
+      }
+    );
   }
 
   /**
@@ -232,16 +182,15 @@ class OrderMgmt extends Component {
 
     this.props.form.validateFields((err, values) => {
       if (values.date) {
-        values.beginDate = moment(new Date(values.date[0])).format(
-          'YYYY-MM-DD'
-        );
+        values.beginDate = moment(new Date(values.date[0])).format('YYYY-MM-DD');
         values.endDate = moment(new Date(values.date[1])).format('YYYY-MM-DD');
       }
 
       return new Promise(() => {
         const fileName = 'FMOT Redemption Report';
+        const exportUrl = URL.orderListExport;
         axios({
-          url: '/api/admin/couponWriteLog/export',
+          url: exportUrl,
           method: 'post',
           headers: {
             'Content-Type': 'application/json;charset=utf-8',
@@ -255,38 +204,34 @@ class OrderMgmt extends Component {
             size: pageSize,
           },
           responseType: 'blob',
-        })
-          .then((res) => {
-            _this.setState({ loadingShow: false });
-            if (res.status === 200) {
-              const blob = new Blob([res.data], {
-                type: 'application/vnd.ms-excel;charset=utf-8',
-              });
-              const objectUrl = URL.createObjectURL(blob);
-              const elink = document.createElement('a');
-              elink.download = `${fileName}.xlsx`;
-              elink.style.display = 'none';
-              elink.href = objectUrl;
-              document.body.appendChild(elink);
-              elink.click();
-              URL.revokeObjectURL(elink.href); // 释放URL 对象
-              document.body.removeChild(elink);
+        }).then((res) => {
+          _this.setState({ loadingShow: false });
+          if (res.status === 200) {
+            const blob = new Blob([res.data], {
+              type: 'application/vnd.ms-excel;charset=utf-8',
+            });
+            const objectUrl = URL.createObjectURL(blob);
+            const elink = document.createElement('a');
+            elink.download = `${fileName}.xlsx`;
+            elink.style.display = 'none';
+            elink.href = objectUrl;
+            document.body.appendChild(elink);
+            elink.click();
+            URL.revokeObjectURL(elink.href); // 释放URL 对象
+            document.body.removeChild(elink);
 
-              notification['success']({
-                message: 'File exported successfully！',
-                description: 'Open Excel to view export details.',
-              });
-            }
-          })
-          .catch(function () {
-            _this.setState({ loadingShow: false });
-            message.error('link failure！', 2);
-          });
+            notification['success']({
+              message: 'File exported successfully！',
+              description: 'Open Excel to view export details.',
+            });
+          }
+        }).catch((err) => {
+          _this.setState({ loadingShow: false });
+          message.error(err ? err : '网络请求失败, 请重试!', 2);
+        });
       });
     });
   };
-
-  
 
   render() {
     const { orgCodeList } = this.state;
@@ -343,9 +288,7 @@ class OrderMgmt extends Component {
         width: 100,
         key: 'deliveryType',
         align: 'center',
-        render: (text) => (
-          <>{Dict.getValue('deliveryType', text, '')}</>
-        ),
+        render: (text) => <>{Dict.getValue('deliveryType', text, '')}</>,
       },
       {
         title: '订单状态',
@@ -353,9 +296,7 @@ class OrderMgmt extends Component {
         width: 100,
         key: 'orderStatus',
         align: 'center',
-        render: (text) => (
-          <>{Dict.getValue('orderStatus', text, '')}</>
-        ),
+        render: (text) => <>{Dict.getValue('orderStatus', text, '')}</>,
       },
       {
         title: '兑换商品',
@@ -366,14 +307,12 @@ class OrderMgmt extends Component {
         render: (text, record) => {
           // const findItem = text.find((item) => item.id === text);
           const goodsListView = (
-            <div className='goods-list-wrap'>
-              {
-                record.goodsList.map((item, index) => (
-                  <span key={index}>{`${item.goodsName} x${item.goodsNum}`}</span>
-                ))
-              }              
-            </div>    
-          )                  
+            <div className="goods-list-wrap">
+              {record.goodsList.map((item, index) => (
+                <span key={index}>{`${item.goodsName} x${item.goodsNum}`}</span>
+              ))}
+            </div>
+          );
           return goodsListView;
         },
       },
@@ -390,7 +329,7 @@ class OrderMgmt extends Component {
         width: 80,
         key: 'totalPoints',
         ellipsis: true,
-        align: 'center',        
+        align: 'center',
       },
     ];
     return (
@@ -399,111 +338,177 @@ class OrderMgmt extends Component {
         <Divider style={{ margin: '3px 0' }} />
         <div className="common-list">
           <div className="item1">
-            <Form className="user_search" onFinish={() => { this.onFinish(); }} style={{ alignItems: 'baseline' }} >
+            <Form
+              className="user_search"
+              onFinish={() => {
+                this.onFinish();
+              }}
+              style={{ alignItems: 'baseline' }}
+            >
               <div className="flex1">
                 <Row gutter={24}>
                   <Col span={8}>
-                    <ConfigProvider locale={en_GB}>
-                      <Form.Item>{getFieldDecorator('date',{})(
-                        <RangePicker style={{ width: '100%' }} placeholder={['请选择查询时间段', '请选择查询时间段']} />
-                      )}
+                    <ConfigProvider locale={zhCN}>
+                      <Form.Item>
+                        {getFieldDecorator(
+                          'date',
+                          {}
+                        )(
+                          <RangePicker
+                            style={{ width: '100%' }}
+                            placeholder={[
+                              '请选择查询时间段',
+                              '请选择查询时间段',
+                            ]}
+                          />
+                        )}
                       </Form.Item>
                     </ConfigProvider>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('shopNameOrId',{})(
-                      <Input placeholder="请输入活动名称" />
-                    )}
+                    <Form.Item>
+                      {getFieldDecorator(
+                        'shopNameOrId',
+                        {}
+                      )(<Input placeholder="请输入活动名称" />)}
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('janRainId',{})(
-                      <Input placeholder="请输入活动ID" />
-                    )}
+                    <Form.Item>
+                      {getFieldDecorator(
+                        'janRainId',
+                        {}
+                      )(<Input placeholder="请输入活动ID" />)}
                     </Form.Item>
                   </Col>
                 </Row>
                 <Row gutter={24} style={{ marginTop: 10 }}>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('shopMarketId',{})(
-                      <Select placeholder="请选择机构代码" onSelect={this.selectOrgCode}>
-                        {
-                          orgCodeList.length > 0 && orgCodeList.map((item, index) => (
-                            <Option key={index} value={item.id}>{item.name}</Option>
-                          ))
-                        }
-                      </Select>
-                    )}
+                    <Form.Item>
+                      {getFieldDecorator(
+                        'shopMarketId',
+                        {}
+                      )(
+                        <Select
+                          placeholder="请选择机构代码"
+                          onSelect={this.selectOrgCode}
+                        >
+                          {orgCodeList.length > 0 &&
+                            orgCodeList.map((item, index) => (
+                              <Option key={index} value={item.id}>
+                                {item.name}
+                              </Option>
+                            ))}
+                        </Select>
+                      )}
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('eventNameOrEventId',{})(
-                      <Input placeholder="请输入用户账号" />
-                    )}
+                    <Form.Item>
+                      {getFieldDecorator(
+                        'eventNameOrEventId',
+                        {}
+                      )(<Input placeholder="请输入用户账号" />)}
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('soldToStoreNo',{})(
-                      <Input placeholder="请输入商品编号" />
-                    )}
+                    <Form.Item>
+                      {getFieldDecorator(
+                        'soldToStoreNo',
+                        {}
+                      )(<Input placeholder="请输入商品编号" />)}
                     </Form.Item>
                   </Col>
                 </Row>
                 <Row gutter={24} style={{ marginTop: 10 }}>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('soldToStoreNo',{})(
-                      <Input placeholder="请输入商品名称" />
-                    )}
+                    <Form.Item>
+                      {getFieldDecorator(
+                        'soldToStoreNo',
+                        {}
+                      )(<Input placeholder="请输入商品名称" />)}
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('payStatus',{})(
-                      <Select placeholder="请选择发货类型" style={{ width: '100%' }}>
-                        <Option value="PICKUP">自提</Option>
-                        <Option value="EXPRESS">邮寄</Option>
-                      </Select>
-                    )}
+                    <Form.Item>
+                      {getFieldDecorator(
+                        'payStatus',
+                        {}
+                      )(
+                        <Select
+                          placeholder="请选择发货类型"
+                          style={{ width: '100%' }}
+                        >
+                          <Option value="PICKUP">自提</Option>
+                          <Option value="EXPRESS">邮寄</Option>
+                        </Select>
+                      )}
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('shopAreaId',{})(
-                      <Select placeholder="请选订单状态" style={{ width: '100%' }}>
-                        <Option value="SUCCESS">交易成功</Option>
-                        <Option value="CANCEL">已取消</Option>
-                      </Select>
-                    )}
+                    <Form.Item>
+                      {getFieldDecorator(
+                        'shopAreaId',
+                        {}
+                      )(
+                        <Select
+                          placeholder="请选订单状态"
+                          style={{ width: '100%' }}
+                        >
+                          <Option value="SUCCESS">交易成功</Option>
+                          <Option value="CANCEL">已取消</Option>
+                        </Select>
+                      )}
                     </Form.Item>
                   </Col>
                 </Row>
                 <Row gutter={24} style={{ marginTop: 10 }}>
-                  <Col span={24} style={{ display: 'flex', justifyContent: 'end' }}>
+                  <Col
+                    span={24}
+                    style={{ display: 'flex', justifyContent: 'end' }}
+                  >
                     <div className="btn-width">
-                      <button className="current-btn" onClick={() => {
-                        this.setState({ pageNo: 0 });
-                      }}>
+                      <button
+                        className="current-btn"
+                        onClick={() => {
+                          this.setState({ pageNo: 0 });
+                        }}
+                      >
                         <SearchOutlined />
                         <span>查询</span>
                       </button>
-                      <button className="current-btn" onClick={() => {
-                        this.setState({
-                          pageNo: 0,
-                          // pageSize: 10,
-                        },() => {
-                          this.exportAll();
-                        });
-                      }}>
+                      <button
+                        className="current-btn"
+                        onClick={() => {
+                          this.setState(
+                            {
+                              pageNo: 0,
+                              // pageSize: 10,
+                            },
+                            () => {
+                              this.exportAll();
+                            }
+                          );
+                        }}
+                      >
                         <ExportOutlined />
                         <span>导出 Excel</span>
                       </button>
-                      <button className="current-btn bg-gray" onClick={() => {
-                        this.setState({
-                          pageNo: 0,
-                          pageSize: 10,
-                          selectOrgCodeList: [],
-                        },() => {
-                          resetFields();
-                        })
-                      }}>
+                      <button
+                        className="current-btn bg-gray"
+                        onClick={() => {
+                          this.setState(
+                            {
+                              pageNo: 0,
+                              pageSize: 10,
+                              selectOrgCodeList: [],
+                            },
+                            () => {
+                              resetFields();
+                            }
+                          );
+                        }}
+                      >
                         <ReloadOutlined />
                         <span>重置</span>
                       </button>

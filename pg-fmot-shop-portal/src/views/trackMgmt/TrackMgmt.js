@@ -10,7 +10,6 @@ import {
   Input,
   Row,
   Col,
-  Tag,
   Tooltip,
   ConfigProvider,
   DatePicker,
@@ -23,7 +22,7 @@ import HomeLayout from '../../common/LayoutStyle';
 import * as api from '../../api/api';
 import MyAlert from '../../components/MyAlert';
 import moment from 'moment';
-import en_GB from 'antd/es/locale/en_GB';
+import zhCN from 'antd/es/locale/zh_CN';
 import Dict from '../../config/Dict';
 
 const { Option } = Select;
@@ -36,7 +35,6 @@ class TrackMgmt extends Component {
       data: [],
       loadingShow: false,
       eventID: '',
-      eventStatus: '',
       queryData: null,
 
       pageNo: 0,
@@ -57,36 +55,11 @@ class TrackMgmt extends Component {
     const self = this;
     const { pageNo, pageSize, queryData } = self.state;
     self.setState({ loadingShow: true });
-
-    const res = {
-      data: {
-        code: 0,
-        data: {
-          content: [
-            {
-              id: 1,
-              activityId: 1,
-              activityName: '活动1',
-              createTime: '2022-01-01 12:00:00',
-              startTime: '2020-08-10 11:11:11',
-              endTime: '2021-08-10 11:11:11',
-              orgCode: '123456',                      
-              activityType: 1,
-              count: 100,  
-              times: 200,
-            }
-          ],
-          totalElements: 2,
-          message: 'success',
-        }
-      }
-    };
-
-  //   api.eventList({
-  //     ...queryData,
-  //     page: pageNo,
-  //     size: pageSize,
-  //   }).then((res) => {
+    api.trackList({
+      ...queryData,
+      page: pageNo,
+      size: pageSize,
+    }).then((res) => {
       self.setState({ loadingShow: false });
       if (res) {
         if (0 === res.data.code) {
@@ -98,10 +71,10 @@ class TrackMgmt extends Component {
           MyAlert({ errorMsg: res.data.message });
         }
       }
-  //   }).catch((err) => {
-  //     self.setState({ loadingShow: false });
-  //     message.error(err ? err : '网络请求失败, 请重试!', 2);
-  //   });
+    }).catch((err) => {
+      self.setState({ loadingShow: false });
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    });
   }; 
 
   /**
@@ -136,9 +109,8 @@ class TrackMgmt extends Component {
    * 查看明细
    */
   clickItemDetail = (record) => {
-    const self = this;
     const { id } = record;
-    window.location.href = '/portal/trackDetail/3'
+    window.location.href = `/portal/trackDetail/${id}`
   }
 
   /**
@@ -252,7 +224,7 @@ class TrackMgmt extends Component {
               <div className="flex1">
                 <Row gutter={24}>
                   <Col span={8}>
-                    <ConfigProvider locale={en_GB}>
+                    <ConfigProvider locale={zhCN}>
                       <Form.Item>{getFieldDecorator('date',{})(
                         <RangePicker style={{ width: '100%' }} placeholder={['请选择查询时间段', '请选择查询时间段']} />
                       )}

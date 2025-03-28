@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Spin, Result } from 'antd';
 import * as api from '../../api/api';
 import { setToken } from '../../api/api';
-
 class SsoCallback extends Component {
   constructor(props) {
     super(props);
@@ -14,10 +13,11 @@ class SsoCallback extends Component {
 
   async componentDidMount() {
     let queryCode = this.getAllParams();
+    console.log(queryCode);
     if (queryCode) {
       if (queryCode.error) {
         this.setState({
-          errorMsg: `server_error!`,
+          errorMsg: `服务错误!`,
           loadingShow: false,
         });
       } else if (queryCode.code) {
@@ -31,22 +31,8 @@ class SsoCallback extends Component {
               localStorage.setItem('token', res.data.data.token);
               localStorage.setItem('userName', res.data.data.userName);
               localStorage.setItem('roleName', res.data.data.roleName);
-              localStorage.setItem(
-                'loginInfo',
-                JSON.stringify(res.data.data.menu)
-              );
-              const menuData = res.data.data.menu;
-              if (menuData.length > 0) {
-                if (menuData[0].subMenus) {
-                  this.props.history.push(menuData[0].subMenus[0].path);
-                } else {
-                  this.props.history.push(menuData[0].path);
-                }
-              } else {
-                this.setState({
-                  errorMsg: `The management account has no configuration menu！`, //该管理账号还没有配置菜单
-                });
-              }
+              localStorage.setItem('loginInfo', JSON.stringify(res.data.data.menu));
+              this.props.history.push('/internalAccount');
             } else {
               this.setState({
                 errorMsg: res.data.message,
@@ -55,18 +41,18 @@ class SsoCallback extends Component {
           }
         } catch (err) {
           this.setState({
-            errorMsg: `Network request failed, please try again later!`,
+            errorMsg: `网络请求失败, 请重试!`,
           });
         }
       } else {
         this.setState({
           loadingShow: false,
-          errorMsg: `Code not obtained!`,
+          errorMsg: `Code 获取失败!`,
         });
       }
     } else {
       this.setState({
-        errorMsg: `Code not obtained!, please try again later!`,
+        errorMsg: `Code 获取失败, 请重试!`,
         loadingShow: false,
       });
     }
@@ -88,16 +74,22 @@ class SsoCallback extends Component {
   render() {
     return (
       <div style={{ marginTop: '60px' }}>
-        {this.state.loadingShow ? (
-          <div style={{ textAlign: 'center' }}>
-            <Spin size="large" />
-            <div>Logging in...</div>
-          </div>
-        ) : (
-          <>
-            {!this.state.loadingShow && <Result title={this.state.errorMsg} />}
-          </>
-        )}
+        {
+          this.state.loadingShow ? (
+            <div style={{ textAlign: 'center' }}>
+              <Spin size="large" />
+              <div>登录中...</div>
+            </div>
+          ) : (
+            <>
+              {
+              !this.state.loadingShow && (
+                <Result title={this.state.errorMsg}/>
+              )
+              }
+            </>
+          )
+        }
       </div>
     );
   }

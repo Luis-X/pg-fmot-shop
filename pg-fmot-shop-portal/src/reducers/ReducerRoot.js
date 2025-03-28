@@ -1,10 +1,10 @@
 // 'use strict'
 
-import { combineReducers } from 'redux'
-import UserInfo from './UserInfo'
+import { combineReducers } from 'redux';
+import UserInfo from './UserInfo';
 
 const ReducerRoot = combineReducers({
-  user:UserInfo,
-})
+  user: UserInfo,
+});
 
 export default ReducerRoot;

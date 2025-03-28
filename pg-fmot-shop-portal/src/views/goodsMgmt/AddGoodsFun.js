@@ -62,30 +62,9 @@ export function AddGoodsFun({
    * 详情数据
    */
   const requestDetailData = async () => {
-    let detailData = {};
-    const res = {
-      data: {
-        code: 0,
-        data: {
-          goodsType: '2',
-          goodsCategory: 1,
-          goodsCode: '3',
-          goodsName: '4',
-          goodsPrice: '5.5',
-          goodsTag: '6',
-          goodsImg: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-          goodsVideo: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-          goodsIntroImg: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-          bannerImgs: [
-            'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-          ],
-          bannerPoster: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-          bannerVideo: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        },
-      },
-    };
+    let detailData = {};    
     try {
-      // const res = await api.eventDetail(eventId);
+      const res = await api.goodsDetail(eventId);
       if (res) {
         if (0 === res.data.code) {
           detailData = res.data.data;
@@ -128,23 +107,8 @@ export function AddGoodsFun({
    * 类别数据
    */
   const requestCategoryData = () => {
-    let list = [];
-    const res = {
-      data: {
-        code: 0,
-        data: [
-          {
-            id: 1,
-            name: '类别1',
-          },
-          {
-            id: 2,
-            name: '类别2',
-          },
-        ],
-      },
-    };
-    // api.marketData().then((res) => {
+    let list = [];    
+    api.goodsCategoryList().then((res) => {
       if (res) {
         if (0 === res.data.code) {
           if (res.data.data.length > 0) {
@@ -160,9 +124,9 @@ export function AddGoodsFun({
           MyAlert({ errorMsg: res.data.message });
         }
       }
-    // }).catch((err) => {
-    //   message.error(err ? err : '网络请求失败, 请重试!', 2);
-    // })
+    }).catch((err) => {
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    })
   };
 
   /**
@@ -212,15 +176,10 @@ export function AddGoodsFun({
    * 新增
    */
   const createHandler = (values) => {
-    console.log('处理后，创建：', values);
-    const res = {
-      data: {
-        code: 0,
-      },
-    };
-    // api.publishEvent({
-    //   ...values,
-    // }).then((res) => {
+    console.log('处理后，创建：', values);    
+    api.goodsCreate({
+      ...values,
+    }).then((res) => {
       if (res) {
         setLoading(false);
         if (0 === res.data.code) {
@@ -231,10 +190,10 @@ export function AddGoodsFun({
           MyAlert({ errorMsg: res.data.message });
         }
       }
-    // }).catch((err) => {
-    //   setLoading(false)
-    //   message.error(err ? err : '网络请求失败, 请重试!', 2);
-    // })
+    }).catch((err) => {
+      setLoading(false)
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    })
   };
 
   /**
@@ -242,14 +201,9 @@ export function AddGoodsFun({
    */
   const saveHandler = (values) => {
     console.log('处理后，保存：', values);
-    const res = {
-      data: {
-        code: 0,
-      },
-    };
-    // api.saveEvent({
-    //   ...values,
-    // }).then((res) => {
+    api.goodsSave({
+      ...values,
+    }).then((res) => {
       if (res) {
         setLoading(false);
         if (0 === res.data.code) {
@@ -260,10 +214,10 @@ export function AddGoodsFun({
           MyAlert({ errorMsg: res.data.message });
         }
       }
-    // }).catch((err) => {
-    //   setLoading(false);
-    //   message.error(err ? err : '网络请求失败, 请重试!', 2);
-    // });
+    }).catch((err) => {
+      setLoading(false);
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    });
   };
 
   /**

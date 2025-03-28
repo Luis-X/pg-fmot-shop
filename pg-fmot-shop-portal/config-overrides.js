@@ -6,7 +6,7 @@ const addProxy = () => configFunction => ({
     disableHostCheck: true,
     proxy: {
       '/api': {
-        target: 'https://dtiger-qa.pg.com',
+        target: 'https://ministore-qa.shenghuojia.com',
         changeOrigin: true,
         pathRewrite: {
           '^/api': '/api'

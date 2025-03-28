@@ -10,7 +10,6 @@ import {
   Input,
   Row,
   Col,
-  Tag,
   Tooltip,
 } from 'antd';
 import {
@@ -54,31 +53,11 @@ class GoodsMgmt extends Component {
     const self = this;
     const { pageNo, pageSize, queryData } = self.state;
     self.setState({ loadingShow: true });
-
-    const res = {
-      data: {
-        code: 0,
-        data: {
-          content: [
-            {
-              id: '8888888',
-              name: '商品1',
-              price: '2000',
-              category: '1',
-              type: '1',              
-            }
-          ],
-          totalElements: 2,
-          message: 'success',
-        }
-      }
-    };
-
-    // api.eventList({
-    //   ...queryData,
-    //   page: pageNo,
-    //   size: pageSize,
-    // }).then((res) => {
+    api.goodsList({
+      ...queryData,
+      page: pageNo,
+      size: pageSize,
+    }).then((res) => {
       self.setState({ loadingShow: false });
       if (res) {
         if (0 === res.data.code) {
@@ -90,10 +69,10 @@ class GoodsMgmt extends Component {
           MyAlert({ errorMsg: res.data.message });
         }
       }
-    // }).catch((err) => {
-    //   self.setState({ loadingShow: false });
-    //   message.error(err ? err : '网络请求失败, 请重试!', 2);
-    // });
+    }).catch((err) => {
+      self.setState({ loadingShow: false });
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    });
   }; 
 
   /**
