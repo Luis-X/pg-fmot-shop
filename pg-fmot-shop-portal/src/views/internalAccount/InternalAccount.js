@@ -11,7 +11,6 @@ import {
   Col,
   Divider,
   Tag,
-  notification,
   ConfigProvider,
   DatePicker,
 } from 'antd';
@@ -27,6 +26,7 @@ import moment from 'moment';
 import { ImportDataPicker } from '../../components/ImportDataPicker';
 import zhCN from 'antd/es/locale/zh_CN';
 import Dict from '../../config/Dict';
+import { DownloadTemplateFile } from '../../utils/util';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -38,6 +38,7 @@ class InternalAccount extends Component {
       data: [],
       loadingShow: false,
       importVisible: false,
+      importType: 0, // 101: 导入账号 102: 积分充值
       queryData: null,
 
       pageNo: 0,
@@ -113,18 +114,17 @@ class InternalAccount extends Component {
    */
   clickImportAccount = () => {
     const self = this;
-    self.setState({ importVisible: true });
+    self.setState({ 
+      importVisible: true,
+      importType: 101
+    });
   }
 
   /**
    * 下载导入内部账号模版
    */
   clickImportAccountTemplate = () => {
-    const self = this;
-    notification['success']({
-      message: '下载成功！',
-      description: '',
-    });
+    DownloadTemplateFile(101);
   }
 
   /**
@@ -132,18 +132,17 @@ class InternalAccount extends Component {
    */
   clickImportPoints = () => {
     const self = this;
-    self.setState({ importVisible: true });
+    self.setState({ 
+      importVisible: true,
+      importType: 102
+    });
   }
 
   /**
    * 下载积分充值模版
    */
   clickImportPointsTemplate = () => {
-    const self = this;
-    notification['success']({
-      message: '下载成功！',
-      description: '',
-    });
+    DownloadTemplateFile(102);
   }
 
   /**
@@ -287,10 +286,12 @@ class InternalAccount extends Component {
 
         <ImportDataPicker
           show={this.state.importVisible}
-          title="导入内部账号"
-          type="account"
+          type={this.state.importType}
           onHide={() => {
-            this.setState({ importVisible: false });
+            this.setState({ 
+              importVisible: false,
+              importType: 0
+             });
           }}
           updateList={() => {
             resetFields();

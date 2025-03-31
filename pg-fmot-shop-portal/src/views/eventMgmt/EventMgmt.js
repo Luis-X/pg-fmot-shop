@@ -124,10 +124,27 @@ class EventMgmt extends Component {
    * 复制活动
    */
    clickItemCopy = (record) => {
-    console.log(record.id)
-    notification['success']({
-      message: '复制活动成功！',
-      description: record.id,
+    const id = record.id;
+    console.log(id)
+    const self = this;
+    self.setState({ loadingShow: true });
+    api.eventCopy({
+      id: id,
+    }).then((res) => {
+      self.setState({ loadingShow: false });
+      if (res) {
+        if (0 === res.data.code) {
+          notification['success']({
+            message: '复制活动成功！'
+          });
+          self.requestListData();
+        } else {
+          MyAlert({ errorMsg: res.data.message });
+        }
+      }
+    }).catch((err) => {
+      self.setState({ loadingShow: false });
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
     });
   };
 

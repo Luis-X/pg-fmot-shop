@@ -32,7 +32,6 @@ export const eventDetail = ''   // 活动详情
 export const eventCreate = ''   // 活动创建
 export const eventSave = ''   // 活动保存
 export const eventGoodsList = ''   // 活动商品列表
-export const eventGoodsChangePrice = ''  // 活动商品价格
 
 // 订单
 export const orderList = ''   // 订单列表

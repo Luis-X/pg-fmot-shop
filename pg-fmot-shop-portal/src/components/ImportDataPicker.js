@@ -6,12 +6,9 @@ import MyAlert from './MyAlert';
 import { LoadingOutlined } from '@ant-design/icons';
 import $ from 'jquery';
 // import axios from "axios";
-import * as URL from '../api/URL';
+import { DownloadTemplateFile } from '../utils/util';
 
-export function ImportDataPicker({ show, type, title, onHide, updateList }) { // type【account: 导入账号 points: 导入积分】
-  const [loading, setLoading] = useState(false);
-  const [fileList, setFileList] = useState([]);
-  const [previewVisible, setPreviewVisible] = useState(false);
+export function ImportDataPicker({ show, type, onHide, updateList }) { // type【account: 导入账号 points: 导入积分】
   const [fileData, setFileData] = useState(null);
   const [fileName, setFileName] = useState('');
   const [firmLoading, setFirmLoading] = useState(false); // 导入数据成功loading
@@ -97,30 +94,7 @@ export function ImportDataPicker({ show, type, title, onHide, updateList }) { //
    * 下载
    */
   const pointImportTemplateUrl = () => {
-    const url = URL.internalAccountImportTemplate;
-    var xhh = new XMLHttpRequest();
-    xhh.open('post', url, true);
-    // xhh.setRequestHeader("Authorization", localStorage.getItem('token'));
-    xhh.setRequestHeader('Authorization', localStorage.getItem('token'));
-    xhh.setRequestHeader('Content-Type', 'application/json');
-    xhh.responseType = 'blob';
-    xhh.onload = function () {
-      if (this.status === 200) {
-        var blob = this.response;
-        var reader = new FileReader();
-        reader.readAsDataURL(blob); // 转换为base64，可以直接放入a表情href
-        reader.onload = function (e) {
-          // 转换完成，创建a标签用于下载
-          var a = document.createElement('a');
-          a.download = `store template.xlsx`;
-          a.href = e.target.result;
-          $('body').append(a);
-          a.click();
-          $(a).remove();
-        };
-      }
-    };
-    xhh.send();
+    DownloadTemplateFile(type)
   };
 
   /**
@@ -152,11 +126,25 @@ export function ImportDataPicker({ show, type, title, onHide, updateList }) { //
     setFileData(imgUrl);
   };
 
+  const showTitle = () => {
+    if (type === 101) {
+      return '导入内部账号';
+    } else if (type === 102) {
+      return '内部账号 积分充值';
+    } else if (type === 201) {
+      return '导入外部账号';
+    } else if (type === 202) {
+      return '外部账号 积分充值';
+    }  else {
+      return '';
+    }
+  }
+
   return (
     <React.Fragment>
       <Form form={form} layout="vertical">
         <Drawer
-          title={title}
+          title={showTitle()}
           width={700}
           visible={show}
           // maskClosable={false}
@@ -175,7 +163,7 @@ export function ImportDataPicker({ show, type, title, onHide, updateList }) { //
         >
           <h2 style={{ marginBottom: 10 }}>
             <span style={{ color: 'red' }}>* </span>
-            {title}
+            {showTitle()}
           </h2>
           <h4 style={{ marginBottom: 10 }}>
             提示: 请按照模版上传.xlsx文件

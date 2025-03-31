@@ -176,11 +176,11 @@ class OrderMgmt extends Component {
    * 导出
    */
   exportAll = () => {
-    const _this = this;
+    const self = this;
     const { pageNo, pageSize } = this.state;
-    _this.setState({ loadingShow: true });
+    self.setState({ loadingShow: true });
 
-    this.props.form.validateFields((err, values) => {
+    self.props.form.validateFields((err, values) => {
       if (values.date) {
         values.beginDate = moment(new Date(values.date[0])).format('YYYY-MM-DD');
         values.endDate = moment(new Date(values.date[1])).format('YYYY-MM-DD');
@@ -205,7 +205,7 @@ class OrderMgmt extends Component {
           },
           responseType: 'blob',
         }).then((res) => {
-          _this.setState({ loadingShow: false });
+          self.setState({ loadingShow: false });
           if (res.status === 200) {
             const blob = new Blob([res.data], {
               type: 'application/vnd.ms-excel;charset=utf-8',
@@ -226,7 +226,7 @@ class OrderMgmt extends Component {
             });
           }
         }).catch((err) => {
-          _this.setState({ loadingShow: false });
+          self.setState({ loadingShow: false });
           message.error(err ? err : '网络请求失败, 请重试!', 2);
         });
       });

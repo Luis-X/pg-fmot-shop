@@ -102,7 +102,14 @@ export const SsoLogin = (param) => {
   }
 };
 export const logout = (param) => {
-  return client.post(URL.logout, param);
+  // return client.post(URL.logout, param);
+  const res = {
+    data: {
+      code: 0,
+      message:'success',
+    }
+  };
+  return clientMockData(res);
 };
 
 // 通用
@@ -135,6 +142,7 @@ export const internalAccountList = (param) => {
       data: {
         content: [
           {
+            id: '1',
             createTime: '2020-08-10 11:11:11',
             bindTime: '2020-08-10 11:11:11',
             email: 'test@163.com',
@@ -252,7 +260,13 @@ export const eventList = (param) => {
   return clientMockData(res);
 };
 export const eventCopy = (param) => {
-  return client.post(URL.eventCopy, param);
+  // return client.post(URL.eventCopy, param);
+  const res = {
+    data: {
+      code: 0,
+    },
+  };
+  return clientMockData(res);
 };
 export const eventDetail = (param) => {
   // return client.post(URL.eventDetail, param);
@@ -274,6 +288,22 @@ export const eventDetail = (param) => {
           bannerLink: "https://www.baidu.com"
         }],
         goodsLimitCount: 10,
+        goodsList: [
+          {
+            id: 100,
+            goodsCode: 111,
+            goodsName: '商品名称1',
+            goodsPrice: '100',
+            goodsActivityPrice: '100',
+          },
+          {
+            id: 200,
+            goodsCode: 222,
+            goodsName: '商品名称2',
+            goodsPrice: '200',
+            goodsActivityPrice: '200',
+          }
+        ]
       }
     }
   }
@@ -304,26 +334,37 @@ export const eventGoodsList = (param) => {
       code: 0,
       data: [
         {
-          id: 1,
+          id: 100,
           goodsCode: 111,
           goodsName: '商品名称1',
           goodsPrice: '100',
           goodsActivityPrice: '100',
         },
         {
-          id: 2,
+          id: 200,
           goodsCode: 222,
           goodsName: '商品名称2',
           goodsPrice: '200',
           goodsActivityPrice: '200',
         },
+        {
+          id: 300,
+          goodsCode: 333,
+          goodsName: '商品名称3',
+          goodsPrice: '300',
+          goodsActivityPrice: '300',
+        },
+        {
+          id: 400,
+          goodsCode: 444,
+          goodsName: '商品名称4',
+          goodsPrice: '400',
+          goodsActivityPrice: '400',
+        }
       ],
     },
   };
   return clientMockData(res);
-};
-export const eventGoodsChangePrice = (param) => {
-  return client.post(URL.eventGoodsChangePrice, param);
 };
 
 // 订单
@@ -366,9 +407,6 @@ export const orderList = (param) => {
     }
   }
   return clientMockData(res);
-};
-export const orderListExport = (param) => {
-  return client.post(URL.orderListExport, param);
 };
 
 // 商品

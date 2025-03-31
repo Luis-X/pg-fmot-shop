@@ -229,3 +229,13 @@
     width: 49%;
   }
 }
+
+.banner-edit-wrap {
+  width: 100%;
+}
+.goods-edit-wrap {
+  width: 100%;
+  .ant-pro-card-body {
+    padding: 0;
+  }
+}

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Drawer, Form, message, Button, ConfigProvider } from 'antd';
+import { Drawer, Form, message, Button, ConfigProvider, Row, Col} from 'antd';
 import {
-  ProCard,
   ProForm,
   ProFormGroup,
   ProFormList,
@@ -28,14 +27,12 @@ export function AddEventFun({
   updateList,
 }) {
   const [orgCodeData, setOrgCodeData] = useState([]);
-  const [goodsListData, setGoodsListData] = useState([]);
   const [Loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
   useEffect(() => {
     async function fetchData() {
       await requestOrgCodeData();
-      await requestGoodsListData();
     }
     fetchData();
   }, []);
@@ -89,6 +86,12 @@ export function AddEventFun({
               bannerList.push(newItem);
             });
             detailData.activityBanner = bannerList;
+            // 商品列表
+            let goodsList = [];
+            detailData.goodsList.forEach((item) => {
+              goodsList.push(item);
+            });
+            setGoodsListData(goodsList);
         } else {
             MyAlert({errorMsg: res.data.message});
         }
@@ -116,32 +119,6 @@ export function AddEventFun({
               });
             }
             setOrgCodeData(list || []);
-          }
-        } else {
-          MyAlert({ errorMsg: res.data.message });
-        }
-      }
-    }).catch((err) => {
-        message.error(err ? err : '网络请求失败, 请重试!', 2);
-    })
-  };
-
-  /**
-   * 商品数据
-   */
-  const requestGoodsListData = () => {
-    let list = [];    
-    api.eventGoodsList().then((res) => {
-      if (res) {
-        if (0 === res.data.code) {
-          if (res.data.data.length > 0) {
-            for (let i in res.data.data) {
-              list.push({
-                label: res.data.data[i].name,
-                value: res.data.data[i].id,
-              });
-            }
-            setGoodsListData(list || []);
           }
         } else {
           MyAlert({ errorMsg: res.data.message });
@@ -181,6 +158,13 @@ export function AddEventFun({
         bannerList.push(newItem);
       });
       values.activityBanner = bannerList;
+      // 商品列表
+      values.goodsList = goodsListData;
+      if (values.goodsList.length <= 0) {
+        message.error('请添加活动商品！', 2);
+        setLoading(false);
+        return;
+      }
       // 操作
       if ('save' === type) {
         saveHandler(values);
@@ -248,12 +232,19 @@ export function AddEventFun({
     wrapperCol: { span: 20 },
   };
 
+  // 商品列表
+  const [selectedId, setSelectedId] = useState(null);
+  const [goodsSearchData, setGoodsSearchData] = useState([]);
+  const [goodsListData, setGoodsListData] = useState([]);
+  const [editableKeys, setEditableRowKeys] = useState([]);
+
+
   const columns = [
     {
       title: '商品编码',
       dataIndex: 'goodsCode',
       readonly: true,
-      width: '30%',
+      width: '15%',
     },
     {
       title: '商品名称',
@@ -265,24 +256,124 @@ export function AddEventFun({
       title: '原价',
       dataIndex: 'goodsPrice',
       readonly: true,
-      width: '20%',
+      width: '15%',
     },
     {
       title: '活动价',
       dataIndex: 'goodsActivityPrice',
       editable: true,
+      formItemProps: {
+        rules: [
+          {
+            pattern: /^\d+(\.\d{1,2})?$/,
+            message: '请输入有效的价格，最多保留两位小数',
+          },
+        ],
+      },
       width: '20%',
     },
     {
       title: '操作',
       valueType: 'option',
-      width: 200,
+      width: '20%',
       render: (text, record, _, action) => [
-        <a key="editable" onClick={() => { action?.startEditable?.(record.id) }}>编辑</a>,
-        <a key="delete" onClick={() => { setDataSource(dataSource.filter((item) => item.id !== record.id)) }}>删除</a>,
+        <a key="editable" onClick={() => { goodsEditWithId(record.id, action) }}>编辑</a>,
+        <a key="delete" onClick={() => { goodsDeleteWithId(record.id) }}>删除</a>,
       ],
     },
   ];
+
+  // 商品选择列表
+  const requestGoodsSearchData = async (searchText) => {
+    let list = [];
+    try {
+      const res = await api.eventGoodsList({
+        searchText: searchText,
+      });
+      if (res) {
+        if (0 === res.data.code) {
+          console.log('---goodsList---', res.data.data);
+          let dataList = res.data.data || []
+          if (dataList.length > 0) {
+            list = goodsSelectOptions(dataList);
+            setGoodsSearchData(dataList);
+          }
+        } else {
+          MyAlert({ errorMsg: res.data.message });
+        }
+      }
+    } catch (err) {
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    }
+    return list;
+  }
+  
+  const goodsSelectOptions = (list) => {
+    let newList = [];
+    list.forEach((item) => {
+      let newItem = {
+        label: item.goodsName,
+        value: item.id,
+      }
+      newList.push(newItem);
+    })
+    return newList;
+  }
+
+  useEffect(() => {
+    if (selectedId) {
+      // 新增商品
+      const newGoodsList = [...goodsListData];
+      let canAdd = true;
+      goodsListData.forEach((item) => {
+        if (item.id === selectedId) {
+          canAdd = false;
+          return;
+        }
+      });
+
+      if (!canAdd) {
+        message.error('该商品已存在!', 2);
+        setSelectedId(null);
+        return;
+      }
+
+      goodsSearchData.forEach((item) => {
+        if (item.id === selectedId) {
+          newGoodsList.push(item);
+        }
+      });
+      console.log('selected goods', newGoodsList);
+      
+      setGoodsListData(newGoodsList);
+      setSelectedId(null);
+    }
+  }, [goodsListData, goodsSearchData, selectedId]);
+  
+  // 添加商品
+  const goodsAddWithId = (id) => {
+    console.log(`selected ${id}`);
+    setSelectedId(id);
+  };
+
+  // 删除商品
+  const goodsDeleteWithId = (id) => {
+    console.log(`deleted ${id}`);
+    const newGoodsList = goodsListData.filter((item) => item.id !== id);
+    setGoodsListData(newGoodsList);
+  }
+
+  // 编辑商品
+  const goodsEditWithId = (id, action) => {
+    console.log(`edited ${id}`);
+    action.startEditable(id)
+  }
+
+  // 保存商品
+  const goodsSaveWithData = async (rowKey, data, row) => {
+    console.log(`saved ${rowKey}`, data, row);
+    await waitTime(1000);
+  }
 
   const waitTime = (time) => {
     return new Promise((resolve) => {
@@ -290,26 +381,6 @@ export function AddEventFun({
         resolve(true);
       }, time);
     });
-  };
-
-  const [editableKeys, setEditableRowKeys] = useState([]);
-  const [dataSource, setDataSource] = useState([]);
-
-  const goodsSelectChange = (value) => {
-    console.log(`selected ${value}`);
-
-    let newData = [];
-    value.forEach(element => {
-      newData.push({
-        id: element,
-        goodsCode: element,
-        goodsName: '商品名称',
-        goodsPrice: '100',
-        goodsActivityPrice: '100',
-      })
-    });
-    console.log(newData)
-    setDataSource(newData);
   };
 
   return (
@@ -438,7 +509,7 @@ export function AddEventFun({
           />
           <ProFormList
             name="activityBanner"
-            label="首页轮播图"
+            label="首页轮播图"             
             initialValue={[
               {
                 bannerImg: [],
@@ -449,13 +520,9 @@ export function AddEventFun({
               creatorButtonText: '新增图片',
             }}
             copyIconProps={false}
-            itemRender={({ listDom, action }, { record }) => {
-              return (
-                <ProCard bordered extra={action} title={record?.name} style={{ marginBlockEnd: 8 }}>{listDom}</ProCard>
-              );
-            }}
           >
             <ProFormGroup key="group" min={1}>
+              <div className='banner-edit-wrap'>
               <ProFormUploadButton
                 name="bannerImg"
                 max={1}
@@ -467,10 +534,13 @@ export function AddEventFun({
                 extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：100x100"
               />
               <ProFormText
+                width={'xl'}
                 name="bannerLink"
                 rules={[{ required: true, message: '请填写点击跳转URL' }]}
                 placeholder={'请填写点击跳转URL'}
               />
+              </div>
+             
             </ProFormGroup>
           </ProFormList>
           <ProFormDigit
@@ -482,34 +552,41 @@ export function AddEventFun({
             max={100000}
             fieldProps={{ precision: 0 }}
           />
-          <ProFormSelect
-            mode="multiple"
-            allowClear
-            options={goodsListData}
-            labelInValue
-            name="activityGoods"
-            label="活动商品"
-            rules={[{ required: true, message: '请输入商品编号' }]}
-            placeholder="请输入商品编号"
-            onChange={goodsSelectChange}
-          />
-          <EditableProTable
-            rowKey="id"
-            recordCreatorProps={false}
-            loading={false}
-            columns={columns}
-            value={dataSource}
-            onChange={setDataSource}
-            editable={{
-              type: 'multiple',
-              editableKeys,
-              onSave: async (rowKey, data, row) => {
-                console.log(rowKey, data, row);
-                await waitTime(2000);
-              },
-              onChange: setEditableRowKeys,
-            }}
-          />
+          <div className='goods-edit-wrap'>
+            <ProFormSelect
+              showSearch
+              showArrow={false}
+              allowClear
+              labelInValue
+              debounceTime={500}
+              label="活动商品"
+              request={requestGoodsSearchData}
+              rules={[{ required: true, message: '请输入商品编号' }]}
+              placeholder="请输入商品编号"
+              onChange={(id) => { goodsAddWithId(id); }}
+            />
+            <Row>
+              <Col span={4}></Col>
+              <Col span={20}>
+                <EditableProTable
+                  rowKey="id"
+                  recordCreatorProps={false}
+                  loading={false}
+                  columns={columns}
+                  value={goodsListData}
+                  onChange={setGoodsListData}
+                  editable={{
+                    type: 'multiple',
+                    editableKeys,
+                    onSave: async (rowKey, data, row) => {
+                      await goodsSaveWithData(rowKey, data, row);                  
+                    },
+                    onChange: setEditableRowKeys,
+                  }}
+                />
+              </Col>
+            </Row>            
+          </div>         
         </ProForm>
       </Drawer>
     </React.Fragment>
