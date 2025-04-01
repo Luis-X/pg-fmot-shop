@@ -55,6 +55,12 @@ class TrackMgmt extends Component {
     const self = this;
     const { pageNo, pageSize, queryData } = self.state;
     self.setState({ loadingShow: true });
+    // 时间处理
+    if (queryData && queryData.date) {
+      queryData.beginDate = moment(new Date(queryData.date[0])).format('YYYY-MM-DD HH:mm:ss');
+      queryData.endDate = moment(new Date(queryData.date[1])).format('YYYY-MM-DD HH:mm:ss');
+      delete queryData.date;
+    }
     api.trackList({
       ...queryData,
       page: pageNo,
@@ -99,7 +105,9 @@ class TrackMgmt extends Component {
     const self = this;
     self.props.form.validateFields((err, values) => {
       if (!err) {
-        self.setState({ queryData: values }, () => {
+        self.setState({ 
+          queryData: values 
+        }, () => {
           self.requestListData();
         });
       }
@@ -227,19 +235,23 @@ class TrackMgmt extends Component {
                   <Col span={8}>
                     <ConfigProvider locale={zhCN}>
                       <Form.Item>{getFieldDecorator('date',{})(
-                        <RangePicker style={{ width: '100%' }} placeholder={['请选择查询时间段', '请选择查询时间段']} />
+                        <RangePicker
+                        showTime={true}
+                        format='YYYY-MM-DD HH:mm:ss'
+                        style={{ width: '100%' }} 
+                        placeholder={['请选择查询时间段', '请选择查询时间段']} />
                       )}
                       </Form.Item>
                     </ConfigProvider>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('searchValue',{})(
+                    <Form.Item>{getFieldDecorator('activityName',{})(
                       <Input placeholder="请输入活动名称" maxLength={50} />
                     )}
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('searchID',{})(
+                    <Form.Item>{getFieldDecorator('activityId',{})(
                       <Input placeholder="请输入活动ID" maxLength={50} />
                     )}
                     </Form.Item>
@@ -256,7 +268,7 @@ class TrackMgmt extends Component {
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('activityCode',{})(
+                    <Form.Item>{getFieldDecorator('orgCode',{})(
                       <Select placeholder="请选择机构代码" style={{ width: '100%' }}>
                         <Option value="ONE">100</Option>
                         <Option value="TWO">200</Option>

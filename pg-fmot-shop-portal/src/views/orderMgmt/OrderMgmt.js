@@ -78,13 +78,10 @@ class OrderMgmt extends Component {
     const self = this;
     const { pageNo, pageSize, queryData } = self.state;
     self.setState({ loadingShow: true });
+    // 时间处理
     if (queryData && queryData.date) {
-      queryData.beginDate = moment(
-        new Date(queryData.date[0])
-      ).format('YYYY-MM-DD');
-      queryData.endDate = moment(
-        new Date(queryData.date[1])
-      ).format('YYYY-MM-DD');
+      queryData.beginDate = moment(new Date(queryData.date[0])).format('YYYY-MM-DD HH:mm:ss');
+      queryData.endDate = moment(new Date(queryData.date[1])).format('YYYY-MM-DD HH:mm:ss');
       delete queryData.date;
     }
     api.orderList({
@@ -153,7 +150,9 @@ class OrderMgmt extends Component {
     const self = this;
     self.props.form.validateFields((err, values) => {
       if (!err) {
-        self.setState({ queryData: values }, () => {
+        self.setState({ 
+          queryData: values
+        }, () => {
           self.requestListData();
         });
       }
@@ -165,61 +164,73 @@ class OrderMgmt extends Component {
    */
   exportAll = () => {
     const self = this;
-    const { pageNo, pageSize } = this.state;
     self.setState({ loadingShow: true });
-
     self.props.form.validateFields((err, values) => {
-      if (values.date) {
-        values.beginDate = moment(new Date(values.date[0])).format('YYYY-MM-DD');
-        values.endDate = moment(new Date(values.date[1])).format('YYYY-MM-DD');
-      }
-
-      return new Promise(() => {
-        const fileName = 'FMOT Redemption Report';
-        const exportUrl = URL.orderListExport;
-        axios({
-          url: exportUrl,
-          method: 'post',
-          headers: {
-            'Content-Type': 'application/json;charset=utf-8',
-            'X-Content-Type-Options': 'nosniff',
-            Pragma: 'no-cache',
-            Authorization: localStorage.getItem('token') || '',
-          },
-          data: {
-            ...values,
-            page: pageNo,
-            size: pageSize,
-          },
-          responseType: 'blob',
-        }).then((res) => {
-          self.setState({ loadingShow: false });
-          if (res.status === 200) {
-            const blob = new Blob([res.data], {
-              type: 'application/vnd.ms-excel;charset=utf-8',
-            });
-            const objectUrl = URL.createObjectURL(blob);
-            const elink = document.createElement('a');
-            elink.download = `${fileName}.xlsx`;
-            elink.style.display = 'none';
-            elink.href = objectUrl;
-            document.body.appendChild(elink);
-            elink.click();
-            URL.revokeObjectURL(elink.href); // 释放URL 对象
-            document.body.removeChild(elink);
-
-            notification['success']({
-              message: 'File exported successfully！',
-              description: 'Open Excel to view export details.',
-            });
-          }
-        }).catch((err) => {
-          self.setState({ loadingShow: false });
-          message.error(err ? err : '网络请求失败, 请重试!', 2);
+      if (!err) {
+        self.setState({ 
+          queryData: values 
+        }, () => {
+          self.requestExportExcelData();
         });
-      });
+      }      
     });
   };
+
+  requestExportExcelData = () => {
+    const self = this;
+    const { pageNo, pageSize, queryData } = self.state;
+    self.setState({ loadingShow: true });
+    // 时间处理
+    if (queryData && queryData.date) {
+      queryData.beginDate = moment(new Date(queryData.date[0])).format('YYYY-MM-DD HH:mm:ss');
+      queryData.endDate = moment(new Date(queryData.date[1])).format('YYYY-MM-DD HH:mm:ss');
+      delete queryData.date;
+    }
+    return new Promise(() => {
+      const fileName = 'FMOT Redemption Report';
+      const exportUrl = URL.orderListExport;
+      axios({
+        url: exportUrl,
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'X-Content-Type-Options': 'nosniff',
+          Pragma: 'no-cache',
+          Authorization: localStorage.getItem('token') || '',
+        },
+        data: {
+          ...queryData,
+          page: pageNo,
+          size: pageSize,
+        },
+        responseType: 'blob',
+      }).then((res) => {
+        self.setState({ loadingShow: false });
+        if (res.status === 200) {
+          const blob = new Blob([res.data], {
+            type: 'application/vnd.ms-excel;charset=utf-8',
+          });
+          const objectUrl = URL.createObjectURL(blob);
+          const elink = document.createElement('a');
+          elink.download = `${fileName}.xlsx`;
+          elink.style.display = 'none';
+          elink.href = objectUrl;
+          document.body.appendChild(elink);
+          elink.click();
+          URL.revokeObjectURL(elink.href); // 释放URL 对象
+          document.body.removeChild(elink);
+
+          notification['success']({
+            message: '文件导出成功！',
+            description: '请打开Excel文件进行查看！',
+          });
+        }
+      }).catch((err) => {
+        self.setState({ loadingShow: false });
+        message.error('导出Excel失败, 请重试!', 2);
+      });
+    });
+  }
 
   render() {
     const { orgCodeList, deliveryTypeList, orderStatusList } = this.state;
@@ -331,107 +342,84 @@ class OrderMgmt extends Component {
                 <Row gutter={24}>
                   <Col span={8}>
                     <ConfigProvider locale={zhCN}>
-                      <Form.Item>
-                        {getFieldDecorator(
-                          'date',
-                          {}
-                        )(
-                          <RangePicker style={{ width: '100%' }} placeholder={['请选择查询时间段', '请选择查询时间段']}
-                          />
-                        )}
+                      <Form.Item>{getFieldDecorator('date',{})(
+                        <RangePicker
+                        showTime={true}
+                        format='YYYY-MM-DD HH:mm:ss'
+                        style={{ width: '100%' }} 
+                        placeholder={['请选择查询时间段', '请选择查询时间段']} />
+                      )}
                       </Form.Item>
                     </ConfigProvider>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>
-                      {getFieldDecorator(
-                        'shopNameOrId',
-                        {}
-                      )(<Input placeholder="请输入活动名称" />)}
+                    <Form.Item>{getFieldDecorator('activityName',{})(
+                      <Input placeholder="请输入活动名称" />
+                    )}
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>
-                      {getFieldDecorator(
-                        'janRainId',
-                        {}
-                      )(<Input placeholder="请输入活动ID" />)}
+                    <Form.Item>{getFieldDecorator('activityId',{})(
+                      <Input placeholder="请输入活动ID" />
+                    )}
                     </Form.Item>
                   </Col>
                 </Row>
                 <Row gutter={24}>
                   <Col span={8}>
-                    <Form.Item>
-                      {getFieldDecorator(
-                        'shopMarketId',
-                        {}
-                      )(
-                        <Select placeholder="请选择机构代码" style={{ width: '100%' }}>
-                          {
-                            orgCodeList.length > 0 && orgCodeList.map((item, index) => (
-                              <Option key={index} value={item.id}>{item.name}</Option>
-                            ))
-                          }
-                        </Select>
-                      )}
+                    <Form.Item>{getFieldDecorator('orgCode',{})(
+                      <Select placeholder="请选择机构代码" style={{ width: '100%' }}>
+                        {
+                          orgCodeList.length > 0 && orgCodeList.map((item, index) => (
+                            <Option key={index} value={item.id}>{item.name}</Option>
+                          ))
+                        }
+                      </Select>
+                    )}
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>
-                      {getFieldDecorator(
-                        'eventNameOrEventId',
-                        {}
-                      )(<Input placeholder="请输入用户账号" />)}
+                    <Form.Item>{getFieldDecorator('accountId',{})(
+                      <Input placeholder="请输入用户账号" />
+                    )}
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>
-                      {getFieldDecorator(
-                        'soldToStoreNo',
-                        {}
-                      )(<Input placeholder="请输入商品编号" />)}
+                    <Form.Item>{getFieldDecorator('goodsId',{})(
+                      <Input placeholder="请输入商品编号" />
+                    )}
                     </Form.Item>
                   </Col>
                 </Row>
                 <Row gutter={24}>
                   <Col span={8}>
-                    <Form.Item>
-                      {getFieldDecorator(
-                        'soldToStoreNo',
-                        {}
-                      )(<Input placeholder="请输入商品名称" />)}
+                    <Form.Item>{getFieldDecorator('goodsName',{})(
+                      <Input placeholder="请输入商品名称" />
+                    )}
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>
-                      {getFieldDecorator(
-                        'payStatus',
-                        {}
-                      )(
-                        <Select placeholder="请选择发货类型" style={{ width: '100%' }}>
-                          {
-                            deliveryTypeList.length > 0 && deliveryTypeList.map((item, index) => (
-                              <Option key={index} value={item.id}>{item.name}</Option>
-                            ))
-                          }
-                        </Select>
-                      )}
+                    <Form.Item>{getFieldDecorator('deliveryType',{})(
+                      <Select placeholder="请选择发货类型" style={{ width: '100%' }}>
+                        {
+                          deliveryTypeList.length > 0 && deliveryTypeList.map((item, index) => (
+                            <Option key={index} value={item.id}>{item.name}</Option>
+                          ))
+                        }
+                      </Select>
+                    )}
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>
-                      {getFieldDecorator(
-                        'shopAreaId',
-                        {}
-                      )(
-                        <Select placeholder="请选订单状态" style={{ width: '100%' }}>
-                          {
-                            orderStatusList.length > 0 && orderStatusList.map((item, index) => (
-                              <Option key={index} value={item.id}>{item.name}</Option>
-                            ))
-                          }
-                        </Select>
-                      )}
+                    <Form.Item>{getFieldDecorator('orderStatus',{})(
+                      <Select placeholder="请选订单状态" style={{ width: '100%' }}>
+                        {
+                          orderStatusList.length > 0 && orderStatusList.map((item, index) => (
+                            <Option key={index} value={item.id}>{item.name}</Option>
+                          ))
+                        }
+                      </Select>
+                    )}
                     </Form.Item>
                   </Col>
                 </Row>

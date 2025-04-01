@@ -22,6 +22,7 @@ import {
 import HomeLayout from '../../common/LayoutStyle';
 import * as api from '../../api/api';
 import MyAlert from '../../components/MyAlert';
+import moment from 'moment';
 import zhCN from 'antd/es/locale/zh_CN';
 import { Line } from '@ant-design/charts';
 
@@ -96,14 +97,11 @@ class TrackDetail extends Component {
     const self = this;
     self.props.form.validateFields((err, values) => {
       if (!err) {
-        self.setState(
-          {
-            queryData: values,
-          },
-          () => {
-            self.clickSearchChart();
-          }
-        );
+        self.setState({
+          queryData: values,
+        },() => {
+          self.clickSearchChart();
+        });
       }
     });
   };
@@ -115,30 +113,27 @@ class TrackDetail extends Component {
     const self = this;
     const { pageNo, pageSize, queryData } = self.state;
     self.setState({ loadingShow: true });
-    api
-      .trackPeopleList({
-        ...queryData,
-        page: pageNo,
-        size: pageSize,
-      })
-      .then((res) => {
-        self.setState({ loadingShow: false });
-        if (res) {
-          const respData = res.data;
-          if (0 === respData.code) {
-            self.setState({
-              data: respData.data.content,
-              totalNum: respData.data.totalElements,
-            });
-          } else {
-            MyAlert({ errorMsg: respData.message });
-          }
+    api.trackPeopleList({
+      ...queryData,
+      page: pageNo,
+      size: pageSize,
+    }).then((res) => {
+      self.setState({ loadingShow: false });
+      if (res) {
+        const respData = res.data;
+        if (0 === respData.code) {
+          self.setState({
+            data: respData.data.content,
+            totalNum: respData.data.totalElements,
+          });
+        } else {
+          MyAlert({ errorMsg: respData.message });
         }
-      })
-      .catch((err) => {
-        self.setState({ loadingShow: false });
-        message.error(err ? err : '网络请求失败, 请重试!', 2);
-      });
+      }
+    }).catch((err) => {
+      self.setState({ loadingShow: false });
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    });
   };
 
   peoplePageOnChange(pageNo, pageSize) {
@@ -162,30 +157,27 @@ class TrackDetail extends Component {
     const self = this;
     const { pageNo, pageSize, queryData } = self.state;
     self.setState({ loadingShow: true });
-    api
-      .trackTimesList({
-        ...queryData,
-        page: pageNo,
-        size: pageSize,
-      })
-      .then((res) => {
-        self.setState({ loadingShow: false });
-        if (res) {
-          const respData = res.data;
-          if (0 === respData.code) {
-            self.setState({
-              data: respData.data.content,
-              totalNum: respData.data.totalElements,
-            });
-          } else {
-            MyAlert({ errorMsg: respData.message });
-          }
+    api.trackTimesList({
+      ...queryData,
+      page: pageNo,
+      size: pageSize,
+    }).then((res) => {
+      self.setState({ loadingShow: false });
+      if (res) {
+        const respData = res.data;
+        if (0 === respData.code) {
+          self.setState({
+            data: respData.data.content,
+            totalNum: respData.data.totalElements,
+          });
+        } else {
+          MyAlert({ errorMsg: respData.message });
         }
-      })
-      .catch((err) => {
-        self.setState({ loadingShow: false });
-        message.error(err ? err : '网络请求失败, 请重试!', 2);
-      });
+      }
+    }).catch((err) => {
+      self.setState({ loadingShow: false });
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    });
   };
 
   timesPageOnChange(pageNo, pageSize) {
@@ -221,29 +213,31 @@ class TrackDetail extends Component {
   requestChartData = () => {
     const self = this;
     const { queryData } = self.state;
-
     self.setState({ loadingShow: true });
-    api
-      .trackChart({
-        ...queryData,
-      })
-      .then((res) => {
-        self.setState({ loadingShow: false });
-        if (res) {
-          const respData = res.data;
-          if (0 === respData.code) {
-            self.setState({
-              data: respData.data.content,
-            });
-          } else {
-            MyAlert({ errorMsg: respData.message });
-          }
+    // 时间处理
+    if (queryData && queryData.date) {
+      queryData.beginDate = moment(new Date(queryData.date[0])).format('YYYY-MM-DD HH:mm:ss');
+      queryData.endDate = moment(new Date(queryData.date[1])).format('YYYY-MM-DD HH:mm:ss');
+      delete queryData.date;
+    }
+    api.trackChart({
+      ...queryData,
+    }).then((res) => {
+      self.setState({ loadingShow: false });
+      if (res) {
+        const respData = res.data;
+        if (0 === respData.code) {
+          self.setState({
+            data: respData.data.content,
+          });
+        } else {
+          MyAlert({ errorMsg: respData.message });
         }
-      })
-      .catch((err) => {
-        self.setState({ loadingShow: false });
-        message.error(err ? err : '网络请求失败, 请重试!', 2);
-      });
+      }
+    }).catch((err) => {
+      self.setState({ loadingShow: false });
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    });
   };
 
   // 人数列表
@@ -578,28 +572,20 @@ class TrackDetail extends Component {
             <Row gutter={24}>
               <Col span={8}>
                 <ConfigProvider locale={zhCN}>
-                  <Form.Item>
-                    {
-                      getFieldDecorator(
-                        'date',
-                        {}
-                      )(
-                        <RangePicker style={{ width: '100%' }} placeholder={['请选择查询时间段', '请选择查询时间段']} />
-                      )
-                    }
+                  <Form.Item>{getFieldDecorator('date',{})(
+                    <RangePicker
+                    showTime={true}
+                    format='YYYY-MM-DD HH:mm:ss'
+                    style={{ width: '100%' }} 
+                    placeholder={['请选择查询时间段', '请选择查询时间段']} />
+                  )}
                   </Form.Item>
                 </ConfigProvider>
               </Col>
               <Col span={8}>
-                <Form.Item>
-                  {
-                    getFieldDecorator(
-                      'searchValue',
-                      {}
-                    )(
-                      <Input placeholder="请输入商品编号" maxLength={50} />
-                    )
-                  }
+                <Form.Item>{getFieldDecorator('goodsId',{})(
+                  <Input placeholder="请输入商品编号" maxLength={50} />
+                )}
                 </Form.Item>
               </Col>
             </Row>

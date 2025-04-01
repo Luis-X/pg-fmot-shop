@@ -155,7 +155,9 @@ class EventMgmt extends Component {
     const self = this;
     self.props.form.validateFields((err, values) => {
       if (!err) {
-        self.setState({ queryData: values }, () => {
+        self.setState({ 
+          queryData: values 
+        }, () => {
           self.requestListData();
         });
       }
@@ -365,13 +367,13 @@ class EventMgmt extends Component {
                     </ConfigProvider>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('name',{})(
+                    <Form.Item>{getFieldDecorator('activityName',{})(
                       <Input placeholder="请输入活动名称" maxLength={50} />
                     )}
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('id',{})(
+                    <Form.Item>{getFieldDecorator('activityId',{})(
                       <Input placeholder="请输入活动ID" maxLength={50} />
                     )}
                     </Form.Item>
@@ -379,7 +381,7 @@ class EventMgmt extends Component {
                 </Row>
                 <Row gutter={24}>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('type',{})(
+                    <Form.Item>{getFieldDecorator('activityType',{})(
                       <Select placeholder="请选择活动类型" style={{ width: '100%' }}>
                         {
                           eventTypeList.length > 0 && eventTypeList.map((item, index) => (
@@ -391,7 +393,7 @@ class EventMgmt extends Component {
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('status',{})(
+                    <Form.Item>{getFieldDecorator('activityStatus',{})(
                       <Select placeholder="请选择活动状态" style={{ width: '100%' }}>
                         {
                           eventStatusList.length > 0 && eventStatusList.map((item, index) => (
