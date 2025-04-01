@@ -26,16 +26,17 @@ class SsoCallback extends Component {
           const res = await api.SsoLogin({ code: queryCode.code });
           if (res) {
             this.setState({ loadingShow: false });
-            if (0 === res.data.code) {
-              setToken(res.data.data.token);
-              localStorage.setItem('token', res.data.data.token);
-              localStorage.setItem('userName', res.data.data.userName);
-              localStorage.setItem('roleName', res.data.data.roleName);
-              localStorage.setItem('loginInfo', JSON.stringify(res.data.data.menu));
+            const respData = res.data;
+            if (0 === respData.code) {
+              setToken(respData.data.token);
+              localStorage.setItem('token', respData.data.token);
+              localStorage.setItem('userName', respData.data.userName);
+              localStorage.setItem('roleName', respData.data.roleName);
+              localStorage.setItem('loginInfo', JSON.stringify(respData.data.menu));
               this.props.history.push('/internalAccount');
             } else {
               this.setState({
-                errorMsg: res.data.message,
+                errorMsg: respData.message,
               });
             }
           }

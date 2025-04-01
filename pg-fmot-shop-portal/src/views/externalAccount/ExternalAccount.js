@@ -66,13 +66,14 @@ class ExternalAccount extends Component {
     }).then((res) => {
       self.setState({ loadingShow: false });
       if (res) {
-        if (0 === res.data.code) {
+        const respData = res.data;
+        if (0 === respData.code) {
           self.setState({
-            data: res.data.data.content,
-            totalNum: res.data.data.totalElements,
+            data: respData.data.content,
+            totalNum: respData.data.totalElements,
           });
         } else {
-          MyAlert({ errorMsg: res.data.message });
+          MyAlert({ errorMsg: respData.message });
         }
       }
     }).catch((err) => {
@@ -185,10 +186,11 @@ class ExternalAccount extends Component {
           status: 'NORMAL' === status ? 'DISABLE' : 'NORMAL',
         }).then((res) => {
           if (res) {
-            if (0 === res.data.code) {
+            const respData = res.data;
+            if (0 === respData.code) {
               self.requestListData();
             } else {
-              MyAlert({ errorMsg: res.data.message });
+              MyAlert({ errorMsg: respData.message });
             }
           }
         });

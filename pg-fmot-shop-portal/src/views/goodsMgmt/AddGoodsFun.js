@@ -15,7 +15,7 @@ import * as api from '../../api/api';
 import MyAlert from '../../components/MyAlert';
 
 export function AddGoodsFun({
-  eventId,
+  goodsId,
   show,
   onHide,
   updateList,
@@ -64,10 +64,11 @@ export function AddGoodsFun({
   const requestDetailData = async () => {
     let detailData = {};    
     try {
-      const res = await api.goodsDetail(eventId);
+      const res = await api.goodsDetail(goodsId);
       if (res) {
-        if (0 === res.data.code) {
-          detailData = res.data.data;
+        const respData = res.data;
+        if (0 === respData.code) {
+          detailData = respData.data;
           // 预览图
           const goodsImgUrls = detailData.goodsImg ? [detailData.goodsImg] : [];
           detailData.goodsImg = imgUrlsToFiles(goodsImgUrls);
@@ -93,7 +94,7 @@ export function AddGoodsFun({
           const goodsIntroImgUrls = detailData.goodsIntroImg ? [detailData.goodsIntroImg] : [];
           detailData.goodsIntroImg = imgUrlsToFiles(goodsIntroImgUrls);
         } else {
-          MyAlert({ errorMsg: res.data.message });
+          MyAlert({ errorMsg: respData.message });
         }
       }
     } catch (err) {
@@ -110,18 +111,19 @@ export function AddGoodsFun({
     let list = [];    
     api.goodsCategoryList().then((res) => {
       if (res) {
-        if (0 === res.data.code) {
-          if (res.data.data.length > 0) {
-            for (let i in res.data.data) {
+        const respData = res.data;
+        if (0 === respData.code) {
+          if (respData.data.length > 0) {
+            for (let i in respData.data) {
               list.push({
-                label: res.data.data[i].name,
-                value: res.data.data[i].id,
+                label: respData.data[i].name,
+                value: respData.data[i].id,
               });
             }
             setCategoryData(list || []);
           }
         } else {
-          MyAlert({ errorMsg: res.data.message });
+          MyAlert({ errorMsg: respData.message });
         }
       }
     }).catch((err) => {
@@ -132,7 +134,7 @@ export function AddGoodsFun({
   /**
    * form.validateFields数据准备
    */
-  const saveAndCreateEvent = (type) => {
+  const saveAndCreateGoods = (type) => {
     setLoading(true);
     form.validateFields().then((values) => {
       console.log('处理前：', values);
@@ -182,12 +184,13 @@ export function AddGoodsFun({
     }).then((res) => {
       if (res) {
         setLoading(false);
-        if (0 === res.data.code) {
+        const respData = res.data;
+        if (0 === respData.code) {
           onHide();
           updateList();
           message.success('创建成功!', 3);
         } else {
-          MyAlert({ errorMsg: res.data.message });
+          MyAlert({ errorMsg: respData.message });
         }
       }
     }).catch((err) => {
@@ -206,12 +209,13 @@ export function AddGoodsFun({
     }).then((res) => {
       if (res) {
         setLoading(false);
-        if (0 === res.data.code) {
+        const respData = res.data;
+        if (0 === respData.code) {
           onHide();
           updateList();
           message.success('保存成功!', 3);
         } else {
-          MyAlert({ errorMsg: res.data.message });
+          MyAlert({ errorMsg: respData.message });
         }
       }
     }).catch((err) => {
@@ -231,21 +235,21 @@ export function AddGoodsFun({
   return (
     <React.Fragment>
       <Drawer 
-        title={eventId ? '商品信息' : '新增商品'} 
+        title={goodsId ? '商品信息' : '新增商品'} 
         footer={
           <div className="create-event-btn">
             {
-              eventId ? (
-                <Button type="primary" disabled={Loading} onClick={() => { saveAndCreateEvent('save') }}>保存</Button>
+              goodsId ? (
+                <Button type="primary" disabled={Loading} onClick={() => { saveAndCreateGoods('save') }}>保存</Button>
               ) : (
-                <Button type="primary" disabled={Loading} onClick={() => { saveAndCreateEvent('create')}}>新增商品</Button>
+                <Button type="primary" disabled={Loading} onClick={() => { saveAndCreateGoods('create')}}>新增商品</Button>
               )
             }
             <Button onClick={onHide}>取消</Button>
           </div>
         } 
         width={720} 
-        visible={show} 
+        open={show} 
         onClose={() => { onHide() }} 
         bodyStyle={{ paddingBottom: 80 }}
       >
@@ -271,13 +275,13 @@ export function AddGoodsFun({
             },
           }}
           params={{}} //网络请求参数
-          request={eventId ? requestDetailData : null}
+          request={goodsId ? requestDetailData : null}
         >
           <ProFormRadio.Group
             name="goodsType"
             label="商品类型"
             rules={[{ required: true, message: '请选择商品类型' }]}
-            initialValue="1"
+            // initialValue="1"
             options={[
               {
                 label: '实物',
@@ -339,13 +343,13 @@ export function AddGoodsFun({
             itemRender={({ listDom, action }, { index }) => (
               <ProCard bordered style={{ marginBlockEnd: 8 }} extra={action} bodyStyle={{ paddingBlockEnd: 0 }}>{listDom}</ProCard>
             )}
-            initialValue={[
-              {
-                bannerVideo: [],
-                bannerPoster: [],
-                bannerImgs: [],
-              },
-            ]}
+            // initialValue={[
+            //   {
+            //     bannerVideo: [],
+            //     bannerPoster: [],
+            //     bannerImgs: [],
+            //   },
+            // ]}
           >
             <div className="goods-banner-row-wrap">
               <div className="goods-banner-row">

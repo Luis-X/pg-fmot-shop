@@ -26,13 +26,13 @@ export function AddEventFun({
   onHide,
   updateList,
 }) {
-  const [orgCodeData, setOrgCodeData] = useState([]);
+  const [orgCodeList, setOrgCodeList] = useState([]);
   const [Loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
   useEffect(() => {
     async function fetchData() {
-      await requestOrgCodeData();
+      await requestOrgCodeListData();
     }
     fetchData();
   }, []);
@@ -73,27 +73,33 @@ export function AddEventFun({
     try {
       const res = await api.eventDetail(eventId);
       if (res) {
-        if (0 === res.data.code) {
-            detailData = res.data.data;
+        const respData = res.data;
+        if (0 === respData.code) {
+            detailData = respData.data;
+            
             // 轮播图
-            let bannerList = [];
-            detailData.activityBanner.forEach((item) => {
+            let bannerList = detailData.activityBanner || [];
+            let newBannerList = [];
+            bannerList.forEach((item) => {
               const imgUrls = item.bannerImg ? [item.bannerImg] : [];
               let newItem = {
                 bannerImg: imgUrlsToFiles(imgUrls),
                 bannerLink: item.bannerLink,
               }
-              bannerList.push(newItem);
+              newBannerList.push(newItem);
             });
-            detailData.activityBanner = bannerList;
+            detailData.activityBanner = newBannerList;
+
             // 商品列表
-            let goodsList = [];
-            detailData.goodsList.forEach((item) => {
-              goodsList.push(item);
+            let goodsList = detailData.goodsList || [];
+            let newGoodsList = [];
+            goodsList.forEach((item) => {
+              newGoodsList.push(item);
             });
-            setGoodsListData(goodsList);
+            setGoodsListData(newGoodsList);
+
         } else {
-            MyAlert({errorMsg: res.data.message});
+            MyAlert({errorMsg: respData.message});
         }
       }
     } catch (err) {
@@ -106,27 +112,26 @@ export function AddEventFun({
   /**
    * 机构代码数据
    */
-  const requestOrgCodeData = () => {
-    let list = [];    
+  const requestOrgCodeListData = () => {
     api.orgCodeList().then((res) => {
       if (res) {
-        if (0 === res.data.code) {
-          if (res.data.data.length > 0) {
-            for (let i in res.data.data) {
-              list.push({
-                label: res.data.data[i].name,
-                value: res.data.data[i].id,
-              });
-            }
-            setOrgCodeData(list || []);
-          }
+        const respData = res.data;
+        if (0 === respData.code) {
+          let list = [];
+          respData.data.forEach((item) => {
+            list.push({
+              label: item.name,
+              value: item.id,
+            });
+          })
+          setOrgCodeList(list);
         } else {
-          MyAlert({ errorMsg: res.data.message });
+          MyAlert({ errorMsg: respData.message });
         }
       }
     }).catch((err) => {
-        message.error(err ? err : '网络请求失败, 请重试!', 2);
-    })
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    });
   };
 
   /**
@@ -138,33 +143,43 @@ export function AddEventFun({
       console.log('处理前：', values);
       // 开始时间
       if (values.startTime) {
-        let startTime = moment(new Date(values.startTime)).format('YYYY-MM-DD')
+        let startTime = moment(new Date(values.startTime)).format('YYYY-MM-DD HH:mm:ss')
         values.startTime = startTime;
       }      
       // 结束时间
       if (values.endTime) {
-        let endTime = moment(new Date(values.endTime)).format('YYYY-MM-DD')
+        let endTime = moment(new Date(values.endTime)).format('YYYY-MM-DD HH:mm:ss')
         values.endTime = endTime;
       }      
+
       // 轮播图
-      let bannerList = [];
-      values.activityBanner.forEach((item) => {
+      let bannerList = values.activityBanner || [];      
+      if (bannerList.length <= 0) {
+        message.error('请上传首页轮播图！', 2);
+        setLoading(false);
+        return;
+      }
+      let newBannerList = [];
+      bannerList.forEach((item) => {
         const imgFiles = item.bannerImg ? item.bannerImg : [];
         const imgUrl = filesToImgUrls(imgFiles)[0] || '';
         let newItem = {
           bannerImg: imgUrl,
           bannerLink: item.bannerLink,
         }
-        bannerList.push(newItem);
+        newBannerList.push(newItem);
       });
-      values.activityBanner = bannerList;
+      values.activityBanner = newBannerList;
+
       // 商品列表
-      values.goodsList = goodsListData;
-      if (values.goodsList.length <= 0) {
+      let goodsList = goodsListData || [];      
+      if (goodsList.length <= 0) {
         message.error('请添加活动商品！', 2);
         setLoading(false);
         return;
       }
+      values.goodsList = goodsList;
+      
       // 操作
       if ('save' === type) {
         saveHandler(values);
@@ -186,12 +201,13 @@ export function AddEventFun({
     }).then((res) => {
       if (res) {
         setLoading(false);
-        if (0 === res.data.code) {
+        const respData = res.data;
+        if (0 === respData.code) {
           onHide();
           updateList();
           message.success('创建成功!', 3);
         } else {
-          MyAlert({ errorMsg: res.data.message });
+          MyAlert({ errorMsg: respData.message });
         }
       }
     }).catch((err) => {
@@ -210,12 +226,13 @@ export function AddEventFun({
     }).then((res) => {
       if (res) {
         setLoading(false);
-        if (0 === res.data.code) {
+        const respData = res.data;
+        if (0 === respData.code) {
           onHide();
           updateList();
           message.success('保存成功!', 3);
         } else {
-          MyAlert({ errorMsg: res.data.message });
+          MyAlert({ errorMsg: respData.message });
         }
       }
     }).catch((err) => {
@@ -265,8 +282,8 @@ export function AddEventFun({
       formItemProps: {
         rules: [
           {
-            pattern: /^\d+(\.\d{1,2})?$/,
-            message: '请输入有效的价格，最多保留两位小数',
+            pattern: /^\d+(\.\d{1})?$/,
+            message: '最多保留一位小数',
           },
         ],
       },
@@ -291,15 +308,16 @@ export function AddEventFun({
         searchText: searchText,
       });
       if (res) {
-        if (0 === res.data.code) {
-          console.log('---goodsList---', res.data.data);
-          let dataList = res.data.data || []
+        const respData = res.data;
+        if (0 === respData.code) {
+          console.log('---goodsList---', respData.data);
+          let dataList = respData.data || []
           if (dataList.length > 0) {
             list = goodsSelectOptions(dataList);
             setGoodsSearchData(dataList);
           }
         } else {
-          MyAlert({ errorMsg: res.data.message });
+          MyAlert({ errorMsg: respData.message });
         }
       }
     } catch (err) {
@@ -386,21 +404,21 @@ export function AddEventFun({
   return (
     <React.Fragment>
       <Drawer 
-        title={eventId ? '活动信息' : '新增活动'} 
+        title={eventId ? '编辑活动' : '创建活动'} 
         footer={
           <div className="create-event-btn">
             {
               eventId ? (
                 <Button type="primary" disabled={Loading} onClick={() => { saveAndCreateEvent('save') }}>保存</Button>
               ) : (
-                <Button type="primary" disabled={Loading} onClick={() => { saveAndCreateEvent('create')}}>新增活动</Button>
+                <Button type="primary" disabled={Loading} onClick={() => { saveAndCreateEvent('create')}}>创建活动</Button>
               )
             }
             <Button onClick={onHide}>取消</Button>
           </div>
         } 
         width={920} 
-        visible={show} 
+        open={show}
         onClose={() => { onHide() }} 
         bodyStyle={{ paddingBottom: 80 }}
       >
@@ -432,7 +450,6 @@ export function AddEventFun({
             name="activityType"
             label="活动类型"
             rules={[{ required: true, message: '请选择活动类型' }]}
-            initialValue="1"
             options={[
               {
                 label: '内部活动',
@@ -451,7 +468,7 @@ export function AddEventFun({
             placeholder="请输入活动名称"
           />
           <ProFormSelect
-            options={orgCodeData}
+            options={orgCodeList}
             name="orgCode"
             label="机构代码"
             rules={[{ required: true, message: '请选择机构代码' }]}
@@ -459,6 +476,8 @@ export function AddEventFun({
           />
           <ConfigProvider locale={zhCN}>
             <ProFormDateTimePicker 
+            showTime={true}
+            format='YYYY-MM-DD HH:mm:ss'
             name="startTime"
             label="开始时间"
             rules={[{ required: true, message: '请选择活动开始时间' }]}
@@ -467,6 +486,8 @@ export function AddEventFun({
           </ConfigProvider>
           <ConfigProvider locale={zhCN}>
             <ProFormDateTimePicker 
+            showTime={true}
+            format='YYYY-MM-DD HH:mm:ss'
             name="endTime"
             label="结束时间"
             rules={[{ required: true, message: '请选择活动结束时间' }]}
@@ -477,7 +498,6 @@ export function AddEventFun({
             name="deliveryType"
             label="发货方式"
             rules={[{ required: true, message: '请选择发货方式' }]}
-            initialValue={['1']}
             options={[
               {
                 label: '自提',
@@ -510,21 +530,17 @@ export function AddEventFun({
           <ProFormList
             name="activityBanner"
             label="首页轮播图"             
-            initialValue={[
-              {
-                bannerImg: [],
-                bannerLink: '',
-              }
-            ]}
             creatorButtonProps={{
               creatorButtonText: '新增图片',
             }}
             copyIconProps={false}
+            rules={[{ required: true, message: '请上传首页轮播图' }]}
           >
             <ProFormGroup key="group" min={1}>
               <div className='banner-edit-wrap'>
               <ProFormUploadButton
                 name="bannerImg"
+                rules={[{ required: true, message: '请上传图片' }]}
                 max={1}
                 fieldProps={{
                   name: 'file',

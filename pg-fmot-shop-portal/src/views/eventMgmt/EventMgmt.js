@@ -35,21 +35,48 @@ class EventMgmt extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      orgCodeList: [],
+      eventTypeList: [
+        {
+          id: 10,
+          name: '内部活动',
+        },
+        {
+          id: 20,
+          name: '外部活动',
+        },
+      ],
+      eventStatusList: [
+        {
+          id: 100,
+          name: '未开始',
+        },
+        {
+          id: 200,
+          name: '进行中',
+        },
+        {
+          id: 300,
+          name: '已结束',
+        },
+      ],
+
       data: [],
       loadingShow: false,
-      visible: false,
-      eventID: '',
       queryData: null,
-
       pageNo: 0,
       pageSize: 10,
       totalNum: 10,
+
+      isShow: false,
+      eventID: '',
     };
   }
 
   async componentDidMount() {
     const self = this;
     self.requestListData();
+    self.requestOrgCodeListData();
   }
 
   /**
@@ -59,20 +86,27 @@ class EventMgmt extends Component {
     const self = this;
     const { pageNo, pageSize, queryData } = self.state;
     self.setState({ loadingShow: true });
+    // 时间处理
+    if (queryData && queryData.date) {
+      queryData.beginDate = moment(new Date(queryData.date[0])).format('YYYY-MM-DD HH:mm:ss');
+      queryData.endDate = moment(new Date(queryData.date[1])).format('YYYY-MM-DD HH:mm:ss');
+      delete queryData.date;
+    }
     api.eventList({
       ...queryData,
       page: pageNo,
       size: pageSize,
     }).then((res) => {
       self.setState({ loadingShow: false });
+      const respData = res.data;
       if (res) {
-        if (0 === res.data.code) {
+        if (0 === respData.code) {
           self.setState({
-            data: res.data.data.content,
-            totalNum: res.data.data.totalElements,
+            data: respData.data.content,
+            totalNum: respData.data.totalElements,
           });
         } else {
-          MyAlert({ errorMsg: res.data.message });
+          MyAlert({ errorMsg: respData.message });
         }
       }
     }).catch((err) => {
@@ -80,6 +114,25 @@ class EventMgmt extends Component {
       message.error(err ? err : '网络请求失败, 请重试!', 2);
     });
   }; 
+
+  // 机构代码
+  requestOrgCodeListData = () => {
+    const self = this;
+    api.orgCodeList().then((res) => {
+      if (res) {
+        const respData = res.data;
+        if (0 === respData.code) {
+          self.setState({
+            orgCodeList: respData.data,
+          });
+        } else {
+          MyAlert({ errorMsg: respData.message });
+        }
+      }
+    }).catch((err) => {
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    });
+  };
 
   /**
    * 翻页OnChange
@@ -115,7 +168,7 @@ class EventMgmt extends Component {
   clickItemDetail = (record) => {
     const self = this;
     self.setState({
-      visible: true,
+      isShow: true,
       eventID: record.id,
     });
   }
@@ -133,13 +186,14 @@ class EventMgmt extends Component {
     }).then((res) => {
       self.setState({ loadingShow: false });
       if (res) {
-        if (0 === res.data.code) {
+        const respData = res.data;
+        if (0 === respData.code) {
           notification['success']({
             message: '复制活动成功！'
           });
           self.requestListData();
         } else {
-          MyAlert({ errorMsg: res.data.message });
+          MyAlert({ errorMsg: respData.message });
         }
       }
     }).catch((err) => {
@@ -167,12 +221,13 @@ class EventMgmt extends Component {
   clickCreateEvent = () => {
     const self = this;
     self.setState({
-      visible: true,
+      isShow: true,
       eventID: '',
     });
   }
 
   render() {
+    const { orgCodeList, eventTypeList, eventStatusList } = this.state;
     const {
       form: { resetFields, getFieldDecorator }
     } = this.props;
@@ -271,12 +326,12 @@ class EventMgmt extends Component {
     return (
       <HomeLayout>
         {
-          this.state.visible ? (
+          this.state.isShow ? (
             <AddEventFun
               eventId={this.state.eventID}
-              show={this.state.visible}
+              show={this.state.isShow}
               onHide={() => {
-                this.setState({ visible: false });
+                this.setState({ isShow: false });
               }}
               updateList={() => {
                 resetFields();
@@ -300,19 +355,23 @@ class EventMgmt extends Component {
                   <Col span={8}>
                     <ConfigProvider locale={zhCN}>
                       <Form.Item>{getFieldDecorator('date',{})(
-                        <RangePicker style={{ width: '100%' }} placeholder={['请选择查询时间段', '请选择查询时间段']} />
+                        <RangePicker
+                        showTime={true}
+                        format='YYYY-MM-DD HH:mm:ss'
+                        style={{ width: '100%' }} 
+                        placeholder={['请选择查询时间段', '请选择查询时间段']} />
                       )}
                       </Form.Item>
                     </ConfigProvider>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('searchValue',{})(
+                    <Form.Item>{getFieldDecorator('name',{})(
                       <Input placeholder="请输入活动名称" maxLength={50} />
                     )}
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('searchID',{})(
+                    <Form.Item>{getFieldDecorator('id',{})(
                       <Input placeholder="请输入活动ID" maxLength={50} />
                     )}
                     </Form.Item>
@@ -320,10 +379,13 @@ class EventMgmt extends Component {
                 </Row>
                 <Row gutter={24}>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('activityType',{})(
+                    <Form.Item>{getFieldDecorator('type',{})(
                       <Select placeholder="请选择活动类型" style={{ width: '100%' }}>
-                        <Option value="1">内部活动</Option>
-                        <Option value="2">外部活动</Option>
+                        {
+                          eventTypeList.length > 0 && eventTypeList.map((item, index) => (
+                            <Option key={index} value={item.id}>{item.name}</Option>
+                          ))
+                        }
                       </Select>
                     )}
                     </Form.Item>
@@ -331,19 +393,23 @@ class EventMgmt extends Component {
                   <Col span={8}>
                     <Form.Item>{getFieldDecorator('status',{})(
                       <Select placeholder="请选择活动状态" style={{ width: '100%' }}>
-                        <Option value="1">未开始</Option>
-                        <Option value="2">进行中</Option>
-                        <Option value="3">已结束</Option>
+                        {
+                          eventStatusList.length > 0 && eventStatusList.map((item, index) => (
+                            <Option key={index} value={item.id}>{item.name}</Option>
+                          ))
+                        }
                       </Select>
                     )}
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('activityCode',{})(
+                    <Form.Item>{getFieldDecorator('orgCode',{})(
                       <Select placeholder="请选择机构代码" style={{ width: '100%' }}>
-                        <Option value="1">100</Option>
-                        <Option value="2">200</Option>
-                        <Option value={null}>全部</Option>
+                        {
+                          orgCodeList.length > 0 && orgCodeList.map((item, index) => (
+                            <Option key={index} value={item.id}>{item.name}</Option>
+                          ))
+                        }
                       </Select>
                     )}
                     </Form.Item>
@@ -358,7 +424,7 @@ class EventMgmt extends Component {
                     <button className="current-btn bg-gray" onClick={() => {
                       this.setState({ 
                         pageNo: 0, 
-                        pageSize: 10 
+                        pageSize: 10
                       }, () => {
                         resetFields();
                         // this.requestListData()

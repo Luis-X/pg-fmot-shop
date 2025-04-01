@@ -38,11 +38,12 @@ class TopBar extends Component {
     // window.location.href = RoutePath.SsoLogout;
     api.logout({}).then((res) => {
       if (res) {
-        if (0 === res.data.code) {
+        const respData = res.data;
+        if (0 === respData.code) {
           localStorage.clear();
           window.location.href = RoutePath.SsoLogout;
         } else {
-          MyAlert({ errorMsg: res.data.message });
+          MyAlert({ errorMsg: respData.message });
         }
       }
     }).catch((err) => {

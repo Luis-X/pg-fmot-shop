@@ -24,14 +24,15 @@ export function ImportDataPicker({ show, type, onHide, updateList }) { // type�
     formData.append('file', file);
     api.internalAccountImport(formData).then((res) => {
       if (res) {
-        if (0 === res.data.code) {
+        const respData = res.data;
+        if (0 === respData.code) {
           setFirmLoading(false);
           document.getElementById('file').value = '';
           setFileData(null);
           setFileName('');
           updateList();
-          if (res.data.data.length > 0) {
-            let resultTxt = res.data.data;
+          if (respData.data.length > 0) {
+            let resultTxt = respData.data;
             Modal.error({
               width: 610,
               title: '导入数据错误',
@@ -68,7 +69,7 @@ export function ImportDataPicker({ show, type, onHide, updateList }) { // type�
           setFileData(null);
           setFileName('');
           setFirmLoading(false);
-          MyAlert({ errorMsg: res.data.message });
+          MyAlert({ errorMsg: respData.message });
         }
       }
     }).catch((err) => {
@@ -146,7 +147,7 @@ export function ImportDataPicker({ show, type, onHide, updateList }) { // type�
         <Drawer
           title={showTitle()}
           width={700}
-          visible={show}
+          open={show}
           // maskClosable={false}
           onClose={() => {
             setFileData(null);

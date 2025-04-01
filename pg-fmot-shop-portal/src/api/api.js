@@ -109,7 +109,7 @@ export const logout = (param) => {
       message:'success',
     }
   };
-  return clientMockData(res);
+  return clientMockData(res, param);
 };
 
 // 通用
@@ -126,11 +126,15 @@ export const orgCodeList = (param) => {
         {
           id: 2,
           name: '机构2',
+        },
+        {
+          id: 3,
+          name: '机构3',
         }
       ],
     },
   };
-  return clientMockData(res);
+  return clientMockData(res, param);
 };
 
 // 内部账号
@@ -157,7 +161,7 @@ export const internalAccountList = (param) => {
       }
     }
   };
-  return clientMockData(res);
+  return clientMockData(res, param);
 };
 export const internalAccountChangeStatus = (param) => {
   // return client.post(URL.internalAccountChangeStatus, param);
@@ -167,7 +171,7 @@ export const internalAccountChangeStatus = (param) => {
       message:'success',
     }
   };
-  return clientMockData(res);
+  return clientMockData(res, param);
 };
 export const internalAccountImport = (param) => {
   return client.post(URL.internalAccountImport, param);
@@ -207,7 +211,7 @@ export const externalAccountList = (param) => {
       }
     }
   };
-  return clientMockData(res);
+  return clientMockData(res, param);
 };
 export const externalAccountChangeStatus = (param) => {
   // return client.post(URL.externalAccountChangeStatus, param);
@@ -217,7 +221,7 @@ export const externalAccountChangeStatus = (param) => {
       message:'success',
     }
   };
-  return clientMockData(res);
+  return clientMockData(res, param);
 };
 export const externalAccountImport = (param) => {
   return client.post(URL.externalAccountImport, param);
@@ -257,7 +261,7 @@ export const eventList = (param) => {
       }
     }
   };
-  return clientMockData(res);
+  return clientMockData(res, param);
 };
 export const eventCopy = (param) => {
   // return client.post(URL.eventCopy, param);
@@ -266,7 +270,7 @@ export const eventCopy = (param) => {
       code: 0,
     },
   };
-  return clientMockData(res);
+  return clientMockData(res, param);
 };
 export const eventDetail = (param) => {
   // return client.post(URL.eventDetail, param);
@@ -307,7 +311,7 @@ export const eventDetail = (param) => {
       }
     }
   }
-  return clientMockData(res);
+  return clientMockData(res, param);
 };
 export const eventCreate = (param) => {
   // return client.post(URL.eventCreate, param);
@@ -316,7 +320,7 @@ export const eventCreate = (param) => {
       code: 0,
     },
   };
-  return clientMockData(res);
+  return clientMockData(res, param);
 };
 export const eventSave = (param) => {
   // return client.post(URL.eventSave, param);
@@ -325,7 +329,7 @@ export const eventSave = (param) => {
       code: 0,
     },
   };
-  return clientMockData(res);
+  return clientMockData(res, param);
 };
 export const eventGoodsList = (param) => {
   // return client.post(URL.eventGoodsList, param);
@@ -338,7 +342,7 @@ export const eventGoodsList = (param) => {
           goodsCode: 111,
           goodsName: '商品名称1',
           goodsPrice: '100',
-          goodsActivityPrice: '100',
+          // goodsActivityPrice: '100',
         },
         {
           id: 200,
@@ -364,7 +368,7 @@ export const eventGoodsList = (param) => {
       ],
     },
   };
-  return clientMockData(res);
+  return clientMockData(res, param);
 };
 
 // 订单
@@ -406,7 +410,7 @@ export const orderList = (param) => {
       }
     }
   }
-  return clientMockData(res);
+  return clientMockData(res, param);
 };
 
 // 商品
@@ -430,7 +434,7 @@ export const goodsList = (param) => {
       }
     }
   };
-  return clientMockData(res);
+  return clientMockData(res, param);
 };
 export const goodsCategoryList = (param) => {
   // return client.post(URL.goodsCategoryList, param);
@@ -449,7 +453,7 @@ export const goodsCategoryList = (param) => {
       ],
     },
   };
-  return clientMockData(res);
+  return clientMockData(res, param);
 };
 export const goodsDetail = (param) => {
   // return client.post(URL.goodsDetail, param);
@@ -474,7 +478,7 @@ export const goodsDetail = (param) => {
       },
     },
   };
-  return clientMockData(res);
+  return clientMockData(res, param);
 };
 export const goodsCreate = (param) => {
   // return client.post(URL.goodsCreate, param);
@@ -483,7 +487,7 @@ export const goodsCreate = (param) => {
       code: 0,
     },
   };
-  return clientMockData(res);
+  return clientMockData(res, param);
 };
 export const goodsSave = (param) => {
   // return client.post(URL.goodsSave, param);
@@ -492,7 +496,7 @@ export const goodsSave = (param) => {
       code: 0,
     },
   };
-  return clientMockData(res);
+  return clientMockData(res, param);
 };
 
 // 数据统计
@@ -514,6 +518,18 @@ export const trackList = (param) => {
             activityType: 1,
             count: 100,  
             times: 200,
+          },
+          {
+            id: 2,
+            activityId: 1,
+            activityName: '活动1',
+            createTime: '2022-01-01 12:00:00',
+            startTime: '2020-08-10 11:11:11',
+            endTime: '2021-08-10 11:11:11',
+            orgCode: '123456',                      
+            activityType: 1,
+            count: 100,  
+            times: 200,
           }
         ],
         totalElements: 2,
@@ -521,7 +537,7 @@ export const trackList = (param) => {
       }
     }
   };
-  return clientMockData(res);
+  return clientMockData(res, param);
 };
 export const trackPeopleList = (param) => {
   // return client.post(URL.trackPeopleList, param);
@@ -532,15 +548,40 @@ export const trackPeopleList = (param) => {
         content: [
           {
             id: 1,
-            name: '商品1',
-            count: 100,
-            times: 100,
           },
+          {
+            id: 2,
+          },
+          {
+            id: 3,
+          },
+          {
+            id: 4,
+          },
+          {
+            id: 5,
+          },
+          {
+            id: 6,
+          },
+          {
+            id: 7,
+          },
+          {
+            id: 8,
+          },
+          {
+            id: 9,
+          },
+          {
+            id: 10,
+          }
         ],
+        totalElements: 12
       },
     },
   };
-  return clientMockData(res);
+  return clientMockData(res, param);
 };
 export const trackTimesList = (param) => {
   // return client.post(URL.trackTimesList, param);
@@ -550,24 +591,85 @@ export const trackTimesList = (param) => {
       data: {
         content: [
           {
-            id: 1,
-            name: '商品1',
-            count: 100,
-            times: 100,
+            id: 10,
+          },
+          {
+            id: 11,
+          },
+          {
+            id: 12,
+          },
+          {
+            id: 13,
+          },
+          {
+            id: 14,
+          },
+          {
+            id: 15,
+          },
+          {
+            id: 16,
+          },
+          {
+            id: 17,
+          },
+          {
+            id: 18,
+          },
+          {
+            id: 19,
+          },
+          {
+            id: 20,
+          },
+          {
+            id: 21,
           },
         ],
+        totalElements: 12
       },
     },
   };
-  return clientMockData(res);
+  return clientMockData(res, param);
 };
 export const trackChart = (param) => {
-  return client.post(URL.trackChart, param);
+  // return client.post(URL.trackChart, param);
+  const res = {
+    data: {
+      code: 0,
+      data: {
+        content: [
+          { type: '轮播图视频观看人数', duration: '0', people: 0 },
+          { type: '轮播图视频观看人数', duration: '0', people: 5 },
+          { type: '轮播图视频观看人数', duration: '5', people: 15 },
+          { type: '轮播图视频观看人数', duration: '10', people: 10 },
+          { type: '轮播图视频观看人数', duration: '15', people: 25 },
+          { type: '轮播图视频观看人数', duration: '20', people: 0 },
+          { type: '商品详情视频观看人数', duration: '0', people: 0 },
+          { type: '商品详情视频观看人数', duration: '5', people: 10 },
+          { type: '商品详情视频观看人数', duration: '10', people: 15 },
+          { type: '商品详情视频观看人数', duration: '15', people: 20 },
+          { type: '商品详情视频观看人数', duration: '20', people: 25 },
+          { type: '商品详情视频观看人数', duration: '25', people: 30 },
+          { type: '商品详情视频观看人数', duration: '30', people: 35 },
+          { type: '商品详情视频观看人数', duration: '35', people: 40 },
+          { type: '商品详情视频观看人数', duration: '40', people: 10 },
+          { type: '商品详情视频观看人数', duration: '45', people: 5 },
+          { type: '商品详情视频观看人数', duration: '50', people: 50 },
+          { type: '商品详情视频观看人数', duration: '55', people: 100 },
+          { type: '商品详情视频观看人数', duration: '60', people: 0 },
+        ]
+      },
+    },
+  }
+  return clientMockData(res, param);
 };
 
 
 // 模拟请求
-const clientMockData = (res) => new Promise((resolve, reject) => {
+const clientMockData = (res, param) => new Promise((resolve, reject) => {
+  console.log('param', param);
   setTimeout(() => {
     resolve(res);
   }, 1000);

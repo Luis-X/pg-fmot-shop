@@ -34,22 +34,31 @@ class OrderMgmt extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [],
       orgCodeList: [],
-      selectOrgCodeList: [],
-      payStatusData: [
+      deliveryTypeList: [
         {
-          id: 'PAID',
-          name: 'Paid',
+          id: 10,
+          name: '自提',
         },
         {
-          id: 'UNPAID',
-          name: 'Unpaid',
+          id: 20,
+          name: '邮寄',
         },
       ],
-      loadingShow: false,
-      reportQueryData: null,
+      orderStatusList: [
+        {
+          id: 100,
+          name: '交易成功',
+        },
+        {
+          id: 200,
+          name: '已取消',
+        },
+      ],
 
+      data: [],
+      loadingShow: false,
+      queryData: null,
       pageNo: 0,
       pageSize: 10,
       totalNum: 10,
@@ -67,77 +76,56 @@ class OrderMgmt extends Component {
    */
   requestListData = () => {
     const self = this;
-    const { pageNo, pageSize, reportQueryData } = self.state;
+    const { pageNo, pageSize, queryData } = self.state;
     self.setState({ loadingShow: true });
-    if (reportQueryData && reportQueryData.date) {
-      reportQueryData.beginDate = moment(
-        new Date(reportQueryData.date[0])
+    if (queryData && queryData.date) {
+      queryData.beginDate = moment(
+        new Date(queryData.date[0])
       ).format('YYYY-MM-DD');
-      reportQueryData.endDate = moment(
-        new Date(reportQueryData.date[1])
+      queryData.endDate = moment(
+        new Date(queryData.date[1])
       ).format('YYYY-MM-DD');
-      delete reportQueryData.date;
+      delete queryData.date;
     }
-    api
-      .orderList({
-        ...reportQueryData,
-        page: pageNo,
-        size: pageSize,
-      })
-      .then((res) => {
-        self.setState({ loadingShow: false });
-        if (res) {
-          if (0 === res.data.code) {
-            self.setState({
-              data: res.data.data.content,
-              totalNum: res.data.data.totalElements,
-            });
-          } else {
-            MyAlert({ errorMsg: res.data.message });
-          }
+    api.orderList({
+      ...queryData,
+      page: pageNo,
+      size: pageSize,
+    }).then((res) => {
+      self.setState({ loadingShow: false });
+      if (res) {
+        const respData = res.data;
+        if (0 === respData.code) {
+          self.setState({
+            data: respData.data.content,
+            totalNum: respData.data.totalElements,
+          });
+        } else {
+          MyAlert({ errorMsg: respData.message });
         }
-      })
-      .catch((err) => {
-        self.setState({ loadingShow: false });
-        message.error(err ? err : '网络请求失败, 请重试!', 2);
-      });
+      }
+    }).catch((err) => {
+      self.setState({ loadingShow: false });
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    });
   };
 
   // 机构代码
   requestOrgCodeListData = () => {
     const self = this;
-    api
-      .orgCodeList()
-      .then((res) => {
-        if (res) {
-          if (0 === res.data.code) {
-            self.setState({
-              orgCodeList: res.data.data,
-            });
-          } else {
-            MyAlert({ errorMsg: res.data.message });
-          }
+    api.orgCodeList().then((res) => {
+      if (res) {
+        const respData = res.data;
+        if (0 === respData.code) {
+          self.setState({
+            orgCodeList: respData.data,
+          });
+        } else {
+          MyAlert({ errorMsg: respData.message });
         }
-      })
-      .catch((err) => {
-        self.setState({ loadingShow: false });
-        message.error(err ? err : '网络请求失败, 请重试!', 2);
-      });
-  };
-
-  // 选择机构代码
-  selectOrgCode = (value) => {
-    const self = this;
-    let { orgCodeList } = self.state;
-    let list = [];
-    for (const key in orgCodeList) {
-      if (orgCodeList[key].id === value) {
-        list = orgCodeList[key].shopAreas;
-        break;
       }
-    }
-    self.setState({
-      selectOrgCodeList: list || [],
+    }).catch((err) => {
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
     });
   };
 
@@ -165,7 +153,7 @@ class OrderMgmt extends Component {
     const self = this;
     self.props.form.validateFields((err, values) => {
       if (!err) {
-        self.setState({ reportQueryData: values }, () => {
+        self.setState({ queryData: values }, () => {
           self.requestListData();
         });
       }
@@ -234,7 +222,7 @@ class OrderMgmt extends Component {
   };
 
   render() {
-    const { orgCodeList } = this.state;
+    const { orgCodeList, deliveryTypeList, orderStatusList } = this.state;
     const {
       form: { resetFields, getFieldDecorator },
     } = this.props;
@@ -338,13 +326,7 @@ class OrderMgmt extends Component {
         <Divider style={{ margin: '3px 0' }} />
         <div className="common-list">
           <div className="item1">
-            <Form
-              className="user_search"
-              onFinish={() => {
-                this.onFinish();
-              }}
-              style={{ alignItems: 'baseline' }}
-            >
+            <Form className="user_search" onFinish={() => { this.onFinish(); }} style={{ alignItems: 'baseline' }}>
               <div className="flex1">
                 <Row gutter={24}>
                   <Col span={8}>
@@ -354,12 +336,7 @@ class OrderMgmt extends Component {
                           'date',
                           {}
                         )(
-                          <RangePicker
-                            style={{ width: '100%' }}
-                            placeholder={[
-                              '请选择查询时间段',
-                              '请选择查询时间段',
-                            ]}
+                          <RangePicker style={{ width: '100%' }} placeholder={['请选择查询时间段', '请选择查询时间段']}
                           />
                         )}
                       </Form.Item>
@@ -382,23 +359,19 @@ class OrderMgmt extends Component {
                     </Form.Item>
                   </Col>
                 </Row>
-                <Row gutter={24} style={{ marginTop: 10 }}>
+                <Row gutter={24}>
                   <Col span={8}>
                     <Form.Item>
                       {getFieldDecorator(
                         'shopMarketId',
                         {}
                       )(
-                        <Select
-                          placeholder="请选择机构代码"
-                          onSelect={this.selectOrgCode}
-                        >
-                          {orgCodeList.length > 0 &&
-                            orgCodeList.map((item, index) => (
-                              <Option key={index} value={item.id}>
-                                {item.name}
-                              </Option>
-                            ))}
+                        <Select placeholder="请选择机构代码" style={{ width: '100%' }}>
+                          {
+                            orgCodeList.length > 0 && orgCodeList.map((item, index) => (
+                              <Option key={index} value={item.id}>{item.name}</Option>
+                            ))
+                          }
                         </Select>
                       )}
                     </Form.Item>
@@ -420,7 +393,7 @@ class OrderMgmt extends Component {
                     </Form.Item>
                   </Col>
                 </Row>
-                <Row gutter={24} style={{ marginTop: 10 }}>
+                <Row gutter={24}>
                   <Col span={8}>
                     <Form.Item>
                       {getFieldDecorator(
@@ -435,12 +408,12 @@ class OrderMgmt extends Component {
                         'payStatus',
                         {}
                       )(
-                        <Select
-                          placeholder="请选择发货类型"
-                          style={{ width: '100%' }}
-                        >
-                          <Option value="PICKUP">自提</Option>
-                          <Option value="EXPRESS">邮寄</Option>
+                        <Select placeholder="请选择发货类型" style={{ width: '100%' }}>
+                          {
+                            deliveryTypeList.length > 0 && deliveryTypeList.map((item, index) => (
+                              <Option key={index} value={item.id}>{item.name}</Option>
+                            ))
+                          }
                         </Select>
                       )}
                     </Form.Item>
@@ -451,64 +424,45 @@ class OrderMgmt extends Component {
                         'shopAreaId',
                         {}
                       )(
-                        <Select
-                          placeholder="请选订单状态"
-                          style={{ width: '100%' }}
-                        >
-                          <Option value="SUCCESS">交易成功</Option>
-                          <Option value="CANCEL">已取消</Option>
+                        <Select placeholder="请选订单状态" style={{ width: '100%' }}>
+                          {
+                            orderStatusList.length > 0 && orderStatusList.map((item, index) => (
+                              <Option key={index} value={item.id}>{item.name}</Option>
+                            ))
+                          }
                         </Select>
                       )}
                     </Form.Item>
                   </Col>
                 </Row>
-                <Row gutter={24} style={{ marginTop: 10 }}>
-                  <Col
-                    span={24}
-                    style={{ display: 'flex', justifyContent: 'end' }}
-                  >
+                <Row gutter={24}>
+                  <Col span={24} style={{ display: 'flex', justifyContent: 'end' }}>
                     <div className="btn-width">
-                      <button
-                        className="current-btn"
-                        onClick={() => {
-                          this.setState({ pageNo: 0 });
-                        }}
-                      >
+                      <button className="current-btn" onClick={() => {
+                        this.setState({ pageNo: 0 });
+                      }}>
                         <SearchOutlined />
                         <span>查询</span>
                       </button>
-                      <button
-                        className="current-btn"
-                        onClick={() => {
-                          this.setState(
-                            {
-                              pageNo: 0,
-                              // pageSize: 10,
-                            },
-                            () => {
-                              this.exportAll();
-                            }
-                          );
-                        }}
-                      >
+                      <button className="current-btn" onClick={() => {
+                        this.setState({
+                          pageNo: 0,
+                          // pageSize: 10,
+                        }, () => {
+                          this.exportAll();
+                        });
+                      }}>
                         <ExportOutlined />
                         <span>导出 Excel</span>
                       </button>
-                      <button
-                        className="current-btn bg-gray"
-                        onClick={() => {
-                          this.setState(
-                            {
-                              pageNo: 0,
-                              pageSize: 10,
-                              selectOrgCodeList: [],
-                            },
-                            () => {
-                              resetFields();
-                            }
-                          );
-                        }}
-                      >
+                      <button className="current-btn bg-gray" onClick={() => {
+                        this.setState({
+                          pageNo: 0,
+                          pageSize: 10,
+                        }, () => {
+                          resetFields();
+                        });
+                      }}>
                         <ReloadOutlined />
                         <span>重置</span>
                       </button>
@@ -523,7 +477,7 @@ class OrderMgmt extends Component {
               size="middle"
               loading={this.state.loadingShow}
               pagination={false}
-              rowKey="couponCode"
+              rowKey="id"
               columns={columns}
               dataSource={this.state.data}
               rowClassName={(record, idx) => {

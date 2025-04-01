@@ -12,6 +12,7 @@ import {
   DatePicker,
   Tabs,
   Input,
+  Spin
 } from 'antd';
 import {
   SearchOutlined,
@@ -22,7 +23,7 @@ import HomeLayout from '../../common/LayoutStyle';
 import * as api from '../../api/api';
 import MyAlert from '../../components/MyAlert';
 import zhCN from 'antd/es/locale/zh_CN';
-// import ReactECharts from 'echarts-for-react';
+import { Line } from '@ant-design/charts';
 
 const { RangePicker } = DatePicker;
 
@@ -34,7 +35,7 @@ class TrackDetail extends Component {
       loadingShow: false,
       eventID: '',
       queryData: null,
-      tabIndex: 0, // 0: 人数 1: 次数
+      tabIndex: 0, // 0: 人数 1: 次数 2: 图表
 
       pageNo: 0,
       pageSize: 10,
@@ -44,92 +45,41 @@ class TrackDetail extends Component {
 
   async componentDidMount() {
     const self = this;
-    self.requestListData();
+    self.tabOnChange('tab-1');
   }
 
-  /**
-   * 列表数据请求
-   */
-  requestListData = () => {
+  tabOnChange = (value) => {
     const self = this;
-    const { pageNo, pageSize, queryData } = self.state;
-    self.setState({ loadingShow: true });
-    api.eventList({
-      ...queryData,
-      page: pageNo,
-      size: pageSize,
-    }).then((res) => {
-      self.setState({ loadingShow: false });
-      if (res) {
-        if (0 === res.data.code) {
-          self.setState({
-            data: res.data.data.content,
-            totalNum: res.data.data.totalElements,
-          });
+    let tabIndex = 0;
+    if (value === 'tab-1') {
+      tabIndex = 0;
+    } else if (value === 'tab-2') {
+      tabIndex = 1;
+    } else if (value === 'tab-3') {
+      tabIndex = 2;
+    }
+
+    self.setState(
+      {
+        tabIndex,
+        pageNo: 0,
+        data: [],
+        totalNum: 10,
+        queryData: null,
+      },
+      () => {
+        console.log(self.state.tabIndex);
+        if (tabIndex === 0) {
+          self.requestPeopleListData();
+        } else if (tabIndex === 1) {
+          self.requestTimesListData();
+        } else if (tabIndex === 2) {
+          self.requestChartData();
         } else {
-          MyAlert({ errorMsg: res.data.message });
+          console.log('error tab');
         }
       }
-    }).catch((err) => {
-      self.setState({ loadingShow: false });
-      message.error(err ? err : '网络请求失败, 请重试!', 2);
-    });
-  };
-
-  /**
-   * 翻页OnChange
-   */
-  pageOnChange(pageNo, pageSize) {
-    const self = this;
-    self.setState({
-      pageNo,
-      pageSize,
-      totalNum: self.state.totalNum,
-    }, () => {
-      self.requestListData();
-    });
-  }
-
-   /**
-   * 渲染列表
-   */
-   onFinish = () => {
-    const self = this;
-    self.props.form.validateFields((err, values) => {
-      if (!err) {
-        self.setState({ queryData: values }, () => {
-          self.requestListData();
-        });
-      }
-    });
-  };
-
-  /**
-   * 人数
-   */
-  clickSearchPeople = () => {
-    const self = this;
-    self.setState({
-      tabIndex: 0,
-      pageNo: 0,
-      queryFlg: true,
-    }, () => {
-      // self.requestListData()
-    });
-  };
-
-  /**
-   * 次数
-   */
-  clickSearchTimes = () => {
-    const self = this;
-    self.setState({
-      tabIndex: 1,
-      pageNo: 0,
-      queryFlg: true,
-    }, () => {
-      // self.requestListData()
-    });
+    );
   };
 
   /**
@@ -137,6 +87,163 @@ class TrackDetail extends Component {
    */
   clickBackBtn = () => {
     window.history.back();
+  };
+
+  /**
+   * 渲染列表
+   */
+  onFinish = () => {
+    const self = this;
+    self.props.form.validateFields((err, values) => {
+      if (!err) {
+        self.setState(
+          {
+            queryData: values,
+          },
+          () => {
+            self.clickSearchChart();
+          }
+        );
+      }
+    });
+  };
+
+  /**
+   * 人数
+   */
+  requestPeopleListData = () => {
+    const self = this;
+    const { pageNo, pageSize, queryData } = self.state;
+    self.setState({ loadingShow: true });
+    api
+      .trackPeopleList({
+        ...queryData,
+        page: pageNo,
+        size: pageSize,
+      })
+      .then((res) => {
+        self.setState({ loadingShow: false });
+        if (res) {
+          const respData = res.data;
+          if (0 === respData.code) {
+            self.setState({
+              data: respData.data.content,
+              totalNum: respData.data.totalElements,
+            });
+          } else {
+            MyAlert({ errorMsg: respData.message });
+          }
+        }
+      })
+      .catch((err) => {
+        self.setState({ loadingShow: false });
+        message.error(err ? err : '网络请求失败, 请重试!', 2);
+      });
+  };
+
+  peoplePageOnChange(pageNo, pageSize) {
+    const self = this;
+    self.setState(
+      {
+        pageNo,
+        pageSize,
+        totalNum: self.state.totalNum,
+      },
+      () => {
+        self.requestPeopleListData();
+      }
+    );
+  }
+
+  /**
+   * 次数
+   */
+  requestTimesListData = () => {
+    const self = this;
+    const { pageNo, pageSize, queryData } = self.state;
+    self.setState({ loadingShow: true });
+    api
+      .trackTimesList({
+        ...queryData,
+        page: pageNo,
+        size: pageSize,
+      })
+      .then((res) => {
+        self.setState({ loadingShow: false });
+        if (res) {
+          const respData = res.data;
+          if (0 === respData.code) {
+            self.setState({
+              data: respData.data.content,
+              totalNum: respData.data.totalElements,
+            });
+          } else {
+            MyAlert({ errorMsg: respData.message });
+          }
+        }
+      })
+      .catch((err) => {
+        self.setState({ loadingShow: false });
+        message.error(err ? err : '网络请求失败, 请重试!', 2);
+      });
+  };
+
+  timesPageOnChange(pageNo, pageSize) {
+    const self = this;
+    self.setState(
+      {
+        pageNo,
+        pageSize,
+        totalNum: self.state.totalNum,
+      },
+      () => {
+        self.requestTimesListData();
+      }
+    );
+  }
+
+  /**
+   * 图表
+   */
+  clickSearchChart = () => {
+    const self = this;
+    self.setState(
+      {
+        tabIndex: 2,
+        data: [],
+      },
+      () => {
+        self.requestChartData();
+      }
+    );
+  };
+
+  requestChartData = () => {
+    const self = this;
+    const { queryData } = self.state;
+
+    self.setState({ loadingShow: true });
+    api
+      .trackChart({
+        ...queryData,
+      })
+      .then((res) => {
+        self.setState({ loadingShow: false });
+        if (res) {
+          const respData = res.data;
+          if (0 === respData.code) {
+            self.setState({
+              data: respData.data.content,
+            });
+          } else {
+            MyAlert({ errorMsg: respData.message });
+          }
+        }
+      })
+      .catch((err) => {
+        self.setState({ loadingShow: false });
+        message.error(err ? err : '网络请求失败, 请重试!', 2);
+      });
   };
 
   // 人数列表
@@ -249,31 +356,33 @@ class TrackDetail extends Component {
       },
     ];
     return (
-      <>
-        <Table
-          size="middle"
-          loading={this.state.loadingShow}
-          pagination={false}
-          rowKey="id"
-          columns={peopleColumns}
-          dataSource={this.state.data}
-          rowClassName={(record, idx) => {
-            if (idx % 2 === 1) return 'bg-row';
-          }}
-        />
-        {this.state.data.length > 0 && (
-          <Pagination
-            style={{ paddingTop: '25px' }}
-            // scroll={{ x: 1366}}
-            pageSize={this.state.pageSize}
-            current={this.state.pageNo + 1}
-            total={this.state.totalNum}
-            onChange={(pageNo, pageSize) =>
-              this.pageOnChange(pageNo - 1, pageSize)
-            }
+      <div className="common-list">
+        <div className="item2">
+          <Table
+            size="middle"
+            loading={this.state.loadingShow}
+            pagination={false}
+            rowKey="id"
+            columns={peopleColumns}
+            dataSource={this.state.data}
+            rowClassName={(record, idx) => {
+              if (idx % 2 === 1) return 'bg-row';
+            }}
           />
-        )}
-      </>
+          {this.state.data.length > 0 && (
+            <Pagination
+              style={{ paddingTop: '25px' }}
+              // scroll={{ x: 1366}}
+              pageSize={this.state.pageSize}
+              current={this.state.pageNo + 1}
+              total={this.state.totalNum}
+              onChange={(pageNo, pageSize) =>
+                this.peoplePageOnChange(pageNo - 1, pageSize)
+              }
+            />
+          )}
+        </div>
+      </div>
     );
   };
 
@@ -387,160 +496,184 @@ class TrackDetail extends Component {
       },
     ];
     return (
-      <>
-        <Table
-          size="middle"
-          loading={this.state.loadingShow}
-          pagination={false}
-          rowKey="id"
-          columns={timesColumns}
-          dataSource={this.state.data}
-          rowClassName={(record, idx) => {
-            if (idx % 2 === 1) return 'bg-row';
-          }}
-        />
-        {this.state.data.length > 0 && (
-          <Pagination
-            style={{ paddingTop: '25px' }}
-            // scroll={{ x: 1366}}
-            pageSize={this.state.pageSize}
-            current={this.state.pageNo + 1}
-            total={this.state.totalNum}
-            onChange={(pageNo, pageSize) =>
-              this.pageOnChange(pageNo - 1, pageSize)
-            }
+      <div className="common-list">
+        <div className="item2">
+          <Table
+            size="middle"
+            loading={this.state.loadingShow}
+            pagination={false}
+            rowKey="id"
+            columns={timesColumns}
+            dataSource={this.state.data}
+            rowClassName={(record, idx) => {
+              if (idx % 2 === 1) return 'bg-row';
+            }}
           />
-        )}
-      </>
+          {this.state.data.length > 0 && (
+            <Pagination
+              style={{ paddingTop: '25px' }}
+              // scroll={{ x: 1366}}
+              pageSize={this.state.pageSize}
+              current={this.state.pageNo + 1}
+              total={this.state.totalNum}
+              onChange={(pageNo, pageSize) =>
+                this.timesPageOnChange(pageNo - 1, pageSize)
+              }
+            />
+          )}
+        </div>
+      </div>
     );
   };
 
   // 图表
   lineChartView = () => {
-    // const options = {
-    //   grid: { top: 8, right: 8, bottom: 24, left: 36 },
-    //   xAxis: {
-    //     type: 'category',
-    //     // data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    //   },
-    //   yAxis: {
-    //     type: 'value',
-    //   },
-    //   series: [
-    //     {
-    //       data: [820, 932, 901, 934, 1290, 1330, 1320],
-    //       type: 'line',
-    //       smooth: true,
-    //     },
-    //     {
-    //       data: [10, 932, 901, 934, 1290, 1330, 1320],
-    //       type: 'line',
-    //       smooth: true,
-    //     },
-    //   ],
-    //   tooltip: {
-    //     trigger: 'axis',
-    //   },
-    // };
-  
-    // return <ReactECharts option={options} />;
-  };
+    const data = this.state.data;
+    const config = {
+      data,
+      height: 500,
+      xField: 'duration',
+      xAxis: {
+        title: {
+          position: 'end',
+          // autoRotate: false,
+          offset: 50,
+          text: '观看时长(S)',
+          style: {
+            fontSize: 16,
+          },
+        },
+      },
+      yField: 'people',
+      yAxis: {
+        title: {
+          position: 'end',
+          // autoRotate: false,
+          offset: 50,
+          text: '观看人数(%)',
+          style: {
+            fontSize: 16,
+          },
+        },
+        min: 0,
+        max: 100,
+        tickInterval: 10,
+      },
+      // smooth: true,
+      seriesField: 'type',
+      color: ['#1979C9', '#FAA219'],
+    };
 
-  /**
-   * 查询
-   */
-  clickSearchBtn = () => {
-    const self = this;
-    self.setState({ 
-      pageNo: 0, 
-      queryFlg: true 
-    }, () => {
-      // self.requestListData()
-    });
-  };
-
-  render() {
     const {
-      form: { resetFields, getFieldDecorator }
+      form: { resetFields, getFieldDecorator },
     } = this.props;
+
+    return (
+      <div className="common-list">
+        <div className="item1">
+          <Form className="user_search" onFinish={() => {
+            this.onFinish();
+          }}>
+          <div className="flex1">
+            <Row gutter={24}>
+              <Col span={8}>
+                <ConfigProvider locale={zhCN}>
+                  <Form.Item>
+                    {
+                      getFieldDecorator(
+                        'date',
+                        {}
+                      )(
+                        <RangePicker style={{ width: '100%' }} placeholder={['请选择查询时间段', '请选择查询时间段']} />
+                      )
+                    }
+                  </Form.Item>
+                </ConfigProvider>
+              </Col>
+              <Col span={8}>
+                <Form.Item>
+                  {
+                    getFieldDecorator(
+                      'searchValue',
+                      {}
+                    )(
+                      <Input placeholder="请输入商品编号" maxLength={50} />
+                    )
+                  }
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={24}>
+              <div className="btn-width">
+                <button className="current-btn" onClick={() => {
+                  this.clickSearchChart();
+                }}>
+                  <SearchOutlined />
+                  <span>查询</span>
+                </button>
+                <button className="current-btn bg-gray" onClick={() => {
+                  resetFields();
+                  this.clickSearchChart();
+                }}>
+                  <ReloadOutlined />
+                  <span>重置</span>
+                </button>
+              </div>
+            </Row>
+          </div>
+        </Form>
+      </div>
+      <div className="item2">
+        <p className="track-chart-title">商品视频观看时长统计</p>
+        {
+          this.state.loadingShow ? (
+            <div className="track-chart-loading">
+              <Spin />
+            </div>
+          ) : (
+            <Line {...config} />
+          )
+        }
+      </div>
+    </div>
+  );
+};
+
+  render() {    
+    const tabItems = [
+      {
+        key: 'tab-1',
+        label: '人数',
+        children: (
+          this.peopleTableView()
+        )
+      },
+      {
+        key: 'tab-2',
+        label: '次数',
+        children: (
+          this.timesTableView()
+        )
+      },
+      {
+        key: 'tab-3',
+        label: '图表',
+        children: (
+          this.lineChartView()
+        )
+      },
+    ];
     return (
       <HomeLayout>
-        <button
-          className="current-btn"
-          onClick={() => {
-            this.clickBackBtn();
-          }}
-        >
+        <button className="current-btn" onClick={() => {
+          this.clickBackBtn();
+        }}>
           <LeftOutlined />
           <span>返回</span>
         </button>
         <p className="list-title">数据详情</p>
         <Divider style={{ margin: '3px 0' }} />
-          <Tabs>
-            <Tabs.TabPane tab="人数" key="item-1">
-              <div className="common-list">          
-                <div className="item2">
-                  {this.peopleTableView()}
-                </div>
-              </div>
-            </Tabs.TabPane>
-            <Tabs.TabPane tab="次数" key="item-2">
-              <div className="common-list">          
-                <div className="item2">
-                  {this.timesTableView()}
-                </div>
-              </div>
-            </Tabs.TabPane>
-            <Tabs.TabPane tab="图表" key="item-3">
-              <div className="common-list">  
-                <div className="item1">
-                  <Form className="user_search" onFinish={() => { this.onFinish(); }}>
-                    <div className="flex1">
-                      <Row gutter={24}>
-                        <Col span={8}>
-                          <ConfigProvider locale={zhCN}>
-                            <Form.Item>{getFieldDecorator('date',{})(
-                              <RangePicker style={{ width: '100%' }} placeholder={['请选择查询时间段', '请选择查询时间段']} />
-                            )}
-                            </Form.Item>
-                          </ConfigProvider>
-                        </Col>
-                        <Col span={8}>
-                          <Form.Item>{getFieldDecorator('searchValue',{})(
-                            <Input placeholder="请输入商品编号" maxLength={50} />
-                          )}
-                          </Form.Item>
-                        </Col>
-                      </Row>                        
-                      <Row gutter={24}>
-                        <div className="btn-width">
-                          <button className="current-btn" onClick={() => { this.clickSearchBtn(); }}>
-                            <SearchOutlined />
-                            <span>查询</span>
-                          </button>
-                          <button className="current-btn bg-gray" onClick={() => {
-                            this.setState({ 
-                              pageNo: 0, 
-                              pageSize: 10 
-                            }, () => {
-                              resetFields();
-                              // this.requestListData()
-                            });
-                          }}>
-                            <ReloadOutlined />
-                            <span>重置</span>
-                          </button>
-                        </div>
-                      </Row>
-                    </div>
-                  </Form>
-                </div>        
-                <div className="item2">
-                  {this.lineChartView()}
-                </div>
-              </div>
-            </Tabs.TabPane>
-          </Tabs>          
+        <Tabs onChange={this.tabOnChange} items={tabItems}></Tabs>
       </HomeLayout>
     );
   }

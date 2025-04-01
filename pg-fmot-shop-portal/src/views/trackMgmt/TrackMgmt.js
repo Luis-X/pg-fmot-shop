@@ -62,13 +62,14 @@ class TrackMgmt extends Component {
     }).then((res) => {
       self.setState({ loadingShow: false });
       if (res) {
-        if (0 === res.data.code) {
+        const respData = res.data;
+        if (0 === respData.code) {
           self.setState({
-            data: res.data.data.content,
-            totalNum: res.data.data.totalElements,
+            data: respData.data.content,
+            totalNum: respData.data.totalElements,
           });
         } else {
-          MyAlert({ errorMsg: res.data.message });
+          MyAlert({ errorMsg: respData.message });
         }
       }
     }).catch((err) => {
@@ -259,7 +260,7 @@ class TrackMgmt extends Component {
                       <Select placeholder="请选择机构代码" style={{ width: '100%' }}>
                         <Option value="ONE">100</Option>
                         <Option value="TWO">200</Option>
-                        <Option value={null}>全部</Option>
+                        <Option value="">全部</Option>
                       </Select>
                     )}
                     </Form.Item>

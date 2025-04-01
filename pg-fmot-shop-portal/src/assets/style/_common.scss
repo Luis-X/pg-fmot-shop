@@ -239,3 +239,18 @@
     padding: 0;
   }
 }
+
+.track-chart-loading {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.track-chart-title {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 30px;
+  font-weight: bold;
+}

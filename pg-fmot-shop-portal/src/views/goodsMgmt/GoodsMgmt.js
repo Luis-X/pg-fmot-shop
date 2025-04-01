@@ -31,13 +31,13 @@ class GoodsMgmt extends Component {
     this.state = {
       data: [],
       loadingShow: false,
-      visible: false,
-      eventID: '',
       queryData: null,
-
       pageNo: 0,
       pageSize: 10,
       totalNum: 10,
+
+      isShow: false,
+      goodsID: '',
     };
   }
 
@@ -60,13 +60,14 @@ class GoodsMgmt extends Component {
     }).then((res) => {
       self.setState({ loadingShow: false });
       if (res) {
-        if (0 === res.data.code) {
+        const respData = res.data;
+        if (0 === respData.code) {
           self.setState({
-            data: res.data.data.content,
-            totalNum: res.data.data.totalElements,
+            data: respData.data.content,
+            totalNum: respData.data.totalElements,
           });
         } else {
-          MyAlert({ errorMsg: res.data.message });
+          MyAlert({ errorMsg: respData.message });
         }
       }
     }).catch((err) => {
@@ -109,8 +110,8 @@ class GoodsMgmt extends Component {
   clickItemDetail = (record) => {
     const self = this;
     self.setState({
-      visible: true,
-      eventID: record.id
+      isShow: true,
+      goodsID: record.id
     });
   }
 
@@ -133,8 +134,8 @@ class GoodsMgmt extends Component {
   clickCreateGoods = () => {
     const self = this;
     self.setState({
-      visible: true,
-      eventID: ''
+      isShow: true,
+      goodsID: ''
     });
   }
 
@@ -205,12 +206,12 @@ class GoodsMgmt extends Component {
     return (
       <HomeLayout>
         {
-          this.state.visible ? (
+          this.state.isShow ? (
             <AddGoodsFun
-              eventId={this.state.eventID}
-              show={this.state.visible}
+              goodsId={this.state.goodsID}
+              show={this.state.isShow}
               onHide={() => {
-                this.setState({ visible: false });
+                this.setState({ isShow: false });
               }}
               updateList={() => {
                 resetFields();
