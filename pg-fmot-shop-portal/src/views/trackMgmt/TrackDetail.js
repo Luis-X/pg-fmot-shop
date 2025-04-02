@@ -585,43 +585,73 @@ class TrackDetail extends Component {
 
   // 图表
   lineChartView = () => {
-    const data = this.state.data;
+    // const data = this.state.data;
+    let data = [];
+    let list = [];
+    for (let i = 0; i < 61; i++) {
+      list.push({ 
+        type: '轮播图视频观看人数', 
+        second: i, 
+        value: 90 - i - Math.floor(Math.random() * 20)  
+      })
+      list.push({ 
+        type: '商品详情视频观看人数', 
+        second: i, 
+        value: 90 - i - Math.floor(Math.random() * 20) 
+      })
+    }
+    data = list;
+
     const config = {
       data,
       height: 500,
-      xField: 'duration',
+      xField: 'second',
+      yField: 'value',
       xAxis: {
         title: {
           position: 'end',
-          // autoRotate: false,
-          offset: 50,
           text: '观看时长(S)',
           style: {
-            fontSize: 16,
+            fontSize: 12,
           },
         },
-        // min: 0,
-        // max: 60,
-        // tickInterval: 3,
+        min: 0,
+        max: 60,
+        tickInterval: 3,
+        tickCount: 20,
       },
-      yField: 'people',
       yAxis: {
         title: {
           position: 'end',
-          // autoRotate: false,
-          offset: 50,
           text: '观看人数(%)',
           style: {
-            fontSize: 16,
+            fontSize: 12,
           },
         },
         min: 0,
         max: 100,
         tickInterval: 10,
+        tickCount: 10,
       },
-      // smooth: true,
+      legend: {
+        layout: 'horizontal',
+        position: 'bottom',
+      },
       seriesField: 'type',
       color: ['#1979C9', '#FAA219'],
+      smooth: true,
+      // point: {
+      //   shapeField: 'square',
+      //   sizeField: 1,
+      // },
+      interaction: {
+        tooltip: {
+          marker: false,
+        },
+      },
+      style: {
+        lineWidth: 1,
+      },
     };
 
     const {
@@ -632,73 +662,73 @@ class TrackDetail extends Component {
       <div className="common-list">
         <div className="item1">
           <Form className="user_search" onFinish={() => { this.onFinishHandler(); }}>
-          <div className="flex1">
-            <Row gutter={24}>
-              <Col span={8}>
-                <ConfigProvider locale={zhCN}>
-                  <Form.Item>{getFieldDecorator('date',{})(
-                    <RangePicker
-                    showTime={true}
-                    format='YYYY-MM-DD HH:mm:ss'
-                    style={{ width: '100%' }} 
-                    placeholder={['请选择查询时间段', '请选择查询时间段']} />
+            <div className="flex1">
+              <Row gutter={24}>
+                <Col span={8}>
+                  <ConfigProvider locale={zhCN}>
+                    <Form.Item>{getFieldDecorator('date',{})(
+                      <RangePicker
+                      showTime={true}
+                      format='YYYY-MM-DD HH:mm:ss'
+                      style={{ width: '100%' }} 
+                      placeholder={['请选择查询时间段', '请选择查询时间段']} />
+                    )}
+                    </Form.Item>
+                  </ConfigProvider>
+                </Col>
+                <Col span={8}>
+                  <Form.Item>{getFieldDecorator('goodsId',{})(
+                    <ProFormSelect
+                      showSearch
+                      showArrow={false}
+                      allowClear
+                      labelInValue
+                      debounceTime={500}
+                      label="活动商品"
+                      request={this.requestGoodsSearchListData}
+                      rules={[{ required: true, message: '请输入商品编号' }]}
+                      placeholder="请输入商品编号"
+                    />
                   )}
                   </Form.Item>
-                </ConfigProvider>
-              </Col>
-              <Col span={8}>
-                <Form.Item>{getFieldDecorator('goodsId',{})(
-                  <ProFormSelect
-                    showSearch
-                    showArrow={false}
-                    allowClear
-                    labelInValue
-                    debounceTime={500}
-                    label="活动商品"
-                    request={this.requestGoodsSearchListData}
-                    rules={[{ required: true, message: '请输入商品编号' }]}
-                    placeholder="请输入商品编号"
-                  />
-                )}
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row gutter={24}>
-              <div className="btn-width">
-                <button className="current-btn" onClick={() => { this.clickSearchBtn(); }}>
-                  <SearchOutlined />
-                  <span>查询</span>
-                </button>
-                <button className="current-btn bg-gray" onClick={() => {
-                  this.setState({ 
-                    pageNo: 0, 
-                    pageSize: 10
-                  }, () => {
-                    resetFields();
-                  });
-                }}>
-                  <ReloadOutlined />
-                  <span>重置</span>
-                </button>
-              </div>
-            </Row>
-          </div>
-        </Form>
-      </div>
-      <div className="item2">
-        <p className="track-chart-title">商品视频观看时长统计</p>
-        {
-          this.state.loadingShow ? (
-            <div className="track-chart-loading">
-              <Spin />
+                </Col>
+              </Row>
+              <Row gutter={24}>
+                <div className="btn-width">
+                  <button className="current-btn" onClick={() => { this.clickSearchBtn(); }}>
+                    <SearchOutlined />
+                    <span>查询</span>
+                  </button>
+                  <button className="current-btn bg-gray" onClick={() => {
+                    this.setState({ 
+                      pageNo: 0, 
+                      pageSize: 10
+                    }, () => {
+                      resetFields();
+                    });
+                  }}>
+                    <ReloadOutlined />
+                    <span>重置</span>
+                  </button>
+                </div>
+              </Row>
             </div>
-          ) : (
-            <Line {...config} />
-          )
-        }
+          </Form>
+        </div>
+        <div className="item2">
+          <p className="track-chart-title">商品视频观看时长统计</p>
+          {
+            this.state.loadingShow ? (
+              <div className="track-chart-loading">
+                <Spin />
+              </div>
+            ) : (
+              <Line {...config} />
+            )
+          }
+        </div>
       </div>
-    </div>
-  );
+    );
   };
 
   // 商品搜索列表
