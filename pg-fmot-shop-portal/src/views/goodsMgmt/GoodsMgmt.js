@@ -29,6 +29,9 @@ class GoodsMgmt extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      goodsTypeList: [],
+      goodsCategoryList: [],
+
       data: [],
       loadingShow: false,
       queryData: null,
@@ -42,13 +45,41 @@ class GoodsMgmt extends Component {
   }
 
   async componentDidMount() {
-    const self = this;
+    const self = this;    
     self.requestListData();
+    self.requestGoodsCategoryListtData();
+    self.configGooodsTypeList();
   }
 
-  /**
-   * 列表数据请求
-   */
+  // 商品类型
+  configGooodsTypeList = () => {
+    const self = this;
+    const list = Dict.getOptionsList('goodsType');
+    self.setState({
+      goodsTypeList: list,
+    })
+  }
+
+  // 商品类别
+  requestGoodsCategoryListtData = () => {
+    const self = this;
+    api.goodsCategoryList().then((res) => {
+      if (res) {
+        const respData = res.data;
+        if (0 === respData.code) {
+          self.setState({
+            goodsCategoryList: respData.data,
+          });
+        } else {
+          MyAlert({ errorMsg: respData.message });
+        }
+      }
+    }).catch((err) => {
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    });
+  };
+
+  // 列表数据
   requestListData = () => {
     const self = this;
     const { pageNo, pageSize, queryData } = self.state;
@@ -76,9 +107,7 @@ class GoodsMgmt extends Component {
     });
   }; 
 
-  /**
-   * 翻页OnChange
-   */
+  // 翻页OnChange
   pageOnChange(pageNo, pageSize) {
     const self = this;
     self.setState({
@@ -90,23 +119,21 @@ class GoodsMgmt extends Component {
     });
   }
 
-  /**
-   * 渲染列表
-   */
+  // 渲染列表
   onFinish = () => {
     const self = this;
     self.props.form.validateFields((err, values) => {
       if (!err) {
-        self.setState({ queryData: values }, () => {
+        self.setState({ 
+          queryData: values 
+        }, () => {
           self.requestListData();
         });
       }
     });
   };
 
-  /**
-   * 查看详情
-   */
+  // 查看详情
   clickItemDetail = (record) => {
     const self = this;
     self.setState({
@@ -115,22 +142,17 @@ class GoodsMgmt extends Component {
     });
   }
 
-  /**
-   * 查询
-   */
+  // 查询
   clickSearchBtn = () => {
     const self = this;
     self.setState({ 
-      pageNo: 0, 
-      queryFlg: true 
+      pageNo: 0,
     }, () => {
-      // self.requestListData()
+      
     });
   };
 
-  /**
-   * 新增商品
-   */
+  // 新增商品
   clickCreateGoods = () => {
     const self = this;
     self.setState({
@@ -140,6 +162,7 @@ class GoodsMgmt extends Component {
   }
 
   render() {
+    const { goodsTypeList, goodsCategoryList } = this.state;
     const {
       form: { resetFields, getFieldDecorator }
     } = this.props;
@@ -232,29 +255,25 @@ class GoodsMgmt extends Component {
               <div className="flex1">
                 <Row gutter={24}>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('searchValue',{})(
-                      <Input placeholder="请输入商品编码" maxLength={50} />
+                    <Form.Item>{getFieldDecorator('goodsId',{})(
+                      <Input placeholder="请输入商品编码" />
                     )}
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('searchID',{})(
-                      <Input placeholder="请输入商品名称" maxLength={50} />
+                    <Form.Item>{getFieldDecorator('goodsName',{})(
+                      <Input placeholder="请输入商品名称" />
                     )}
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('activityType',{})(
-                      <Select placeholder="请选择商品类别" style={{ width: '100%' }}>
-                        <Option value="INTERNAL">洗发护理</Option>
-                        <Option value="EXTERNAL">女性护理</Option>
-                        <Option value="EXTERNAL">口腔护理</Option>
-                        <Option value="EXTERNAL">护肤</Option>
-                        <Option value="EXTERNAL">新品测试</Option>
-                        <Option value="EXTERNAL">个人护理</Option>
-                        <Option value="EXTERNAL">织物及家居护理</Option>
-                        <Option value="EXTERNAL">婴儿护理</Option>
-                        <Option value="EXTERNAL">Grooming</Option>
+                    <Form.Item>{getFieldDecorator('goodsCategory',{})(
+                      <Select placeholder="请选择商品类别" style={{ width: '100%' }}>                      
+                        {
+                          goodsCategoryList.length > 0 && goodsCategoryList.map((item, index) => (
+                            <Option key={index} value={item.id}>{item.name}</Option>
+                          ))
+                        }
                       </Select>
                     )}
                     </Form.Item>
@@ -262,10 +281,8 @@ class GoodsMgmt extends Component {
                 </Row>
                 <Row gutter={24}>                  
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('status',{})(
-                      <Select placeholder="请选择商品类型" style={{ width: '100%' }}>
-                        <Option value="START">实物</Option>
-                        <Option value="ING">虚拟商品</Option>
+                    <Form.Item>{getFieldDecorator('goodsType',{})(
+                      <Select placeholder="请选择商品类型" style={{ width: '100%' }} options={goodsTypeList}>
                       </Select>
                     )}
                     </Form.Item>
@@ -283,7 +300,6 @@ class GoodsMgmt extends Component {
                         pageSize: 10 
                       }, () => {
                         resetFields();
-                        // this.requestListData()
                       });
                     }}>
                       <ReloadOutlined />

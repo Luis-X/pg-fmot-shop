@@ -35,26 +35,8 @@ class OrderMgmt extends Component {
     super(props);
     this.state = {
       orgCodeList: [],
-      deliveryTypeList: [
-        {
-          id: 10,
-          name: '自提',
-        },
-        {
-          id: 20,
-          name: '邮寄',
-        },
-      ],
-      orderStatusList: [
-        {
-          id: 100,
-          name: '交易成功',
-        },
-        {
-          id: 200,
-          name: '已取消',
-        },
-      ],
+      deliveryTypeList: [],
+      orderStatusList: [],
 
       data: [],
       loadingShow: false,
@@ -69,11 +51,48 @@ class OrderMgmt extends Component {
     const self = this;
     self.requestListData();
     self.requestOrgCodeListData();
+    self.configDeliveryTypeList();
+    self.configOrderStatusList();
   }
 
-  /**
-   * 列表数据请求
-   */
+  // 发货方式
+  configDeliveryTypeList = () => {
+    const self = this;
+    const list = Dict.getOptionsList('deliveryType');
+    self.setState({
+      deliveryTypeList: list,
+    })
+  }
+
+  // 订单状态
+  configOrderStatusList = () => {
+    const self = this;
+    const list = Dict.getOptionsList('orderStatus');
+    self.setState({
+      orderStatusList: list,
+    })
+  }
+
+  // 机构代码
+  requestOrgCodeListData = () => {
+    const self = this;
+    api.orgCodeList().then((res) => {
+      if (res) {
+        const respData = res.data;
+        if (0 === respData.code) {
+          self.setState({
+            orgCodeList: respData.data,
+          });
+        } else {
+          MyAlert({ errorMsg: respData.message });
+        }
+      }
+    }).catch((err) => {
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    });
+  };
+
+  // 列表数据
   requestListData = () => {
     const self = this;
     const { pageNo, pageSize, queryData } = self.state;
@@ -107,45 +126,19 @@ class OrderMgmt extends Component {
     });
   };
 
-  // 机构代码
-  requestOrgCodeListData = () => {
-    const self = this;
-    api.orgCodeList().then((res) => {
-      if (res) {
-        const respData = res.data;
-        if (0 === respData.code) {
-          self.setState({
-            orgCodeList: respData.data,
-          });
-        } else {
-          MyAlert({ errorMsg: respData.message });
-        }
-      }
-    }).catch((err) => {
-      message.error(err ? err : '网络请求失败, 请重试!', 2);
-    });
-  };
-
-  /**
-   * 翻页OnChange
-   */
+  // 翻页OnChange
   pageOnChange(pageNo, pageSize) {
     const self = this;
-    self.setState(
-      {
-        pageNo,
-        pageSize,
-        totalNum: self.state.totalNum,
-      },
-      () => {
-        self.requestListData();
-      }
-    );
+    self.setState({
+      pageNo,
+      pageSize,
+      totalNum: self.state.totalNum,
+    },() => {
+      self.requestListData();
+    });
   }
 
-  /**
-   * 渲染列表
-   */
+  // 渲染列表
   onFinish = () => {
     const self = this;
     self.props.form.validateFields((err, values) => {
@@ -159,9 +152,7 @@ class OrderMgmt extends Component {
     });
   };
 
-  /**
-   * 导出
-   */
+  // 导出
   exportAll = () => {
     const self = this;
     self.setState({ loadingShow: true });
@@ -176,6 +167,7 @@ class OrderMgmt extends Component {
     });
   };
 
+  // 导出Excel文件
   requestExportExcelData = () => {
     const self = this;
     const { pageNo, pageSize, queryData } = self.state;
@@ -187,7 +179,7 @@ class OrderMgmt extends Component {
       delete queryData.date;
     }
     return new Promise(() => {
-      const fileName = 'FMOT Redemption Report';
+      const fileName = '订单列表';
       const exportUrl = URL.orderListExport;
       axios({
         url: exportUrl,
@@ -304,11 +296,10 @@ class OrderMgmt extends Component {
         key: 'goodsList',
         align: 'center',
         render: (text, record) => {
-          // const findItem = text.find((item) => item.id === text);
           const goodsListView = (
             <div className="goods-list-wrap">
               {record.goodsList.map((item, index) => (
-                <span key={index}>{`${item.goodsName} x${item.goodsNum}`}</span>
+                <span key={index}>{`${item.goodsId} ${item.goodsName}x${item.goodsNum} ${item.goodsPrice}积分`}</span>
               ))}
             </div>
           );
@@ -400,24 +391,14 @@ class OrderMgmt extends Component {
                   </Col>
                   <Col span={8}>
                     <Form.Item>{getFieldDecorator('deliveryType',{})(
-                      <Select placeholder="请选择发货类型" style={{ width: '100%' }}>
-                        {
-                          deliveryTypeList.length > 0 && deliveryTypeList.map((item, index) => (
-                            <Option key={index} value={item.id}>{item.name}</Option>
-                          ))
-                        }
+                      <Select placeholder="请选择发货类型" style={{ width: '100%' }} options={deliveryTypeList}>
                       </Select>
                     )}
                     </Form.Item>
                   </Col>
                   <Col span={8}>
                     <Form.Item>{getFieldDecorator('orderStatus',{})(
-                      <Select placeholder="请选订单状态" style={{ width: '100%' }}>
-                        {
-                          orderStatusList.length > 0 && orderStatusList.map((item, index) => (
-                            <Option key={index} value={item.id}>{item.name}</Option>
-                          ))
-                        }
+                      <Select placeholder="请选订单状态" style={{ width: '100%' }} options={orderStatusList}>
                       </Select>
                     )}
                     </Form.Item>

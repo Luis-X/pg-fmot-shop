@@ -36,30 +36,8 @@ class EventMgmt extends Component {
     super(props);
     this.state = {
       orgCodeList: [],
-      eventTypeList: [
-        {
-          id: 10,
-          name: '内部活动',
-        },
-        {
-          id: 20,
-          name: '外部活动',
-        },
-      ],
-      eventStatusList: [
-        {
-          id: 100,
-          name: '未开始',
-        },
-        {
-          id: 200,
-          name: '进行中',
-        },
-        {
-          id: 300,
-          name: '已结束',
-        },
-      ],
+      activityTypeList: [],
+      activityStatusList: [],
 
       data: [],
       loadingShow: false,
@@ -77,11 +55,48 @@ class EventMgmt extends Component {
     const self = this;
     self.requestListData();
     self.requestOrgCodeListData();
+    self.configActivityTypeList();
+    self.configActivityStatusList();
   }
 
-  /**
-   * 列表数据请求
-   */
+  // 活动类型
+  configActivityTypeList = () => {
+    const self = this;
+    const list = Dict.getOptionsList('activityType');
+    self.setState({
+      activityTypeList: list,
+    })
+  }
+
+  // 活动状态
+  configActivityStatusList = () => {
+    const self = this;
+    const list = Dict.getOptionsList('activityStatus');
+    self.setState({
+      activityStatusList: list,
+    })
+  }
+
+  // 机构代码
+  requestOrgCodeListData = () => {
+    const self = this;
+    api.orgCodeList().then((res) => {
+      if (res) {
+        const respData = res.data;
+        if (0 === respData.code) {
+          self.setState({
+            orgCodeList: respData.data,
+          });
+        } else {
+          MyAlert({ errorMsg: respData.message });
+        }
+      }
+    }).catch((err) => {
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    });
+  };
+
+  // 列表数据
   requestListData = () => {
     const self = this;
     const { pageNo, pageSize, queryData } = self.state;
@@ -113,30 +128,9 @@ class EventMgmt extends Component {
       self.setState({ loadingShow: false });
       message.error(err ? err : '网络请求失败, 请重试!', 2);
     });
-  }; 
-
-  // 机构代码
-  requestOrgCodeListData = () => {
-    const self = this;
-    api.orgCodeList().then((res) => {
-      if (res) {
-        const respData = res.data;
-        if (0 === respData.code) {
-          self.setState({
-            orgCodeList: respData.data,
-          });
-        } else {
-          MyAlert({ errorMsg: respData.message });
-        }
-      }
-    }).catch((err) => {
-      message.error(err ? err : '网络请求失败, 请重试!', 2);
-    });
   };
 
-  /**
-   * 翻页OnChange
-   */
+  // 翻页OnChange
   pageOnChange(pageNo, pageSize) {
     const self = this;
     self.setState({
@@ -148,9 +142,7 @@ class EventMgmt extends Component {
     });
   }
 
-  /**
-   * 渲染列表
-   */
+  // 渲染列表
   onFinish = () => {
     const self = this;
     self.props.form.validateFields((err, values) => {
@@ -164,9 +156,7 @@ class EventMgmt extends Component {
     });
   };
 
-  /**
-   * 查看详情
-   */
+  // 查看详情
   clickItemDetail = (record) => {
     const self = this;
     self.setState({
@@ -175,10 +165,8 @@ class EventMgmt extends Component {
     });
   }
 
-   /**
-   * 复制活动
-   */
-   clickItemCopy = (record) => {
+  // 复制活动
+  clickItemCopy = (record) => {
     const id = record.id;
     console.log(id)
     const self = this;
@@ -204,22 +192,17 @@ class EventMgmt extends Component {
     });
   };
 
-  /**
-   * 查询
-   */
+  // 查询
   clickSearchBtn = () => {
     const self = this;
     self.setState({ 
-      pageNo: 0, 
-      queryFlg: true 
+      pageNo: 0,  
     }, () => {
-      // self.requestListData()
+
     });
   };
 
-  /**
-   * 创建活动
-   */
+  // 创建活动
   clickCreateEvent = () => {
     const self = this;
     self.setState({
@@ -229,7 +212,7 @@ class EventMgmt extends Component {
   }
 
   render() {
-    const { orgCodeList, eventTypeList, eventStatusList } = this.state;
+    const { orgCodeList, activityTypeList, activityStatusList } = this.state;
     const {
       form: { resetFields, getFieldDecorator }
     } = this.props;
@@ -247,8 +230,8 @@ class EventMgmt extends Component {
       {
         title: '活动ID',
         width: 50,
-        dataIndex: 'id',
-        key: 'id',
+        dataIndex: 'activityId',
+        key: 'activityId',
         align: 'center',
       },
       {
@@ -268,15 +251,15 @@ class EventMgmt extends Component {
       {
         title: '活动名称',
         width: 100,
-        dataIndex: 'name',
-        key: 'name',
+        dataIndex: 'activityName',
+        key: 'activityName',
         align: 'center',
       },
       {
         title: '活动类型',
-        dataIndex: 'type',
+        dataIndex: 'activityType',
         width: 50,
-        key: 'type',
+        key: 'activityType',
         align: 'center',
         render: (text) => (
           <>{Dict.getValue('activityType', text, '')}</>
@@ -284,9 +267,9 @@ class EventMgmt extends Component {
       },
       {
         title: '活动状态',
-        dataIndex: 'status',
+        dataIndex: 'activityStatus',
         width: 50,
-        key: 'status',
+        key: 'activityStatus',
         align: 'center',
         render: (text) => (
           <>{Dict.getValue('activityStatus', text, '')}</>
@@ -333,16 +316,17 @@ class EventMgmt extends Component {
               eventId={this.state.eventID}
               show={this.state.isShow}
               onHide={() => {
-                this.setState({ isShow: false });
+                this.setState({ 
+                  isShow: false 
+                });
               }}
               updateList={() => {
                 resetFields();
-                this.setState(
-                  {
-                    pageNo: 0,
-                  },
-                  () => this.requestListData()
-                );
+                this.setState({
+                  pageNo: 0
+                },() => {
+                  this.requestListData()
+                });
               }}
             />
           ) : null
@@ -368,13 +352,13 @@ class EventMgmt extends Component {
                   </Col>
                   <Col span={8}>
                     <Form.Item>{getFieldDecorator('activityName',{})(
-                      <Input placeholder="请输入活动名称" maxLength={50} />
+                      <Input placeholder="请输入活动名称" />
                     )}
                     </Form.Item>
                   </Col>
                   <Col span={8}>
                     <Form.Item>{getFieldDecorator('activityId',{})(
-                      <Input placeholder="请输入活动ID" maxLength={50} />
+                      <Input placeholder="请输入活动ID" />
                     )}
                     </Form.Item>
                   </Col>
@@ -382,24 +366,14 @@ class EventMgmt extends Component {
                 <Row gutter={24}>
                   <Col span={8}>
                     <Form.Item>{getFieldDecorator('activityType',{})(
-                      <Select placeholder="请选择活动类型" style={{ width: '100%' }}>
-                        {
-                          eventTypeList.length > 0 && eventTypeList.map((item, index) => (
-                            <Option key={index} value={item.id}>{item.name}</Option>
-                          ))
-                        }
+                      <Select placeholder="请选择活动类型" style={{ width: '100%' }} options={activityTypeList}>
                       </Select>
                     )}
                     </Form.Item>
                   </Col>
                   <Col span={8}>
                     <Form.Item>{getFieldDecorator('activityStatus',{})(
-                      <Select placeholder="请选择活动状态" style={{ width: '100%' }}>
-                        {
-                          eventStatusList.length > 0 && eventStatusList.map((item, index) => (
-                            <Option key={index} value={item.id}>{item.name}</Option>
-                          ))
-                        }
+                      <Select placeholder="请选择活动状态" style={{ width: '100%' }} options={activityStatusList}>
                       </Select>
                     )}
                     </Form.Item>
@@ -429,7 +403,6 @@ class EventMgmt extends Component {
                         pageSize: 10
                       }, () => {
                         resetFields();
-                        // this.requestListData()
                       });
                     }}>
                       <ReloadOutlined />

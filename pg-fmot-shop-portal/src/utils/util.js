@@ -57,4 +57,34 @@ export const DownloadTemplateFile = (type) => {
   xhh.send();
 };
 
-export default DownloadTemplateFile;
+// urls转files
+export const ImgUrlsToFiles = (imgUrls) => {
+  let list = [];
+  imgUrls.forEach((item) => {
+    const url = item || '';
+    if (url) {
+      list.push({
+        url: url,
+      });
+    }
+  });
+  return list;
+}
+
+// files转urls
+export const FilesToImgUrls = (files) => {
+  let list = [];
+  files.forEach((item) => {
+    const url = item.url || '';
+    if (url) {
+      list.push(url);
+    }
+  });
+  return list;
+}
+
+export default {
+  DownloadTemplateFile,
+  ImgUrlsToFiles,
+  FilesToImgUrls
+}

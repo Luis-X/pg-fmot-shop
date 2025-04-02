@@ -31,13 +31,13 @@ export const eventCopy = ''   // 活动复制
 export const eventDetail = ''   // 活动详情
 export const eventCreate = ''   // 活动创建
 export const eventSave = ''   // 活动保存
-export const eventGoodsList = ''   // 活动商品列表
 
 // 订单
 export const orderList = ''   // 订单列表
 export const orderListExport = ''   // 订单列表导出
 
 // 商品
+export const goodsSearchList = ''   // 商品搜索
 export const goodsList = ''   // 商品列表
 export const goodsCategoryList = ''   // 商品类别
 export const goodsDetail = ''   // 活动详情

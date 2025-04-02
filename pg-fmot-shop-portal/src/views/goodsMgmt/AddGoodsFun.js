@@ -13,6 +13,8 @@ import {
 import '@ant-design/pro-components/dist/components.css';
 import * as api from '../../api/api';
 import MyAlert from '../../components/MyAlert';
+import Dict from '../../config/Dict';
+import { ImgUrlsToFiles, FilesToImgUrls } from '../../utils/util';
 
 export function AddGoodsFun({
   goodsId,
@@ -20,79 +22,87 @@ export function AddGoodsFun({
   onHide,
   updateList,
 }) {
-  const [categoryData, setCategoryData] = useState([]);
+  const [goodsTypeList, setGoodsTypeList] = useState([]);
+  const [categoryList, setCategoryList] = useState([]);
   const [Loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
   useEffect(() => {
     async function fetchData() {
-      await requestCategoryData();
+      await requestCategoryListData();
+      configGooodsTypeList();
     }
     fetchData();
   }, []);
 
-  // urls转files
-  function imgUrlsToFiles(imgUrls) {
-    let list = [];
-    imgUrls.forEach((item) => {
-      const url = item || '';
-      if (url) {
-        list.push({
-          url: url,
-        });
-      }
-    });
-
-    return list;
+  // 商品类型
+  const configGooodsTypeList = () => {
+    const list = Dict.getOptionsList('goodsType');
+    setGoodsTypeList(list);
   }
 
-  // files转urls
-  function filesToImgUrls(files) {
-    let list = [];
-    files.forEach((item) => {
-      const url = item.url || '';
-      if (url) {
-        list.push(url);
+  // 商品类别
+  const requestCategoryListData = () => {   
+    api.goodsCategoryList().then((res) => {
+      if (res) {
+        const respData = res.data;
+        if (0 === respData.code) {
+          let list = [];
+          respData.data.forEach((item) => {
+            list.push({
+              label: item.name,
+              value: item.id,
+            });
+          })
+          setCategoryList(list);
+        } else {
+          MyAlert({ errorMsg: respData.message });
+        }
       }
-    });
-    return list;
-  }
+    }).catch((err) => {
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    })
+  };
 
-  /**
-   * 详情数据
-   */
+  // 详情数据
   const requestDetailData = async () => {
-    let detailData = {};    
+    let detailData = {};  
+
     try {
       const res = await api.goodsDetail(goodsId);
       if (res) {
         const respData = res.data;
         if (0 === respData.code) {
           detailData = respData.data;
+
           // 预览图
           const goodsImgUrls = detailData.goodsImg ? [detailData.goodsImg] : [];
-          detailData.goodsImg = imgUrlsToFiles(goodsImgUrls);
+          detailData.goodsImg = ImgUrlsToFiles(goodsImgUrls);
+
           // 轮播图（视频、封面、图片）
           let bannerPoster = [];
           let bannerVideo = [];
           let bannerImgs = [];
           const bannerPosterUrls = detailData.bannerPoster ? [detailData.bannerPoster] : [];
-          bannerPoster = imgUrlsToFiles(bannerPosterUrls);
+          bannerPoster = ImgUrlsToFiles(bannerPosterUrls);
           const bannerVideoUrls = detailData.bannerVideo ? [detailData.bannerVideo] : [];
-          bannerVideo = imgUrlsToFiles(bannerVideoUrls);
+          bannerVideo = ImgUrlsToFiles(bannerVideoUrls);
           const bannerImgsUrls = detailData.bannerImgs ? detailData.bannerImgs : [];
-          bannerImgs = imgUrlsToFiles(bannerImgsUrls);
+          bannerImgs = ImgUrlsToFiles(bannerImgsUrls);
           detailData.goodsBanner = [{
             bannerPoster: bannerPoster,
             bannerVideo: bannerVideo,
             bannerImgs: bannerImgs,
           }];
+
           // 视频
           const goodsVideoUrls = detailData.goodsVideo ? [detailData.goodsVideo] : [];
-          detailData.goodsVideo = imgUrlsToFiles(goodsVideoUrls);
+          detailData.goodsVideo = ImgUrlsToFiles(goodsVideoUrls);
+
           // 长图
           const goodsIntroImgUrls = detailData.goodsIntroImg ? [detailData.goodsIntroImg] : [];
-          detailData.goodsIntroImg = imgUrlsToFiles(goodsIntroImgUrls);
+          detailData.goodsIntroImg = ImgUrlsToFiles(goodsIntroImgUrls);
+
         } else {
           MyAlert({ errorMsg: respData.message });
         }
@@ -104,65 +114,41 @@ export function AddGoodsFun({
     return detailData;
   };
 
-  /**
-   * 类别数据
-   */
-  const requestCategoryData = () => {
-    let list = [];    
-    api.goodsCategoryList().then((res) => {
-      if (res) {
-        const respData = res.data;
-        if (0 === respData.code) {
-          if (respData.data.length > 0) {
-            for (let i in respData.data) {
-              list.push({
-                label: respData.data[i].name,
-                value: respData.data[i].id,
-              });
-            }
-            setCategoryData(list || []);
-          }
-        } else {
-          MyAlert({ errorMsg: respData.message });
-        }
-      }
-    }).catch((err) => {
-      message.error(err ? err : '网络请求失败, 请重试!', 2);
-    })
-  };
-
-  /**
-   * form.validateFields数据准备
-   */
+  // 创建、保存
   const saveAndCreateGoods = (type) => {
     setLoading(true);
     form.validateFields().then((values) => {
       console.log('处理前：', values);
+
       // 预览图
       const goodsImgFiles = values.goodsImg ? values.goodsImg : [];
-      values.goodsImg = filesToImgUrls(goodsImgFiles)[0] || '';
+      values.goodsImg = FilesToImgUrls(goodsImgFiles)[0] || '';
+
       // 轮播图（视频、封面、图片）
       let bannerPoster = '';
       let bannerVideo = '';
       let bannerImgs = [];
       values.goodsBanner.forEach((item) => {
         const bannerPosterFiles = item.bannerPoster ? item.bannerPoster : [];
-        bannerPoster = filesToImgUrls(bannerPosterFiles)[0] || '';
+        bannerPoster = FilesToImgUrls(bannerPosterFiles)[0] || '';
         const bannerVideoFiles = item.bannerVideo ? item.bannerVideo : [];
-        bannerVideo = filesToImgUrls(bannerVideoFiles)[0] || '';
+        bannerVideo = FilesToImgUrls(bannerVideoFiles)[0] || '';
         const bannerImgFiles = item.bannerImgs ? item.bannerImgs : [];
-        bannerImgs = filesToImgUrls(bannerImgFiles) || [];
+        bannerImgs = FilesToImgUrls(bannerImgFiles) || [];
       });
       values.bannerPoster = bannerPoster;
       values.bannerVideo = bannerVideo;
       values.bannerImgs = bannerImgs;
       values.goodsBanner = [];
+
       // 视频
       const goodsVideoFiles = values.goodsVideo ? values.goodsVideo : [];
-      values.goodsVideo = filesToImgUrls(goodsVideoFiles)[0] || '';
+      values.goodsVideo = FilesToImgUrls(goodsVideoFiles)[0] || '';
+
       // 长图
       const goodsIntroFiles = values.goodsIntroImg ? values.goodsIntroImg : [];
-      values.goodsIntroImg = filesToImgUrls(goodsIntroFiles)[0] || '';
+      values.goodsIntroImg = FilesToImgUrls(goodsIntroFiles)[0] || '';
+
       // 操作
       if ('save' === type) {
         saveHandler(values);
@@ -174,9 +160,7 @@ export function AddGoodsFun({
     });
   };
 
-  /**
-   * 新增
-   */
+  // 创建
   const createHandler = (values) => {
     console.log('处理后，创建：', values);    
     api.goodsCreate({
@@ -199,9 +183,7 @@ export function AddGoodsFun({
     })
   };
 
-  /**
-   * 保存
-   */
+  // 保存
   const saveHandler = (values) => {
     console.log('处理后，保存：', values);
     api.goodsSave({
@@ -235,7 +217,7 @@ export function AddGoodsFun({
   return (
     <React.Fragment>
       <Drawer 
-        title={goodsId ? '商品信息' : '新增商品'} 
+        title={goodsId ? '编辑商品' : '新增商品'} 
         footer={
           <div className="create-event-btn">
             {
@@ -248,7 +230,7 @@ export function AddGoodsFun({
             <Button onClick={onHide}>取消</Button>
           </div>
         } 
-        width={720} 
+        width={920} 
         open={show} 
         onClose={() => { onHide() }} 
         bodyStyle={{ paddingBottom: 80 }}
@@ -281,20 +263,10 @@ export function AddGoodsFun({
             name="goodsType"
             label="商品类型"
             rules={[{ required: true, message: '请选择商品类型' }]}
-            // initialValue="1"
-            options={[
-              {
-                label: '实物',
-                value: '1',
-              },
-              {
-                label: '虚拟商品',
-                value: '2',
-              },
-            ]}
+            options={goodsTypeList}
           />
           <ProFormSelect
-            options={categoryData}
+            options={categoryList}
             name="goodsCategory"
             label="商品类别"
             rules={[{ required: true, message: '请选择商品类别' }]}
@@ -343,13 +315,13 @@ export function AddGoodsFun({
             itemRender={({ listDom, action }, { index }) => (
               <ProCard bordered style={{ marginBlockEnd: 8 }} extra={action} bodyStyle={{ paddingBlockEnd: 0 }}>{listDom}</ProCard>
             )}
-            // initialValue={[
-            //   {
-            //     bannerVideo: [],
-            //     bannerPoster: [],
-            //     bannerImgs: [],
-            //   },
-            // ]}
+            initialValue={[
+              {
+                bannerVideo: [],
+                bannerPoster: [],
+                bannerImgs: [],
+              },
+            ]}
           >
             <div className="goods-banner-row-wrap">
               <div className="goods-banner-row">

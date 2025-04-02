@@ -32,11 +32,12 @@ class TrackMgmt extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      orgCodeList: [],
+      activityTypeList: [],
+
       data: [],
       loadingShow: false,
-      eventID: '',
       queryData: null,
-
       pageNo: 0,
       pageSize: 10,
       totalNum: 10,
@@ -45,12 +46,40 @@ class TrackMgmt extends Component {
 
   async componentDidMount() {
     const self = this;
+    self.configActivityTypeList();
     self.requestListData();
+    self.requestOrgCodeListData();
   }
 
-  /**
-   * 列表数据请求
-   */
+  // 活动类型
+  configActivityTypeList = () => {
+    const self = this;
+    const list = Dict.getOptionsList('activityType');
+    self.setState({
+      activityTypeList: list,
+    })
+  }
+
+  // 机构代码
+  requestOrgCodeListData = () => {
+    const self = this;
+    api.orgCodeList().then((res) => {
+      if (res) {
+        const respData = res.data;
+        if (0 === respData.code) {
+          self.setState({
+            orgCodeList: respData.data,
+          });
+        } else {
+          MyAlert({ errorMsg: respData.message });
+        }
+      }
+    }).catch((err) => {
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    });
+  };
+
+  // 列表数据
   requestListData = () => {
     const self = this;
     const { pageNo, pageSize, queryData } = self.state;
@@ -84,9 +113,7 @@ class TrackMgmt extends Component {
     });
   }; 
 
-  /**
-   * 翻页OnChange
-   */
+  // 翻页OnChange
   pageOnChange(pageNo, pageSize) {
     const self = this;
     self.setState({
@@ -98,9 +125,7 @@ class TrackMgmt extends Component {
     });
   }
 
-  /**
-   * 渲染列表
-   */
+  // 渲染列表
   onFinish = () => {
     const self = this;
     self.props.form.validateFields((err, values) => {
@@ -114,28 +139,24 @@ class TrackMgmt extends Component {
     });
   };
 
-  /**
-   * 查看明细
-   */
+  // 查看明细
   clickItemDetail = (record) => {
     const { id } = record;
     window.location.href = `/portal/trackDetail/${id}`
   }
 
-  /**
-   * 查询
-   */
+  // 查询
   clickSearchBtn = () => {
     const self = this;
     self.setState({ 
       pageNo: 0, 
-      queryFlg: true 
     }, () => {
-      // self.requestListData()
+      
     });
   };
 
   render() {
+    const { orgCodeList, activityTypeList } = this.state;
     const {
       form: { resetFields, getFieldDecorator }
     } = this.props;
@@ -246,13 +267,13 @@ class TrackMgmt extends Component {
                   </Col>
                   <Col span={8}>
                     <Form.Item>{getFieldDecorator('activityName',{})(
-                      <Input placeholder="请输入活动名称" maxLength={50} />
+                      <Input placeholder="请输入活动名称" />
                     )}
                     </Form.Item>
                   </Col>
                   <Col span={8}>
                     <Form.Item>{getFieldDecorator('activityId',{})(
-                      <Input placeholder="请输入活动ID" maxLength={50} />
+                      <Input placeholder="请输入活动ID" />
                     )}
                     </Form.Item>
                   </Col>
@@ -260,9 +281,7 @@ class TrackMgmt extends Component {
                 <Row gutter={24}>
                   <Col span={8}>
                     <Form.Item>{getFieldDecorator('activityType',{})(
-                      <Select placeholder="请选择活动类型" style={{ width: '100%' }}>
-                        <Option value="INTERNAL">内部活动</Option>
-                        <Option value="EXTERNAL">外部活动</Option>
+                      <Select placeholder="请选择活动类型" style={{ width: '100%' }} options={activityTypeList}>
                       </Select>
                     )}
                     </Form.Item>
@@ -270,9 +289,11 @@ class TrackMgmt extends Component {
                   <Col span={8}>
                     <Form.Item>{getFieldDecorator('orgCode',{})(
                       <Select placeholder="请选择机构代码" style={{ width: '100%' }}>
-                        <Option value="ONE">100</Option>
-                        <Option value="TWO">200</Option>
-                        <Option value="">全部</Option>
+                        {
+                          orgCodeList.length > 0 && orgCodeList.map((item, index) => (
+                            <Option key={index} value={item.id}>{item.name}</Option>
+                          ))
+                        }
                       </Select>
                     )}
                     </Form.Item>
@@ -290,7 +311,6 @@ class TrackMgmt extends Component {
                         pageSize: 10 
                       }, () => {
                         resetFields();
-                        // this.requestListData()
                       });
                     }}>
                       <ReloadOutlined />

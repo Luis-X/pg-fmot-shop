@@ -13,6 +13,7 @@ import {
   Tag,
   ConfigProvider,
   DatePicker,
+  Tooltip
 } from 'antd';
 import {
   ImportOutlined,
@@ -28,37 +29,64 @@ import zhCN from 'antd/es/locale/zh_CN';
 import Dict from '../../config/Dict';
 import { DownloadTemplateFile } from '../../utils/util';
 
-const { Option } = Select;
+// const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 class ExternalAccount extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      bindStatusList: [],
+      loginStatusList: [],
+
       data: [],
       loadingShow: false,
-      importVisible: false,
-      importType: 0, // 201: 导入账号 202: 积分充值
       queryData: null,
-
       pageNo: 0,
       pageSize: 10,
       totalNum: 10,
+
+      isShow: false,
+      importType: 0, // 201: 导入账号 202: 积分充值
     };
   }
 
   componentDidMount() {
     const self = this;
     self.requestListData();
+    self.configBindStatusList();
+    self.configLoginStatusList();
   }
 
-  /**
-   * 列表数据请求
-   */
+  // 绑定状态
+  configBindStatusList = () => {
+    const self = this;
+    const list = Dict.getOptionsList('accountBindStatus');
+    self.setState({
+      bindStatusList: list,
+    })
+  }
+
+  // 登录权限
+  configLoginStatusList = () => {
+    const self = this;
+    const list = Dict.getOptionsList('accountLoginStatus');
+    self.setState({
+      loginStatusList: list,
+    })
+  }
+
+  // 列表数据
   requestListData = () => {
     const self = this;
     const { pageNo, pageSize, queryData } = this.state;
     self.setState({ loadingShow: true });    
+    // 时间处理
+    if (queryData && queryData.date) {
+      queryData.beginDate = moment(new Date(queryData.date[0])).format('YYYY-MM-DD HH:mm:ss');
+      queryData.endDate = moment(new Date(queryData.date[1])).format('YYYY-MM-DD HH:mm:ss');
+      delete queryData.date;
+    }
     api.externalAccountList({
       ...queryData,
       page: pageNo,
@@ -82,9 +110,8 @@ class ExternalAccount extends Component {
     });
   };
 
-  /**
-   * 翻页OnChange
-   */
+  
+  // 翻页OnChange
   pageOnChange(pageNo, pageSize) {
     const self = this;
     self.setState({
@@ -96,95 +123,84 @@ class ExternalAccount extends Component {
     });
   }
 
-  /**
-   * 渲染列表
-   */
+  // 渲染列表
   onFinish = () => {
     const self = this;
     self.props.form.validateFields((err, values) => {
       if (!err) {
-        self.setState({ queryData: values }, () => {
+        self.setState({ 
+          queryData: values 
+        }, () => {
           self.requestListData();
         });
       }
     });
   };
 
-  /**
-   * 导入外部账号
-   */
+  // 导入外部账号
   clickImportAccount = () => {
     const self = this;
     self.setState({ 
-      importVisible: true,
+      isShow: true,
       importType: 201
     });
   }
 
-  /**
-   * 下载导入外部账号模版
-   */
+  // 外部账号模版
   clickImportAccountTemplate = () => {
     DownloadTemplateFile(201)
   }
 
-  /**
-   * 积分充值
-   */
+  // 积分充值
   clickImportPoints = () => {
     const self = this;
     self.setState({ 
-      importVisible: true,
+      isShow: true,
       importType: 202
     });
   }
 
-  /**
-   * 下载积分充值模版
-   */
+  // 积分充值模版
   clickImportPointsTemplate = () => {
     DownloadTemplateFile(202)
   }
 
-  /**
-   * 查询
-   */
+  // 查询
   clickSearchBtn = () => {
     const self = this;
     self.setState({ 
       pageNo: 0, 
     }, () => {
-      // self.requestListData()
+    
     });
   };
 
-  /**
-   * 正常
-   */
+  // 正常 -> 锁定
   clickAccountEnable = (record) => {
-    this.requestAccountOperation(record.status, record.id);
+    this.requestAccountOperation('锁定', {
+      id: record.id,
+      status: 2,
+    });
   }
 
-  /**
-   * 锁定
-   */
+  // 锁定 -> 正常
   clickAccountDisable = (record) => {
-    this.requestAccountOperation(record.status, record.id);
+    this.requestAccountOperation('正常', {
+      id: record.id,
+      status: 1,
+    });
   }
 
-  /**
-   * 账号操作
-   */
-  requestAccountOperation = (status, id) => {
+  // 账号操作
+  requestAccountOperation = (statusText, params) => {
     const self = this;
     ConfirmAlert({
       title: '温馨提示',
-      errorMsg: `您确定修改登录权限为 ${'NORMAL' === status ? '锁定' : '正常'} 吗?`,
+      errorMsg: `您确定修改登录权限为 ${statusText} 吗?`,
       callbackOK: () => {
-        api.externalAccountChangeStatus({
-          id: id,
-          status: 'NORMAL' === status ? 'DISABLE' : 'NORMAL',
-        }).then((res) => {
+        api.internalAccountChangeStatus(
+          params
+        ).then((res) => {
           if (res) {
             const respData = res.data;
             if (0 === respData.code) {
@@ -200,6 +216,7 @@ class ExternalAccount extends Component {
   };
 
   render() {
+    const { bindStatusList, loginStatusList } = this.state;
     const {
       form: { resetFields, getFieldDecorator },
     } = this.props;
@@ -216,9 +233,9 @@ class ExternalAccount extends Component {
       },
       {
         title: '活动ID',
-        dataIndex: 'id',
+        dataIndex: 'activityId',
         width: 50,
-        key: 'id',
+        key: 'activityId',
         align: 'center',
       },
       {
@@ -240,9 +257,9 @@ class ExternalAccount extends Component {
       },
       {
         title: '账号',
-        dataIndex: 'account',
+        dataIndex: 'accountId',
         width: 100,
-        key: 'account',
+        key: 'accountId',
         align: 'center',
       },
       {
@@ -261,38 +278,48 @@ class ExternalAccount extends Component {
       },
       {
         title: '绑定状态',
-        dataIndex: 'status',
+        dataIndex: 'bindStatus',
         width: 50,
-        key: 'status',
+        key: 'bindStatus',
         ellipsis: true,
         align: 'center',
         render: (text) => (
           <>
-            {Dict.getValue('accountBindStatus', text, '')}
+            {
+              text === '1' ? (
+                <Tag color='green'>
+                  <span>已绑定</span>
+                </Tag>              
+              ) : (
+                <Tag color='red'>
+                  <span>未绑定</span>
+                </Tag>
+              )
+            }
           </>
         ),
       },
       {
         title: '登录权限',
         width: 100,
-        dataIndex: 'permission',
-        key: 'permission',
+        dataIndex: 'loginStatus',
+        key: 'loginStatus',
         ellipsis: true,
         align: 'center',
         render: (text, record) => (
-          <div>
+          <>                        
             {
-              text === '1' ? (
-                <Tag color='green' onClick={() => { this.clickAccountEnable(record); }}>
-                  <span>{Dict.getValue('accountLoginStatus', text, '')}</span>
-                </Tag>                
+              text === '1' ? (     
+                <Tooltip title="正常">
+                  <span className="event-setting" onClick={() => { this.clickAccountEnable(record); }}>正常</span>
+                </Tooltip>          
               ) : (
-                <Tag color='red' onClick={() => { this.clickAccountDisable(record); }} >
-                  <span>{Dict.getValue('accountLoginStatus', text, '')}</span>
-                </Tag>
+                <Tooltip title="锁定">
+                  <span className="event-setting" onClick={() => { this.clickAccountDisable(record); }}>锁定</span>
+                </Tooltip>
               )
             }
-          </div>
+          </>
         ),
       },
     ];
@@ -301,22 +328,21 @@ class ExternalAccount extends Component {
       <HomeLayout>
 
         <ImportDataPicker
-          show={this.state.importVisible}
-          type={this.state.importType}         
+          show={this.state.isShow}
+          type={this.state.importType}
           onHide={() => {
             this.setState({ 
-              importVisible: false,
+              isShow: false,
               importType: 0
             });
           }}
           updateList={() => {
             resetFields();
-            this.setState(
-              {
-                pageNo: 0,
-              },
-              () => this.requestListData()
-            );
+            this.setState({
+              pageNo: 0
+            },() => {
+              this.requestListData()
+            });
           }}
         />
 
@@ -330,19 +356,23 @@ class ExternalAccount extends Component {
                   <Col span={8}>
                     <ConfigProvider locale={zhCN}>
                       <Form.Item>{getFieldDecorator('date',{})(
-                        <RangePicker style={{ width: '100%' }} placeholder={['请选择查询时间段', '请选择查询时间段']} />
+                        <RangePicker
+                        showTime={true}
+                        format='YYYY-MM-DD HH:mm:ss'
+                        style={{ width: '100%' }} 
+                        placeholder={['请选择查询时间段', '请选择查询时间段']} />                      
                       )}
                       </Form.Item>
                     </ConfigProvider>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('searchValue',{})(
+                    <Form.Item>{getFieldDecorator('activityId',{})(
                       <Input placeholder="请输入活动ID" />
                     )}
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('searchValue',{})(
+                    <Form.Item>{getFieldDecorator('activityName',{})(
                       <Input placeholder="请输入活动名称" />
                     )}
                     </Form.Item>
@@ -350,25 +380,21 @@ class ExternalAccount extends Component {
                 </Row>
                 <Row gutter={24}>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('searchValue',{})(
+                    <Form.Item>{getFieldDecorator('accountId',{})(
                       <Input placeholder="请输入外部账号" />
                     )}
                     </Form.Item>
                   </Col>    
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('shopMarketId',{})(
-                      <Select placeholder="请选择绑定状态" style={{ width: '100%' }}>
-                        <Option value="BIND">已绑定</Option>
-                        <Option value="UNBIND">未绑定</Option>
+                    <Form.Item>{getFieldDecorator('bindStatus',{})(
+                      <Select placeholder="请选择绑定状态" style={{ width: '100%' }} options={bindStatusList}>
                       </Select>
                     )}
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('shopAreaId',{})(
-                      <Select placeholder="请选择登录状态" style={{ width: '100%' }}>
-                        <Option value="ENABLE">正常</Option>
-                        <Option value="DISABLE">锁定</Option>
+                    <Form.Item>{getFieldDecorator('loginStatus',{})(
+                      <Select placeholder="请选择登录状态" style={{ width: '100%' }} options={loginStatusList}>
                       </Select>
                     )}
                     </Form.Item>
@@ -398,20 +424,20 @@ class ExternalAccount extends Component {
           </div>
           <div className="item2">
             <Row gutter={5} style={{ marginBottom: '15px' }}>
-              <button className="current-btn" onClick={() => { this.clickImportAccount(); }}>
-                <ImportOutlined />
-                <span>导入外部账号</span>
-              </button>
-              <button className="current-btn" onClick={() => { this.clickImportAccountTemplate(); }}>
-                <span>下载导入账号模版</span>
-              </button>
-              <button className="current-btn" onClick={() => { this.clickImportPoints(); }}>
-                <ImportOutlined />
-                <span>积分充值</span>
-              </button>
-              <button className="current-btn" onClick={() => { this.clickImportPointsTemplate(); }}>
-                <span>下载积分充值模版</span>
-              </button>
+              <div>
+                <button className="current-btn" onClick={() => { this.clickImportAccount(); }}>
+                  <ImportOutlined />
+                  <span>导入外部账号</span>
+                </button>
+                <span className="event-setting" style={{ textDecoration: 'underline', marginLeft: '5px' }}  onClick={() => { this.clickImportAccountTemplate(); }}>下载导入账号模版</span>
+              </div>
+              <div>
+                <button className="current-btn" onClick={() => { this.clickImportPoints(); }}>
+                  <ImportOutlined />
+                  <span>积分充值</span>
+                </button>
+                <span className="event-setting" style={{ textDecoration: 'underline', marginLeft: '5px' }}  onClick={() => { this.clickImportPointsTemplate(); }}>下载积分充值模版</span>
+              </div>
             </Row>
             <Table
               size="middle"

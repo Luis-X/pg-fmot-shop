@@ -19,6 +19,8 @@ import * as api from '../../api/api';
 import MyAlert from '../../components/MyAlert';
 import zhCN from 'antd/es/locale/zh_CN';
 import moment from 'moment';
+import Dict from '../../config/Dict';
+import { ImgUrlsToFiles, FilesToImgUrls } from '../../utils/util';
 
 export function AddEventFun({
   eventId,
@@ -26,6 +28,8 @@ export function AddEventFun({
   onHide,
   updateList,
 }) {
+  const [activityTypeList, setActivityTypeList] = useState([]);
+  const [deliveryTypeList, setDeliveryTypeList] = useState([]);
   const [orgCodeList, setOrgCodeList] = useState([]);
   const [Loading, setLoading] = useState(false);
   const [form] = Form.useForm();
@@ -33,40 +37,48 @@ export function AddEventFun({
   useEffect(() => {
     async function fetchData() {
       await requestOrgCodeListData();
+      configActivityTypeList();
+      configDeliveryTypeList();
     }
     fetchData();
   }, []);
 
-   // urls转files
-   function imgUrlsToFiles(imgUrls) {
-    let list = [];
-    imgUrls.forEach((item) => {
-      const url = item || '';
-      if (url) {
-        list.push({
-          url: url,
-        });
-      }
-    });
-
-    return list;
+  // 活动类型
+  const configActivityTypeList = () => {
+    const list = Dict.getOptionsList('activityType');
+    setActivityTypeList(list);
   }
 
-  // files转urls
-  function filesToImgUrls(files) {
-    let list = [];
-    files.forEach((item) => {
-      const url = item.url || '';
-      if (url) {
-        list.push(url);
-      }
-    });
-    return list;
+  // 发货方式
+  const configDeliveryTypeList = () => {
+    const list = Dict.getOptionsList('deliveryType');
+    setDeliveryTypeList(list);
   }
 
-  /**
-   * 详情数据
-   */
+  // 机构代码
+  const requestOrgCodeListData = () => {
+    api.orgCodeList().then((res) => {
+      if (res) {
+        const respData = res.data;
+        if (0 === respData.code) {
+          let list = [];
+          respData.data.forEach((item) => {
+            list.push({
+              label: item.name,
+              value: item.id,
+            });
+          })
+          setOrgCodeList(list);
+        } else {
+          MyAlert({ errorMsg: respData.message });
+        }
+      }
+    }).catch((err) => {
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    });
+  };
+
+  // 详情数据
   const requestDetailData = async () => {
     let detailData = {};
     
@@ -83,7 +95,7 @@ export function AddEventFun({
             bannerList.forEach((item) => {
               const imgUrls = item.bannerImg ? [item.bannerImg] : [];
               let newItem = {
-                bannerImg: imgUrlsToFiles(imgUrls),
+                bannerImg: ImgUrlsToFiles(imgUrls),
                 bannerLink: item.bannerLink,
               }
               newBannerList.push(newItem);
@@ -109,34 +121,7 @@ export function AddEventFun({
     return detailData;
   };
 
-  /**
-   * 机构代码数据
-   */
-  const requestOrgCodeListData = () => {
-    api.orgCodeList().then((res) => {
-      if (res) {
-        const respData = res.data;
-        if (0 === respData.code) {
-          let list = [];
-          respData.data.forEach((item) => {
-            list.push({
-              label: item.name,
-              value: item.id,
-            });
-          })
-          setOrgCodeList(list);
-        } else {
-          MyAlert({ errorMsg: respData.message });
-        }
-      }
-    }).catch((err) => {
-      message.error(err ? err : '网络请求失败, 请重试!', 2);
-    });
-  };
-
-  /**
-   * form.validateFields数据准备
-   */
+  // 创建、保存
   const saveAndCreateEvent = (type) => {
     setLoading(true);
     form.validateFields().then((values) => {
@@ -162,7 +147,7 @@ export function AddEventFun({
       let newBannerList = [];
       bannerList.forEach((item) => {
         const imgFiles = item.bannerImg ? item.bannerImg : [];
-        const imgUrl = filesToImgUrls(imgFiles)[0] || '';
+        const imgUrl = FilesToImgUrls(imgFiles)[0] || '';
         let newItem = {
           bannerImg: imgUrl,
           bannerLink: item.bannerLink,
@@ -191,9 +176,7 @@ export function AddEventFun({
     });
   };
 
-  /**
-   * 新增
-   */
+  // 创建
   const createHandler = (values) => {
     console.log('处理后，创建：', values);
     api.eventCreate({
@@ -216,9 +199,7 @@ export function AddEventFun({
     })
   };
 
-  /**
-   * 保存
-   */
+  // 保存
   const saveHandler = (values) => {
     console.log('处理后，保存：', values);
     api.eventSave({
@@ -251,10 +232,9 @@ export function AddEventFun({
 
   // 商品列表
   const [selectedId, setSelectedId] = useState(null);
-  const [goodsSearchData, setGoodsSearchData] = useState([]);
+  const [goodsSearchList, setGoodsSearchList] = useState([]);
   const [goodsListData, setGoodsListData] = useState([]);
   const [editableKeys, setEditableRowKeys] = useState([]);
-
 
   const columns = [
     {
@@ -300,11 +280,11 @@ export function AddEventFun({
     },
   ];
 
-  // 商品选择列表
-  const requestGoodsSearchData = async (searchText) => {
+  // 商品搜索列表
+  const requestGoodsSearchListData = async (searchText) => {
     let list = [];
     try {
-      const res = await api.eventGoodsList({
+      const res = await api.goodsSearchList({
         searchText: searchText,
       });
       if (res) {
@@ -314,7 +294,7 @@ export function AddEventFun({
           let dataList = respData.data || []
           if (dataList.length > 0) {
             list = goodsSelectOptions(dataList);
-            setGoodsSearchData(dataList);
+            setGoodsSearchList(dataList);
           }
         } else {
           MyAlert({ errorMsg: respData.message });
@@ -326,6 +306,7 @@ export function AddEventFun({
     return list;
   }
   
+  // 商品选项
   const goodsSelectOptions = (list) => {
     let newList = [];
     list.forEach((item) => {
@@ -356,7 +337,7 @@ export function AddEventFun({
         return;
       }
 
-      goodsSearchData.forEach((item) => {
+      goodsSearchList.forEach((item) => {
         if (item.id === selectedId) {
           newGoodsList.push(item);
         }
@@ -366,7 +347,7 @@ export function AddEventFun({
       setGoodsListData(newGoodsList);
       setSelectedId(null);
     }
-  }, [goodsListData, goodsSearchData, selectedId]);
+  }, [goodsListData, goodsSearchList, selectedId]);
   
   // 添加商品
   const goodsAddWithId = (id) => {
@@ -450,16 +431,7 @@ export function AddEventFun({
             name="activityType"
             label="活动类型"
             rules={[{ required: true, message: '请选择活动类型' }]}
-            options={[
-              {
-                label: '内部活动',
-                value: '1',
-              },
-              {
-                label: '外部活动',
-                value: '2',
-              },
-            ]}
+            options={activityTypeList}
           />
           <ProFormText
             name="activityName"
@@ -498,16 +470,7 @@ export function AddEventFun({
             name="deliveryType"
             label="发货方式"
             rules={[{ required: true, message: '请选择发货方式' }]}
-            options={[
-              {
-                label: '自提',
-                value: '1',
-              },
-              {
-                label: '邮寄',
-                value: '2',
-              },
-            ]}
+            options={deliveryTypeList}
           />
           <ProFormTextArea
             name="informNote"
@@ -576,7 +539,7 @@ export function AddEventFun({
               labelInValue
               debounceTime={500}
               label="活动商品"
-              request={requestGoodsSearchData}
+              request={requestGoodsSearchListData}
               rules={[{ required: true, message: '请输入商品编号' }]}
               placeholder="请输入商品编号"
               onChange={(id) => { goodsAddWithId(id); }}

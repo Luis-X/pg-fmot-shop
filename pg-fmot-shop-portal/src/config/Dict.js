@@ -35,24 +35,56 @@ let dict = {
   },
   goodsType: {
     1: '实物',
-    2: '虚拟',
+    2: '虚拟商品',
   },
 
   // 订单
   orderStatus: {
-    1: '待支付',
-    2: '待发货',
-    3: '待收货',
-    4: '已完成',
-    5: '已取消',
+    1: '交易成功',
+    2: '已取消',
   },
   deliveryType: {
-    1: '自取',
+    1: '自提',
     2: '邮寄',
+  },
+
+  // 埋点
+  trackPeopleType: {
+    1: '浏览人数',
+    2: '页面平均停留时长',
+    3: '轮播图视频平均播放时长',
+    4: '轮播图视频播放人数',
+    5: '轮播图视频完播人数',
+    6: '商品详情视频平均播放时长',
+    7: '商品详情视频播放人数',
+    8: '商品详情视频完播人数',
+    9: '购买人数',
+    10: '添加购物车人数',   
+    11: '点击“确认兑换”人数',
+    12: '兑换成功人数',
+    13: '兑换失败人数',
+    14: '取消人数',
+  },
+  trackTimesType: {
+    1: '浏览次数',
+    2: '页面平均停留时长',
+    3: '轮播图视频平均播放时长',
+    4: '轮播图视频播放次数',
+    5: '轮播图视频完播次数',
+    6: '商品详情视频平均播放时长',
+    7: '商品详情视频播放次数',
+    8: '商品详情视频完播次数',
+    9: '购买次数',
+    10: '添加购物车次数',    
+    11: '点击“确认兑换”次数',
+    12: '兑换成功次数',
+    13: '兑换失败次数',
+    14: '取消次数',
   },
 };
 
 export default {
+
   getValue: (key, value, def) => {
     let dictValue = dict[key];
     if (key == null || !dict.hasOwnProperty(key)) {
@@ -64,6 +96,22 @@ export default {
       return def;
     }
   },
+
+  getOptionsList: (key) => {
+    if (key == null ||!dict.hasOwnProperty(key)) {
+      return [];
+    }
+    let obj = dict[key];
+    let options = [];
+    for (let k in obj) {
+      options.push({
+        value: k,
+        label: obj[k]       
+      });
+    }
+    return options;
+  }
+  
 };
 
 export { dict };
