@@ -27,7 +27,7 @@ import moment from 'moment';
 import { ImportDataPicker } from '../../components/ImportDataPicker';
 import zhCN from 'antd/es/locale/zh_CN';
 import Dict from '../../config/Dict';
-import { DownloadTemplateFile } from '../../utils/util';
+import Util from '../../utils/util';
 
 // const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -147,7 +147,7 @@ class InternalAccount extends Component {
 
   // 内部账号模版
   clickImportAccountTemplate = () => {
-    DownloadTemplateFile(101);
+    Util.downloadTemplateFile(101);
   }
 
   // 积分充值
@@ -161,7 +161,7 @@ class InternalAccount extends Component {
 
   // 积分充值模版
   clickImportPointsTemplate = () => {
-    DownloadTemplateFile(102);
+    Util.downloadTemplateFile(102);
   }
 
   // 查询

@@ -20,7 +20,7 @@ import MyAlert from '../../components/MyAlert';
 import zhCN from 'antd/es/locale/zh_CN';
 import moment from 'moment';
 import Dict from '../../config/Dict';
-import { ImgUrlsToFiles, FilesToImgUrls } from '../../utils/util';
+import Util from '../../utils/util';
 
 export function AddEventFun({
   eventId,
@@ -95,7 +95,7 @@ export function AddEventFun({
             bannerList.forEach((item) => {
               const imgUrls = item.bannerImg ? [item.bannerImg] : [];
               let newItem = {
-                bannerImg: ImgUrlsToFiles(imgUrls),
+                bannerImg: Util.imgUrlsToFiles(imgUrls),
                 bannerLink: item.bannerLink,
               }
               newBannerList.push(newItem);
@@ -147,7 +147,7 @@ export function AddEventFun({
       let newBannerList = [];
       bannerList.forEach((item) => {
         const imgFiles = item.bannerImg ? item.bannerImg : [];
-        const imgUrl = FilesToImgUrls(imgFiles)[0] || '';
+        const imgUrl = Util.filesToImgUrls(imgFiles)[0] || '';
         let newItem = {
           bannerImg: imgUrl,
           bannerLink: item.bannerLink,

@@ -6,7 +6,7 @@ import MyAlert from './MyAlert';
 import { LoadingOutlined } from '@ant-design/icons';
 import $ from 'jquery';
 // import axios from "axios";
-import { DownloadTemplateFile } from '../utils/util';
+import Util from '../utils/util';
 
 export function ImportDataPicker({ show, type, onHide, updateList }) { // type【account: 导入账号 points: 导入积分】
   const [fileData, setFileData] = useState(null);
@@ -95,7 +95,7 @@ export function ImportDataPicker({ show, type, onHide, updateList }) { // type�
    * 下载
    */
   const pointImportTemplateUrl = () => {
-    DownloadTemplateFile(type)
+    Util.downloadTemplateFile(type)
   };
 
   /**

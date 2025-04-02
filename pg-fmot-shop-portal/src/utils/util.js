@@ -1,10 +1,9 @@
 import $ from 'jquery';
 import * as URL from '../api/URL';
 
-/**
- * 根据类型下载模板文件
- */
-export const DownloadTemplateFile = (type) => {
+const utils = {
+ // 根据类型下载模板文件
+ downloadTemplateFile: (type) => {
   console.log(type);
   let url;
   let fileName = 'template.xlsx';
@@ -55,10 +54,10 @@ export const DownloadTemplateFile = (type) => {
     }
   };
   xhh.send();
-};
+},
 
 // urls转files
-export const ImgUrlsToFiles = (imgUrls) => {
+imgUrlsToFiles: (imgUrls) => {
   let list = [];
   imgUrls.forEach((item) => {
     const url = item || '';
@@ -69,10 +68,10 @@ export const ImgUrlsToFiles = (imgUrls) => {
     }
   });
   return list;
-}
+},
 
 // files转urls
-export const FilesToImgUrls = (files) => {
+filesToImgUrls: (files) => {
   let list = [];
   files.forEach((item) => {
     const url = item.url || '';
@@ -82,9 +81,6 @@ export const FilesToImgUrls = (files) => {
   });
   return list;
 }
+};
 
-export default {
-  DownloadTemplateFile,
-  ImgUrlsToFiles,
-  FilesToImgUrls
-}
+export default utils;

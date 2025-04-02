@@ -14,7 +14,7 @@ import '@ant-design/pro-components/dist/components.css';
 import * as api from '../../api/api';
 import MyAlert from '../../components/MyAlert';
 import Dict from '../../config/Dict';
-import { ImgUrlsToFiles, FilesToImgUrls } from '../../utils/util';
+import Util from '../../utils/util';
 
 export function AddGoodsFun({
   goodsId,
@@ -77,18 +77,18 @@ export function AddGoodsFun({
 
           // 预览图
           const goodsImgUrls = detailData.goodsImg ? [detailData.goodsImg] : [];
-          detailData.goodsImg = ImgUrlsToFiles(goodsImgUrls);
+          detailData.goodsImg = Util.imgUrlsToFiles(goodsImgUrls);
 
           // 轮播图（视频、封面、图片）
           let bannerPoster = [];
           let bannerVideo = [];
           let bannerImgs = [];
           const bannerPosterUrls = detailData.bannerPoster ? [detailData.bannerPoster] : [];
-          bannerPoster = ImgUrlsToFiles(bannerPosterUrls);
+          bannerPoster = Util.imgUrlsToFiles(bannerPosterUrls);
           const bannerVideoUrls = detailData.bannerVideo ? [detailData.bannerVideo] : [];
-          bannerVideo = ImgUrlsToFiles(bannerVideoUrls);
+          bannerVideo = Util.imgUrlsToFiles(bannerVideoUrls);
           const bannerImgsUrls = detailData.bannerImgs ? detailData.bannerImgs : [];
-          bannerImgs = ImgUrlsToFiles(bannerImgsUrls);
+          bannerImgs = Util.imgUrlsToFiles(bannerImgsUrls);
           detailData.goodsBanner = [{
             bannerPoster: bannerPoster,
             bannerVideo: bannerVideo,
@@ -97,11 +97,11 @@ export function AddGoodsFun({
 
           // 视频
           const goodsVideoUrls = detailData.goodsVideo ? [detailData.goodsVideo] : [];
-          detailData.goodsVideo = ImgUrlsToFiles(goodsVideoUrls);
+          detailData.goodsVideo = Util.imgUrlsToFiles(goodsVideoUrls);
 
           // 长图
           const goodsIntroImgUrls = detailData.goodsIntroImg ? [detailData.goodsIntroImg] : [];
-          detailData.goodsIntroImg = ImgUrlsToFiles(goodsIntroImgUrls);
+          detailData.goodsIntroImg = Util.imgUrlsToFiles(goodsIntroImgUrls);
 
         } else {
           MyAlert({ errorMsg: respData.message });
@@ -122,7 +122,7 @@ export function AddGoodsFun({
 
       // 预览图
       const goodsImgFiles = values.goodsImg ? values.goodsImg : [];
-      values.goodsImg = FilesToImgUrls(goodsImgFiles)[0] || '';
+      values.goodsImg = Util.filesToImgUrls(goodsImgFiles)[0] || '';
 
       // 轮播图（视频、封面、图片）
       let bannerPoster = '';
@@ -130,11 +130,11 @@ export function AddGoodsFun({
       let bannerImgs = [];
       values.goodsBanner.forEach((item) => {
         const bannerPosterFiles = item.bannerPoster ? item.bannerPoster : [];
-        bannerPoster = FilesToImgUrls(bannerPosterFiles)[0] || '';
+        bannerPoster = Util.filesToImgUrls(bannerPosterFiles)[0] || '';
         const bannerVideoFiles = item.bannerVideo ? item.bannerVideo : [];
-        bannerVideo = FilesToImgUrls(bannerVideoFiles)[0] || '';
+        bannerVideo = Util.filesToImgUrls(bannerVideoFiles)[0] || '';
         const bannerImgFiles = item.bannerImgs ? item.bannerImgs : [];
-        bannerImgs = FilesToImgUrls(bannerImgFiles) || [];
+        bannerImgs = Util.filesToImgUrls(bannerImgFiles) || [];
       });
       values.bannerPoster = bannerPoster;
       values.bannerVideo = bannerVideo;
@@ -143,11 +143,11 @@ export function AddGoodsFun({
 
       // 视频
       const goodsVideoFiles = values.goodsVideo ? values.goodsVideo : [];
-      values.goodsVideo = FilesToImgUrls(goodsVideoFiles)[0] || '';
+      values.goodsVideo = Util.filesToImgUrls(goodsVideoFiles)[0] || '';
 
       // 长图
       const goodsIntroFiles = values.goodsIntroImg ? values.goodsIntroImg : [];
-      values.goodsIntroImg = FilesToImgUrls(goodsIntroFiles)[0] || '';
+      values.goodsIntroImg = Util.filesToImgUrls(goodsIntroFiles)[0] || '';
 
       // 操作
       if ('save' === type) {
