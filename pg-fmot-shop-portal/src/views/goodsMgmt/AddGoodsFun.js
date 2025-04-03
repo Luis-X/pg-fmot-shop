@@ -42,7 +42,7 @@ export function AddGoodsFun({
   }
 
   // 商品类别
-  const requestCategoryListData = () => {   
+  const requestCategoryListData = async () => {   
     api.goodsCategoryList().then((res) => {
       if (res) {
         const respData = res.data;
@@ -206,6 +206,44 @@ export function AddGoodsFun({
     });
   };
 
+  // 上传图片
+  const beforeUpload = (file) => {
+    console.log('---file---', file);
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    if (!isJpgOrPng) {
+      message.error('图片格式不是JPG/PNG!');
+    }
+    const isLt2M = file.size / 1024 / 1024 <= 10.1;
+    if (!isLt2M) {
+      message.error('图片需要小于10MB!');
+    }
+    return isJpgOrPng && isLt2M;
+  };
+
+  const handleImgChange = (info) => {
+    console.log('---info---', info);
+    const { status } = info.file;
+    if (status === 'uploading') {
+      setLoading(true);
+      return;
+    }
+    // 上传
+    if (status === 'done') {
+      setLoading(false);
+      const resp = info.file.response;
+      console.log('---resp---', resp);
+      if (resp.code === 0) {
+        const url = resp.data
+        console.log(url)
+      } else {
+        message.info(resp.message)
+      }
+    } else {
+      setLoading(false);
+      console.log('file upload failed', info.file);
+    }
+  };
+  
   /**
    * Form布局
    */
@@ -213,6 +251,63 @@ export function AddGoodsFun({
     labelCol: { span: 4 },
     wrapperCol: { span: 20 },
   };
+
+  const goodsBannerItemView = () => {
+    return (
+      <>
+        <div className="goods-banner-row-wrap">
+          <div className="goods-banner-row">
+            <ProFormUploadButton
+              name="bannerVideo"
+              label="视频"
+              extra="只能上传mp4文件，最好不要超过100KB"
+              rules={[{ required: false, message: '请上传视频' }]}
+              max={1}
+              fieldProps={{
+                name: 'file',
+                listType: 'picture-card',
+              }}
+              title="上传视频"
+              action={api.uploadFile()}
+              beforeUpload={beforeUpload}
+              onChange={handleImgChange}
+            />
+          </div>
+          <div className="goods-banner-row">
+            <ProFormUploadButton
+              name="bannerPoster"
+              label="封面"
+              extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：100x100"
+              rules={[{ required: false, message: '请上传封面' }]}
+              max={1}
+              fieldProps={{
+                name: 'file',
+                listType: 'picture-card',
+              }}
+              title="上传图片"
+              action={api.uploadFile()}
+              beforeUpload={beforeUpload}
+              onChange={handleImgChange}
+            />
+          </div>
+        </div>
+        <ProFormUploadButton
+          name="bannerImgs"
+          label="图片"
+          extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：100x100"
+          rules={[{ required: true, message: '请上传商品轮播图' }]}
+          fieldProps={{
+            name: 'file',
+            listType: 'picture-card',
+          }}
+          title="上传图片"
+          action={api.uploadFile()}
+          beforeUpload={beforeUpload}
+          onChange={handleImgChange}
+        />
+      </>      
+    )
+  }
 
   return (
     <React.Fragment>
@@ -305,66 +400,46 @@ export function AddGoodsFun({
             max={1}
             fieldProps={{ listType: 'picture-card' }}
             title="上传图片"
+            action={api.uploadFile()}
+            beforeUpload={beforeUpload}
+            onChange={handleImgChange}
           />
-          <ProFormList
-            name="goodsBanner"
-            label="商品轮播图"
-            creatorButtonProps={false}
-            copyIconProps={false}
-            deleteIconProps={false}
-            itemRender={({ listDom, action }, { index }) => (
-              <ProCard bordered style={{ marginBlockEnd: 8 }} extra={action} bodyStyle={{ paddingBlockEnd: 0 }}>{listDom}</ProCard>
-            )}
-            initialValue={[
-              {
-                bannerVideo: [],
-                bannerPoster: [],
-                bannerImgs: [],
-              },
-            ]}
-          >
-            <div className="goods-banner-row-wrap">
-              <div className="goods-banner-row">
-                <ProFormUploadButton
-                  name="bannerVideo"
-                  label="视频"
-                  extra="只能上传mp4文件，最好不要超过100KB"
-                  rules={[{ required: false, message: '请上传视频' }]}
-                  max={1}
-                  fieldProps={{
-                    name: 'file',
-                    listType: 'picture-card',
-                  }}
-                  title="上传视频"
-                />
-              </div>
-              <div className="goods-banner-row">
-                <ProFormUploadButton
-                  name="bannerPoster"
-                  label="封面"
-                  extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：100x100"
-                  rules={[{ required: false, message: '请上传封面' }]}
-                  max={1}
-                  fieldProps={{
-                    name: 'file',
-                    listType: 'picture-card',
-                  }}
-                  title="上传图片"
-                />
-              </div>
-            </div>
-            <ProFormUploadButton
-              name="bannerImgs"
-              label="图片"
-              extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：100x100"
-              rules={[{ required: true, message: '请上传商品轮播图' }]}
-              fieldProps={{
-                name: 'file',
-                listType: 'picture-card',
-              }}
-              title="上传图片"
-            />
-          </ProFormList>
+          {
+            goodsId? (
+              <ProFormList
+                name="goodsBanner"
+                label="商品轮播图"
+                creatorButtonProps={false}
+                copyIconProps={false}
+                deleteIconProps={false}
+                itemRender={({ listDom, action }, { index }) => (
+                  <ProCard bordered style={{ marginBlockEnd: 8 }} extra={action} bodyStyle={{ paddingBlockEnd: 0 }}>{listDom}</ProCard>
+                )}
+              >
+                {goodsBannerItemView()}
+              </ProFormList>
+            ) : (
+              <ProFormList
+                name="goodsBanner"
+                label="商品轮播图"
+                creatorButtonProps={false}
+                copyIconProps={false}
+                deleteIconProps={false}
+                itemRender={({ listDom, action }, { index }) => (
+                  <ProCard bordered style={{ marginBlockEnd: 8 }} extra={action} bodyStyle={{ paddingBlockEnd: 0 }}>{listDom}</ProCard>
+                )}
+                initialValue={[
+                  {
+                    bannerVideo: [],
+                    bannerPoster: [],
+                    bannerImgs: [],
+                  },
+                ]}
+              >
+                {goodsBannerItemView()}
+              </ProFormList>
+            )
+          }
           <ProFormUploadButton
             name="goodsVideo"
             label="商品视频"
@@ -376,6 +451,9 @@ export function AddGoodsFun({
               listType: 'picture-card',
             }}
             title="上传视频"
+            action={api.uploadFile()}
+            beforeUpload={beforeUpload}
+            onChange={handleImgChange}
           />
           <ProFormUploadButton
             name="goodsIntroImg"
@@ -388,6 +466,10 @@ export function AddGoodsFun({
               listType: 'picture-card',
             }}
             title="上传图片"
+            showUploadList={false}
+            action={api.uploadFile()}
+            beforeUpload={beforeUpload}
+            onChange={handleImgChange}
           />
         </ProForm>
       </Drawer>

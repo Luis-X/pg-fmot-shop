@@ -11,7 +11,9 @@ import {
   ConfigProvider,
   DatePicker,
   Tabs,
-  Spin
+  Spin,
+  Tooltip,
+  notification
 } from 'antd';
 import {
   SearchOutlined,
@@ -42,8 +44,8 @@ class TrackDetail extends Component {
           id: '0',
           title: '商品名称',
           width: 50,
-          dataIndex: 'id',
-          key: 'id',
+          dataIndex: 'goodsName',
+          key: 'goodsName',
           align: 'center',
         },
         {
@@ -53,6 +55,7 @@ class TrackDetail extends Component {
           dataIndex: 'id',
           key: 'id',
           align: 'center',
+          render: (text, record) => ( this.listTableItemView(text, record) ),
         },
         {
           id: '2',
@@ -61,6 +64,7 @@ class TrackDetail extends Component {
           dataIndex: 'id',
           key: 'id',
           align: 'center',
+          render: (text, record) => ( this.listTableItemView(text, record) ),
         },
         {
           id: '3',
@@ -69,6 +73,7 @@ class TrackDetail extends Component {
           dataIndex: 'id',
           key: 'id',
           align: 'center',
+          render: (text, record) => ( this.listTableItemView(text, record) ),
         },
         {
           id: '4',
@@ -77,6 +82,7 @@ class TrackDetail extends Component {
           dataIndex: 'id',
           key: 'id',
           align: 'center',
+          render: (text, record) => ( this.listTableItemView(text, record) ),
         },
         {
           id: '5',
@@ -85,6 +91,7 @@ class TrackDetail extends Component {
           dataIndex: 'id',
           key: 'id',
           align: 'center',
+          render: (text, record) => ( this.listTableItemView(text, record) ),
         },
         {
           id: '6',
@@ -93,6 +100,7 @@ class TrackDetail extends Component {
           dataIndex: 'id',
           key: 'id',
           align: 'center',
+          render: (text, record) => ( this.listTableItemView(text, record) ),
         },
         {
           id: '7',
@@ -101,6 +109,7 @@ class TrackDetail extends Component {
           dataIndex: 'id',
           key: 'id',
           align: 'center',
+          render: (text, record) => ( this.listTableItemView(text, record) ),
         },
         {
           id: '8',
@@ -109,6 +118,7 @@ class TrackDetail extends Component {
           dataIndex: 'id',
           key: 'id',
           align: 'center',
+          render: (text, record) => ( this.listTableItemView(text, record) ),
         },
         {
           id: '9',
@@ -117,6 +127,7 @@ class TrackDetail extends Component {
           dataIndex: 'id',
           key: 'id',
           align: 'center',
+          render: (text, record) => ( this.listTableItemView(text, record) ),
         },
         {
           id: '10',
@@ -125,6 +136,7 @@ class TrackDetail extends Component {
           dataIndex: 'id',
           key: 'id',
           align: 'center',
+          render: (text, record) => ( this.listTableItemView(text, record) ),
         },
         {
           id: '11',
@@ -133,6 +145,7 @@ class TrackDetail extends Component {
           dataIndex: 'id',
           key: 'id',
           align: 'center',
+          render: (text, record) => ( this.listTableItemView(text, record) ),
         },
         {
           id: '12',
@@ -141,6 +154,7 @@ class TrackDetail extends Component {
           dataIndex: 'id',
           key: 'id',
           align: 'center',
+          render: (text, record) => ( this.listTableItemView(text, record) ),
         },
         {
           id: '13',
@@ -149,6 +163,7 @@ class TrackDetail extends Component {
           dataIndex: 'id',
           key: 'id',
           align: 'center',
+          render: (text, record) => ( this.listTableItemView(text, record) ),
         },
         {
           id: '14',
@@ -157,6 +172,7 @@ class TrackDetail extends Component {
           dataIndex: 'id',
           key: 'id',
           align: 'center',
+          render: (text, record) => ( this.listTableItemView(text, record) ),
         },
       ],
       timesColumns: [
@@ -164,8 +180,8 @@ class TrackDetail extends Component {
           id: '0',
           title: '商品名称',
           width: 50,
-          dataIndex: 'id',
-          key: 'id',
+          dataIndex: 'goodsName',
+          key: 'goodsName',
           align: 'center',
         },
         {
@@ -175,6 +191,7 @@ class TrackDetail extends Component {
           dataIndex: 'id',
           key: 'id',
           align: 'center',
+          render: (text, record) => ( this.listTableItemView(text, record) ),
         },
         {
           id: '2',
@@ -183,6 +200,7 @@ class TrackDetail extends Component {
           dataIndex: 'id',
           key: 'id',
           align: 'center',
+          render: (text, record) => ( this.listTableItemView(text, record) ),
         },
         {
           id: '3',
@@ -191,6 +209,7 @@ class TrackDetail extends Component {
           dataIndex: 'id',
           key: 'id',
           align: 'center',
+          render: (text, record) => ( this.listTableItemView(text, record) ),
         },
         {
           id: '4',
@@ -199,6 +218,7 @@ class TrackDetail extends Component {
           dataIndex: 'id',
           key: 'id',
           align: 'center',
+          render: (text, record) => ( this.listTableItemView(text, record) ),
         },
         {
           id: '5',
@@ -207,6 +227,7 @@ class TrackDetail extends Component {
           dataIndex: 'id',
           key: 'id',
           align: 'center',
+          render: (text, record) => ( this.listTableItemView(text, record) ),
         },
         {
           id: '6',
@@ -215,6 +236,7 @@ class TrackDetail extends Component {
           dataIndex: 'id',
           key: 'id',
           align: 'center',
+          render: (text, record) => ( this.listTableItemView(text, record) ),
         },
         {
           id: '7',
@@ -223,6 +245,7 @@ class TrackDetail extends Component {
           dataIndex: 'id',
           key: 'id',
           align: 'center',
+          render: (text, record) => ( this.listTableItemView(text, record) ),
         },
         {
           id: '8',
@@ -231,6 +254,7 @@ class TrackDetail extends Component {
           dataIndex: 'id',
           key: 'id',
           align: 'center',
+          render: (text, record) => ( this.listTableItemView(text, record) ),
         },
         {
           id: '9',
@@ -239,6 +263,7 @@ class TrackDetail extends Component {
           dataIndex: 'id',
           key: 'id',
           align: 'center',
+          render: (text, record) => ( this.listTableItemView(text, record) ),
         },
         {
           id: '10',
@@ -247,6 +272,7 @@ class TrackDetail extends Component {
           dataIndex: 'id',
           key: 'id',
           align: 'center',
+          render: (text, record) => ( this.listTableItemView(text, record) ),
         },
         {
           id: '11',
@@ -255,6 +281,7 @@ class TrackDetail extends Component {
           dataIndex: 'id',
           key: 'id',
           align: 'center',
+          render: (text, record) => ( this.listTableItemView(text, record) ),
         },
         {
           id: '12',
@@ -263,6 +290,7 @@ class TrackDetail extends Component {
           dataIndex: 'id',
           key: 'id',
           align: 'center',
+          render: (text, record) => ( this.listTableItemView(text, record) ),
         },
         {
           id: '13',
@@ -271,6 +299,7 @@ class TrackDetail extends Component {
           dataIndex: 'id',
           key: 'id',
           align: 'center',
+          render: (text, record) => ( this.listTableItemView(text, record) ),
         },
         {
           id: '14',
@@ -279,6 +308,7 @@ class TrackDetail extends Component {
           dataIndex: 'id',
           key: 'id',
           align: 'center',
+          render: (text, record) => ( this.listTableItemView(text, record) ),
         },
       ],
       goodsSearchList: [],
@@ -512,6 +542,14 @@ class TrackDetail extends Component {
     return newColumnList;
   }
 
+  // 导出数据明细（Excel）
+  clickListItem = (record) => {
+    console.log(record)
+    notification['success']({
+      message: '数据明细导出成功！'
+    });
+  }
+
   // 列表
   listTableView = (columns) => {
     const { trackTypeList } = this.state;
@@ -582,6 +620,14 @@ class TrackDetail extends Component {
       </div>
     );
   };
+
+  listTableItemView = (text, record) => {
+    return (
+      <Tooltip title="数据明细">
+        <span className="event-setting" onClick={() => { this.clickListItem(record); }}>{text}</span>
+      </Tooltip>
+    )    
+  }
 
   // 图表
   lineChartView = () => {

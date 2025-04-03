@@ -83,6 +83,11 @@ export const setToken = () => {
   });
 };
 
+// 上传文件
+export const uploadFile = (param) => {
+  return URL.uploadFile;
+};
+
 
 // 登录、登出
 export const SsoLogin = (param) => {
@@ -187,9 +192,15 @@ export const internalAccountChangeStatus = (param) => {
 export const internalAccountImport = (param) => {
   return client.post(URL.internalAccountImport, param);
 };
+export const internalAccountImportTemplate = (param) => {
+  return URL.internalAccountImportTemplate;
+}
 export const internalAccountImportPoints = (param) => {
   return client.post(URL.internalAccountImportPoints, param);
 };
+export const internalAccountImportTemplatePoints = (param) => {
+  return URL.internalAccountImportTemplatePoints;
+}
 
 // 外部账号
 export const externalAccountList = (param) => {
@@ -244,9 +255,15 @@ export const externalAccountChangeStatus = (param) => {
 export const externalAccountImport = (param) => {
   return client.post(URL.externalAccountImport, param);
 };
+export const externalAccountImportTemplate = (param) => {
+  return URL.externalAccountImportTemplate;
+}
 export const externalAccountImportPoints = (param) => {
   return client.post(URL.externalAccountImportPoints, param);
 };
+export const externalAccountImportTemplatePoints = (param) => {
+  return URL.externalAccountImportTemplatePoints;
+}
 
 // 活动
 export const eventList = (param) => {
@@ -315,7 +332,7 @@ export const eventDetail = (param) => {
     data: {
       code: 0,
       data: {
-        activityType: '1',
+        activityType: '2',
         activityName: "活动名称",
         orgCode: "123456789",
         startTime: "2023-01-01",
@@ -443,6 +460,9 @@ export const orderList = (param) => {
   }
   return clientMockData(res, param);
 };
+export const orderListExport = (param) => {
+  return URL.orderListExport;
+}
 
 // 商品
 export const goodsSearchList = (param) => {
@@ -653,33 +673,43 @@ export const trackPeopleList = (param) => {
         content: [
           {
             id: 1,
+            goodsName: '商品1',
           },
           {
             id: 2,
+            goodsName: '商品2',
           },
           {
             id: 3,
+            goodsName: '商品3',
           },
           {
             id: 4,
+            goodsName: '商品4',
           },
           {
             id: 5,
+            goodsName: '商品5',
           },
           {
             id: 6,
+            goodsName: '商品6',
           },
           {
             id: 7,
+            goodsName: '商品7',
           },
           {
             id: 8,
+            goodsName: '商品8',
           },
           {
             id: 9,
+            goodsName: '商品9',
           },
           {
             id: 10,
+            goodsName: '商品10',
           }
         ],
         totalElements: 12
@@ -696,41 +726,45 @@ export const trackTimesList = (param) => {
       data: {
         content: [
           {
+            id: 1,
+            goodsName: '商品1',
+          },
+          {
+            id: 2,
+            goodsName: '商品2',
+          },
+          {
+            id: 3,
+            goodsName: '商品3',
+          },
+          {
+            id: 4,
+            goodsName: '商品4',
+          },
+          {
+            id: 5,
+            goodsName: '商品5',
+          },
+          {
+            id: 6,
+            goodsName: '商品6',
+          },
+          {
+            id: 7,
+            goodsName: '商品7',
+          },
+          {
+            id: 8,
+            goodsName: '商品8',
+          },
+          {
+            id: 9,
+            goodsName: '商品9',
+          },
+          {
             id: 10,
-          },
-          {
-            id: 11,
-          },
-          {
-            id: 12,
-          },
-          {
-            id: 13,
-          },
-          {
-            id: 14,
-          },
-          {
-            id: 15,
-          },
-          {
-            id: 16,
-          },
-          {
-            id: 17,
-          },
-          {
-            id: 18,
-          },
-          {
-            id: 19,
-          },
-          {
-            id: 20,
-          },
-          {
-            id: 21,
-          },
+            goodsName: '商品10',
+          }
         ],
         totalElements: 12
       },

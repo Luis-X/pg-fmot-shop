@@ -5,7 +5,7 @@
   "homepage": "/portal",
   "dependencies": {
     "@ant-design/charts": "^1.4.2",
-    "@ant-design/pro-components": "^1.1.14",
+    "@ant-design/pro-components": "^1.1.25",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",

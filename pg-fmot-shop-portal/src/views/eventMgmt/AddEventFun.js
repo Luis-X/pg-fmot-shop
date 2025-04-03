@@ -56,7 +56,7 @@ export function AddEventFun({
   }
 
   // 机构代码
-  const requestOrgCodeListData = () => {
+  const requestOrgCodeListData = async () => {
     api.orgCodeList().then((res) => {
       if (res) {
         const respData = res.data;
@@ -222,14 +222,6 @@ export function AddEventFun({
     });
   };
 
-  /**
-   * Form布局
-   */
-  const formItemLayout = {
-    labelCol: { span: 4 },
-    wrapperCol: { span: 20 },
-  };
-
   // 商品列表
   const [selectedId, setSelectedId] = useState(null);
   const [goodsSearchList, setGoodsSearchList] = useState([]);
@@ -382,6 +374,52 @@ export function AddEventFun({
     });
   };
 
+  // 上传图片
+  const beforeUpload = (file) => {
+    console.log('---file---', file);
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    if (!isJpgOrPng) {
+      message.error('图片格式不是JPG/PNG!');
+    }
+    const isLt2M = file.size / 1024 / 1024 <= 10.1;
+    if (!isLt2M) {
+      message.error('图片需要小于10MB!');
+    }
+    return isJpgOrPng && isLt2M;
+  };
+
+  const handleImgChange = (info) => {
+    console.log('---info---', info);
+    const { status } = info.file;
+    if (status === 'uploading') {
+      setLoading(true);
+      return;
+    }
+    // 上传
+    if (status === 'done') {
+      setLoading(false);
+      const resp = info.file.response;
+      console.log('---resp---', resp);
+      if (resp.code === 0) {
+        const url = resp.data
+        console.log(url)
+      } else {
+        message.info(resp.message)
+      }
+    } else {
+      setLoading(false);
+      console.log('file upload failed', info.file);
+    }
+  };
+  
+  /**
+  * Form布局
+  */
+  const formItemLayout = {
+    labelCol: { span: 4 },
+    wrapperCol: { span: 20 },
+  };
+
   return (
     <React.Fragment>
       <Drawer 
@@ -501,25 +539,27 @@ export function AddEventFun({
           >
             <ProFormGroup key="group" min={1}>
               <div className='banner-edit-wrap'>
-              <ProFormUploadButton
-                name="bannerImg"
-                rules={[{ required: true, message: '请上传图片' }]}
-                max={1}
-                fieldProps={{
-                  name: 'file',
-                  listType: 'picture-card',
-                }}
-                title="上传文件"
-                extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：100x100"
-              />
-              <ProFormText
-                width={'xl'}
-                name="bannerLink"
-                rules={[{ required: true, message: '请填写点击跳转URL' }]}
-                placeholder={'请填写点击跳转URL'}
-              />
-              </div>
-             
+                <ProFormUploadButton
+                  name="bannerImg"
+                  rules={[{ required: true, message: '请上传图片' }]}
+                  max={1}
+                  fieldProps={{
+                    name: 'file',
+                    listType: 'picture-card',
+                  }}
+                  title="上传文件"
+                  extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：100x100"
+                  action={api.uploadFile()}
+                  beforeUpload={beforeUpload}
+                  onChange={handleImgChange}
+                />
+                <ProFormText
+                  width={'xl'}
+                  name="bannerLink"
+                  rules={[{ required: true, message: '请填写点击跳转URL' }]}
+                  placeholder={'请填写点击跳转URL'}
+                />
+              </div>             
             </ProFormGroup>
           </ProFormList>
           <ProFormDigit

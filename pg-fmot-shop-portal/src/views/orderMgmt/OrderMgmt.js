@@ -180,7 +180,7 @@ class OrderMgmt extends Component {
     }
     return new Promise(() => {
       const fileName = '订单列表';
-      const exportUrl = URL.orderListExport;
+      const exportUrl = api.orderListExport();
       axios({
         url: exportUrl,
         method: 'post',

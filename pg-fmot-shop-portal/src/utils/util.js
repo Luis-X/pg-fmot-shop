@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import * as URL from '../api/URL';
+import * as api from '../api/api';
 
 const utils = {
  // 根据类型下载模板文件
@@ -9,19 +9,19 @@ const utils = {
   let fileName = 'template.xlsx';
   if (type === 101) {
     // 内部，账户导入模板
-    url = URL.internalAccountImportTemplate;
+    url = api.internalAccountImportTemplate();
     fileName = 'internal account template.xlsx';
   } else if (type === 102) {
     // 内部，积分导入模板
-    url = URL.internalAccountImportTemplatePoints;
+    url = api.internalAccountImportTemplatePoints();
     fileName = 'internal points template.xlsx';
   } else if (type === 201) {
     // 外部，账户导入模板
-    url = URL.externalAccountImportTemplate;
+    url = api.externalAccountImportTemplate();
     fileName = 'external account template.xlsx';
   } else if (type === 202) {
     // 外部，积分导入模板
-    url = URL.externalAccountImportTemplatePoints;
+    url = api.externalAccountImportTemplatePoints();
     fileName = 'external points template.xlsx';
   } else {
     console.error('未识别的模板类型');
