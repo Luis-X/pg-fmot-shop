@@ -1,5 +1,6 @@
 // 上传文件
 export const uploadFile = window.location.origin === 'https://ministore.shenghuojia.com' ? 'https://storage.pg.com.cn/v1/files' : 'https://storage-qa.pg.com.cn/v1/files';
+export const uploadFileSign = ''   // 获取上传文件签名
     
 // 登录、登出
 export const ssoLogin = '/admin/ssoLogin' // 管理员SSO登陆接口

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Drawer, Form, message, Button, ConfigProvider, Row, Col} from 'antd';
+import { Drawer, Form, message, Button, ConfigProvider, Row, Col, Upload} from 'antd';
 import {
   ProForm,
   ProFormGroup,
@@ -385,7 +385,7 @@ export function AddEventFun({
     if (!isLt2M) {
       message.error('图片需要小于10MB!');
     }
-    return isJpgOrPng && isLt2M;
+    return (isJpgOrPng && isLt2M) ? true : Upload.LIST_IGNORE;
   };
 
   const handleImgChange = (info) => {
@@ -546,11 +546,11 @@ export function AddEventFun({
                   fieldProps={{
                     name: 'file',
                     listType: 'picture-card',
+                    beforeUpload: beforeUpload,
                   }}
                   title="上传文件"
                   extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：100x100"
-                  action={api.uploadFile()}
-                  beforeUpload={beforeUpload}
+                  action={api.uploadFile()}                  
                   onChange={handleImgChange}
                 />
                 <ProFormText

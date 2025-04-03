@@ -88,6 +88,10 @@ export const uploadFile = (param) => {
   return URL.uploadFile;
 };
 
+// 文件签名
+export const uploadFileSign = (param) => {
+  return client.get(URL.uploadFileSign, param);
+};
 
 // 登录、登出
 export const SsoLogin = (param) => {

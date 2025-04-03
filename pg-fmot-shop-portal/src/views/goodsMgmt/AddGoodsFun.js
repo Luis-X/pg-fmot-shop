@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Drawer, Form, message, Button } from 'antd';
+import { Drawer, Form, message, Button, Upload } from 'antd';
 import {
   ProCard,
   ProForm,
@@ -217,7 +217,7 @@ export function AddGoodsFun({
     if (!isLt2M) {
       message.error('图片需要小于10MB!');
     }
-    return isJpgOrPng && isLt2M;
+    return (isJpgOrPng && isLt2M) ? true : Upload.LIST_IGNORE;
   };
 
   const handleImgChange = (info) => {
@@ -266,10 +266,10 @@ export function AddGoodsFun({
               fieldProps={{
                 name: 'file',
                 listType: 'picture-card',
+                beforeUpload: beforeUpload,
               }}
               title="上传视频"
               action={api.uploadFile()}
-              beforeUpload={beforeUpload}
               onChange={handleImgChange}
             />
           </div>
@@ -283,10 +283,10 @@ export function AddGoodsFun({
               fieldProps={{
                 name: 'file',
                 listType: 'picture-card',
+                beforeUpload: beforeUpload,
               }}
               title="上传图片"
               action={api.uploadFile()}
-              beforeUpload={beforeUpload}
               onChange={handleImgChange}
             />
           </div>
@@ -299,10 +299,10 @@ export function AddGoodsFun({
           fieldProps={{
             name: 'file',
             listType: 'picture-card',
+            beforeUpload: beforeUpload,
           }}
           title="上传图片"
           action={api.uploadFile()}
-          beforeUpload={beforeUpload}
           onChange={handleImgChange}
         />
       </>      
@@ -398,10 +398,13 @@ export function AddGoodsFun({
             extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：100x100"
             rules={[{ required: true, message: '请上传商品预览图' }]}
             max={1}
-            fieldProps={{ listType: 'picture-card' }}
+            fieldProps={{ 
+              name: 'file',
+              listType: 'picture-card',
+              beforeUpload: beforeUpload,
+            }}
             title="上传图片"
             action={api.uploadFile()}
-            beforeUpload={beforeUpload}
             onChange={handleImgChange}
           />
           {
@@ -449,10 +452,10 @@ export function AddGoodsFun({
             fieldProps={{
               name: 'file',
               listType: 'picture-card',
+              beforeUpload: beforeUpload,
             }}
             title="上传视频"
             action={api.uploadFile()}
-            beforeUpload={beforeUpload}
             onChange={handleImgChange}
           />
           <ProFormUploadButton
@@ -464,11 +467,11 @@ export function AddGoodsFun({
             fieldProps={{
               name: 'file',
               listType: 'picture-card',
+              beforeUpload: beforeUpload,
             }}
             title="上传图片"
             showUploadList={false}
             action={api.uploadFile()}
-            beforeUpload={beforeUpload}
             onChange={handleImgChange}
           />
         </ProForm>
