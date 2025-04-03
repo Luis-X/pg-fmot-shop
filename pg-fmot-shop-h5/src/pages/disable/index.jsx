@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { Empty } from "@nutui/nutui-react";
 import { View, Image } from "@tarojs/components";
 import Taro, { useLoad, useRouter, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
 import PGAlertPrivacy from "../../components/pgAlertPrivacy/index";
 import PGLoading from "../../components/pgLoading/index";
+
+import imgBG from '../../images/disable-bg.png';
+import imgIcon from '../../images/disable-icon.png';
 
 export default function Index() {
 
@@ -45,40 +47,26 @@ export default function Index() {
 
   const [isShowPage, setIsShowPage] = useState(false);
   const [statusType, setStatusType] = useState(''); // 1: 不在活动时间内 2: 不符合活动资格
-  const emptySrc = 'https://storage.360buyimg.com/imgtools/44f3cc10c4-0cf9a7e0-c0ac-11ee-8375-193101bb1a46.png'
 
   return (
     <>
-      {isShowPage ? (
-        <View className='pg-index'>
-          <View className='disable-list'>
-            <Empty
-              className='disable-empty'
-              description={
-                <View>
-                  {statusType === 1 && (
-                    <>
-                      <View className='disable-empty-desc'>抱歉！</View>
-                      <View className='disable-empty-desc'>
-                        当前不在活动时间内
-                      </View>
-                    </>
-                  )}
-                  {statusType === 2 && (
-                    <>
-                      <View className='disable-empty-desc'>抱歉！</View>
-                      <View className='disable-empty-desc'>
-                        暂不符合活动资格
-                      </View>
-                    </>
-                  )}
-                </View>
-              }
-              image={
-                <Image src={emptySrc} />
-              }
-              imageSize={150}
-            />
+      {isShowPage ? (  
+        <View className='disable-list'>
+          <Image className='disable-bg-img' mode='aspectFill' src={imgBG}></Image>
+          <View className="disable-empty">
+            <Image className='disable-empty-img' mode='aspectFit' src={imgIcon}></Image>
+            {statusType === 1 && (
+              <>
+                <View className='disable-empty-desc'>抱歉！</View>
+                <View className='disable-empty-desc'>当前不在活动时间内</View>
+              </>
+            )}
+            {statusType === 2 && (
+              <>
+                <View className='disable-empty-desc'>抱歉！</View>
+                <View className='disable-empty-desc'>暂不符合活动资格</View>
+              </>
+            )}
           </View>
           <PGAlertPrivacy></PGAlertPrivacy>
         </View>

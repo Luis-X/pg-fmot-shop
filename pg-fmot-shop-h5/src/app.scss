@@ -8,9 +8,10 @@
   --nutui-button-default-font-size: 24rpx;
   --nutui-button-default-border-color: #808080;
   // input
-  --nutui-input-border-radius: 10rpx;
-  --nutui-input-font-size: 24rpx;
-  --nutui-input-padding: 15rpx 20rpx;
+  --nutui-input-border-radius: 20rpx;
+  --nutui-input-font-size: 28rpx;
+  --nutui-input-padding: 25rpx 28rpx;
+  --nutui-input-placeholder-color: #AFB0B3;
   // empty
   --nutui-empty-background-color: transparent;
   // dialog
@@ -25,8 +26,16 @@
   // tabs
   --nutui-tabs-tabpane-padding: 0rpx 0rpx;
   --nutui-tabs-titles-background-color: #ffffff;
-  // price
-  --nutui-price-line-color: #808080;
+  
+
+  // tag [ok]
+  --nutui-tag-padding: 0rpx 8rpx;
+  --nutui-tag-font-size: 18rpx;
+  --nutui-tag-height: 32rpx;
+  --nutui-tag-border-radius: 8rpx;
+  --nutui-tag-color: #B46820;
+  --nutui-tag-border-width: 1rpx;
+  --nutui-tag-background-color: #FFF4E7;
 }
 
 .pg-index {
@@ -38,7 +47,7 @@
   // display: flex;
   // flex-direction: column;
   // align-items: center;
-  background: rgba(21, 67, 154, 0.06);
+  background: #F6F8FC;
 }
 
 .pg-alert-bg {

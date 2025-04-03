@@ -3,15 +3,19 @@ import {
   PullToRefresh,
   InfiniteLoading,
   Toast,
-  SearchBar,
+  Image,
 } from "@nutui/nutui-react";
-import { View } from "@tarojs/components";
+import { View, Input } from "@tarojs/components";
 import Taro, { useLoad, useRouter, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
 import PGAlertPrivacy from "../../components/pgAlertPrivacy/index";
 import PGGoodsView from "../../components/pgGoodsView/index";
 import PGLoading from "../../components/pgLoading/index";
+
+import imgSearchBar from "../../images/home-search-bar.png";
+import imgSearchBarIcon from "../../images/home-search-bar-icon.png";
+
 
 export default function Index() {
 
@@ -45,7 +49,7 @@ export default function Index() {
     init();
 
     const keyword = router.params.keyword || '';
-    setKeyWord(decodeURIComponent(keyword));
+    setSearchValue(decodeURIComponent(keyword));
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
@@ -61,15 +65,17 @@ export default function Index() {
   };
 
   // 搜索
-  const [keyWord, setKeyWord] = useState('');
-  const searchOnChange = (val) => {
-    console.log("searchOnChange", val);
-    setKeyWord(val);
+  const [searchValue, setSearchValue] = useState('')
+
+  const searchOnChange = (e) => {
+    const value = e.detail.value || ''
+    console.log('searchOnChange', value)
+    setSearchValue(value)
   };
 
-  const searchOnConfirm = (val) => {
-    console.log("searchOnConfirm", val);
-    setKeyWord(val);
+  const searchOnConfirm = () => {
+    const value = searchValue || ''
+    console.log('searchOnConfirm', value)
   };
 
   // 下拉刷新
@@ -129,7 +135,23 @@ export default function Index() {
         <View className='pg-index'>
           <PullToRefresh onRefresh={() => refreshData()} renderIcon={(status) => Taro.UTIL.refreshRenderHeaderSvg(status)}>
             <View className='search-list' id='scroll'>
-              <SearchBar className='search-search-wrap' value={keyWord} placeholder='请输入商品名称搜索' onChange={searchOnChange} onSearch={searchOnConfirm} />
+              <View className="search-search-wrap">
+                <Image className='search-search-img' mode='aspectFill' src={imgSearchBar}></Image>
+                <View className='search-search-bar-wrap'>                   
+                  <View className='search-search-bar'>
+                    <Input 
+                      className='search-search-input' 
+                      type='text' 
+                      placeholder='请输入商品名称搜索' 
+                      value={searchValue || ''}
+                      onInput={searchOnChange} 
+                    />
+                    <View className="search-search-btn" onClick={searchOnConfirm}>
+                      <Image className='search-search-icon' mode='aspectFit' src={imgSearchBarIcon}></Image>                      
+                    </View>
+                  </View>
+                </View>                 
+              </View> 
               <InfiniteLoading target='scroll' hasMore={hasMore} onLoadMore={loadMore} loadingText={Taro.UTIL.refreshRenderFooterSvg('加载中')} loadMoreText={Taro.UTIL.refreshRenderFooterSvg('没有更多了')}>
                 {goodsListView()}
               </InfiniteLoading>

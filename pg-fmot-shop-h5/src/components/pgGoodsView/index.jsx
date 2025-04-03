@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
-import { Tag, Image, Price } from "@nutui/nutui-react";
-import { View } from '@tarojs/components'
+import { Tag, Image } from "@nutui/nutui-react";
+import { View, Text } from '@tarojs/components'
 import Taro, { useLoad } from '@tarojs/taro'
 import './index.scss'
 
@@ -24,18 +24,21 @@ export default function Index(props) {
   return (
     <View className='pg-goods-wrap' onClick={clickGoods}>
       <Image className='goods-img' src={item.src} fit='cover'></Image>
-      <View className='goods-name'>{item.title}</View>
+      <Text className='goods-name'>{item.title}</Text>
       <View className='goods-price-wrap'>
-        <Price className='goods-price-new' price={item.vipPrice} size='normal' symbol='积分' digits={0} position='after'></Price>
+        <View className='goods-price-new-wrap'>
+          <View className='goods-price-new'>{item.vipPrice}</View>
+          <View className='goods-price-new-unit'>积分</View>
+        </View>       
         {
           item.price && (
-            <Price className='goods-price-old' price={item.price} line size='small' symbol='积分' digits={0} position='after'></Price>
+            <View className='goods-price-old'>{item.price}积分</View>
           )
         }        
       </View>          
       <View className='goods-tag-wrap'>
-        <Tag className='goods-tag' type='primary'>{item.shopDescription}</Tag>
-        <Tag className='goods-tag' type='primary'>{item.delivery}</Tag>        
+        <Tag className='goods-tag' plain background='#B46820'>{item.shopDescription}</Tag>
+        <Tag className='goods-tag' plain background='#B46820'>{item.delivery}</Tag>        
       </View>
     </View>
   )

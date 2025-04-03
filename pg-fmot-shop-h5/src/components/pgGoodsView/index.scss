@@ -1,57 +1,70 @@
 .pg-goods-wrap {
-  margin-bottom: 20rpx;
-  width: 340rpx;
-  height: 540rpx;
+  margin-bottom: 30rpx;
+  width: 320rpx;
+  height: 530rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
   background: #ffffff;
-  border-radius: 10rpx;
+  border-radius: 12rpx;
   .goods-img {
     .nut-img {
-      border-radius: 10rpx 10rpx 0rpx 0rpx !important;
+      border-radius: 12rpx 12rpx 0rpx 0rpx !important;
     }
-    width: 340rpx;
-    height: 340rpx;
+    width: 320rpx;
+    height: 320rpx;
   }
   .goods-name {
-    width: 320rpx;
-    height: 100rpx;
-    // background: orange;
+    margin-top: 22rpx;
+    width: 280rpx;
+    line-height: 40rpx;
     font-size: 30rpx;
-    color: black;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
+    color: #000000;
+    // display: -webkit-box;
+    // -webkit-box-orient: vertical;
+    // -webkit-line-clamp: 2;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
   .goods-price-wrap {
-    width: 320rpx;
-    height: 50rpx;
-    // background: orange;
+    margin-top: 20rpx;
+    width: 280rpx;
     display: flex;
     flex-direction: row;
     align-items: flex-end;
-    .goods-price-new {
-      color: red;
-    }
+    .goods-price-new-wrap {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end;
+      .goods-price-new {
+        color: #EE3A43;
+        font-size: 40rpx;
+        line-height: 40rpx;
+      }
+      .goods-price-new-unit {
+        margin-left: 5rpx;
+        color: #EE3A43;
+        font-size: 24rpx;
+        line-height: 24rpx;
+      }
+    }    
     .goods-price-old {
-      margin-left: 10rpx;
-      color: gray;
+      margin-left: 8rpx;
+      color: #8A8A8A;
+      font-size: 24rpx;
+      line-height: 24rpx;
+      text-decoration: line-through;
     }
   }
   .goods-tag-wrap {
-    width: 320rpx;
-    height: 40rpx;
-    // background: orange;
+    margin-top: 20rpx;
+    width: 280rpx;
     display: flex;
     flex-direction: row;
     align-items: center;
     .goods-tag {
       margin-right: 10rpx;
-      font-size: 20rpx;
-      color: #ffffff;
     }
   }
 }

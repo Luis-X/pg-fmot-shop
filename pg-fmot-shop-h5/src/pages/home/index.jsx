@@ -4,17 +4,19 @@ import {
   InfiniteLoading,
   Toast,
   Dialog,
-  SearchBar,
   Swiper,
-  Image
+  Image,
 } from "@nutui/nutui-react";
-import { View } from "@tarojs/components";
+import { View, Input } from "@tarojs/components";
 import Taro, { useLoad, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
 import PGAlertPrivacy from "../../components/pgAlertPrivacy/index";
 import PGGoodsView from "../../components/pgGoodsView/index";
 import PGLoading from "../../components/pgLoading/index";
+
+import imgSearchBar from "../../images/home-search-bar.png";
+import imgSearchBarIcon from "../../images/home-search-bar-icon.png";
 
 export default function Index() {
   const sleep = (time) => {
@@ -51,7 +53,7 @@ export default function Index() {
   const state = {
     src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
     title:
-      "【活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
+      "洋甘菊无硅油天然洋甘菊无硅油天然",
     price: "388.0",
     vipPrice: "378",
     shopDescription: "自营",
@@ -139,13 +141,18 @@ export default function Index() {
   };
 
   // 搜索
-  const searchOnChange = (val) => {
-    console.log("searchOnChange", val);
+  const [searchValue, setSearchValue] = useState('')
+
+  const searchOnChange = (e) => {
+    const value = e.detail.value || ''
+    console.log('searchOnChange', value)
+    setSearchValue(value)
   };
 
-  const searchOnConfirm = (val) => {
-    console.log("searchOnConfirm", val);
-    Taro.ROUTER.navigateTo(`/pages/search/index?keyword=${val}`);
+  const searchOnConfirm = () => {
+    const value = searchValue || ''
+    console.log('searchOnConfirm', value)
+    Taro.ROUTER.navigateTo(`/pages/search/index?keyword=${value}`);
   };
 
   // 轮播图
@@ -189,7 +196,7 @@ export default function Index() {
             bannerList.map((item, index) => {
               return (
                 <Swiper.Item key={index} className='swiper-item' onClick={() => clickBanner(item)}>
-                  <Image className='swiper-item' src={item.imgUrl} fit='cover' />
+                  <Image className='swiper-item-img' src={item.imgUrl} fit='cover' />
                 </Swiper.Item>
               );
             })
@@ -212,7 +219,23 @@ export default function Index() {
           <PullToRefresh onRefresh={() => refreshData()} renderIcon={(status) => Taro.UTIL.refreshRenderHeaderSvg(status)}>
             <View className={visible ? 'home-list' : 'home-tab-list'} id='scroll'>              
               <InfiniteLoading target='scroll' hasMore={hasMore} onLoadMore={loadMore} loadingText={Taro.UTIL.refreshRenderFooterSvg('加载中')} loadMoreText={Taro.UTIL.refreshRenderFooterSvg('没有更多了')}>
-                <SearchBar className='home-search-wrap' placeholder='请输入商品名称搜索' onChange={searchOnChange} onSearch={searchOnConfirm} />
+                <View className="home-search-wrap">
+                  <Image className='home-search-img' mode='aspectFill' src={imgSearchBar}></Image>
+                  <View className='home-search-bar-wrap'>                   
+                    <View className='home-search-bar'>
+                      <Input 
+                        className='home-search-input' 
+                        type='text' 
+                        placeholder='请输入商品名称搜索' 
+                        value={searchValue || ''}
+                        onInput={searchOnChange} 
+                      />
+                      <View className="home-search-btn" onClick={searchOnConfirm}>
+                        <Image className='home-search-icon' mode='aspectFit' src={imgSearchBarIcon}></Image>                      
+                      </View>
+                    </View>
+                  </View>                 
+                </View>                
                 {swiperView()}
                 {goodsListView()}                
               </InfiniteLoading>

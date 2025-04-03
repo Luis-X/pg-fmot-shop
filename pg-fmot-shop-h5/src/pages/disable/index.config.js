@@ -1,4 +1,4 @@
 export default definePageConfig({
-  navigationBarTitleText: '提示页',
+  navigationBarTitleText: '提示',
   disableScroll: true
 })

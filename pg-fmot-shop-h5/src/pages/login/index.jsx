@@ -1,11 +1,19 @@
 import { useState } from 'react'
 import { Input, Button } from '@nutui/nutui-react'
-import { View } from '@tarojs/components'
+import { View, Image } from '@tarojs/components'
 import Taro, { useLoad, useDidShow } from '@tarojs/taro'
 import './index.scss'
 
+import ASSET_IMG from '../../utils/assetImg.js'
+
 import PGAlertPrivacy from "../../components/pgAlertPrivacy/index";
 import PGLoading from "../../components/pgLoading/index";
+
+// const imgBG = ASSET_IMG.assetImgWithName('login-bg.png')
+import imgBG from '../../images/login-bg.png';
+import imgTitle from '../../images/login-title.png';
+import imgBtnBind from '../../images/login-btn-bind.png';
+import imgBtnLogin from '../../images/login-btn-login.png';
 
 export default function Index() {
 
@@ -84,6 +92,7 @@ export default function Index() {
   // 账号输入
   const [inputValue, setInputValue] = useState('')
   const inputOnChange = (val) => {
+    console.log(val)
     setInputValue(val)
   }
 
@@ -91,12 +100,19 @@ export default function Index() {
     <>
       {isShowPage ? (
         <View className='login-list'>
+          <Image className='login-bg-img' mode='aspectFill' src={imgBG}></Image>
           <View className='login-wrap'>
+            <Image className='login-title-img' mode='aspectFit' src={imgTitle}></Image>
             <Input className='login-input' placeholder='请输入您的账号登录' onChange={inputOnChange} />
-            <View className='login-desc'>注意：同一活动只能绑定1个账号，绑定后无法解绑，请使用本人微信进行绑定。</View>
-            <Button className='login-btn-bind' onClick={clickBindConfirm}>确认绑定并查看活动</Button>
-            <View className='login-btn-login' onClick={clickInternalLogin}>内部用户登录</View>
+            <View className='login-desc'>（注意：同一活动内只能绑定1个账号，绑定后无法解绑，请使用本人微信进行绑定。）</View>
+            <View className='login-btn-bind-wrap' onClick={clickBindConfirm}>
+              <Image className='login-btn-bind-img' mode='aspectFit' src={imgBtnBind}></Image>
+              <View className='login-btn-bind-text-wrap'>
+                <View className='login-btn-bind-text'>确认绑定并查看活动</View>
+              </View>              
+            </View>                                 
           </View>     
+          <Image className='login-btn-login' mode='aspectFill' src={imgBtnLogin} onClick={clickInternalLogin}></Image>
           <PGAlertPrivacy></PGAlertPrivacy> 
         </View>
       ) : (

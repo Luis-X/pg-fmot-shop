@@ -5,9 +5,7 @@ import {
   Dialog,
   Badge,
   Swiper,
-  Price,
   Tag,
-  Divider,
   Image
 } from "@nutui/nutui-react";
 import { Cart, Service } from "@nutui/icons-react";
@@ -17,6 +15,12 @@ import "./index.scss";
 
 import PGAlertPrivacy from "../../components/pgAlertPrivacy/index";
 import PGLoading from "../../components/pgLoading/index";
+
+import imgPriceBar from "../../images/detail-price-bar.png";
+import imgService from "../../images/detail-service.png";
+import imgCart from "../../images/detail-cart.png";
+import imgLine from "../../images/detail-line.png";
+import imgCartAdd from "../../images/detail-cart-add.png";
 
 export default function Index() {
 
@@ -143,18 +147,19 @@ export default function Index() {
         <View className='tools-bar'>
           <View className='left-btn-wrap'>
             <View className='left-btn' onClick={() => clickService()}>
-              <Service width={20} height={20} />
-              <View className='left-btn-title'>客服</View>
+              <Image className='left-btn-img' mode='aspectFit' src={imgService}></Image>
             </View>
+            <Image className='left-btn-line' mode='aspectFit' src={imgLine}></Image>
             <Badge className='left-btn-tag' value={cartNum} max={99}>
               <View className='left-btn' onClick={() => clickCart()}>
-                <Cart width={20} height={20} />
-                <View className='left-btn-title'>购物车</View>                                   
+                <Image className='left-btn-img' mode='aspectFit' src={imgCart}></Image>
               </View>
             </Badge> 
           </View>              
           <View className='right-btn-wrap'>
-            <View className='right-btn-add'onClick={() => clickCartAdd()}>加入购物车</View>
+            <View className='right-btn-add'onClick={() => clickCartAdd()}>
+              <Image className='right-btn-add-img' mode='aspectFit' src={imgCartAdd}></Image>
+            </View>
             <View className='right-btn-buy'onClick={() => clickBuyNow()}>立即购买</View>
           </View>
         </View>
@@ -276,13 +281,17 @@ export default function Index() {
     return (
       <>
         <View className='detail-price-wrap'>
+          <Image className='detail-price-img' mode='aspectFill' src={imgPriceBar}></Image>
           <View className='detail-price-item'>
-            <Price className='detail-price-new' price={goodsInfo.vipPrice} size='large' symbol='积分' digits={0} position='after' />
+            <View className='detail-price-new-wrap'>
+              <View className='detail-price-new'>{goodsInfo.vipPrice}</View>
+              <View className='detail-price-new-unit'>积分</View>
+            </View>       
             {
               goodsInfo.price && (
-                <Price className='detail-price-old' price={goodsInfo.price} line size='small' symbol='积分' digits={0} position='after' />
+                <View className='detail-price-old'>{goodsInfo.price}积分</View>
               )
-            }        
+            }     
           </View>           
         </View>
         <View className='detail-name-wrap'>
@@ -290,9 +299,9 @@ export default function Index() {
         </View>
         <View className='detail-tag-wrap'>
           <View className='detail-tag-item'>
-            <Tag className='detail-tag-text' type='primary'>{goodsInfo.shopDescription}</Tag>
-            <Tag className='detail-tag-text' type='primary'>{goodsInfo.shopName}</Tag>
-            <Tag className='detail-tag-text' type='primary'>{goodsInfo.delivery}</Tag>
+            <Tag className='detail-tag-text'>{goodsInfo.shopDescription}</Tag>
+            <Tag className='detail-tag-text'>{goodsInfo.shopName}</Tag>
+            <Tag className='detail-tag-text'>{goodsInfo.delivery}</Tag>
           </View>          
         </View>
       </>
@@ -304,7 +313,7 @@ export default function Index() {
     return (
       <>
         <View className='detail-divider-wrap'>
-          <Divider className='detail-divider'>商品详情</Divider>
+          <View className='detail-divider'>商品详情</View>
         </View>       
         <View className='detail-video-wrap'>
           <View className='detail-video-item'>
