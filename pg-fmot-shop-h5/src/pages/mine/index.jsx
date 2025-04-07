@@ -1,16 +1,16 @@
 import { useState } from "react";
 import {
   PullToRefresh,
-  Toast,
-  Tabs,
+  Image,
 } from "@nutui/nutui-react";
-import { View, Image } from "@tarojs/components";
+import { View } from "@tarojs/components";
 import Taro, { useLoad, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
 import PGAlertPrivacy from "../../components/pgAlertPrivacy/index";
 import PGOrderView from "../../components/pgOrderView/index";
 import PGLoading from "../../components/pgLoading/index";
+import PGTabBar from "../../components/pgTabbar/index";
 
 import imgTopBar from '../../images/mine-top-bar.png';
 import imgOrder from '../../images/mine-order.png';
@@ -80,7 +80,6 @@ export default function Index() {
   const refreshData = () => {
     return new Promise((resolve) => {
       setTimeout(() => {
-        Toast.show("😊");
         resolve("done");
       }, 1000);
     });
@@ -107,7 +106,7 @@ export default function Index() {
     return (
       <View className='mine-point-wrap'>
         <View className="point-bg-wrap">
-          <Image className='point-img' mode='aspectFit' src={imgTopBar}></Image>
+          <Image className='point-img' fit='contain' src={imgTopBar}></Image>
           <View className='point-title'>12059000</View>
           <View className='point-btn' onClick={clickMyExchange}>查看我正参与的兑换</View>
         </View>               
@@ -120,7 +119,7 @@ export default function Index() {
     return (
       <>
         <View className='mine-order-wrap'>
-          <Image className='order-img' mode='aspectFit' src={imgOrder}></Image>
+          <Image className='order-img' fit='contain' src={imgOrder}></Image>
           <View className='order-title'>我的订单</View>
         </View>
         <View className='mine-tab-wrap'>
@@ -140,7 +139,11 @@ export default function Index() {
   // 订单标签
   const listView = () => {
     return (
+      <>
+      <PGOrderView orderInfo={orderInfo} onClick={() => clickOrderDetail()}></PGOrderView>
       <PGOrderView orderInfo={orderInfo} onClick={() => clickOrderDetail()}></PGOrderView> 
+      </>
+      
     )
   }
 
@@ -155,6 +158,7 @@ export default function Index() {
               {listView()}                                                          
             </View>
           </PullToRefresh>
+          <PGTabBar sence='mine'></PGTabBar>
           <PGAlertPrivacy></PGAlertPrivacy>
         </View>
       ) : (

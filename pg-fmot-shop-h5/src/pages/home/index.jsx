@@ -2,8 +2,6 @@ import { useState } from "react";
 import {
   PullToRefresh,
   InfiniteLoading,
-  Toast,
-  Dialog,
   Swiper,
   Image,
   Indicator
@@ -66,7 +64,6 @@ export default function Index() {
   const refreshData = () => {
     return new Promise((resolve) => {
       setTimeout(() => {
-        Toast.show("😊");
         resolve("done");
       }, 1000);
     });
@@ -113,35 +110,6 @@ export default function Index() {
     )
   };
 
-  // 弹窗
-  const [visible, setVisible] = useState(false);
-  const checkAlertStatus = () => {
-    setVisible(true);
-    Taro.hideTabBar();
-  };
-
-  const clickAlertConfirm = () => {
-    setVisible(false);
-    Taro.showTabBar();
-  };
-
-  const alertView = () => {
-    return (
-      <Dialog
-        className='home-alert'
-        title='请同意协议条款'
-        visible={visible}
-        hideCancelButton
-        confirmText='同意'
-        onConfirm={() => clickAlertConfirm()}
-      >
-        <View className='home-alert-content'>
-          文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容
-        </View>
-      </Dialog>
-    );
-  };
-
   // 搜索
   const [searchValue, setSearchValue] = useState('')
 
@@ -160,7 +128,7 @@ export default function Index() {
   const searchBarView = () => {
     return (
       <View className="home-search-wrap">
-        <Image className='home-search-img' mode='aspectFill' src={imgSearchBar}></Image>
+        <Image className='home-search-img' fit='fill' src={imgSearchBar}></Image>
         <View className='home-search-bar-wrap'>                   
           <View className='home-search-bar'>
             <Input 
@@ -172,7 +140,7 @@ export default function Index() {
               onConfirm={searchOnConfirm}
             />
             <View className="home-search-btn" onClick={searchOnConfirm}>
-              <Image className='home-search-icon' mode='aspectFit' src={imgSearchBarIcon}></Image>                      
+              <Image className='home-search-icon' fit='contain' src={imgSearchBarIcon}></Image>                      
             </View>
           </View>
         </View>                 
@@ -251,8 +219,7 @@ export default function Index() {
               </InfiniteLoading>
             </View>
           </PullToRefresh>
-          {/* {alertView()} */}
-          <PGTabBar></PGTabBar>
+          <PGTabBar sence='home'></PGTabBar>
           <PGAlertPrivacy></PGAlertPrivacy>          
         </View>
       ) : (

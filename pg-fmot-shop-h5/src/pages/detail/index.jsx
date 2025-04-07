@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
   PullToRefresh,
-  Toast,
   Dialog,
   Badge,
   Swiper,
@@ -100,7 +99,6 @@ export default function Index() {
   const refreshData = () => {
     return new Promise((resolve) => {
       setTimeout(() => {
-        Toast.show("😊");
         resolve("done");
       }, 1000);
     });
@@ -147,17 +145,17 @@ export default function Index() {
         <View className='tools-bar'>
           <View className='left-btn-wrap'>
             <View className='left-btn' onClick={() => clickService()}>
-              <Image className='left-btn-img' mode='aspectFit' src={imgService}></Image>
+              <Image className='left-btn-img' fit='contain' src={imgService}></Image>
             </View>
-            <Image className='left-btn-line' mode='aspectFit' src={imgLine}></Image>            
+            <Image className='left-btn-line' fit='contain' src={imgLine}></Image>            
               <View className='left-btn' onClick={() => clickCart()}>
-                <Image className='left-btn-img' mode='aspectFit' src={imgCart}></Image>
+                <Image className='left-btn-img' fit='contain' src={imgCart}></Image>
                 <Badge className="left-btn-tag" value={cartNum} max={99}></Badge>                
               </View> 
           </View>              
           <View className='right-btn-wrap'>
             <View className='right-btn-add'onClick={() => clickCartAdd()}>
-              <Image className='right-btn-add-img' mode='aspectFit' src={imgCartAdd}></Image>
+              <Image className='right-btn-add-img' fit='contain' src={imgCartAdd}></Image>
             </View>
             <View className='right-btn-buy'onClick={() => clickBuyNow()}>立即购买</View>
           </View>
@@ -281,7 +279,7 @@ export default function Index() {
     return (
       <>
         <View className='detail-price-wrap'>
-          <Image className='detail-price-img' mode='aspectFill' src={imgPriceBar}></Image>
+          <Image className='detail-price-img' fit='fill' src={imgPriceBar}></Image>
           <View className='detail-price-item'>
             <View className='detail-price-new-wrap'>
               <View className='detail-price-new'>{goodsInfo.vipPrice}</View>
@@ -335,7 +333,7 @@ export default function Index() {
           </View>          
         </View>
         <View className='detail-img-wrap'>
-          <Image className='detail-img' src={goodsInfo.src}></Image>
+          <Image className='detail-img' src={goodsInfo.src} fit='contain'></Image>
         </View>
       </>
     )

@@ -9,8 +9,7 @@
   // dialog
   --nutui-dialog-border-radius: 10rpx;
   --nutui-dialog-header-font-size: 34rpx;
-  // tabbar
-  --nutui-tabbar-height: 100rpx;
+ 
   // tabs
   --nutui-tabs-tabpane-padding: 0rpx 0rpx;
   --nutui-tabs-titles-background-color: #ffffff;
@@ -46,7 +45,6 @@
   // countdown [ok]
   --nutui-countdown-font-size: 24rpx;
   --nutui-countdown-color: #000000;
-
 }
 
 .pg-index {
@@ -62,7 +60,7 @@
 }
 
 .pg-alert-bg {
-  z-index: 9999;
+  z-index: 999999;
   position: fixed;
   width: 100%;
   height: 100%;

@@ -54,7 +54,6 @@
 		"@tarojs/runtime": "3.6.35",
 		"@tarojs/shared": "3.6.35",
 		"@tarojs/taro": "3.6.35",
-		"cms-request": "^1.0.3",
 		"compressorjs": "^1.2.1",
 		"crypto-js": "^4.2.0",
 		"dayjs": "^1.11.13",

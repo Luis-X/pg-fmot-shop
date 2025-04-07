@@ -1,5 +1,4 @@
 import wx from 'weixin-js-sdk';
-import cmsSDK from 'cms-request';
 
 import Taro from '@tarojs/taro';
 import REQUEST from '../utils/request';
@@ -42,8 +41,6 @@ export default {
   myReportSubmit,
 
   myDemandSubmit,
-
-  contactUs,
 
   uploadFileSign,
   uploadFileSignPublic,
@@ -180,26 +177,6 @@ function myReportSubmit (params) {
 function myDemandSubmit (params) {
   return REQUEST.post('/api/userRequirement/create', params)
 }
-
-// 需求 联系我们 [ok]
-function contactUs () {
-  let cmsConfig = CONFIG.cmsConfig || {}
-  cmsConfig.secret = Taro.UTIL.decodeBaseStr(cmsConfig.seId)
-  const param = {
-    mid: '6986fea0e5'
-  }
-  return new Promise(function (resolve) {
-    let cmsRequest = new cmsSDK.CmsH5Request(cmsConfig)
-    cmsRequest.request(param).then(result => {
-      resolve(result || {})
-    }).catch(err => {
-      resolve(err)
-    }).finally(() => {
-
-    })
-  })
-}
-
 
 // 文件上传 签名私有 [ok]
 function uploadFileSign () {

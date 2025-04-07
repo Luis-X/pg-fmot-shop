@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
   PullToRefresh,
-  Toast,
   Image,
   InputNumber
 } from "@nutui/nutui-react";
@@ -12,6 +11,7 @@ import "./index.scss";
 
 import PGAlertPrivacy from "../../components/pgAlertPrivacy/index";
 import PGLoading from "../../components/pgLoading/index";
+import PGTabBar from "../../components/pgTabbar/index";
 
 export default function Index() {
 
@@ -138,7 +138,6 @@ export default function Index() {
   const refreshData = () => {
     return new Promise((resolve) => {
       setTimeout(() => {
-        Toast.show("😊");
         resolve("done");
       }, 1000);
     });
@@ -219,7 +218,7 @@ export default function Index() {
     });
 
     if (ids.length <= 0) {
-      Toast.show("请选择商品");
+      Taro.HUD.showToastMessage('请选择商品')
       return;
     }
 
@@ -311,6 +310,7 @@ export default function Index() {
             </View>
           </PullToRefresh>
           {toolsView()}
+          <PGTabBar sence='cart'></PGTabBar>
           <PGAlertPrivacy></PGAlertPrivacy>
         </View>
       ) : (

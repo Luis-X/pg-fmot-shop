@@ -1,6 +1,6 @@
 .home-tab-list {
   width: 100vw;
-  height: calc(100vh - 88rpx);
+  height: calc(100vh - 168rpx);
   padding: 0;
   overflow-y: auto;
   overflow-x: hidden;
@@ -9,7 +9,7 @@
 
 .home-list {
   width: 100vw;
-  height: 100vh;
+  height: calc(100vh - 168rpx);
   padding: 0;
   overflow-y: auto;
   overflow-x: hidden;
@@ -107,17 +107,3 @@
     justify-content: space-between;
   }
 }
-
-
-.home-alert {
-  .home-alert-content {
-    color: #808080;
-    font-size: 24rpx;
-  }
-  .nut-dialog-footer-ok {
-    font-size: 34rpx;
-    width: 100%;
-    --nutui-dialog-footer-ok-max-width: 100%;
-  }
-}
-

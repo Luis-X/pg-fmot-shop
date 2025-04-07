@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
   PullToRefresh,
-  Toast,
   Dialog,
   CountDown
 } from "@nutui/nutui-react";
@@ -80,7 +79,6 @@ export default function Index() {
   const refreshData = () => {
     return new Promise((resolve) => {
       setTimeout(() => {
-        Toast.show("😊");
         resolve("done");
       }, 1000);
     });

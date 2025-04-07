@@ -2,10 +2,9 @@ import { useState } from "react";
 import {
   PullToRefresh,
   InfiniteLoading,
-  Toast,
+  Image
 } from "@nutui/nutui-react";
-import { ArrowRight } from '@nutui/icons-react'
-import { View, Image } from "@tarojs/components";
+import { View  } from "@tarojs/components";
 import Taro, { useLoad, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
@@ -52,7 +51,6 @@ export default function Index() {
   const refreshData = () => {
     return new Promise((resolve) => {
       setTimeout(() => {
-        Toast.show("😊");
         resolve("done");
       }, 1000);
     });
@@ -94,13 +92,13 @@ export default function Index() {
       return (
         <View className='exchange-bg-wrap' key={index} onClick={() => clickItem(index)}>
           <View className='exchange-wrap'>
-            <Image className='exchange-img' mode='aspectFit' src={imgIcon}></Image>
+            <Image className='exchange-img' fit='contain' src={imgIcon}></Image>
             <View className='exchange-info'>
               <View className='exchange-name'>活动名称{index}</View>
               <View className='exchange-desc'>开始时间：2025-01-01</View>
               <View className='exchange-desc'>截止时间：2025-01-01</View>
             </View>
-            <Image className='exchange-arrow' mode='aspectFit' src={imgArrow}></Image>
+            <Image className='exchange-arrow' fit='contain' src={imgArrow}></Image>
           </View>
         </View>        
       );

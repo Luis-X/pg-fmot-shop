@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   PullToRefresh,
   InfiniteLoading,
-  Toast,
   Image,
 } from "@nutui/nutui-react";
 import { View, Input } from "@tarojs/components";
@@ -81,7 +80,7 @@ export default function Index() {
   const searchBarView = () => {
     return (
       <View className="search-search-wrap">
-        <Image className='search-search-img' mode='aspectFill' src={imgSearchBar}></Image>
+        <Image className='search-search-img' fit='fill' src={imgSearchBar}></Image>
         <View className='search-search-bar-wrap'>                   
           <View className='search-search-bar'>
             <Input 
@@ -93,7 +92,7 @@ export default function Index() {
               onConfirm={searchOnConfirm}
             />
             <View className="search-search-btn" onClick={searchOnConfirm}>
-              <Image className='search-search-icon' mode='aspectFit' src={imgSearchBarIcon}></Image>                      
+              <Image className='search-search-icon' fit='contain' src={imgSearchBarIcon}></Image>                      
             </View>
           </View>
         </View>                 
@@ -105,7 +104,6 @@ export default function Index() {
   const refreshData = () => {
     return new Promise((resolve) => {
       setTimeout(() => {
-        Toast.show("😊");
         resolve("done");
       }, 1000);
     });

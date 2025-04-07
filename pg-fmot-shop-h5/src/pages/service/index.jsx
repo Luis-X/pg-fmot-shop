@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { View, Image } from '@tarojs/components'
+import { Image } from "@nutui/nutui-react";
+import { View } from '@tarojs/components'
 import Taro, { useLoad, useDidShow } from '@tarojs/taro'
 import './index.scss'
 
@@ -45,19 +46,19 @@ export default function Index() {
         isShowPage ? (
           <View className='pg-index'>       
             <View className='service-list'>  
-              <Image className='service-bg-img' mode='aspectFill' src={imgBG}></Image> 
-              <View className='service-wrap'>
-                <Image className='service-img' mode='aspectFit' src={imgIcon}></Image> 
+              <Image className='service-bg-img' fit='fill' src={imgBG}></Image> 
+              <View className='service-wrap'>                
                 <View className='service-content'>
                   <View className='service-content-item'>
-                    <Image className='service-content-icon' mode='aspectFit' src={imgPhone}></Image>
+                    <Image className='service-content-icon' fit='contain' src={imgPhone}></Image>
                     <View className='service-content-text'>联系电话：13188998899</View>
                   </View>
                   <View className='service-content-item'>
-                    <Image className='service-content-icon' mode='aspectFit' src={imgAddress}></Image>
+                    <Image className='service-content-icon' fit='contain' src={imgAddress}></Image>
                     <View className='service-content-text'>联系地址：辽宁省大连市高新园区万达广场一单元1901</View>
                   </View>
                 </View>
+                <Image className='service-img' fit='contain' src={imgIcon}></Image> 
               </View>
             </View>
             <PGAlertPrivacy></PGAlertPrivacy>

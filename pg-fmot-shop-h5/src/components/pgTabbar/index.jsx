@@ -1,11 +1,19 @@
-import { useEffect, useState } from 'react'
-import { Tabbar } from "@nutui/nutui-react";
-import { Cart, Home, User } from '@nutui/icons-react'
+import { useEffect } from 'react'
+import { Image } from "@nutui/nutui-react";
 import { View } from '@tarojs/components'
 import Taro, { useLoad } from '@tarojs/taro'
 import './index.scss'
 
-export default function Index() {
+import imgHome from "../../images/home.png";
+import imgHomeOn from "../../images/home_on.png";
+import imgCart from "../../images/cart.png";
+import imgCartOn from "../../images/cart_on.png";
+import imgMine from "../../images/mine.png";
+import imgMineOn from "../../images/mine_on.png";
+
+export default function Index(props) {
+
+  const { sence } = props
 
   useLoad(() => {
     console.log('tabbar loaded.')
@@ -14,26 +22,47 @@ export default function Index() {
   useEffect(() => {
     console.log('tabbar effect.') 
   }, []);
-
-  const [index, setIndex] = useState(0)
   
-  const clickTabbar = (value) => {
-    console.log('clickTabbar', value)
-    setIndex(value)
-    if (value === 0) {
-      Taro.ROUTER.navigateTo(`/pages/home/index`);   
-    } else if (value === 1) {
-      Taro.ROUTER.navigateTo(`/pages/cart/index`);
-    } else if (value === 2) {
-      Taro.ROUTER.navigateTo(`/pages/user/index`);
+  const clickTabbar = (index) => {
+    console.log('clickTabbar', sence)
+    if (index === 0) {
+      Taro.ROUTER.redirectTo(`/pages/home/index`);   
+    } else if (index === 1) {
+      Taro.ROUTER.redirectTo(`/pages/cart/index`);
+    } else if (index === 2) {
+      Taro.ROUTER.redirectTo(`/pages/mine/index`);
     }
   }
 
   return (
-    <Tabbar fixed value={index} onSwitch={(value) => clickTabbar(value)}>
-      <Tabbar.Item icon={<Home />} />
-      <Tabbar.Item icon={<Cart />} />
-      <Tabbar.Item icon={<User />} />
-    </Tabbar>
+    <View className='pg-tabbar-wrap'>
+      <View className='pg-tabbar-item' onClick={() => clickTabbar(0)}>
+        {
+          sence === 'home' ? (
+            <Image className='pg-tabbar-icon' src={imgHomeOn} fit='contain'></Image>
+          ) : (
+            <Image className='pg-tabbar-icon' src={imgHome} fit='contain'></Image>
+          )
+        }                
+      </View>
+      <View className='pg-tabbar-item' onClick={() => clickTabbar(1)}>
+        {
+          sence === 'cart' ? (
+            <Image className='pg-tabbar-icon' src={imgCartOn} fit='contain'></Image>
+          ) : (
+            <Image className='pg-tabbar-icon' src={imgCart} fit='contain'></Image>
+          )
+        }     
+      </View>
+      <View className='pg-tabbar-item' onClick={() => clickTabbar(2)}>
+        {
+          sence === 'mine' ? (
+            <Image className='pg-tabbar-icon' src={imgMineOn} fit='contain'></Image>
+          ) : (
+            <Image className='pg-tabbar-icon' src={imgMine} fit='contain'></Image>
+          )
+        }     
+      </View>
+    </View>
   )
 }
