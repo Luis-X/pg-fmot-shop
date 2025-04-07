@@ -3,7 +3,7 @@ import {
   PullToRefresh,
   Toast,
   Dialog,
-  Button
+  CountDown
 } from "@nutui/nutui-react";
 import { View } from "@tarojs/components";
 import Taro, { useLoad, useDidShow } from "@tarojs/taro";
@@ -97,8 +97,10 @@ export default function Index() {
   const noteView = () => {
     return (
       <View className='order-detail-note-wrap'>
-        <View className='note-title'>领取说明：</View>
-        <View className='note-content'>{orderInfo.orderDesc}</View>
+        <View className="note-wrap">
+          <View className='note-title'>领取说明：</View>
+          <View className='note-content'>{orderInfo.orderDesc}</View>
+        </View>        
       </View> 
     )
   }
@@ -134,6 +136,18 @@ export default function Index() {
     }, 1000);        
   }
 
+  const btnView = () => {
+    return (
+      <View className='order-detail-btn-wrap'>
+        <View className='order-detail-cancel' onClick={clickCancel}>取消订单</View>
+        <View className='order-detail-count-down-wrap'>
+          <View className='order-detail-count-down'>剩余可取消时间：</View>
+          <CountDown remainingTime={60 * 1000} />
+        </View>        
+      </View> 
+    )
+  }
+
   const alertView = () => {
     return (
       <Dialog
@@ -159,12 +173,10 @@ export default function Index() {
           <PullToRefresh onRefresh={() => refreshData()} renderIcon={(status) => Taro.UTIL.refreshRenderHeaderSvg(status)}>
             <View className='order-detail-list' id='scroll'>      
               {orderInfoView()}
-              {noteView()}                  
+              {noteView()} 
+              {btnView()}                              
             </View>
-          </PullToRefresh>
-          <View className='order-detail-btn-wrap'>
-            <Button className='order-detail-cancel' block type='primary' onClick={clickCancel}>取消订单</Button>
-          </View>        
+          </PullToRefresh>                 
           {alertView()}
           <PGAlertPrivacy></PGAlertPrivacy>          
         </View>

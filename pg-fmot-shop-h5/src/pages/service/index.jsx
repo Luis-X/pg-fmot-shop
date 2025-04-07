@@ -1,11 +1,16 @@
 import { useState } from 'react'
-import { Cell } from '@nutui/nutui-react'
-import { View } from '@tarojs/components'
+import { View, Image } from '@tarojs/components'
 import Taro, { useLoad, useDidShow } from '@tarojs/taro'
 import './index.scss'
 
 import PGAlertPrivacy from '../../components/pgAlertPrivacy/index'
 import PGLoading from "../../components/pgLoading/index";
+
+import imgBG from '../../images/service-bg.png';
+import imgIcon from '../../images/service-icon.png';
+import imgPhone from '../../images/service-phone.png';
+import imgAddress from '../../images/service-address.png';
+
 
 export default function Index() {
 
@@ -39,11 +44,21 @@ export default function Index() {
       {
         isShowPage ? (
           <View className='pg-index'>       
-            <View className='service-list'>   
-              <Cell.Group divider className='service-wrap'>
-                <Cell className='service-item' title='联系电话：' extra='400-020-9900' />
-                <Cell className='service-item' title='联系地址：' extra='北京市海淀区西小口路66号东升科技园C4，100192' />
-              </Cell.Group>            
+            <View className='service-list'>  
+              <Image className='service-bg-img' mode='aspectFill' src={imgBG}></Image> 
+              <View className='service-wrap'>
+                <Image className='service-img' mode='aspectFit' src={imgIcon}></Image> 
+                <View className='service-content'>
+                  <View className='service-content-item'>
+                    <Image className='service-content-icon' mode='aspectFit' src={imgPhone}></Image>
+                    <View className='service-content-text'>联系电话：13188998899</View>
+                  </View>
+                  <View className='service-content-item'>
+                    <Image className='service-content-icon' mode='aspectFit' src={imgAddress}></Image>
+                    <View className='service-content-text'>联系地址：辽宁省大连市高新园区万达广场一单元1901</View>
+                  </View>
+                </View>
+              </View>
             </View>
             <PGAlertPrivacy></PGAlertPrivacy>
           </View>

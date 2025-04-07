@@ -5,12 +5,15 @@ import {
   Toast,
 } from "@nutui/nutui-react";
 import { ArrowRight } from '@nutui/icons-react'
-import { View } from "@tarojs/components";
+import { View, Image } from "@tarojs/components";
 import Taro, { useLoad, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
 import PGAlertPrivacy from "../../components/pgAlertPrivacy/index";
 import PGLoading from "../../components/pgLoading/index";
+
+import imgIcon from '../../images/exchange-icon.png';
+import imgArrow from '../../images/exchange-arrow.png';
 
 export default function Index() {
   const sleep = (time) => {
@@ -91,12 +94,13 @@ export default function Index() {
       return (
         <View className='exchange-bg-wrap' key={index} onClick={() => clickItem(index)}>
           <View className='exchange-wrap'>
+            <Image className='exchange-img' mode='aspectFit' src={imgIcon}></Image>
             <View className='exchange-info'>
               <View className='exchange-name'>活动名称{index}</View>
               <View className='exchange-desc'>开始时间：2025-01-01</View>
-              <View className='exchange-desc'>结束时间：2025-01-01</View>
+              <View className='exchange-desc'>截止时间：2025-01-01</View>
             </View>
-            <ArrowRight className='exchange-arrow' />
+            <Image className='exchange-arrow' mode='aspectFit' src={imgArrow}></Image>
           </View>
         </View>        
       );
@@ -110,6 +114,7 @@ export default function Index() {
           <PullToRefresh onRefresh={() =>refreshData()} renderIcon={(status) => Taro.UTIL.refreshRenderHeaderSvg(status)}>
             <View className='exchange-list' id='scroll'>
               <InfiniteLoading target='scroll' hasMore={hasMore} onLoadMore={loadMore} loadingText={Taro.UTIL.refreshRenderFooterSvg('加载中')} loadMoreText={Taro.UTIL.refreshRenderFooterSvg('没有更多了')}>
+                <View className="exchange-space-top"></View>
                 {exchangeListView()}
               </InfiniteLoading>
             </View>

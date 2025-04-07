@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Input, Button } from '@nutui/nutui-react'
+import { Input } from '@nutui/nutui-react'
 import { View, Image } from '@tarojs/components'
 import Taro, { useLoad, useDidShow } from '@tarojs/taro'
 import './index.scss'

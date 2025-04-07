@@ -1,26 +1,14 @@
 // @import "~taro-ui/dist/style/index.scss";
 
 :root {
-  // button 
-  --nutui-button-border-width: 1rpx;
-  --nutui-button-default-height: 80rpx;
-  --nutui-button-border-radius: 10rpx;
-  --nutui-button-default-font-size: 24rpx;
-  --nutui-button-default-border-color: #808080;
   // input
   --nutui-input-border-radius: 20rpx;
   --nutui-input-font-size: 28rpx;
   --nutui-input-padding: 25rpx 28rpx;
   --nutui-input-placeholder-color: #AFB0B3;
-  // empty
-  --nutui-empty-background-color: transparent;
   // dialog
   --nutui-dialog-border-radius: 10rpx;
   --nutui-dialog-header-font-size: 34rpx;
-  // search
-  --nutui-searchbar-padding: 10rpx 25rpx;
-  --nutui-searchbar-input-height: 80rpx;
-  --nutui-searchbar-font-size: 30rpx;
   // tabbar
   --nutui-tabbar-height: 100rpx;
   // tabs
@@ -36,6 +24,29 @@
   --nutui-tag-color: #B46820;
   --nutui-tag-border-width: 1rpx;
   --nutui-tag-background-color: #FFF4E7;
+  // input-number [ok]
+  --nutui-inputnumber-input-width: 72rpx;
+  --nutui-inputnumber-input-height: 50rpx;
+  --nutui-inputnumber-input-background-color: #ffffff;
+  --nutui-inputnumber-input-font-color: #000000;
+  --nutui-inputnumber-input-font-size: 28rpx;
+  --nutui-inputnumber-input-border: 1rpx;
+  --nutui-inputnumber-input-border-radius: 0rpx;
+  --nutui-inputnumber-button-width: 50rpx;
+  --nutui-inputnumber-button-height: 50rpx;
+  --nutui-inputnumber-button-border-radius: 0rpx;
+  --nutui-inputnumber-icon-color: #606060;
+  // indicator [ok]
+  --nutui-indicator-color: #EE3A43;
+  --nutui-indicator-dot-color: rgba(239, 51, 64, 0.2);
+  --nutui-indicator-dot-size: 20rpx;
+  --nutui-indicator-dot-active-size: 20rpx;
+  --nutui-indicator-border-radius: 10rpx;
+  --nutui-indicator-dot-margin: 10rpx;
+  // countdown [ok]
+  --nutui-countdown-font-size: 24rpx;
+  --nutui-countdown-color: #000000;
+
 }
 
 .pg-index {

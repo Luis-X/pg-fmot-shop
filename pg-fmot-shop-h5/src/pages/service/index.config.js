@@ -1,4 +1,4 @@
 export default definePageConfig({
-  navigationBarTitleText: '客服',
+  navigationBarTitleText: '联系客服',
   disableScroll: true
 })

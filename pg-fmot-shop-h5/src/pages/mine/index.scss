@@ -6,46 +6,98 @@
   overflow-x: hidden;
 }
 
+
 .mine-point-wrap {
-  margin-top: 20rpx;
-  width: 100%;
-  height: 100rpx;
-  background: #ffffff;
+  margin-top: 20rpx;  
+  width: 100%;  
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
-  .point-title {
-    margin-left: 25rpx;
-    font-size: 30rpx;
-    color: black;
-  }
-  .point-btn {
-    margin-right: 25rpx;
-    font-size: 30rpx;
-    color: blue;
-    text-decoration: underline;
+  justify-content: center;
+  .point-bg-wrap {
+    position: relative;
+    width: 710rpx;
+    height: 212rpx;
+    .point-img {
+      width: 100%;
+      height: 100%;
+    }
+    .point-title {
+      position: absolute;
+      top: 24rpx;
+      left: 56rpx;
+      font-weight: bold;
+      font-size: 54rpx;
+      color: #FFFFFF;
+    }
+    .point-btn {
+      position: absolute;
+      top: 112rpx;
+      left: 60rpx;
+      padding: 0rpx 10rpx;
+      font-size: 22rpx;
+      color: #B46820;
+      background: #FEF2E0;
+      border-radius: 4rpx;
+    }
   }
 }
 
+
 .mine-order-wrap {
-  margin-top: 20rpx;
   width: 100%;
-  height: 100rpx;
-  background: #ffffff;
+  height: 48rpx;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
+  .order-img {
+    margin-left: 30rpx;
+    width: 44rpx;
+    height: 44rpx;
+  }
   .order-title {
-    margin-left: 25rpx;
-    font-size: 30rpx;
-    color: black;
+    margin-left: 10rpx;
+    font-weight: bold;
+    font-size: 32rpx;
+    color: #000000;
   }
 }
 
+
 .mine-tab-wrap {
   width: 100%;
-  background: #ffffff;
+  height: 78rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  .tab-item {
+    width: 200rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    .tab-item-text-focus {
+      font-size: 32rpx;
+      color: #EE3A43;      
+    }
+    .tab-item-text {
+      font-size: 32rpx;
+      color: #000000;      
+    }
+    .tab-item-line-focus {
+      margin-top: 4rpx;
+      width: 66rpx;
+      height: 4rpx;
+      background: #EE3A43;
+    }
+    .tab-item-line {
+      margin-top: 4rpx;
+      width: 66rpx;
+      height: 4rpx;
+      background: transparent;
+    }
+  }
 }
 

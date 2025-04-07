@@ -4,13 +4,16 @@ import {
   Toast,
   Tabs,
 } from "@nutui/nutui-react";
-import { View } from "@tarojs/components";
+import { View, Image } from "@tarojs/components";
 import Taro, { useLoad, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
 import PGAlertPrivacy from "../../components/pgAlertPrivacy/index";
 import PGOrderView from "../../components/pgOrderView/index";
 import PGLoading from "../../components/pgLoading/index";
+
+import imgTopBar from '../../images/mine-top-bar.png';
+import imgOrder from '../../images/mine-order.png';
 
 export default function Index() {
 
@@ -71,7 +74,7 @@ export default function Index() {
       },
     ]
   }
-  const [tabIndex, setTabIndex] = useState('0')
+  const [tabIndex, setTabIndex] = useState(0)
 
   // 下拉刷新
   const refreshData = () => {
@@ -99,27 +102,57 @@ export default function Index() {
     Taro.ROUTER.navigateTo('/pages/orderDetail/index');
   }
 
+  // 我的积分
+  const topBarView = () => {
+    return (
+      <View className='mine-point-wrap'>
+        <View className="point-bg-wrap">
+          <Image className='point-img' mode='aspectFit' src={imgTopBar}></Image>
+          <View className='point-title'>12059000</View>
+          <View className='point-btn' onClick={clickMyExchange}>查看我正参与的兑换</View>
+        </View>               
+      </View>
+    )
+  }
+
+  // 我的订单
+  const tabView = () => {
+    return (
+      <>
+        <View className='mine-order-wrap'>
+          <Image className='order-img' mode='aspectFit' src={imgOrder}></Image>
+          <View className='order-title'>我的订单</View>
+        </View>
+        <View className='mine-tab-wrap'>
+          <View className="tab-item" onClick={() => tabChange(0)}>
+            <View className={tabIndex === 0 ? 'tab-item-text-focus' : 'tab-item-text'}>全部</View>
+            <View className={tabIndex === 0 ? 'tab-item-line-focus' : 'tab-item-line'}></View>
+          </View>
+          <View className="tab-item" onClick={() => tabChange(1)}>
+            <View className={tabIndex === 1 ? 'tab-item-text-focus' : 'tab-item-text'}>已取消</View>
+            <View className={tabIndex === 1 ? 'tab-item-line-focus' : 'tab-item-line'}></View>
+          </View>
+        </View> 
+      </>
+    )
+  }
+
+  // 订单标签
+  const listView = () => {
+    return (
+      <PGOrderView orderInfo={orderInfo} onClick={() => clickOrderDetail()}></PGOrderView> 
+    )
+  }
+
   return (
     <>
       {isShowPage ? (
         <View className='pg-index'>
           <PullToRefresh onRefresh={() => refreshData()} renderIcon={(status) => Taro.UTIL.refreshRenderHeaderSvg(status)}>
             <View className='mine-list' id='scroll'>
-              <View className='mine-point-wrap'>
-                <View className='point-title'>我的积分：110分</View>
-                <View className='point-btn' onClick={clickMyExchange}>查看我正参与的兑换</View>
-              </View>
-              <View className='mine-order-wrap'>
-                <View className='order-title'>我的订单</View>
-              </View>            
-              <Tabs className='mine-tab-wrap' value={tabIndex} autoHeight onChange={tabChange}>
-                <Tabs.TabPane title='全部'>
-                  <PGOrderView orderInfo={orderInfo} onClick={() => clickOrderDetail(1)}></PGOrderView>
-                </Tabs.TabPane>
-                <Tabs.TabPane title='已取消'>
-                  <PGOrderView orderInfo={orderInfo} onClick={() => clickOrderDetail(2)}></PGOrderView>
-                </Tabs.TabPane>
-              </Tabs>                                              
+              {topBarView()}
+              {tabView()}
+              {listView()}                                                          
             </View>
           </PullToRefresh>
           <PGAlertPrivacy></PGAlertPrivacy>

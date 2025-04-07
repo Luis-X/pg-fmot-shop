@@ -3,7 +3,6 @@ import {
   PullToRefresh,
   Toast,
   Image,
-  Button,
   InputNumber
 } from "@nutui/nutui-react";
 import { CheckNormal, Checked } from '@nutui/icons-react'
@@ -42,6 +41,7 @@ export default function Index() {
         src: "https://storage.360buyimg.com/jdc-article/NutUItaro34.jpg",
         title: "商品名称商品名称商品名称商品名称商品名称商品名称",
         price: 100,
+        vipPrice: 99,
         num: 2,
         limit: 10,
         isSelect: true
@@ -51,10 +51,81 @@ export default function Index() {
         src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
         title: "商品名称商品名称商品名称商品名称商品名称商品名称",
         price: 200,
+        vipPrice: 99,
         num: 1,
         limit: 5,
         isSelect: false
-      }
+      },
+      {
+        id: 2,
+        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
+        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
+        price: 200,
+        vipPrice: 99,
+        num: 1,
+        limit: 5,
+        isSelect: false
+      },
+      {
+        id: 2,
+        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
+        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
+        price: 200,
+        vipPrice: 99,
+        num: 1,
+        limit: 5,
+        isSelect: false
+      },
+      {
+        id: 2,
+        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
+        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
+        price: 200,
+        vipPrice: 99,
+        num: 1,
+        limit: 5,
+        isSelect: false
+      },
+      {
+        id: 2,
+        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
+        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
+        price: 200,
+        vipPrice: 99,
+        num: 1,
+        limit: 5,
+        isSelect: false
+      },
+      {
+        id: 2,
+        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
+        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
+        price: 200,
+        vipPrice: 99,
+        num: 1,
+        limit: 5,
+        isSelect: false
+      },
+      {
+        id: 2,
+        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
+        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
+        price: 200,
+        vipPrice: 99,
+        num: 1,
+        limit: 5,
+        isSelect: false
+      },
+      {
+        id: 2,
+        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
+        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
+        price: 200,
+        vipPrice: 99,
+        num: 1,
+        limit: 5,
+        isSelect: false
+      },
     ]
 
     setCartList(cartListData);
@@ -158,29 +229,42 @@ export default function Index() {
 
   // 商品列表
   const goodsListView = () => {
-    return cartList.map((item, index) => {
-      return (
-        <View className='goods-wrap' key={index}>
-          {
-            item.isSelect ? (
-              <View className='goods-select' onClick={() => clickSelectItem(false, index)}>
-                <Checked style={{ color: "red" }} />
+    return (
+      <View className='cart-item-wrap'>
+      {
+        cartList.map((item, index) => {
+          return (
+            <View className={index === 0 ? 'goods-bg-wrap-radius' : 'goods-bg-wrap'} key={index}>           
+              <View className='goods-wrap'>
+                {
+                  item.isSelect ? (
+                    <View className='goods-select' onClick={() => clickSelectItem(false, index)}>
+                      <Checked style={{ color: "red" }} />
+                    </View>
+                  ) : (
+                    <View className='goods-select' onClick={() => clickSelectItem(true, index)}>
+                      <CheckNormal style={{ color: '#B7BED1' }} />
+                    </View>
+                  )
+                }
+                <Image className='goods-img' src={item.src} fit='cover'></Image>
+                <View className='goods-info'>
+                  <View className='goods-name'>{item.title}</View>
+                  <View className='goods-price-old'>{item.price}积分</View>
+                  <View className='goods-price-new-wrap'>
+                    <View className='goods-price-new'>{item.vipPrice}</View>
+                    <View className='goods-price-new-unit'>积分</View>
+                  </View>
+                </View>
+                <InputNumber className='goods-count' value={item.num} max={item.limit} min={0} allowEmpty onChange={(val) => cartNumOnChange(val, index)} />
               </View>
-            ) : (
-              <View className='goods-select' onClick={() => clickSelectItem(true, index)}>
-                <CheckNormal />
-              </View>
-            )
-          }
-          <Image className='goods-img' src={item.src} fit='cover'></Image>
-          <View className='goods-info'>
-            <View className='goods-name'>{item.title}</View>
-            <View className='goods-price'>{item.price}积分</View>
-          </View>
-          <InputNumber className='goods-count' value={item.num} max={item.limit} min={0} allowEmpty onChange={(val) => cartNumOnChange(val, index)} />
-        </View>
-      );
-    });
+              <View className="goods-line"></View>
+            </View>
+          );
+        })
+      }
+      </View>
+    )
   };
 
   // 工具栏
@@ -189,7 +273,6 @@ export default function Index() {
       <View className='cart-tools-wrap'>            
         <View className='total-wrap'>
           <View className='select-wrap'>
-            {/* <Radio className='select-all' icon={<CheckNormal />} activeIcon={<Checked style={{ color: 'red' }} />} value='1'></Radio> */}
             {
             isAllSelect ? (
               <View className='select-all' onClick={() => clickAllSelect(false)}>
@@ -197,7 +280,7 @@ export default function Index() {
               </View>
             ) : (
               <View className='select-all' onClick={() => clickAllSelect(true)}>
-                <CheckNormal />
+                <CheckNormal style={{ color: '#B7BED1' }} />
               </View>
             )
           }
@@ -205,10 +288,14 @@ export default function Index() {
           </View>
           <View className='total-text-wrap'>
             <View className='total-count'>{`共计${totalNum}件商品`}</View>
-            <View className='total-amount'>{`合计${totalAmount}积分`}</View>
+            <View className='total-price-wrap'>
+              <View className='total-price-text'>合计</View>
+              <View className='total-price-red'>{totalAmount}</View>
+              <View className='total-price-text'>积分</View>
+            </View>
           </View>              
         </View>
-        <Button className='next-step-btn' block type='primary' onClick={clickNextStep}>下一步</Button>
+        <View className='next-step-btn' onClick={clickNextStep}>下一步</View>
       </View>
     )
   }
@@ -219,7 +306,8 @@ export default function Index() {
         <View className='pg-index'>
           <PullToRefresh onRefresh={() => refreshData()} renderIcon={(status) => Taro.UTIL.refreshRenderHeaderSvg(status)}>
             <View className='cart-list' id='scroll'>
-              <View className='cart-item-wrap'>{goodsListView()}</View>                                                                        
+              <View className='cart-space-top'></View>
+              {goodsListView()}                                                                       
             </View>
           </PullToRefresh>
           {toolsView()}

@@ -6,6 +6,7 @@ import {
   Dialog,
   Swiper,
   Image,
+  Indicator
 } from "@nutui/nutui-react";
 import { View, Input } from "@tarojs/components";
 import Taro, { useLoad, useDidShow } from "@tarojs/taro";
@@ -14,6 +15,7 @@ import "./index.scss";
 import PGAlertPrivacy from "../../components/pgAlertPrivacy/index";
 import PGGoodsView from "../../components/pgGoodsView/index";
 import PGLoading from "../../components/pgLoading/index";
+import PGTabBar from "../../components/pgTabbar/index";
 
 import imgSearchBar from "../../images/home-search-bar.png";
 import imgSearchBarIcon from "../../images/home-search-bar-icon.png";
@@ -155,6 +157,29 @@ export default function Index() {
     Taro.ROUTER.navigateTo(`/pages/search/index?keyword=${value}`);
   };
 
+  const searchBarView = () => {
+    return (
+      <View className="home-search-wrap">
+        <Image className='home-search-img' mode='aspectFill' src={imgSearchBar}></Image>
+        <View className='home-search-bar-wrap'>                   
+          <View className='home-search-bar'>
+            <Input 
+              className='home-search-input' 
+              type='text' 
+              placeholder='请输入商品名称搜索' 
+              value={searchValue || ''}
+              onInput={searchOnChange} 
+              onConfirm={searchOnConfirm}
+            />
+            <View className="home-search-btn" onClick={searchOnConfirm}>
+              <Image className='home-search-icon' mode='aspectFit' src={imgSearchBarIcon}></Image>                      
+            </View>
+          </View>
+        </View>                 
+      </View>
+    )
+  }
+
   // 轮播图
   const bannerList = [
     {
@@ -175,10 +200,10 @@ export default function Index() {
     },
   ];
 
-  const [currentIndex, setCurrentIndex] = useState(1)
+  const [currentIndex, setCurrentIndex] = useState(0)
   const onChangeSwiperItem = (index) => {
       console.log('onChangeSwiperItem', index)
-      setCurrentIndex(index + 1)
+      setCurrentIndex(index)
     }
   
   const swiperView = () => {
@@ -187,9 +212,7 @@ export default function Index() {
         <Swiper 
           className='swiper-item'
           loop
-          indicator={
-            <div className='swiper-item-indicator'>{currentIndex}/{bannerList.length}</div>
-          }
+          indicator={false}
           onChange={onChangeSwiperItem}
         >
           {
@@ -202,6 +225,9 @@ export default function Index() {
             })
           }
         </Swiper>
+        <View className="home-swiper-slide">
+          <Indicator total={bannerList.length} type="dualScreen" current={currentIndex} />
+        </View>      
       </View>
     );
   };
@@ -219,29 +245,14 @@ export default function Index() {
           <PullToRefresh onRefresh={() => refreshData()} renderIcon={(status) => Taro.UTIL.refreshRenderHeaderSvg(status)}>
             <View className={visible ? 'home-list' : 'home-tab-list'} id='scroll'>              
               <InfiniteLoading target='scroll' hasMore={hasMore} onLoadMore={loadMore} loadingText={Taro.UTIL.refreshRenderFooterSvg('加载中')} loadMoreText={Taro.UTIL.refreshRenderFooterSvg('没有更多了')}>
-                <View className="home-search-wrap">
-                  <Image className='home-search-img' mode='aspectFill' src={imgSearchBar}></Image>
-                  <View className='home-search-bar-wrap'>                   
-                    <View className='home-search-bar'>
-                      <Input 
-                        className='home-search-input' 
-                        type='text' 
-                        placeholder='请输入商品名称搜索' 
-                        value={searchValue || ''}
-                        onInput={searchOnChange} 
-                      />
-                      <View className="home-search-btn" onClick={searchOnConfirm}>
-                        <Image className='home-search-icon' mode='aspectFit' src={imgSearchBarIcon}></Image>                      
-                      </View>
-                    </View>
-                  </View>                 
-                </View>                
+                {searchBarView()}      
                 {swiperView()}
                 {goodsListView()}                
               </InfiniteLoading>
             </View>
           </PullToRefresh>
-          {alertView()}
+          {/* {alertView()} */}
+          <PGTabBar></PGTabBar>
           <PGAlertPrivacy></PGAlertPrivacy>          
         </View>
       ) : (

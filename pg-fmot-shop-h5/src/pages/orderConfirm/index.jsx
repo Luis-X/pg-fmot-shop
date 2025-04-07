@@ -3,8 +3,9 @@ import {
   PullToRefresh,
   Toast,
   Dialog,
-  Button,
   Radio,
+  Image,
+  InputNumber
 } from "@nutui/nutui-react";
 import { CheckNormal, Checked } from '@nutui/icons-react'
 import { View } from "@tarojs/components";
@@ -12,7 +13,6 @@ import Taro, { useLoad, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
 import PGAlertPrivacy from "../../components/pgAlertPrivacy/index";
-import PGOrderView from "../../components/pgOrderView/index";
 import PGLoading from "../../components/pgLoading/index";
 
 export default function Index() {
@@ -46,6 +46,101 @@ export default function Index() {
       // '商品名称4',
     ];
     setShortageList(array)
+
+    const cartListData = [
+      {
+        id: 1,
+        src: "https://storage.360buyimg.com/jdc-article/NutUItaro34.jpg",
+        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
+        price: 100,
+        vipPrice: 99,
+        num: 2,
+        limit: 10,
+        isSelect: true
+      },
+      {
+        id: 2,
+        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
+        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
+        price: 200,
+        vipPrice: 99,
+        num: 1,
+        limit: 5,
+        isSelect: false
+      },
+      {
+        id: 2,
+        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
+        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
+        price: 200,
+        vipPrice: 99,
+        num: 1,
+        limit: 5,
+        isSelect: false
+      },
+      {
+        id: 2,
+        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
+        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
+        price: 200,
+        vipPrice: 99,
+        num: 1,
+        limit: 5,
+        isSelect: false
+      },
+      {
+        id: 2,
+        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
+        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
+        price: 200,
+        vipPrice: 99,
+        num: 1,
+        limit: 5,
+        isSelect: false
+      },
+      {
+        id: 2,
+        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
+        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
+        price: 200,
+        vipPrice: 99,
+        num: 1,
+        limit: 5,
+        isSelect: false
+      },
+      {
+        id: 2,
+        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
+        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
+        price: 200,
+        vipPrice: 99,
+        num: 1,
+        limit: 5,
+        isSelect: false
+      },
+      {
+        id: 2,
+        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
+        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
+        price: 200,
+        vipPrice: 99,
+        num: 1,
+        limit: 5,
+        isSelect: false
+      },
+      {
+        id: 2,
+        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
+        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
+        price: 200,
+        vipPrice: 99,
+        num: 1,
+        limit: 5,
+        isSelect: false
+      },
+    ]
+
+    setCartList(cartListData);
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
@@ -85,6 +180,8 @@ export default function Index() {
     ]
   }
 
+  const [cartList, setCartList] = useState([])
+
   // 选择发货方式
   const [deliveryType, setDeliveryType] = useState('1')
   const onDeliveryChange = (val) => {
@@ -101,24 +198,48 @@ export default function Index() {
     });
   };
 
-  // 订单信息
-  const orderInfoView = () => {
+  // 商品列表
+  const goodsListView = () => {
     return (
-      <PGOrderView orderInfo={orderInfo}></PGOrderView>
+      <View className='order-confirm-item-wrap'>
+        {
+          cartList.map((item, index) => {
+            return (
+              <View className={index === 0 ? 'goods-bg-wrap-radius' : 'goods-bg-wrap'} key={index}>           
+                <View className='goods-wrap'>
+                  <Image className='goods-img' src={item.src} fit='cover'></Image>
+                  <View className='goods-info'>
+                    <View className='goods-name'>{item.title}</View>
+                    <View className='goods-price-old'>{item.price}积分</View>
+                    <View className='goods-price-new-wrap'>
+                      <View className='goods-price-new'>{item.vipPrice}</View>
+                      <View className='goods-price-new-unit'>积分</View>
+                    </View>
+                  </View>
+                  <InputNumber className='goods-count' value={item.num} max={item.limit} min={0} allowEmpty onChange={(val) => cartNumOnChange(val, index)} />
+                </View>
+                <View className="goods-line"></View>
+              </View>
+            );
+          })
+        }      
+      </View>
     )
-  }
+  };
 
   // 发货方式
   const deliveryView = () => {
     return (
       <View className='order-confirm-delivery-wrap'>
-        <View className='delivery-title'>请选择发货方式：</View>
-        <View className='delivery-option'>
-        <Radio.Group defaultValue={deliveryType} direction='horizontal' onChange={onDeliveryChange}> 
-          <Radio className='delivery-option-item' icon={<CheckNormal />} activeIcon={<Checked style={{ color: 'red' }} />} value='1'>线下自提</Radio>
-          <Radio className='delivery-option-item' icon={<CheckNormal />} activeIcon={<Checked style={{ color: 'red' }} />} value='2'>邮寄</Radio>
-        </Radio.Group>                  
-        </View>                
+        <View className="delivery-wrap">
+          <View className='delivery-title'>请选择发货方式：</View>
+          <View className='delivery-option'>
+          <Radio.Group defaultValue={deliveryType} direction='horizontal' onChange={onDeliveryChange}> 
+            <Radio className='delivery-option-item' icon={<CheckNormal />} activeIcon={<Checked style={{ color: 'red' }} />} value='1'>线下自提</Radio>
+            <Radio className='delivery-option-item' icon={<CheckNormal />} activeIcon={<Checked style={{ color: 'red' }} />} value='2'>邮寄</Radio>
+          </Radio.Group>                  
+          </View>         
+        </View>               
       </View>
     )
   }
@@ -127,8 +248,10 @@ export default function Index() {
   const noteView = () => {
     return (
       <View className='order-confirm-note-wrap'>
-        <View className='note-title'>领取说明：</View>
-        <View className='note-content'>文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本</View>
+        <View className="note-wrap">
+          <View className='note-title'>领取说明：</View>
+          <View className='note-content'>{orderInfo.orderDesc}</View>
+        </View>        
       </View>                                       
     )
   }
@@ -177,6 +300,14 @@ export default function Index() {
       
     }, 1000);        
   }
+
+  const btnView = () => {
+    return (
+      <View className='order-confirm-btn-wrap'>
+        <View className='order-confirm-ok' onClick={clickExchange}>确认兑换</View>
+      </View> 
+    )
+  }
   
   const alertView = () => {
     return (
@@ -209,15 +340,13 @@ export default function Index() {
       {isShowPage ? (
         <View className='pg-index'>
           <PullToRefresh onRefresh={() => refreshData()} renderIcon={(status) => Taro.UTIL.refreshRenderHeaderSvg(status)}>
-            <View className='order-confirm-list' id='scroll'>          
-              {orderInfoView()}
+            <View className='order-confirm-list' id='scroll'>                        
+              {goodsListView()}
               {deliveryView()}
               {noteView()}
+              {btnView()}              
             </View>
-          </PullToRefresh>
-          <View className='order-confirm-btn-wrap'>
-            <Button className='order-confirm-ok' block type='primary' onClick={clickExchange}>确认兑换</Button>
-          </View>       
+          </PullToRefresh>                
           {alertView()}
           <PGAlertPrivacy></PGAlertPrivacy>
         </View>

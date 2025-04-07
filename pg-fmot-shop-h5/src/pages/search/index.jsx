@@ -78,6 +78,29 @@ export default function Index() {
     console.log('searchOnConfirm', value)
   };
 
+  const searchBarView = () => {
+    return (
+      <View className="search-search-wrap">
+        <Image className='search-search-img' mode='aspectFill' src={imgSearchBar}></Image>
+        <View className='search-search-bar-wrap'>                   
+          <View className='search-search-bar'>
+            <Input 
+              className='search-search-input' 
+              type='text' 
+              placeholder='请输入商品名称搜索' 
+              value={searchValue || ''}
+              onInput={searchOnChange} 
+              onConfirm={searchOnConfirm}
+            />
+            <View className="search-search-btn" onClick={searchOnConfirm}>
+              <Image className='search-search-icon' mode='aspectFit' src={imgSearchBarIcon}></Image>                      
+            </View>
+          </View>
+        </View>                 
+      </View> 
+    )
+  }
+
   // 下拉刷新
   const refreshData = () => {
     return new Promise((resolve) => {
@@ -134,25 +157,9 @@ export default function Index() {
       {isShowPage ? (
         <View className='pg-index'>
           <PullToRefresh onRefresh={() => refreshData()} renderIcon={(status) => Taro.UTIL.refreshRenderHeaderSvg(status)}>
-            <View className='search-list' id='scroll'>
-              <View className="search-search-wrap">
-                <Image className='search-search-img' mode='aspectFill' src={imgSearchBar}></Image>
-                <View className='search-search-bar-wrap'>                   
-                  <View className='search-search-bar'>
-                    <Input 
-                      className='search-search-input' 
-                      type='text' 
-                      placeholder='请输入商品名称搜索' 
-                      value={searchValue || ''}
-                      onInput={searchOnChange} 
-                    />
-                    <View className="search-search-btn" onClick={searchOnConfirm}>
-                      <Image className='search-search-icon' mode='aspectFit' src={imgSearchBarIcon}></Image>                      
-                    </View>
-                  </View>
-                </View>                 
-              </View> 
-              <InfiniteLoading target='scroll' hasMore={hasMore} onLoadMore={loadMore} loadingText={Taro.UTIL.refreshRenderFooterSvg('加载中')} loadMoreText={Taro.UTIL.refreshRenderFooterSvg('没有更多了')}>
+            <View className='search-list' id='scroll'>              
+                <InfiniteLoading target='scroll' hasMore={hasMore} onLoadMore={loadMore} loadingText={Taro.UTIL.refreshRenderFooterSvg('加载中')} loadMoreText={Taro.UTIL.refreshRenderFooterSvg('没有更多了')}>
+                {searchBarView()}
                 {goodsListView()}
               </InfiniteLoading>
             </View>

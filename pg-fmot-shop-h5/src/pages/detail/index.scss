@@ -9,22 +9,15 @@
   overflow-x: hidden;
 }
 
+
 .detail-swiper-wrap {
   margin-top: 20rpx;
+  position: relative;
   width: 100vw;  
   display: flex;
   flex-direction: column;
   align-items: center;
-  .swiper-item-indicator {
-    position: absolute;
-    bottom: 10rpx;
-    right: 10rpx;
-    padding: 0 15rpx;
-    color: #ffffff;
-    font-size: 22rpx;
-    background-color: rgba(0, 0, 0, .4);
-    border-radius: 10rpx;
-  }
+  background: orange;
   .swiper-item {
     position: relative;
     width: 100vw;
@@ -41,7 +34,19 @@
       height: 100%;
     }
   }
+  .detail-swiper-slide {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    height: 60rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
 }
+
 
 .detail-price-wrap {
   position: relative;
@@ -126,6 +131,7 @@
   }  
 }
 
+
 .detail-divider-wrap {
   width: 100vw;
   height: 116rpx;
@@ -140,6 +146,7 @@
     color: #000000;
   }
 }
+
 
 .detail-video-wrap {  
   margin-top: 10rpx;
@@ -162,6 +169,7 @@
   }
 }
 
+
 .detail-img-wrap {
   margin-top: 30rpx;
   width: 100vw;
@@ -174,7 +182,9 @@
   }
 }
 
+
 .detail-tools-wrap {
+  z-index: 99999;
   position: fixed;
   bottom: 0;
   left: 0;
@@ -182,14 +192,20 @@
   height: 156rpx;
   background-color: #fff;
   border-top: 1px solid #eee;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
   .tools-bar {
     margin-top: 28rpx;
     display: flex;
-    justify-content: center;
+    flex-direction: row;    
     align-items: center;
+    justify-content: space-between;
     height: 100rpx;
+    width: 674rpx;   
     .left-btn-wrap {
-      width: 226rpx;
+      width: 242rpx;
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -199,6 +215,7 @@
         height: 92rpx;
       }
       .left-btn {
+        position: relative;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -207,10 +224,14 @@
           width: 90rpx;
           height: 90rpx;
         }
+        .left-btn-tag {
+          position: absolute;
+          top: 22rpx;
+          right: 24rpx;
+        }
       }          
     }
     .right-btn-wrap {
-      margin-left: 36rpx;
       width: 404rpx;
       display: flex;
       flex-direction: row;
@@ -249,6 +270,7 @@
     }
   }
 }
+
 
 .detail-alert {
   .detail-alert-content {

@@ -6,9 +6,9 @@ import {
   Badge,
   Swiper,
   Tag,
-  Image
+  Image,
+  Indicator
 } from "@nutui/nutui-react";
-import { Cart, Service } from "@nutui/icons-react";
 import { View, Video } from "@tarojs/components";
 import Taro, { useLoad, useDidShow } from "@tarojs/taro";
 import "./index.scss";
@@ -149,12 +149,11 @@ export default function Index() {
             <View className='left-btn' onClick={() => clickService()}>
               <Image className='left-btn-img' mode='aspectFit' src={imgService}></Image>
             </View>
-            <Image className='left-btn-line' mode='aspectFit' src={imgLine}></Image>
-            <Badge className='left-btn-tag' value={cartNum} max={99}>
+            <Image className='left-btn-line' mode='aspectFit' src={imgLine}></Image>            
               <View className='left-btn' onClick={() => clickCart()}>
                 <Image className='left-btn-img' mode='aspectFit' src={imgCart}></Image>
-              </View>
-            </Badge> 
+                <Badge className="left-btn-tag" value={cartNum} max={99}></Badge>                
+              </View> 
           </View>              
           <View className='right-btn-wrap'>
             <View className='right-btn-add'onClick={() => clickCartAdd()}>
@@ -193,7 +192,7 @@ export default function Index() {
     "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
     "https://storage.360buyimg.com/jdc-article/fristfabu.jpg",
   ];
-  const [currentIndex, setCurrentIndex] = useState(1)
+  const [currentIndex, setCurrentIndex] = useState(0)
 
   const clickSwiperItem = (item) => {
     const currentUrl = item;
@@ -209,7 +208,7 @@ export default function Index() {
   const onChangeSwiperItem = (index) => {
     console.log('onChangeSwiperItem', index)
 
-    setCurrentIndex(index + 1)
+    setCurrentIndex(index)
 
     const videoContext = Taro.createVideoContext('swiper-video-ref');
     if(!videoContext) {
@@ -235,9 +234,7 @@ export default function Index() {
         <Swiper 
           className='swiper-item'
           loop
-          indicator={
-            <div className='swiper-item-indicator'>{currentIndex}/{bannerList.length}</div>
-          }
+          indicator={false}
           onChange={onChangeSwiperItem}
         >
           {bannerList.map((item, index) => {
@@ -272,6 +269,9 @@ export default function Index() {
             );
           })}
         </Swiper>
+        <View className="detail-swiper-slide">
+          <Indicator total={bannerList.length} type="dualScreen" current={currentIndex} />
+        </View>   
       </View>
     )
   }

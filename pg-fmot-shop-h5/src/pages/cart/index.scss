@@ -1,10 +1,17 @@
 .cart-list {
   width: 100vw;
-  height: calc(100vh - 288rpx);
+  height: calc(100vh - 406rpx);
   padding: 0;
   overflow-y: auto;
   overflow-x: hidden;
 }
+
+
+.cart-space-top {
+  width: 100%;
+  height: 20rpx;
+}
+
 
 .cart-item-wrap {
   position: relative;
@@ -12,95 +19,183 @@
   display: flex;
   flex-direction: column;  
   align-items: center;
-  background: #ffffff;  
+  .goods-bg-wrap {
+    position: relative;
+    width: 710rpx;
+    height: 238rpx;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #ffffff;    
+  }  
+  .goods-bg-wrap-radius {
+    position: relative;
+    width: 710rpx;
+    height: 238rpx;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #ffffff;    
+    border-top-left-radius: 12rpx;
+    border-top-right-radius: 12rpx;
+  } 
   .goods-wrap {
     position: relative;
     margin: 10rpx auto;
-    width: 700rpx;
+    width: 670rpx;
+    height: 160rpx;
     display: flex;
     flex-direction: row;
     align-items: center;
     .goods-select {
       margin-right: 20rpx;
+      // width: 40rpx;
+      // height: 40rpx;
     }
     .goods-img {
-      width: 150rpx;
-      height: 150rpx;
+      width: 160rpx;
+      height: 160rpx;
+      .nut-img {
+        border-radius: 12rpx !important;
+      }      
     }    
     .goods-info {
       margin-left: 20rpx;
-      width: 320rpx;
-      height: 150rpx;
+      width: 400rpx;
+      height: 160rpx;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       .goods-name {
-        font-size: 30rpx;
-        color: black;
+        font-size: 28rpx;
+        color: #000000;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      .goods-price {
-        font-size: 30rpx;
-        color: black;
+      .goods-price-old {
+        font-size: 24rpx;
+        color: #8A8A8A;
+        text-decoration: line-through;
       }
+      .goods-price-new-wrap {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-end;
+        .goods-price-new {
+          color: #000000;
+          font-size: 36rpx;
+          line-height: 36rpx;
+        }
+        .goods-price-new-unit {
+          margin-left: 5rpx;
+          margin-bottom: 4rpx;
+          color: #000000;
+          font-size: 24rpx;
+          line-height: 24rpx;
+        }
+      } 
     }   
     .goods-count {
       position: absolute;
-      top: 10rpx;
+      bottom: 0rpx;
       right: 0rpx;
+      border: 2rpx solid #B7BED1;
+      border-radius: 14rpx;
+      .nut-input-minus {
+        border-right: 2rpx solid #B7BED1 !important;
+      }
+      .nut-input-add {
+        border-left: 2rpx solid #B7BED1 !important;
+      }
     }
   }
+  .goods-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 6rpx;
+    background: #F6F9FF;
+  }
 }
+
 
 .cart-tools-wrap {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 88rpx;
+  bottom: 200rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #ffffff;
   .total-wrap {
     position: relative;
-    margin: 10rpx 0 20rpx 0;
-    width: 700rpx;
+    width: 710rpx;
+    height: 96rpx;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    border-bottom-left-radius: 12rpx;
+    border-bottom-right-radius: 12rpx;
+    background: #ffffff;
     .select-wrap {
+      margin-left: 20rpx;
       display: flex;
       flex-direction: row;
       align-items: center;
       .select-all {
-        margin-right: 5rpx;
+        margin-right: 12rpx;
+        // width: 40rpx;
+        // height: 40rpx;
       }
       .select-all-text  {
-        font-size: 30rpx;
-        color: black;
+        font-size: 28rpx;
+        color: #000000;
       }
     }
     .total-text-wrap {
+      margin-right: 20rpx;
       display: flex;
       flex-direction: row;
       align-items: center;
       .total-count {
-        font-size: 30rpx;
-        color: black;
+        font-size: 28rpx;
+        color: #000000;
       }
-      .total-amount {
+      .total-price-wrap {
         margin-left: 20rpx;
-        font-size: 30rpx;
-        color: black;
-      }
+        margin-bottom: 4rpx;
+        display: flex;
+        flex-direction: row;
+        align-items: flex-end;
+        .total-price-red {
+          color: #EE3A43;
+          font-size: 36rpx;
+          line-height: 36rpx;
+        }
+        .total-price-text {
+          margin-bottom: 2rpx;
+          color: #000000;
+          font-size: 28rpx;
+          line-height: 28rpx;
+        }
+      } 
     }   
   }
   .next-step-btn {
-    width: 700rpx;
-    margin-bottom: 20rpx;
+    margin-top: 28rpx;
+    width: 370rpx;
+    height: 84rpx;
+    background: #EE3A43;
+    box-shadow: 0rpx 4rpx 12rpx 0rpx rgba(239,51,64,0.24);
+    border-radius: 42rpx;
+    // font-weight: bold;
+    font-size: 32rpx;
+    color: #FFFFFF;
+    line-height: 84rpx;
+    text-align: center;
   }   
 }
 
