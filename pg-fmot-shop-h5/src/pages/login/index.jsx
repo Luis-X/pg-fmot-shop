@@ -6,7 +6,6 @@ import './index.scss'
 
 import ASSET_IMG from '../../utils/assetImg.js'
 
-import PGAlertPrivacy from "../../components/pgAlertPrivacy/index";
 import PGLoading from "../../components/pgLoading/index";
 
 // const imgBG = ASSET_IMG.assetImgWithName('login-bg.png')
@@ -29,9 +28,6 @@ export default function Index() {
     Taro.WXSDK.hideOptionMenu();
   });
 
-  const isWhiteUser = true; // 是否是白名单用户
-  const isBindOpenId = true; // 是否绑定了openid
-
   const createdPage = async () => {
     // const isLogin = await Taro.UTIL.checkIsLogin()
     // if (!isLogin) {
@@ -50,43 +46,35 @@ export default function Index() {
       return
     }
 
-    if (isWhiteUser) {
-      if (isBindOpenId) {
-        console.log("白名单用户，已绑定");
-        Taro.UTIL.goToActivityHomeWithId()
-      } else {
-        console.log("白名单用户，未绑定");
-        requestBindUserData()
-      }
-    } else {
-      Taro.HUD.showToastMessage('账号不正确')
-    }
+    requestBindActivityIdData()
   }
 
   // 绑定账号
-  const requestBindUserData = () => {
-    const isSuccess = inputValue === '123456';
+   async function requestBindActivityIdData() {
+    const params = {
+      activityId: "111",
+      openId: "1234567890",
+      userId: inputValue,
+    }
 
-    Taro.HUD.showLoading('绑定中...');
-    setTimeout(() => {
-      
-      Taro.HUD.hideLoading();
-      if (isSuccess) {
-        Taro.HUD.showToastMessage('绑定成功')
-        setTimeout(() => {
-          Taro.UTIL.goToActivityHomeWithId()
-        }, 2000);        
-      } else {
-        Taro.HUD.showToastMessage('绑定失败')
-      }
-      
-    }, 1000);        
+    Taro.HUD.showLoading('绑定中...')
+    const res = await Taro.NETWORK.bindActivityId(params) 
+    Taro.HUD.hideLoading()
+
+    if (res.code === 0) {
+      Taro.HUD.showToastMessage('绑定成功')
+      setTimeout(() => {
+        Taro.UTIL.checkUserStatusGoHome()
+      }, 1500);      
+    } else {
+      Taro.HUD.showToastMessage(res.message)
+    }
   }
 
   // 内部登录
   const clickInternalLogin = () => {
     console.log("内部-sso登录");
-    Taro.HUD.showToastMessage("内部-sso登录");
+    Taro.UTIL.ssoLogin()
   }
 
   // 账号输入
@@ -113,7 +101,6 @@ export default function Index() {
             </View>                                 
           </View>     
           <Image className='login-btn-login' fit='fill' src={imgBtnLogin} onClick={clickInternalLogin}></Image>
-          <PGAlertPrivacy></PGAlertPrivacy> 
         </View>
       ) : (
         <PGLoading></PGLoading>

@@ -8,7 +8,6 @@ import { View  } from "@tarojs/components";
 import Taro, { useLoad, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
-import PGAlertPrivacy from "../../components/pgAlertPrivacy/index";
 import PGLoading from "../../components/pgLoading/index";
 
 import imgIcon from '../../images/exchange-icon.png';
@@ -117,7 +116,6 @@ export default function Index() {
               </InfiniteLoading>
             </View>
           </PullToRefresh>
-          <PGAlertPrivacy></PGAlertPrivacy>
         </View>
       ) : (
         <PGLoading></PGLoading>

@@ -42,12 +42,21 @@
       font-size: 32rpx;
       color: #000000;
     }
-    .text-goods {    
+    .text-goods-scroll { 
+      margin-top: 10rpx;   
       width: 500rpx;
-      text-align: left;
+      max-height: 500rpx;
       font-size: 32rpx;
       color: #000000;
-    }
+      overflow: hidden;
+      overflow-y: scroll;
+      .text-goods {    
+        width: 100%;
+        text-align: left;
+        font-size: 32rpx;
+        color: #000000;
+      }
+    }    
     .btn-wrap {
       margin-top: 50rpx;
       margin-bottom: 44rpx;

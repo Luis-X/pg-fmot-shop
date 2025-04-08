@@ -88,13 +88,15 @@ export default function Index(props) {
         <Image className='alert-img' fit='contain' src={imgLight}></Image>
         <View className='text-title'>{title}</View>
         <View className='text-content-left'>{desc}</View>  
-        {
-          goodsListArray.map((item, index) => {
-            return (
-              <View className='text-goods' key={index}>{item}</View>
-            )
-          })
-        }        
+        <View className='text-goods-scroll'>       
+          {
+            goodsListArray.map((item, index) => {
+              return (
+                <View className='text-goods' key={index}>{item.title}</View>
+              )
+            })
+          }      
+         </View>  
         <View className='btn-wrap'>   
           {
             cancelText && (

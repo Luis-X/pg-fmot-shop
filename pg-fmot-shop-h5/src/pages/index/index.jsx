@@ -1,9 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View } from "@tarojs/components";
 import Taro, { useLoad, useRouter, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
-import PGAlertPrivacy from "../../components/pgAlertPrivacy/index";
 import PGLoading from "../../components/pgLoading/index";
 
 export default function Index() {
@@ -20,75 +19,122 @@ export default function Index() {
     Taro.WXSDK.hideOptionMenu();
   });
 
-  const [isShowPage, setIsShowPage] = useState(false);
+  const [isShowAlert, setIsShowAlert] = useState(false);
+  const [userData, setUserData] = useState({});
 
-  const activityType = router.params.type; // 1内部活动，2外部活动
-  const isBlockUser = false; // 是否被锁定
-  const isAvailable = true; // 是否在活动时间内
-  const isBindOpenId = false; // 是否绑定了openid
-  const isInternalUser = false; // 是否绑定了内部用户
-  const isExternalUser = false; // 是否绑定了外部用户
+  useEffect(() => {
+    if (Object.keys(userData).length > 0) {
+      allHandler()
+    }
+  }, [userData]);
 
   const createdPage = async () => {
-    setIsShowPage(true);
-    if (activityType === "1") {
-      console.log("内部活动");
-      if (checkActivityStatus()) {
-        internalHandler();
-      }
-    } else {
-      console.log("外部活动");
-      if (checkActivityStatus()) {
-        externalHandler();
-      }
-    }
+    requestData()
   };
 
-  // 检查活动状态
-  const checkActivityStatus = () => {
-    if (isAvailable) {
-      console.log("活动时间内");
-      return true;
+  async function requestData() {
+    const params = {
+      code: "123456",
+    }
+
+    const res = await Taro.NETWORK.login(params) 
+
+    if (res.code === 0) {
+      const resData = res.data || {}
+      Taro.UTIL.setPGStorage('login_info', resData)	
+      setUserData(resData)
+    } else {
+      Taro.HUD.showToastMessage(res.message)
+    }
+  }
+
+
+  async function requestBindOpenIdData() {
+    const params = {
+      email: "test@163.com",
+      openId: "1234567890",
+    }
+
+    Taro.HUD.showLoading('绑定中...')
+    const res = await Taro.NETWORK.bindOpenId(params) 
+    Taro.HUD.hideLoading()
+
+    if (res.code === 0) {
+      Taro.HUD.showToastMessage('绑定成功')
+      setTimeout(() => {
+        checkUserStatus();
+      }, 1500);      
+    } else {
+      Taro.HUD.showToastMessage(res.message)
+    }
+  }
+
+  // 活动处理
+  const allHandler = () => {
+    const isActivityTime = userData.isActivityTime;
+    const activityType = userData.activityType;
+
+    if (isActivityTime) {
+      console.log("活动时间内")
+      if (activityType === 1) {
+        console.log("内部活动")
+        internalHandler()
+      } else if (activityType === 2) {
+        console.log("外部活动")
+        externalHandler()
+      } else {
+        console.log("未知活动")
+        Taro.HUD.showToastMessage('未知活动')
+      }
     } else {
       console.log("不在活动时间内");
       Taro.ROUTER.navigateTo("/pages/disable/index?status=1");
-      return false;
     }
-  };
+  }
 
   // 内部活动
   const internalHandler = () => {
+    const isBindOpenId = userData.isBindOpenId;
+
     if (isBindOpenId) {
-      Taro.UTIL.goToActivityHomeWithId()
+      console.log("内部-openId已绑定");
+      checkUserStatus();
     } else {
+      console.log("内部-openId未绑定");
       console.log("内部-sso登录");
-      Taro.HUD.showToastMessage("内部-sso登录");
+      Taro.UTIL.ssoLogin()           
     }
   };
 
   // 外部活动
   const externalHandler = () => {
+    const isInternalUser = userData.isInternalUser;
+    const isExternalUser = userData.isExternalUser;
+
     if (isInternalUser) {
-      console.log("内部用户");
-      Taro.UTIL.goToActivityHomeWithId()
-    } else if (isExternalUser) {
-      console.log("外部用户");
-      Taro.UTIL.goToActivityHomeWithId()
-    } else {
-      console.log("外部-登录页");
-      Taro.ROUTER.navigateTo("/pages/login/index");
+      console.log("绑定过，内部用户");
+      checkUserStatus();
+      return;
     }
+
+    if (isExternalUser) {
+      console.log("绑定过，外部用户");
+      checkUserStatus();
+      return
+    }
+
+    console.log("未绑定过，内部用户");
+    console.log("未绑定过，外部用户");
+    console.log("进入登录页");
+    Taro.ROUTER.navigateTo("/pages/login/index");
   };
 
+  // 检查用户状态
+  const checkUserStatus = () => {    
+    Taro.UTIL.checkUserStatusGoHome()
+  }
+
   return (
-    <>
-      {isShowPage ? (
-        <View className='pg-index'>
-          <PGAlertPrivacy></PGAlertPrivacy>
-        </View>
-      ) : (
-        <PGLoading></PGLoading>
-      )}
-    </>
+    <PGLoading></PGLoading>   
   );
 }

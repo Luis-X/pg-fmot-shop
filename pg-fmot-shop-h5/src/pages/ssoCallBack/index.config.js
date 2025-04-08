@@ -1,4 +1,4 @@
 export default definePageConfig({
-  navigationBarTitleText: '登录页',
+  navigationBarTitleText: 'FMOT SHOP',
   disableScroll: true
 })

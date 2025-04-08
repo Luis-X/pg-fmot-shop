@@ -61,7 +61,7 @@ showCancel			是否显示取消按钮，默认为 true
 cancelText			取消按钮的文字，默认为"取消"，最多 4 个字符
 cancelColor			取消按钮的文字颜色，默认为"#000000"
 confirmText			确定按钮的文字，默认为"确定"，最多 4 个字符
-confirmColor		确定按钮的文字颜色，默认为"#2196f3"
+confirmColor		确定按钮的文字颜色，默认为"#EE3A43"
 callback        选择返回值
 */
 function baseShowModal(
@@ -93,7 +93,7 @@ function showModalChoose(item, callback) {
   const content = item.content;
   const confirmText = item.confirmText ? item.confirmText : '确认';
   const cancelText = item.cancelText ? item.cancelText : '取消';
-  baseShowModal(title, content, true, cancelText, '#000000', confirmText, '#2196f3', (res) => {
+  baseShowModal(title, content, true, cancelText, '#000000', confirmText, '#EE3A43', (res) => {
     callback(res);
   });
 }
@@ -102,7 +102,7 @@ function showModalConfirm(item, callback) {
   const title = item.title;
   const content = item.content;
   const confirmText = item.confirmText ? item.confirmText : '确认';
-  baseShowModal(title, content, false, '', '#000000', confirmText, '#2196f3', (res) => {
+  baseShowModal(title, content, false, '', '#000000', confirmText, '#EE3A43', (res) => {
     callback(res);
   });
 }

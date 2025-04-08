@@ -1,14 +1,9 @@
 import { useState } from "react";
-import {
-  PullToRefresh,
-  InfiniteLoading,
-  Image,
-} from "@nutui/nutui-react";
+import { PullToRefresh, InfiniteLoading, Image } from "@nutui/nutui-react";
 import { View, Input } from "@tarojs/components";
 import Taro, { useLoad, useRouter, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
-import PGAlertPrivacy from "../../components/pgAlertPrivacy/index";
 import PGGoodsView from "../../components/pgGoodsView/index";
 import PGLoading from "../../components/pgLoading/index";
 
@@ -19,12 +14,6 @@ import imgSearchBarIcon from "../../images/home-search-bar-icon.png";
 export default function Index() {
 
   const router = useRouter()
-
-  const sleep = (time) => {
-    return new Promise((resolve) => {
-      setTimeout(resolve, time);
-    });
-  };
 
   useLoad(() => {
     Taro.WXSDK.hideOptionMenu();
@@ -45,23 +34,17 @@ export default function Index() {
     // }
     Taro.TRACKER.pageViewTracker("搜索列表");
     setIsShowPage(true);
-    init();
 
     const keyword = router.params.keyword || '';
     setSearchValue(decodeURIComponent(keyword));
+
+    requestListData({
+      pageIndex: 0,
+      keyword: searchValue,
+    }, false)
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
-  const state = {
-    src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
-    title:
-      "【活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
-    price: "388",
-    vipPrice: "378",
-    shopDescription: "自营",
-    delivery: "厂商配送",
-    shopName: "阳澄湖大闸蟹自营店>",
-  };
 
   // 搜索
   const [searchValue, setSearchValue] = useState('')
@@ -75,6 +58,10 @@ export default function Index() {
   const searchOnConfirm = () => {
     const value = searchValue || ''
     console.log('searchOnConfirm', value)
+    requestListData({
+      pageIndex: 0,
+      keyword: value,
+    }, false)
   };
 
   const searchBarView = () => {
@@ -102,36 +89,75 @@ export default function Index() {
 
   // 下拉刷新
   const refreshData = () => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve("done");
-      }, 1000);
-    });
+    return requestListData({
+      pageIndex: 0,
+      keyword: searchValue,
+    }, false)
   };
 
   // 上拉加载
-  const [defaultList, setDefaultList] = useState([]);
+  const [dataList, setDataList] = useState([]);
+  const [pageCurrentIndex, setPageCurrentIndex] = useState(0)
   const [hasMore, setHasMore] = useState(true);
 
   const loadMore = async () => {
-    await sleep(2000);
-    const curLen = defaultList.length;
-    for (let i = curLen; i < curLen + 10; i++) {
-      defaultList.push(`${i}`);
-    }
-    if (defaultList.length >= 30) {
-      setHasMore(false);
-    } else {
-      setDefaultList([...defaultList]);
-    }
+    await requestListData({
+      pageIndex: pageCurrentIndex,
+      keyword: searchValue,
+    }, true)
   };
 
-  const init = () => {
-    for (let i = 0; i < 20; i++) {
-      defaultList.push(`${i}`);
+  // request
+  async function requestListData(query, isLoadMore) {
+
+    const pageIndex = query.pageIndex || 0
+    const keyword = query.keyword || ''
+
+    if (!isLoadMore) {
+      setDataList([])
+    } else {
+      if (pageIndex > 0 && !hasMore) {
+        console.log('no more')
+        return
+      }
     }
-    setDefaultList([...defaultList]);
-  };
+
+    const params = {
+      page: pageIndex,
+      size: 10,
+      keyword: keyword,
+    }
+
+    const res = await Taro.NETWORK.searchList(params) 
+    Taro.HUD.hideLoading()
+
+    if (res.code === 0) {
+      const resData = res.data || {}
+
+      const list = resData.list || []
+
+      let newList = []
+      if (isLoadMore) {
+        newList = dataList.concat(list)
+      } else {
+        newList = list
+      }
+      
+      setDataList(newList)  
+      setPageCurrentIndex(pageIndex + 1)
+      
+      // 没有更多
+      if (pageIndex >= resData.totalPages - 1) {
+        setHasMore(false)
+      } else {
+        setHasMore(true)
+      }
+
+    } else {
+      Taro.HUD.showToastMessage(res.message)
+    } 
+  }
+  
 
   // 商品列表
   const goodsListView = () => {
@@ -139,9 +165,9 @@ export default function Index() {
       <View className='search-grid-bg-wrap'>
         <View className='search-grid-wrap'>
           {
-            defaultList.map((item, index) => {
+            dataList.map((item, index) => {
               return (
-                <PGGoodsView key={index} item={state}></PGGoodsView>
+                <PGGoodsView key={index} item={item}></PGGoodsView>
               );
             })
           }
@@ -162,7 +188,6 @@ export default function Index() {
               </InfiniteLoading>
             </View>
           </PullToRefresh>
-          <PGAlertPrivacy></PGAlertPrivacy>
         </View>
       ) : (
         <PGLoading></PGLoading>

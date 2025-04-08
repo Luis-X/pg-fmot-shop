@@ -10,7 +10,6 @@ import { View } from "@tarojs/components";
 import Taro, { useLoad, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
-import PGAlertPrivacy from "../../components/pgAlertPrivacy/index";
 import PGLoading from "../../components/pgLoading/index";
 import PGAlertConfirm from "../../components/pgAlertConfirm/index";
 
@@ -39,147 +38,12 @@ export default function Index() {
     Taro.TRACKER.pageViewTracker("确认订单");
     setIsShowPage(true);
 
-    const array = [
-      '商品名称1',
-      '商品名称2',
-      '商品名称3',
-      // '商品名称4',
-    ];
-    setShortageList(array)
-
-    const cartListData = [
-      {
-        id: 1,
-        src: "https://storage.360buyimg.com/jdc-article/NutUItaro34.jpg",
-        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
-        price: 100,
-        vipPrice: 99,
-        num: 2,
-        limit: 10,
-        isSelect: true
-      },
-      {
-        id: 2,
-        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
-        price: 200,
-        vipPrice: 99,
-        num: 1,
-        limit: 5,
-        isSelect: false
-      },
-      {
-        id: 2,
-        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
-        price: 200,
-        vipPrice: 99,
-        num: 1,
-        limit: 5,
-        isSelect: false
-      },
-      {
-        id: 2,
-        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
-        price: 200,
-        vipPrice: 99,
-        num: 1,
-        limit: 5,
-        isSelect: false
-      },
-      {
-        id: 2,
-        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
-        price: 200,
-        vipPrice: 99,
-        num: 1,
-        limit: 5,
-        isSelect: false
-      },
-      {
-        id: 2,
-        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
-        price: 200,
-        vipPrice: 99,
-        num: 1,
-        limit: 5,
-        isSelect: false
-      },
-      {
-        id: 2,
-        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
-        price: 200,
-        vipPrice: 99,
-        num: 1,
-        limit: 5,
-        isSelect: false
-      },
-      {
-        id: 2,
-        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
-        price: 200,
-        vipPrice: 99,
-        num: 1,
-        limit: 5,
-        isSelect: false
-      },
-      {
-        id: 2,
-        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
-        price: 200,
-        vipPrice: 99,
-        num: 1,
-        limit: 5,
-        isSelect: false
-      },
-    ]
-
-    setCartList(cartListData);
+    requestData();
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
-  const orderInfo = {
-    orderId: '2022010100000000000000000000000000000000000000000000000000000000',
-    orderStatus: '待支付',
-    orderAmount: '100.00',
-    orderCreateTime: '2022-01-01 00:00:00',
-    orderDesc: '文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本',
-    totalNum: 10,
-    totalAmount: 100,
-    goodsList: [
-      {
-        src: "https://storage.360buyimg.com/jdc-article/NutUItaro34.jpg",
-        title:
-          "【活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
-        price: "388.0",
-        vipPrice: "378",
-        num: "1",
-      },
-      {
-        src: "https://storage.360buyimg.com/jdc-article/NutUItaro2.jpg",
-        title:
-          "【活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
-        price: "388.0",
-        vipPrice: "378",
-        num: "1",
-      },
-      {
-        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-        title:
-          "【活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
-        price: "388.0",
-        vipPrice: "378",
-        num: "1",
-      },
-    ]
-  }
 
+  const [orderInfo, setOrderInfo] = useState({})
   const [cartList, setCartList] = useState([])
 
   // 选择发货方式
@@ -190,12 +54,28 @@ export default function Index() {
 
    // 下拉刷新
    const refreshData = () => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve("done");
-      }, 1000);
-    });
+    return requestData();
   };
+
+  // request
+  async function requestData(id) {
+    const params = {
+      id: id
+    }
+
+    Taro.HUD.showLoading()
+    const res = await Taro.NETWORK.orderConfirmInfo(params) 
+    Taro.HUD.hideLoading()
+
+    if (res.code === 0) {
+      const resData = res.data || {}
+      const goodsList = resData.goodsList || []
+      setOrderInfo(resData)
+      setCartList(goodsList)
+    } else {
+      Taro.HUD.showToastMessage(res.message)
+    }   
+  }
 
   // 商品列表
   const goodsListView = () => {
@@ -260,8 +140,17 @@ export default function Index() {
   const [hideConfimBtn, setHideConfimBtn] = useState(false);
 
   const clickExchange = () => {
-    const isShortage = shortageList.length > 0 // 是否包含虚拟商品
-    const isAllShortage = shortageList.length >= orderInfo.goodsList.length; // 是否所有都为虚拟商品
+
+    // 是否包含虚拟商品
+    const newList = []
+    cartList.forEach(item => {
+      if (item.type === 1) {
+        newList.push(item)
+      }
+    })
+    const isShortage = newList.length > 0 // 是否包含虚拟商品
+    const isAllShortage = newList.length >= cartList.length; // 是否所有都为虚拟商品
+    setShortageList(newList)
 
     if (isShortage) {      
       if (isAllShortage) {
@@ -333,14 +222,13 @@ export default function Index() {
         <View className='pg-index'>
           <PullToRefresh onRefresh={() => refreshData()} renderIcon={(status) => Taro.UTIL.refreshRenderHeaderSvg(status)}>
             <View className='order-confirm-list' id='scroll'>                        
-              {goodsListView()}
-              {deliveryView()}
-              {noteView()}
-              {btnView()}              
+              { cartList && cartList.length > 0 ? goodsListView() : null }
+              { cartList && cartList.length > 0 ? deliveryView() : null }
+              { orderInfo.orderDesc ? noteView() : null }
+              { cartList && cartList.length > 0 ? btnView() : null }
             </View>
           </PullToRefresh>                
           {alertView()}
-          <PGAlertPrivacy></PGAlertPrivacy>
         </View>
       ) : (
         <PGLoading></PGLoading>

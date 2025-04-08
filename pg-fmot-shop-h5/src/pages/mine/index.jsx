@@ -7,7 +7,7 @@ import { View } from "@tarojs/components";
 import Taro, { useLoad, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
-import PGAlertPrivacy from "../../components/pgAlertPrivacy/index";
+import PGAlertAgree from "../../components/pgAlertAgree/index";
 import PGOrderView from "../../components/pgOrderView/index";
 import PGLoading from "../../components/pgLoading/index";
 import PGTabBar from "../../components/pgTabbar/index";
@@ -159,7 +159,7 @@ export default function Index() {
             </View>
           </PullToRefresh>
           <PGTabBar sence='mine'></PGTabBar>
-          <PGAlertPrivacy></PGAlertPrivacy>
+          <PGAlertAgree></PGAlertAgree>
         </View>
       ) : (
         <PGLoading></PGLoading>

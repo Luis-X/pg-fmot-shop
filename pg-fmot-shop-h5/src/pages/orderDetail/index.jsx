@@ -7,7 +7,6 @@ import { View } from "@tarojs/components";
 import Taro, { useLoad, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
-import PGAlertPrivacy from "../../components/pgAlertPrivacy/index";
 import PGOrderView from "../../components/pgOrderView/index";
 import PGLoading from "../../components/pgLoading/index";
 import PGAlertConfirm from "../../components/pgAlertConfirm/index";
@@ -35,54 +34,36 @@ export default function Index() {
     // }
     Taro.TRACKER.pageViewTracker("订单详情");
     setIsShowPage(true);
+
+    requestData();
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
 
-  const orderInfo = {
-    orderId: '2022010100000000000000000000000000000000000000000000000000000000',
-    orderStatus: '待支付',
-    orderAmount: '100.00',
-    orderCreateTime: '2022-01-01 00:00:00',
-    orderDesc: '文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本',
-    totalNum: 10,
-    totalAmount: 100,
-    goodsList: [
-      {
-        src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
-        title:
-          "【活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
-        price: "388.0",
-        vipPrice: "378",
-        num: "1",
-      },
-      {
-        src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
-        title:
-          "【活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
-        price: "388.0",
-        vipPrice: "378",
-        num: "1",
-      },
-      {
-        src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
-        title:
-          "【活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
-        price: "388.0",
-        vipPrice: "378",
-        num: "1",
-      },
-    ]
-  }
+  const [orderInfo, setOrderInfo] = useState({})
 
   // 下拉刷新
   const refreshData = () => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve("done");
-      }, 1000);
-    });
+    return requestData();
   };
+
+  // request
+  async function requestData(id) {
+    const params = {
+      id: id
+    }
+
+    Taro.HUD.showLoading()
+    const res = await Taro.NETWORK.orderDetailInfo(params) 
+    Taro.HUD.hideLoading()
+
+    if (res.code === 0) {
+      const resData = res.data || {}
+      setOrderInfo(resData)
+    } else {
+      Taro.HUD.showToastMessage(res.message)
+    }   
+  }
 
   // 订单详情
   const orderInfoView = () => {
@@ -174,8 +155,7 @@ export default function Index() {
               {btnView()}                              
             </View>
           </PullToRefresh>                 
-          {alertView()}
-          <PGAlertPrivacy></PGAlertPrivacy>          
+          {alertView()}        
         </View>
       ) : (
         <PGLoading></PGLoading>

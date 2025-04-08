@@ -11,7 +11,6 @@ import { View, Video } from "@tarojs/components";
 import Taro, { useLoad, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
-import PGAlertPrivacy from "../../components/pgAlertPrivacy/index";
 import PGLoading from "../../components/pgLoading/index";
 import PGAlertConfirm from "../../components/pgAlertConfirm/index";
 
@@ -44,27 +43,16 @@ export default function Index() {
     // }
     Taro.TRACKER.pageViewTracker("商品详情");
     setIsShowPage(true);
+
+    requestData()
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
 
-  const goodsInfo = {
-    src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
-    title:
-      "【活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
-    price: "388",
-    vipPrice: "378",
-    shopDescription: "自营",
-    delivery: "厂商配送",
-    shopName: "阳澄湖大闸蟹自营店",
-  };  
+  const [goodsInfo, setGoodsInfo] = useState({});  
 
   // 视频
-  const videoSource = {
-    src: 'https://storage.360buyimg.com/nutui/video/video_NutUI.mp4',
-    poster: 'https://storage.360buyimg.com/jdc-article/NutUItaro34.jpg',
-    type: 'video/mp4',
-  }
+  const [videoSource, setVideoSource] = useState({});
 
   const videoOptions = {
     initialTime: 0,
@@ -96,12 +84,30 @@ export default function Index() {
 
   // 下拉刷新
   const refreshData = () => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve("done");
-      }, 1000);
-    });
+    return requestData()
   };
+
+  // request
+  async function requestData(id) {
+    const params = {
+      id: id
+    }
+
+    Taro.HUD.showLoading()
+    const res = await Taro.NETWORK.goodsDetail(params) 
+    Taro.HUD.hideLoading()
+
+    if (res.code === 0) {
+      const resData = res.data || {}
+      const banner = resData.banner || []
+      const video = resData.video || {}
+      setGoodsInfo(resData)
+      setBannerList(banner)
+      setVideoSource(video)
+    } else {
+      Taro.HUD.showToastMessage(res.message)
+    }   
+  }
 
   // 确认购买
   const clickConfirmBuy = () => {
@@ -122,14 +128,32 @@ export default function Index() {
   // 加入购物车
   const [cartNum, setCartNum] = useState(0);
   const clickCartAdd = () => {
+    const id = 0;
     const maxLimit = 10;
     const num = cartNum + 1;
     if (num >= maxLimit) {
       Taro.HUD.showToastMessage('加购商品超过数量上限')
       return;
     }
-    setCartNum(num)
-    Taro.HUD.showToastMessage('加入购物车成功')
+    requestAddCartData(id, num)
+  }
+
+  async function requestAddCartData(id, num) {
+    const params = {
+      id: id
+    }
+
+    Taro.HUD.showLoading()
+    const res = await Taro.NETWORK.goodsAddCart(params) 
+    Taro.HUD.hideLoading()
+
+    if (res.code === 0) {
+      const resData = res.data || {}
+      setCartNum(num)
+      Taro.HUD.showToastMessage('加入购物车成功')
+    } else {
+      Taro.HUD.showToastMessage(res.message)
+    }   
   }
 
   // 立即购买
@@ -182,12 +206,7 @@ export default function Index() {
   }
   
   // 轮播图
-  const bannerList = [
-    "https://storage.360buyimg.com/jdc-article/NutUItaro34.jpg",
-    "https://storage.360buyimg.com/jdc-article/NutUItaro2.jpg",
-    "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-    "https://storage.360buyimg.com/jdc-article/fristfabu.jpg",
-  ];
+  const [bannerList, setBannerList] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0)
 
   const clickSwiperItem = (item) => {
@@ -239,25 +258,25 @@ export default function Index() {
                 {
                   index === 0 ? (
                     <View className='swiper-item'>
-                     <Video 
-                       className='swiper-video'
-                       id='swiper-video-ref'
-                       src={videoSource.src}
-                       poster={videoSource.poster}
-                       initialTime={videoOptions.initialTime}
-                       controls={videoOptions.controls}
-                       autoplay={videoOptions.autoplay}
-                       loop={videoOptions.loop}
-                       muted={videoOptions.muted}
-                       onPlay={onVideoPlay}
-                       onPause={onVideoPause}
-                       onPlayend={onVideoPlayend}
-                       onTimeUpdate={onVideoTimeUpdate}
-                     />
+                    <Video 
+                      className='swiper-video'
+                      id='swiper-video-ref'
+                      src={videoSource.src}
+                      poster={videoSource.poster}
+                      initialTime={videoOptions.initialTime}
+                      controls={videoOptions.controls}
+                      autoplay={videoOptions.autoplay}
+                      loop={videoOptions.loop}
+                      muted={videoOptions.muted}
+                      onPlay={onVideoPlay}
+                      onPause={onVideoPause}
+                      onPlayend={onVideoPlayend}
+                      onTimeUpdate={onVideoTimeUpdate}
+                    />
                     </View>                    
                   ) : (
                     <View className='swiper-item'>
-                       <Image className='swiper-img' src={item} fit='cover' onClick={clickSwiperItem} />
+                      <Image className='swiper-img' src={item} fit='cover' onClick={clickSwiperItem} />
                     </View>                   
                   )
                 }                
@@ -268,7 +287,7 @@ export default function Index() {
         <View className="detail-swiper-slide">
           <Indicator total={bannerList.length} type="dualScreen" current={currentIndex} />
         </View>   
-      </View>
+      </View>     
     )
   }
 
@@ -310,29 +329,37 @@ export default function Index() {
       <>
         <View className='detail-divider-wrap'>
           <View className='detail-divider'>商品详情</View>
-        </View>       
-        <View className='detail-video-wrap'>
-          <View className='detail-video-item'>
-          <Video 
-            className='detail-video'
-            id='video'
-            src={videoSource.src}
-            poster={videoSource.poster}
-            initialTime={videoOptions.initialTime}
-            controls={videoOptions.controls}
-            autoplay={videoOptions.autoplay}
-            loop={videoOptions.loop}
-            muted={videoOptions.muted}
-            onPlay={onVideoPlay}
-            onPause={onVideoPause}
-            onPlayend={onVideoPlayend}
-            onTimeUpdate={onVideoTimeUpdate}
-          />
-          </View>          
-        </View>
-        <View className='detail-img-wrap'>
-          <Image className='detail-img' src={goodsInfo.src} fit='contain'></Image>
-        </View>
+        </View>  
+        {
+          videoSource.src ? (
+            <View className='detail-video-wrap'>
+              <View className='detail-video-item'>
+              <Video 
+                className='detail-video'
+                id='video'
+                src={videoSource.src}
+                poster={videoSource.poster}
+                initialTime={videoOptions.initialTime}
+                controls={videoOptions.controls}
+                autoplay={videoOptions.autoplay}
+                loop={videoOptions.loop}
+                muted={videoOptions.muted}
+                onPlay={onVideoPlay}
+                onPause={onVideoPause}
+                onPlayend={onVideoPlayend}
+                onTimeUpdate={onVideoTimeUpdate}
+              />
+              </View>          
+            </View>
+          ) : null
+        }
+        {
+          goodsInfo.src ? (
+            <View className='detail-img-wrap'>
+              <Image className='detail-img' src={goodsInfo.src} fit='contain'></Image>
+            </View>
+          ) : null
+        }                     
       </>
     )
   }
@@ -343,14 +370,13 @@ export default function Index() {
         <View className='pg-index'>
           <PullToRefresh onRefresh={() => refreshData()} renderIcon={(status) => Taro.UTIL.refreshRenderHeaderSvg(status)}>
             <View className='detail-list' id='scroll'>          
-              {swiperView()}
-              {goodsInfoView()}
-              {goodsVideoAndImgView()}
+              {bannerList && bannerList.length > 0 ? swiperView() : null}
+              {goodsInfo && goodsInfo.title ? goodsInfoView() : null}
+              {(goodsInfo.video || goodsInfo.src) ? goodsVideoAndImgView() : null}
             </View>
           </PullToRefresh>
           {toolsView()}
-          {alertView()}
-          <PGAlertPrivacy></PGAlertPrivacy>                    
+          {alertView()}                   
         </View>
       ) : (
         <PGLoading></PGLoading>

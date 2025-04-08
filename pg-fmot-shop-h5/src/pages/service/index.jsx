@@ -4,7 +4,6 @@ import { View } from '@tarojs/components'
 import Taro, { useLoad, useDidShow } from '@tarojs/taro'
 import './index.scss'
 
-import PGAlertPrivacy from '../../components/pgAlertPrivacy/index'
 import PGLoading from "../../components/pgLoading/index";
 
 import imgBG from '../../images/service-bg.png';
@@ -36,9 +35,30 @@ export default function Index() {
     // }
     Taro.TRACKER.pageViewTracker('客服')
     setIsShowPage(true)
+
+    requestData()
   }
 
   const [isShowPage, setIsShowPage] = useState(false)
+  const [serviceInfo, setServiceInfo] = useState([])
+
+  // request
+  async function requestData(id) {
+    const params = {
+      id: id
+    }
+
+    Taro.HUD.showLoading()
+    const res = await Taro.NETWORK.serviceDetail(params) 
+    Taro.HUD.hideLoading()
+
+    if (res.code === 0) {
+      const resData = res.data || {}
+      setServiceInfo(resData)
+    } else {
+      Taro.HUD.showToastMessage(res.message)
+    }   
+  }
 
   return (
     <>
@@ -51,17 +71,16 @@ export default function Index() {
                 <View className='service-content'>
                   <View className='service-content-item'>
                     <Image className='service-content-icon' fit='contain' src={imgPhone}></Image>
-                    <View className='service-content-text'>联系电话：13188998899</View>
+                    <View className='service-content-text'>{serviceInfo.phone}</View>
                   </View>
                   <View className='service-content-item'>
                     <Image className='service-content-icon' fit='contain' src={imgAddress}></Image>
-                    <View className='service-content-text'>联系地址：辽宁省大连市高新园区万达广场一单元1901</View>
+                    <View className='service-content-text'>{serviceInfo.address}</View>
                   </View>
                 </View>
                 <Image className='service-img' fit='contain' src={imgIcon}></Image> 
               </View>
             </View>
-            <PGAlertPrivacy></PGAlertPrivacy>
           </View>
         ) : (
           <PGLoading></PGLoading>

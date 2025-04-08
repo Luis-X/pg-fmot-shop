@@ -1,16 +1,10 @@
 import { useState } from "react";
-import {
-  PullToRefresh,
-  InfiniteLoading,
-  Swiper,
-  Image,
-  Indicator
-} from "@nutui/nutui-react";
+import { PullToRefresh, InfiniteLoading, Swiper, Image, Indicator } from "@nutui/nutui-react";
 import { View, Input } from "@tarojs/components";
 import Taro, { useLoad, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
-import PGAlertPrivacy from "../../components/pgAlertPrivacy/index";
+import PGAlertAgree from "../../components/pgAlertAgree/index";
 import PGGoodsView from "../../components/pgGoodsView/index";
 import PGLoading from "../../components/pgLoading/index";
 import PGTabBar from "../../components/pgTabbar/index";
@@ -19,11 +13,6 @@ import imgSearchBar from "../../images/home-search-bar.png";
 import imgSearchBarIcon from "../../images/home-search-bar-icon.png";
 
 export default function Index() {
-  const sleep = (time) => {
-    return new Promise((resolve) => {
-      setTimeout(resolve, time);
-    });
-  };
 
   useLoad(() => {
     Taro.WXSDK.hideOptionMenu();
@@ -44,53 +33,89 @@ export default function Index() {
     // }
     Taro.TRACKER.pageViewTracker("首页");
     setIsShowPage(true);
-    init();
+
+    requestListData({
+      pageIndex: 0,
+      activityId: '',
+    }, false)
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
 
-  const state = {
-    src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
-    title:
-      "洋甘菊无硅油天然洋甘菊无硅油天然",
-    price: "388.0",
-    vipPrice: "378",
-    shopDescription: "自营",
-    delivery: "厂商配送",
-  };
-
   // 下拉刷新
   const refreshData = () => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve("done");
-      }, 1000);
-    });
+    return requestListData({
+      pageIndex: 0,
+      activityId: '',
+    }, false)
   };
 
   // 上拉加载
-  const [defaultList, setDefaultList] = useState([]);
+  const [dataList, setDataList] = useState([]);
+  const [pageCurrentIndex, setPageCurrentIndex] = useState(0)
   const [hasMore, setHasMore] = useState(true);
 
   const loadMore = async () => {
-    await sleep(2000);
-    const curLen = defaultList.length;
-    for (let i = curLen; i < curLen + 10; i++) {
-      defaultList.push(`${i}`);
-    }
-    if (defaultList.length >= 30) {
-      setHasMore(false);
-    } else {
-      setDefaultList([...defaultList]);
-    }
+    await requestListData({
+      pageIndex: pageCurrentIndex,
+      activityId: '',
+    }, true)
   };
 
-  const init = () => {
-    for (let i = 0; i < 20; i++) {
-      defaultList.push(`${i}`);
+   // request
+  async function requestListData(query, isLoadMore) {
+
+    const pageIndex = query.pageIndex || 0
+    const activityId = query.activityId || ''
+
+    if (!isLoadMore) {
+      setDataList([])
+    } else {
+      if (pageIndex > 0 && !hasMore) {
+        console.log('no more')
+        return
+      }
     }
-    setDefaultList([...defaultList]);
-  };
+
+    const params = {
+      page: pageIndex,
+      size: 10,
+      activityId: activityId,
+    }
+
+    const res = await Taro.NETWORK.activityList(params) 
+    Taro.HUD.hideLoading()
+
+    if (res.code === 0) {
+      const resData = res.data || {}
+
+      const banner = resData.banner || []
+      const list = resData.list || []
+
+      let newList = []
+      if (isLoadMore) {
+        newList = dataList.concat(list)
+      } else {
+        newList = list
+      }
+            
+      setBannerList(banner)
+      setCurrentIndex(0)
+      
+      setDataList(newList)  
+      setPageCurrentIndex(pageIndex + 1)
+      
+      // 没有更多
+      if (pageIndex >= resData.totalPages - 1) {
+        setHasMore(false)
+      } else {
+        setHasMore(true)
+      }
+
+    } else {
+      Taro.HUD.showToastMessage(res.message)
+    } 
+  }
 
   // 商品列表
   const goodsListView = () => {
@@ -98,9 +123,9 @@ export default function Index() {
       <View className='home-grid-bg-wrap'>
         <View className='home-grid-wrap'>
           {
-            defaultList.map((item, index) => {
+            dataList.map((item, index) => {
               return (
-                <PGGoodsView key={index} item={state}></PGGoodsView>
+                <PGGoodsView key={index} item={item}></PGGoodsView>
               );
             })
           }
@@ -148,25 +173,7 @@ export default function Index() {
   }
 
   // 轮播图
-  const bannerList = [
-    {
-      imgUrl: 'https://storage.360buyimg.com/jdc-article/NutUItaro34.jpg',
-      url: 'https://www.baidu.com'
-    },
-    {
-      imgUrl: 'https://storage.360buyimg.com/jdc-article/NutUItaro2.jpg',
-      url: 'https://www.baidu.com'
-    },
-    {
-      imgUrl: 'https://storage.360buyimg.com/jdc-article/welcomenutui.jpg',
-      url: 'https://www.baidu.com'
-    },
-    {
-      imgUrl: 'https://storage.360buyimg.com/jdc-article/fristfabu.jpg',
-      url: 'https://www.baidu.com'
-    },
-  ];
-
+  const [bannerList, setBannerList] = useState([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const onChangeSwiperItem = (index) => {
       console.log('onChangeSwiperItem', index)
@@ -196,7 +203,7 @@ export default function Index() {
           <Indicator total={bannerList.length} type="dualScreen" current={currentIndex} />
         </View>      
       </View>
-    );
+    )
   };
 
   const clickBanner = (item) => {
@@ -213,13 +220,13 @@ export default function Index() {
             <View className='home-list' id='scroll'>              
               <InfiniteLoading target='scroll' hasMore={hasMore} onLoadMore={loadMore} loadingText={Taro.UTIL.refreshRenderFooterSvg('加载中')} loadMoreText={Taro.UTIL.refreshRenderFooterSvg('没有更多了')}>
                 {searchBarView()}      
-                {swiperView()}
+                {bannerList && bannerList.length > 0 ? swiperView() : null}
                 {goodsListView()}                
               </InfiniteLoading>
             </View>
           </PullToRefresh>
           <PGTabBar sence='home'></PGTabBar>
-          <PGAlertPrivacy></PGAlertPrivacy>          
+          <PGAlertAgree></PGAlertAgree>          
         </View>
       ) : (
         <PGLoading></PGLoading>

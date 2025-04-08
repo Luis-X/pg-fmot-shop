@@ -4,7 +4,6 @@ import { View } from "@tarojs/components";
 import Taro, { useLoad, useRouter, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
-import PGAlertPrivacy from "../../components/pgAlertPrivacy/index";
 import PGLoading from "../../components/pgLoading/index";
 
 import imgBG from '../../images/disable-bg.png';
@@ -69,7 +68,6 @@ export default function Index() {
               </>
             )}
           </View>
-          <PGAlertPrivacy></PGAlertPrivacy>
         </View>
       ) : (
         <PGLoading></PGLoading>

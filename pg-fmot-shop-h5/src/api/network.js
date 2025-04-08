@@ -7,45 +7,26 @@ import CONFIG from '../api/config';
 
 export default {
   aclUrl,
+
   login,
+  agreeAgreement,
 
-  accountsConflictAvoidance,
-  modifyAccountsTerms,
-  sendSmsCaptcha,
-  getGraphCaptcha,
-
-  registerByMobile,
-  registerUserInfo,
-  updateUserInfo,
-  userInfo,
-  userInfoDetail,
-  getUserEmail,
-
-  getJobCategoryConfig,
-
-  articleList,
-  articleDetail,
-  articleListOfMyFavorite,
-  articleAddFavorite,
-  articleDelFavorite,
-  articleDownloadByEmail,
+  bindOpenId,
+  bindActivityId,
 
   activityList,
-  activityDetail,
-  activityListOfMyBook,
-  activityAddBook,
-  activityDelBook,
-  
-  myReportList,
-  myReportDetail,
-  myReportSubmit,
+  searchList,
 
-  myDemandSubmit,
+  goodsDetail,
+  goodsAddCart,
 
-  uploadFileSign,
-  uploadFileSignPublic,
-  uploadFileGetFileUrl,
-  uploadFile,
+  orderConfirmInfo,
+  orderConfirm,
+
+  orderDetailInfo,
+  orderCancel,
+
+  serviceDetail,
 
   wxSignShare,
   wxConfigShareData,
@@ -56,162 +37,371 @@ function aclUrl (params) {
   return REQUEST.post('/aclUrl', params)
 }
 
-// code 登录 [ok]
+// code 登录
 function login (params) {
-  return REQUEST.post('/codeToToken', params)
+  // return REQUEST.post('/codeToToken', params)
+  const res = {
+    code: 0,
+    data: {
+      // token
+      token: '1234567890',
+      // 是否在活动时间内
+      isActivityTime: true,
+      // 活动类型 1: 内部活动 2: 外部活动
+      activityType: 2,
+      // 是否绑定OpenId
+      isBindOpenId: false,
+      // 账号是否正常
+      isAvailableUser: true,
+      // 是否同意协议
+      isAgreeAgreement: false,
+      // 邮箱是否白名单且未绑定过 (内部)
+      isAvailableEmail: true,
+      // 是否绑定openId为内部用户
+      isInternalUser: false,
+      // 是否绑定活动为外部用户
+      isExternalUser: false,
+    },
+    message: '登录失败'
+  }
+  return clientMockData(res, params);
 }
 
-// AM 解决冲突 [ok]
-function accountsConflictAvoidance (params) {
-  return REQUEST.get('/api/user/accountsConflictAvoidance', params)
-}
-// AM 更新隐私条款 [ok]
-function modifyAccountsTerms (params) {
-  return REQUEST.get('/api/user/modifyAccountsTerms', params)
-}
-// AM 获取验证码 [ok]
-function sendSmsCaptcha (params) {
-  return REQUEST.post('/api/user/sendSmsCaptcha', params)
-}
-// AM 获取图形验证码 [ok]
-function getGraphCaptcha (params) {
-  return REQUEST.post('/api/user/getGraphCaptcha', params)
+// 同意协议
+function agreeAgreement (params) {
+  const res = {
+    code: 0,
+    data: {},
+    message: '同意失败'
+  }
+  return clientMockData(res, params);
 }
 
-
-// 用户 手机号注册 [ok]
-function registerByMobile (params) {
-  return REQUEST.post('/api/user/registerByMobile', params)
-}
-// 用户 注册信息 [ok]
-function registerUserInfo (params) {
-  return REQUEST.post('/api/user/registerUserInfo', params)
-}
-// 用户 信息更新 [ok]
-function updateUserInfo (params) {
-  return REQUEST.post('/api/user/updateUserInfo', params)
-}
-// 用户 信息 [ok]
-function userInfo () {
-  return REQUEST.get('/api/user/userInfo', {})
-}
-// 用户 信息详细 [ok]
-function userInfoDetail () {
-  return REQUEST.get('/api/user/userInfoDetail', {})
-}
-// 用户 邮箱 [ok]
-function getUserEmail () {
-  return REQUEST.get('/api/user/getUserEmail', {})
+// 邮箱绑定OpenId
+function bindOpenId (params) {
+  const res = {
+    code: 0,
+    data: {},
+    message: '绑定失败'
+  }
+  return clientMockData(res, params);
 }
 
-
-// 职业类型 [ok]
-function getJobCategoryConfig () {
-  return REQUEST.get('/api/systemConfig/getJobCategoryConfig', {})
+// 账号绑定
+function bindActivityId (params) {
+  const res = {
+    code: 0,
+    data: {},
+    message: '账号不正确'
+  }
+  return clientMockData(res, params);
 }
 
-
-// 文章 列表 [ok]
-function articleList (params) {
-  return REQUEST.post('/api/article/listForH5', params)
-}
-// 文章 详情 [ok]
-function articleDetail (params) {
-  return REQUEST.post('/api/article/detailForH5', params)
-}
-// 文章 我的收藏 [ok]
-function articleListOfMyFavorite (params) {
-  return REQUEST.post('/api/article/listMyForH5', params)
-}
-// 文章 添加收藏 [ok]
-function articleAddFavorite (params) {
-  return REQUEST.post('/api/article/addFavoriteArticleForH5', params)
-}
-// 文章 取消收藏 [ok]
-function articleDelFavorite (params) {
-  return REQUEST.post('/api/article/cancelFavoriteArticleForH5', params)
-}
-// 文章 附件下载 [ok]
-function articleDownloadByEmail (params) {
-  return REQUEST.post('/api/article/sendDownloadLinkEmailForH5', params)
-}
-
-
-// 活动 列表 [ok]
+// 活动列表
 function activityList (params) {
-  return REQUEST.post('/api/activity/listForH5', params)
+  const res = {
+    code: 0,
+    data: {
+      banner: [
+        {
+          imgUrl: 'https://storage.360buyimg.com/jdc-article/NutUItaro34.jpg',
+          url: 'https://www.baidu.com'
+        },
+        {
+          imgUrl: 'https://storage.360buyimg.com/jdc-article/NutUItaro2.jpg',
+          url: 'https://www.baidu.com'
+        },
+        {
+          imgUrl: 'https://storage.360buyimg.com/jdc-article/welcomenutui.jpg',
+          url: 'https://www.baidu.com'
+        },
+        {
+          imgUrl: 'https://storage.360buyimg.com/jdc-article/fristfabu.jpg',
+          url: 'https://www.baidu.com'
+        },
+      ],
+      list: [
+        {
+          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
+          title:
+            "洋甘菊无硅油天然洋甘菊无硅油天然",
+          price: "388.0",
+          vipPrice: "378",
+          shopDescription: "自营",
+          delivery: "厂商配送",
+        },
+        {
+          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
+          title:
+            "洋甘菊无硅油天然洋甘菊无硅油天然",
+          price: "388.0",
+          vipPrice: "378",
+          shopDescription: "自营",
+          delivery: "厂商配送",
+        },
+        {
+          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
+          title:
+            "洋甘菊无硅油天然洋甘菊无硅油天然",
+          price: "388.0",
+          vipPrice: "378",
+          shopDescription: "自营",
+          delivery: "厂商配送",
+        },
+        {
+          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
+          title:
+            "洋甘菊无硅油天然洋甘菊无硅油天然",
+          price: "388.0",
+          vipPrice: "378",
+          shopDescription: "自营",
+          delivery: "厂商配送",
+        },
+        {
+          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
+          title:
+            "洋甘菊无硅油天然洋甘菊无硅油天然",
+          price: "388.0",
+          vipPrice: "378",
+          shopDescription: "自营",
+          delivery: "厂商配送",
+        },
+        {
+          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
+          title:
+            "洋甘菊无硅油天然洋甘菊无硅油天然",
+          price: "388.0",
+          vipPrice: "378",
+          shopDescription: "自营",
+          delivery: "厂商配送",
+        }
+      ],
+      totalPages: 2,
+    }
+  }
+  return clientMockData(res, params);
 }
-// 活动 详情 [ok]
-function activityDetail (params) {
-  return REQUEST.post('/api/activity/detailForH5', params)
+
+// 搜索列表
+function searchList (params) {
+  const res = {
+    code: 0,
+    data: {
+      list: [
+        {
+          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
+          title:
+            "洋甘菊无硅油天然洋甘菊无硅油天然",
+          price: "388.0",
+          vipPrice: "378",
+          shopDescription: "自营",
+          delivery: "厂商配送",
+        },
+        {
+          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
+          title:
+            "洋甘菊无硅油天然洋甘菊无硅油天然",
+          price: "388.0",
+          vipPrice: "378",
+          shopDescription: "自营",
+          delivery: "厂商配送",
+        },
+        {
+          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
+          title:
+            "洋甘菊无硅油天然洋甘菊无硅油天然",
+          price: "388.0",
+          vipPrice: "378",
+          shopDescription: "自营",
+          delivery: "厂商配送",
+        },
+        {
+          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
+          title:
+            "洋甘菊无硅油天然洋甘菊无硅油天然",
+          price: "388.0",
+          vipPrice: "378",
+          shopDescription: "自营",
+          delivery: "厂商配送",
+        },
+        {
+          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
+          title:
+            "洋甘菊无硅油天然洋甘菊无硅油天然",
+          price: "388.0",
+          vipPrice: "378",
+          shopDescription: "自营",
+          delivery: "厂商配送",
+        },
+        {
+          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
+          title:
+            "洋甘菊无硅油天然洋甘菊无硅油天然",
+          price: "388.0",
+          vipPrice: "378",
+          shopDescription: "自营",
+          delivery: "厂商配送",
+        }
+      ],
+      totalPages: 2,
+    }
+  }
+  return clientMockData(res, params);
 }
-// 活动 我的预约 [ok]
-function activityListOfMyBook (params) {
-  return REQUEST.post('/api/activity/listMyForH5', params)
+
+// 商品详情
+function goodsDetail (params) {
+  const res = {
+    code: 0,
+    data: {      
+      title: "【活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
+      price: "388",
+      vipPrice: "378",
+      shopDescription: "自营",
+      delivery: "厂商配送",
+      shopName: "阳澄湖大闸蟹自营店",
+      banner: [
+        "https://storage.360buyimg.com/jdc-article/NutUItaro34.jpg",
+        "https://storage.360buyimg.com/jdc-article/NutUItaro2.jpg",
+        "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
+        "https://storage.360buyimg.com/jdc-article/fristfabu.jpg",
+      ],
+      video: {
+        src: 'https://storage.360buyimg.com/nutui/video/video_NutUI.mp4',
+        poster: 'https://storage.360buyimg.com/jdc-article/NutUItaro34.jpg',
+        type: 'video/mp4',
+      },
+      src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
+    }
+  }
+  return clientMockData(res, params);
 }
-// 活动 添加预约 [ok]
-function activityAddBook (params) {
-  return REQUEST.post('/api/activity/reservationForH5', params)
+// 加入购物车
+function goodsAddCart (params) {
+  const res = {
+    code: 0,
+    data: {},
+    message: '加入购物车失败'
+  }
+  return clientMockData(res, params);
 }
-// 活动 取消预约 [ok]
-function activityDelBook (params) {
-  return REQUEST.post('/api/activity/cancelReservationForH5', params)
+
+// 联系客服
+function serviceDetail (params) {
+  const res = {
+    code: 0,
+    data: {
+      phone: '联系电话：13188998899',
+      address: '联系地址：辽宁省大连市高新园区万达广场一单元1901',
+    },
+    message: '联系客服失败'
+  }
+  return clientMockData(res, params);
+}
+
+// 订单确认信息
+function orderConfirmInfo (params) {
+  const res = {
+    code: 0,
+    data: {
+      goodsList: [
+        {
+          id: 1,
+          src: "https://storage.360buyimg.com/jdc-article/NutUItaro34.jpg",
+          title: "商品名称商品名称商品名称商品名称商品名称商品名称",
+          price: 100,
+          vipPrice: 99,
+          num: 2,
+          limit: 10,
+          isSelect: true,
+          type: 1,
+        },
+        {
+          id: 2,
+          src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
+          title: "商品名称商品名称商品名称商品名称商品名称商品名称",
+          price: 200,
+          vipPrice: 99,
+          num: 1,
+          limit: 5,
+          isSelect: false,
+          type: 2,
+        },
+      ],
+      orderDesc: '文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本'
+    },
+    message: '订单确认失败'
+  }
+  return clientMockData(res, params);
+}
+// 订单确认
+function orderConfirm (params) {
+  const res = {
+    code: 0,
+    data: {},
+    message: '订单确认失败'
+  }
+  return clientMockData(res, params);
+}
+
+// 订单详情
+function orderDetailInfo (params) {
+  const res = {
+    code: 0,
+    data: {
+      orderId: '2022010100000000000000000000000000000000000000000000000000000000',
+      orderStatus: '待支付',
+      orderAmount: '100.00',
+      orderCreateTime: '2022-01-01 00:00:00',
+      orderDesc: '文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本',
+      totalNum: 10,
+      totalAmount: 100,
+      goodsList: [
+        {
+          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
+          title:
+            "【活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
+          price: "388.0",
+          vipPrice: "378",
+          num: "1",
+        },
+        {
+          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
+          title:
+            "【活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
+          price: "388.0",
+          vipPrice: "378",
+          num: "1",
+        },
+        {
+          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
+          title:
+            "【活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
+          price: "388.0",
+          vipPrice: "378",
+          num: "1",
+        },
+      ]
+    }
+  }
+  return clientMockData(res, params);
+}
+// 取消订单
+function orderCancel (params) {
+  const res = {
+    code: 0,
+    data: {},
+    message: '取消订单失败'
+  }
+  return clientMockData(res, params);
 }
 
 
-// 报道 我的报道 [ok]
-function myReportList () {
-  return REQUEST.get('/api/userReport/listMyForH5', {})
-}
-// 报道 详情 [ok]
-function myReportDetail (params) {
-  return REQUEST.post('/api/userReport/detailForH5', params)
-}
-// 报道 提交报道 [ok]
-function myReportSubmit (params) {
-  return REQUEST.post('/api/userReport/create', params)
-}
-
-
-// 需求 提交需求 [ok]
-function myDemandSubmit (params) {
-  return REQUEST.post('/api/userRequirement/create', params)
-}
-
-// 文件上传 签名私有 [ok]
-function uploadFileSign () {
-  return REQUEST.get('/api/uploadFile/signature', {})
-}
-// 文件上传 签名公有 [ok]
-function uploadFileSignPublic () {
-  return REQUEST.get('/api/uploadFile/signaturePublic', {})
-}
-// 文件上传 私有转url [ok]
-function uploadFileGetFileUrl (params) {
-  return REQUEST.post('/api/uploadFile/signature/getFileUrl', params)
-}
-// 文件上传 [ok] 
-function uploadFile (tempFiles, signData) {
-  // console.log('tempFiles', tempFiles)
-  const type = tempFiles.name.split('.').pop()
-  const fileName = tempFiles.name || `newsFile.${type}`
-  const formData = new FormData()
-  // formData.append('file', tempFiles, 'newsFile.' + type)  
-  formData.append('file', tempFiles, fileName)  
-  formData.append('subscriptionKey', signData.subscriptionKey)
-  formData.append('public', signData.public)
-  formData.append('signature', signData.signature)
-  formData.append('timestamp', signData.timestamp)
-  formData.append('userId', signData.userId)
-  return REQUEST.uploadFile(formData)
-}
-
-
-// 微信签名 [ok]
+// 微信签名
 function wxSignShare (params) {
   return REQUEST.post('/api/wxJsSdk/getSharingSign', params)
 }
-// 微信js-sdk [ok]
+// 微信js-sdk
 async function wxConfigShareData (shareData, senceType) {
   console.log(`wx-share-----${JSON.stringify(shareData)}`)
 
@@ -323,3 +513,12 @@ function shareTracker(shareData, senceType) {
     // Taro.TRACKER.eventTracker('MP_Share', '小程序分享', 'MP_Share', {})
   }
 }
+
+
+// 模拟请求
+const clientMockData = (res, param) => new Promise((resolve, reject) => {
+  console.log('param', param);
+  setTimeout(() => {
+    resolve(res);
+  }, 1000);
+})

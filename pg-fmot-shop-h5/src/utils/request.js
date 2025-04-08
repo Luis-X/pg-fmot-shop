@@ -48,10 +48,10 @@ function baseRequest(url, data, method) {
           // console.debug(respData)
 
           if (respData.code === -2) {
-            loginWithAclUrl('登录过期，重新登录')
+            loginWithSSOUrl('登录过期，重新登录')
             // resolve({})
           } else if (respData.code === -20005) {
-            loginWithAclUrl(respData.message || '')
+            loginWithSSOUrl(respData.message || '')
             // resolve({})
           } else {
             resolve(respData)
@@ -107,7 +107,7 @@ function uploadFile(formData) {
 }
 
 // 登录失效、过期
-function loginWithAclUrl(message) {
+function loginWithSSOUrl(message) {
   Taro.showToast({
     title: message,
     icon: 'none',

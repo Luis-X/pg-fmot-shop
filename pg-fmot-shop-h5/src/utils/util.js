@@ -12,14 +12,11 @@ export default {
   setPGStorage,
   getPGStorage,
   clearPGStorage,
-  
-  showDisablePage,
 
-  goToAclUrlPage,
+  goToSSOUrlPage,
   checkIsLogin,
 
   checkUserStatus,
-  cacheUserDetail,
   
   dateFormatter,
 
@@ -29,7 +26,9 @@ export default {
   refreshRenderHeaderSvg,
   refreshRenderFooterSvg,
 
-  goToActivityHomeWithId,
+  checkUserStatusGoHome,
+  checkAgreementStatusShow,
+  ssoLogin,
 };
 
 function pgConfig() {
@@ -38,13 +37,6 @@ function pgConfig() {
 
 function isH5() {
   return process.env.TARO_ENV === 'h5';
-}
-
-// 活动、文章 是否屏蔽
-function showDisablePage() {
-  Taro.redirectTo({
-    url: '/pages/disable/index',
-  }) 
 }
 
 function setPGStorage(key, data) {
@@ -77,16 +69,11 @@ function clearPGStorage(key) {
 }
 
 // 去授权，获取code
-async function goToAclUrlPage() { 
+async function goToSSOUrlPage() { 
   // FIXME: test or debug should hide code
 
   clearPGStorage('login_info')
   clearPGStorage('user_info')
-  clearPGStorage('user_detail')
-  clearPGStorage('favourite_data')
-  clearPGStorage('book_data')
-  clearPGStorage('ok_newTerm')
-  clearPGStorage('edit_user_info')
   
   // 后端拼接 acl
   /*
@@ -192,7 +179,7 @@ async function checkIsLogin() {
       isLogin = true
     } else {
       // 无code
-      goToAclUrlPage()
+      goToSSOUrlPage()
       isLogin = false
     }
   }
@@ -247,15 +234,6 @@ async function checkUserStatus(callback) {
   // 默认
   if (callback) {
     callback(false)
-  }
-}
-
-// 缓存用户信息
-async function cacheUserDetail() {
-  const res = await Taro.NETWORK.userInfoDetail()
-  if (res.code === 0) {
-    const resData = res.data || {}
-    setPGStorage('user_detail', resData)
   }
 }
 
@@ -344,15 +322,37 @@ function refreshRenderFooterSvg(text) {
   );
 }
 
-//
-function goToActivityHomeWithId(params) {
-  const isBlockUser = false; // 是否用户被锁定
-  if (isBlockUser) {
-    console.log("被锁定");
-    Taro.ROUTER.navigateTo("/pages/disable/index?status=2");
+
+ // 检查用户状态，跳转活动首页
+ function checkUserStatusGoHome() {    
+  const userData = Taro.UTIL.getPGStorage('login_info')
+  const isAvailableUser = userData.isAvailableUser;
+  if (isAvailableUser) {
+    console.log("用户正常");
+    console.log("进入首页");
+    Taro.ROUTER.navigateTo("/pages/home/index");
   } else {
-    console.log("正常用户");
-    const id = params || '';
-    Taro.ROUTER.navigateTo(`/pages/home/index?id=${id}`);
+    console.log("用户异常");
+    console.log("暂不符合活动资格");
+    Taro.ROUTER.navigateTo("/pages/disable/index?status=2");
   }
+}
+
+ // 检查协议状态
+ function checkAgreementStatusShow() {    
+  const userData = Taro.UTIL.getPGStorage('login_info')
+  const isAgreeAgreement = userData.isAgreeAgreement;
+  if (isAgreeAgreement) {
+    console.log("同意协议");
+    return false
+  } else {
+    console.log("未同意协议");
+    return true
+  }
+}
+
+// SSO登录
+function ssoLogin() {
+  Taro.HUD.showToastMessage("内部-sso登录");
+  Taro.ROUTER.navigateTo("/pages/ssoCallBack/index?test=1");
 }

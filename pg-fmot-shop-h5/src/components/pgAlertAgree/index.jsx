@@ -12,50 +12,52 @@ import imgStar from "../../images/alert-star.png";
 export default function Index(props) {
 
   useLoad(() => {
-    console.log('privacy alert loaded.')
+    console.log('agree alert loaded.')
   })
 
   useEffect(() => {
-    console.log('privacy alert effect.') 
+    console.log('agree alert effect.') 
+    checkAgreementStatus()
   }, []);
 
-  
-  const [isShow, setIsShow] = useState(true)
+  const [isAlertShow, setIsAlertShow] = useState(false)
 
-  function showPrivacyAlert(isNeedShow) {    
-    setIsShow(isNeedShow)
+  const checkAgreementStatus = () => {
+    const isAgreeShow = Taro.UTIL.checkAgreementStatusShow()
+    if (isAgreeShow) {
+      setIsAlertShow(true)
+    } else {
+      setIsAlertShow(false)
+    }
   }
 
   // 确定
   const clickConfirm = () => {
-    if (props.onConfirm) {
-      props.onConfirm()
-    } 
-
-    showPrivacyAlert(false)
+    requestAgreeData()
   }
 
-  async function requestPostTermsData() {
+  async function requestAgreeData() {
     const timestamp = Date.parse(new Date())
     const params = {
       creatime: timestamp,
     }
 
-    Taro.HUD.showLoading()
-    const res = await Taro.NETWORK.modifyAccountsTerms(params) 
-    Taro.HUD.hideLoading()
+    const res = await Taro.NETWORK.agreeAgreement(params) 
 
     if (res.code === 0) { 
-      Taro.UTIL.setPGStorage('ok_newTerm', '1')
-      showPrivacyAlert(false)
+      setIsAlertShow(false)
+      
+      if (props.onConfirm) {
+        props.onConfirm()
+      } 
     } else {
       Taro.HUD.showToastMessage(res.message)
     }  
   }
 
   return (
-    <Overlay visible={isShow}>
-      <View className='pg-privacy-alert-wrap'>
+    <Overlay visible={isAlertShow}>
+      <View className='pg-agree-alert-wrap'>
         <View className='alert-content'>
           <Image className='alert-img' fit='contain' src={imgStar}></Image>
           <View className='text-title'>请同意协议条款</View>
