@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
   PullToRefresh,
-  Dialog,
   CountDown
 } from "@nutui/nutui-react";
 import { View } from "@tarojs/components";
@@ -11,6 +10,7 @@ import "./index.scss";
 import PGAlertPrivacy from "../../components/pgAlertPrivacy/index";
 import PGOrderView from "../../components/pgOrderView/index";
 import PGLoading from "../../components/pgLoading/index";
+import PGAlertConfirm from "../../components/pgAlertConfirm/index";
 
 export default function Index() {
 
@@ -104,14 +104,12 @@ export default function Index() {
   }
 
   // 取消订单
-  const [visible, setVisible] = useState(false);
-
   const clickCancel = () => {
-    setVisible(true)
+    setIsAlertShow(true)
   };
 
   const clickCancelConfirm = () => {
-    setVisible(false);
+    setIsAlertShow(false);
     requestOrderCancelData() 
   };
   
@@ -146,21 +144,22 @@ export default function Index() {
     )
   }
 
+  // 弹框
+  const [isAlertShow, setIsAlertShow] = useState(false);
+
   const alertView = () => {
     return (
-      <Dialog
-        className='order-detail-alert'
+      <PGAlertConfirm
+        show={isAlertShow}
+        styleType={0}
         title='提示'
-        visible={visible}
+        desc='确认取消订单？'        
         confirmText='确认'
         cancelText='取消'            
         onConfirm={() => clickCancelConfirm()}
-        onCancel={() => setVisible(false)}
+        onCancel={() => setIsAlertShow(false)}
       >
-        <View className='order-detail-alert-content'>              
-          确认取消订单？
-        </View>
-      </Dialog>
+      </PGAlertConfirm>
     )
   }
 

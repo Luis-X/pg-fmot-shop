@@ -184,7 +184,7 @@
 
 
 .detail-tools-wrap {
-  z-index: 999999;
+  z-index: 999;
   position: fixed;
   bottom: 0;
   left: 0;
@@ -268,15 +268,6 @@
         background-color: #EE3A43;
       }
     }
-  }
-}
-
-
-.detail-alert {
-  .detail-alert-content {
-    color: #808080;
-    font-size: 24rpx;
-    text-align: center;
   }
 }
 

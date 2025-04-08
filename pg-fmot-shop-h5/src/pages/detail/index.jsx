@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
   PullToRefresh,
-  Dialog,
   Badge,
   Swiper,
   Tag,
@@ -14,6 +13,7 @@ import "./index.scss";
 
 import PGAlertPrivacy from "../../components/pgAlertPrivacy/index";
 import PGLoading from "../../components/pgLoading/index";
+import PGAlertConfirm from "../../components/pgAlertConfirm/index";
 
 import imgPriceBar from "../../images/detail-price-bar.png";
 import imgService from "../../images/detail-service.png";
@@ -47,7 +47,6 @@ export default function Index() {
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
-  const [visible, setVisible] = useState(false);
 
   const goodsInfo = {
     src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
@@ -106,7 +105,7 @@ export default function Index() {
 
   // 确认购买
   const clickConfirmBuy = () => {
-    setVisible(false);
+    setIsAlertShow(false);
     Taro.ROUTER.navigateTo('/pages/orderConfirm/index');
   };
 
@@ -135,7 +134,7 @@ export default function Index() {
 
   // 立即购买
   const clickBuyNow = () => {
-    setVisible(true);
+    setIsAlertShow(true);
   }
 
   // 工具栏
@@ -165,21 +164,20 @@ export default function Index() {
   }
 
   // 弹窗
+  const [isAlertShow, setIsAlertShow] = useState(false);
   const alertView = () => {
     return (
-      <Dialog
-        className='detail-alert'
+      <PGAlertConfirm
+        show={isAlertShow}
+        styleType={1}
         title='确认购买'
-        visible={visible}
+        desc='直接跳转至积分结算页面'        
         confirmText='兑换'
         cancelText='取消'            
         onConfirm={() => clickConfirmBuy()}
-        onCancel={() => setVisible(false)}
+        onCancel={() => setIsAlertShow(false)}
       >
-        <View className='detail-alert-content'>
-          直接跳转至积分结算页面
-        </View>
-      </Dialog>
+      </PGAlertConfirm>
     )
   }
   
@@ -352,7 +350,7 @@ export default function Index() {
           </PullToRefresh>
           {toolsView()}
           {alertView()}
-          <PGAlertPrivacy></PGAlertPrivacy>          
+          <PGAlertPrivacy></PGAlertPrivacy>                    
         </View>
       ) : (
         <PGLoading></PGLoading>

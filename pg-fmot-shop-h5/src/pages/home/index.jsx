@@ -45,7 +45,6 @@ export default function Index() {
     Taro.TRACKER.pageViewTracker("首页");
     setIsShowPage(true);
     init();
-    checkAlertStatus();
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
@@ -211,7 +210,7 @@ export default function Index() {
       {isShowPage ? (
         <View className='pg-index'>
           <PullToRefresh onRefresh={() => refreshData()} renderIcon={(status) => Taro.UTIL.refreshRenderHeaderSvg(status)}>
-            <View className={visible ? 'home-list' : 'home-tab-list'} id='scroll'>              
+            <View className='home-list' id='scroll'>              
               <InfiniteLoading target='scroll' hasMore={hasMore} onLoadMore={loadMore} loadingText={Taro.UTIL.refreshRenderFooterSvg('加载中')} loadMoreText={Taro.UTIL.refreshRenderFooterSvg('没有更多了')}>
                 {searchBarView()}      
                 {swiperView()}

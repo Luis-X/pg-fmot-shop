@@ -19,8 +19,7 @@ export default function Index(props) {
     console.log('privacy alert effect.') 
   }, []);
 
-
-  // 隐私政策  
+  
   const [isShow, setIsShow] = useState(true)
 
   function showPrivacyAlert(isNeedShow) {    
@@ -54,20 +53,11 @@ export default function Index(props) {
     }  
   }
 
-  function handleTouchMove(e) {
-    try {
-      e.preventDefault()
-      e.stopPropagation()
-    } catch (error) {
-      
-    }    
-  }
-
   return (
     <Overlay visible={isShow}>
       <View className='pg-privacy-alert-wrap'>
         <View className='alert-content'>
-          <Image className='alert-bg-img' fit='contain' src={imgStar}></Image>
+          <Image className='alert-img' fit='contain' src={imgStar}></Image>
           <View className='text-title'>请同意协议条款</View>
           <View className='text-scroll'>请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。</View>              
           <View className='confirm-btn' onClick={() => clickConfirm()}>同意</View>                              

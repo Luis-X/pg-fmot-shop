@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
   PullToRefresh,
-  Dialog,
   Radio,
   Image,
   InputNumber
@@ -13,6 +12,8 @@ import "./index.scss";
 
 import PGAlertPrivacy from "../../components/pgAlertPrivacy/index";
 import PGLoading from "../../components/pgLoading/index";
+import PGAlertConfirm from "../../components/pgAlertConfirm/index";
+
 
 export default function Index() {
 
@@ -255,7 +256,6 @@ export default function Index() {
   }
 
   // 确认兑换
-  const [visible, setVisible] = useState(false);
   const [shortageList, setShortageList] = useState([]);
   const [hideConfimBtn, setHideConfimBtn] = useState(false);
 
@@ -269,14 +269,14 @@ export default function Index() {
       } else {
         setHideConfimBtn(false)
       }
-      setVisible(true)
+      setIsAlertShow(true)
     } else {
       requestOrderConfirmData()      
     }    
   };
 
   const clickExchangeConfirm = () => {
-    setVisible(false);
+    setIsAlertShow(false);
     requestOrderConfirmData()   
   };
 
@@ -307,29 +307,23 @@ export default function Index() {
     )
   }
   
+  // 弹框
+  const [isAlertShow, setIsAlertShow] = useState(false);
+
   const alertView = () => {
     return (
-      <Dialog
-        className='exchange-alert'
+      <PGAlertConfirm
+        show={isAlertShow}
+        styleType={2}
         title='提示'
-        visible={visible}
-        hideConfirmButton={hideConfimBtn}
-        confirmText='继续结算'
+        desc='以下商品缺货，是否继续结算？'        
+        goodsList={shortageList}
+        confirmText={hideConfimBtn ? '' : '继续结算'}
         cancelText='放弃'            
         onConfirm={() => clickExchangeConfirm()}
-        onCancel={() => setVisible(false)}
+        onCancel={() => setIsAlertShow(false)}
       >
-        <View className='exchange-alert-content'>              
-          <View className='exchange-alert-title'>以下商品缺货，是否继续结算？</View>
-          {
-            shortageList.map((item, index) => {
-              return (
-                <View className='exchange-alert-goods' key={index}>{item}</View>
-              )
-            })
-          }
-        </View>
-      </Dialog>
+      </PGAlertConfirm>
     )
   }
 
