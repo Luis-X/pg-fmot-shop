@@ -169,23 +169,24 @@ export default function Index() {
     requestOrderConfirmData()   
   };
 
-  const requestOrderConfirmData = () => {
-    const isSuccess = true;
+  const requestOrderConfirmData = async (id) => {  
+    const params = {
+      id: id
+    }
 
-    Taro.HUD.showLoading('兑换中...');
-    setTimeout(() => {
-      
-      Taro.HUD.hideLoading();
-      if (isSuccess) {
-        Taro.HUD.showToastMessage('兑换成功')
-        setTimeout(() => {
-          Taro.ROUTER.navigateTo('/pages/mine/index');
-        }, 2000);        
-      } else {
-        Taro.HUD.showToastMessage('兑换失败，不能超过活动商品最大订购量')
-      }
-      
-    }, 1000);        
+    Taro.HUD.showLoading('兑换中...')
+    const res = await Taro.NETWORK.orderConfirm(params) 
+    Taro.HUD.hideLoading()
+
+    if (res.code === 0) {
+      const resData = res.data || {}
+      Taro.HUD.showToastMessage('兑换成功')
+      setTimeout(() => {
+        Taro.ROUTER.navigateTo('/pages/mine/index');
+      }, 2000);
+    } else {
+      Taro.HUD.showToastMessage(res.message)
+    }        
   }
 
   const btnView = () => {

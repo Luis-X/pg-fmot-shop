@@ -52,7 +52,16 @@ export default function Index(props) {
             <View className='pg-order-num'>{`订单编号：${orderInfo.orderId}`}</View>
             <View className='pg-order-date'>{`下单时间：${orderInfo.orderCreateTime}`}</View>
           </View>          
-          <View className='pg-order-status'>{orderInfo.orderStatus}</View>
+          {
+            orderInfo.orderStatus === 1 ? (
+              <View className='pg-order-status'>交易成功</View>
+            ) : null
+          }
+          {
+            orderInfo.orderStatus === 2 ? (
+              <View className='pg-order-status'>已取消</View>
+            ) : null
+          }
         </View>       
         {goodsListView()}
         <View className='pg-order-total-wrap'>

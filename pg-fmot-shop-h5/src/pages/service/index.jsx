@@ -49,7 +49,7 @@ export default function Index() {
     }
 
     Taro.HUD.showLoading()
-    const res = await Taro.NETWORK.serviceDetail(params) 
+    const res = await Taro.NETWORK.serviceInfo(params) 
     Taro.HUD.hideLoading()
 
     if (res.code === 0) {

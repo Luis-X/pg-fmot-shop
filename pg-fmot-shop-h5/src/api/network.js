@@ -26,7 +26,15 @@ export default {
   orderDetailInfo,
   orderCancel,
 
-  serviceDetail,
+  mineInfo,
+  mineOrderList,
+  mineExchangeList,
+
+  cartList,
+  cartAdd,
+  cartDel,
+
+  serviceInfo,
 
   wxSignShare,
   wxConfigShareData,
@@ -286,19 +294,6 @@ function goodsAddCart (params) {
   return clientMockData(res, params);
 }
 
-// 联系客服
-function serviceDetail (params) {
-  const res = {
-    code: 0,
-    data: {
-      phone: '联系电话：13188998899',
-      address: '联系地址：辽宁省大连市高新园区万达广场一单元1901',
-    },
-    message: '联系客服失败'
-  }
-  return clientMockData(res, params);
-}
-
 // 订单确认信息
 function orderConfirmInfo (params) {
   const res = {
@@ -339,7 +334,7 @@ function orderConfirm (params) {
   const res = {
     code: 0,
     data: {},
-    message: '订单确认失败'
+    message: '兑换失败，不能超过活动商品最大订购量'
   }
   return clientMockData(res, params);
 }
@@ -350,7 +345,7 @@ function orderDetailInfo (params) {
     code: 0,
     data: {
       orderId: '2022010100000000000000000000000000000000000000000000000000000000',
-      orderStatus: '待支付',
+      orderStatus: 1,
       orderAmount: '100.00',
       orderCreateTime: '2022-01-01 00:00:00',
       orderDesc: '文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本',
@@ -389,9 +384,218 @@ function orderDetailInfo (params) {
 // 取消订单
 function orderCancel (params) {
   const res = {
-    code: 0,
+    code: 1,
     data: {},
     message: '取消订单失败'
+  }
+  return clientMockData(res, params);
+}
+
+// 我的信息
+function mineInfo (params) {
+  const res = {
+    code: 0,
+    data: {
+      points: 0
+    }
+  }
+  return clientMockData(res, params);
+}
+// 我的订单
+function mineOrderList (params) {
+  const res = {
+    code: 0,
+    data: {
+      list: [
+        {
+          orderId: '2022010100000000000000000000000000000000000000000000000000000000',
+          orderStatus: '待支付',
+          orderAmount: '100.00',
+          orderCreateTime: '2022-01-01 00:00:00',
+          orderDesc: '文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本',
+          totalNum: 10,
+          totalAmount: 100,
+          goodsList: [
+            {
+              src: "https://storage.360buyimg.com/jdc-article/NutUItaro34.jpg",
+              title:
+                "【活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
+              price: "388.0",
+              vipPrice: "378",
+              num: "1",
+            },
+            {
+              src: "https://storage.360buyimg.com/jdc-article/NutUItaro2.jpg",
+              title:
+                "【活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
+              price: "388.0",
+              vipPrice: "378",
+              num: "1",
+            },
+            {
+              src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
+              title:
+                "【活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
+              price: "388.0",
+              vipPrice: "378",
+              num: "1",
+            },
+          ]
+        }
+      ]
+    }
+  }
+  return clientMockData(res, params);
+}
+// 我的兑换
+function mineExchangeList (params) {
+  const res = {
+    code: 0,
+    data: {
+      list: [
+        {
+          // 名称
+          name: '商品名称',
+          // 开始时间
+          startTime: '2022-01-01 00:00:00',
+          // 结束时间
+          endTime: '2022-01-01 00:00:00',
+        }
+      ]
+    }
+  }
+  return clientMockData(res, params);
+}
+
+// 购物车
+function cartList (params) {
+  const res = {
+    code: 0,
+    data: {
+      list: [
+        {
+          id: 1,
+          src: "https://storage.360buyimg.com/jdc-article/NutUItaro34.jpg",
+          title: "商品名称商品名称商品名称商品名称商品名称商品名称",
+          price: 100,
+          vipPrice: 99,
+          num: 2,
+          limit: 10,
+          isSelect: true
+        },
+        {
+          id: 2,
+          src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
+          title: "商品名称商品名称商品名称商品名称商品名称商品名称",
+          price: 200,
+          vipPrice: 99,
+          num: 1,
+          limit: 5,
+          isSelect: false
+        },
+        {
+          id: 2,
+          src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
+          title: "商品名称商品名称商品名称商品名称商品名称商品名称",
+          price: 200,
+          vipPrice: 99,
+          num: 1,
+          limit: 5,
+          isSelect: false
+        },
+        {
+          id: 2,
+          src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
+          title: "商品名称商品名称商品名称商品名称商品名称商品名称",
+          price: 200,
+          vipPrice: 99,
+          num: 1,
+          limit: 5,
+          isSelect: false
+        },
+        {
+          id: 2,
+          src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
+          title: "商品名称商品名称商品名称商品名称商品名称商品名称",
+          price: 200,
+          vipPrice: 99,
+          num: 1,
+          limit: 5,
+          isSelect: false
+        },
+        {
+          id: 2,
+          src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
+          title: "商品名称商品名称商品名称商品名称商品名称商品名称",
+          price: 200,
+          vipPrice: 99,
+          num: 1,
+          limit: 5,
+          isSelect: false
+        },
+        {
+          id: 2,
+          src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
+          title: "商品名称商品名称商品名称商品名称商品名称商品名称",
+          price: 200,
+          vipPrice: 99,
+          num: 1,
+          limit: 5,
+          isSelect: false
+        },
+        {
+          id: 2,
+          src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
+          title: "商品名称商品名称商品名称商品名称商品名称商品名称",
+          price: 200,
+          vipPrice: 99,
+          num: 1,
+          limit: 5,
+          isSelect: false
+        },
+        {
+          id: 2,
+          src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
+          title: "商品名称商品名称商品名称商品名称商品名称商品名称",
+          price: 200,
+          vipPrice: 99,
+          num: 1,
+          limit: 5,
+          isSelect: false
+        },
+      ]
+    }
+  }
+  return clientMockData(res, params);
+}
+// 加入购物车
+function cartAdd (params) {
+  const res = {
+    code: 0,
+    data: {},
+    message: '加入购物车失败'
+  }
+  return clientMockData(res, params);
+}
+// 删除购物车
+function cartDel (params) {
+  const res = {
+    code: 0,
+    data: {},
+    message: '删除购物车失败'
+  }
+  return clientMockData(res, params);
+}
+
+// 联系客服
+function serviceInfo (params) {
+  const res = {
+    code: 0,
+    data: {
+      phone: '联系电话：13188998899',
+      address: '联系地址：辽宁省大连市高新园区万达广场一单元1901',
+    },
+    message: '联系客服失败'
   }
   return clientMockData(res, params);
 }

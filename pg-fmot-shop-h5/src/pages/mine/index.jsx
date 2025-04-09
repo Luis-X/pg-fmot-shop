@@ -36,54 +36,97 @@ export default function Index() {
     // }
     Taro.TRACKER.pageViewTracker("我的");
     setIsShowPage(true);
+
+    requestListData({
+      pageIndex: 0,
+      tabIndex: 0,
+    }, false)
+
+    requestData()
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
-  const orderInfo = {
-    orderId: '2022010100000000000000000000000000000000000000000000000000000000',
-    orderStatus: '待支付',
-    orderAmount: '100.00',
-    orderCreateTime: '2022-01-01 00:00:00',
-    orderDesc: '文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本',
-    totalNum: 10,
-    totalAmount: 100,
-    goodsList: [
-      {
-        src: "https://storage.360buyimg.com/jdc-article/NutUItaro34.jpg",
-        title:
-          "【活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
-        price: "388.0",
-        vipPrice: "378",
-        num: "1",
-      },
-      {
-        src: "https://storage.360buyimg.com/jdc-article/NutUItaro2.jpg",
-        title:
-          "【活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
-        price: "388.0",
-        vipPrice: "378",
-        num: "1",
-      },
-      {
-        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-        title:
-          "【活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
-        price: "388.0",
-        vipPrice: "378",
-        num: "1",
-      },
-    ]
-  }
   const [tabIndex, setTabIndex] = useState(0)
+
+  const [userInfo, setUserInfo] = useState({})
+  const [dataList, setDataList] = useState([]);
+  const [pageCurrentIndex, setPageCurrentIndex] = useState(0)
+  const [hasMore, setHasMore] = useState(true);
 
   // 下拉刷新
   const refreshData = () => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve("done");
-      }, 1000);
-    });
+    requestData()
+    return requestListData({
+      pageIndex: 0,
+      tabIndex: tabIndex,
+    }, false);
   };
+
+  // request
+  async function requestData() {
+    const params = {}
+    Taro.HUD.showLoading()
+    const res = await Taro.NETWORK.mineInfo(params) 
+    Taro.HUD.hideLoading()
+
+    if (res.code === 0) {
+      const resData = res.data || {}
+      setUserInfo(resData)
+    } else {
+      Taro.HUD.showToastMessage(res.message)
+    }   
+  }
+  
+
+  async function requestListData(query, isLoadMore) {
+
+    const pageIndex = query.pageIndex || 0
+    const tabIndex = query.tabIndex || ''
+
+    if (!isLoadMore) {
+      setDataList([])
+    } else {
+      if (pageIndex > 0 && !hasMore) {
+        console.log('no more')
+        return
+      }
+    }
+
+    const params = {
+      page: pageIndex,
+      size: 10,
+      type: tabIndex,
+    }
+
+    const res = await Taro.NETWORK.mineOrderList(params) 
+    Taro.HUD.hideLoading()
+
+    if (res.code === 0) {
+      const resData = res.data || {}
+
+      const list = resData.list || []
+
+      let newList = []
+      if (isLoadMore) {
+        newList = dataList.concat(list)
+      } else {
+        newList = list
+      }
+
+      setDataList(newList)  
+      setPageCurrentIndex(pageIndex + 1)
+      
+      // 没有更多
+      if (pageIndex >= resData.totalPages - 1) {
+        setHasMore(false)
+      } else {
+        setHasMore(true)
+      }
+
+    } else {
+      Taro.HUD.showToastMessage(res.message)
+    } 
+  }
 
   // 我的兑换
   const clickMyExchange = () => {
@@ -93,6 +136,10 @@ export default function Index() {
   // 标签
   const tabChange = (index) => {
     setTabIndex(index);
+    requestListData({
+      pageIndex: 0,
+      tabIndex: index,
+    }, false)
   }
 
   // 订单详情
@@ -107,7 +154,7 @@ export default function Index() {
       <View className='mine-point-wrap'>
         <View className="point-bg-wrap">
           <Image className='point-img' fit='contain' src={imgTopBar}></Image>
-          <View className='point-title'>12059000</View>
+          <View className='point-title'>{userInfo.points >= 0 ? userInfo.points : '--'}</View>
           <View className='point-btn' onClick={clickMyExchange}>查看我正参与的兑换</View>
         </View>               
       </View>
@@ -139,11 +186,11 @@ export default function Index() {
   // 订单标签
   const listView = () => {
     return (
-      <>
-      <PGOrderView orderInfo={orderInfo} onClick={() => clickOrderDetail()}></PGOrderView>
-      <PGOrderView orderInfo={orderInfo} onClick={() => clickOrderDetail()}></PGOrderView> 
-      </>
-      
+      dataList.map((item, index) => {
+        return (
+          <PGOrderView key={index} orderInfo={item} onClick={() => clickOrderDetail()}></PGOrderView>
+        );
+      })
     )
   }
 

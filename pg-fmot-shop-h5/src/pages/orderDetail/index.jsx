@@ -94,23 +94,24 @@ export default function Index() {
     requestOrderCancelData() 
   };
   
-  const requestOrderCancelData = () => {
-    const isSuccess = true;
+  const requestOrderCancelData = async (id) => {
+    const params = {
+      id: id
+    }
 
-    Taro.HUD.showLoading('取消中...');
-    setTimeout(() => {
-      
-      Taro.HUD.hideLoading();
-      if (isSuccess) {
-        Taro.HUD.showToastMessage('取消成功')
-        setTimeout(() => {
-          Taro.ROUTER.navigateBack()
-        }, 2000);        
-      } else {
-        Taro.HUD.showToastMessage('取消失败')
-      }
-      
-    }, 1000);        
+    Taro.HUD.showLoading('取消中...')
+    const res = await Taro.NETWORK.orderCancel(params) 
+    Taro.HUD.hideLoading()
+
+    if (res.code === 0) {
+      const resData = res.data || {}
+      Taro.HUD.showToastMessage('取消成功')
+      setTimeout(() => {
+        Taro.ROUTER.navigateBack()
+      }, 2000);
+    } else {
+      Taro.HUD.showToastMessage(res.message)
+    }       
   }
 
   const btnView = () => {
@@ -119,7 +120,7 @@ export default function Index() {
         <View className='order-detail-cancel' onClick={clickCancel}>取消订单</View>
         <View className='order-detail-count-down-wrap'>
           <View className='order-detail-count-down'>剩余可取消时间：</View>
-          <CountDown remainingTime={60 * 1000} />
+          <CountDown remainingTime={60 * 60 * 1000} />
         </View>        
       </View> 
     )
@@ -150,9 +151,9 @@ export default function Index() {
         <View className='pg-index'>
           <PullToRefresh onRefresh={() => refreshData()} renderIcon={(status) => Taro.UTIL.refreshRenderHeaderSvg(status)}>
             <View className='order-detail-list' id='scroll'>      
-              {orderInfoView()}
-              {noteView()} 
-              {btnView()}                              
+              { orderInfo.orderId ? orderInfoView() : null}
+              { orderInfo.orderDesc ? noteView() : null }
+              { (orderInfo.orderStatus && orderInfo.orderStatus !== 2) ? btnView() : null}                              
             </View>
           </PullToRefresh>                 
           {alertView()}        

@@ -31,101 +31,7 @@ export default function Index() {
     Taro.TRACKER.pageViewTracker("购物车");
     setIsShowPage(true);
 
-    const cartListData = [
-      {
-        id: 1,
-        src: "https://storage.360buyimg.com/jdc-article/NutUItaro34.jpg",
-        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
-        price: 100,
-        vipPrice: 99,
-        num: 2,
-        limit: 10,
-        isSelect: true
-      },
-      {
-        id: 2,
-        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
-        price: 200,
-        vipPrice: 99,
-        num: 1,
-        limit: 5,
-        isSelect: false
-      },
-      {
-        id: 2,
-        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
-        price: 200,
-        vipPrice: 99,
-        num: 1,
-        limit: 5,
-        isSelect: false
-      },
-      {
-        id: 2,
-        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
-        price: 200,
-        vipPrice: 99,
-        num: 1,
-        limit: 5,
-        isSelect: false
-      },
-      {
-        id: 2,
-        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
-        price: 200,
-        vipPrice: 99,
-        num: 1,
-        limit: 5,
-        isSelect: false
-      },
-      {
-        id: 2,
-        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
-        price: 200,
-        vipPrice: 99,
-        num: 1,
-        limit: 5,
-        isSelect: false
-      },
-      {
-        id: 2,
-        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
-        price: 200,
-        vipPrice: 99,
-        num: 1,
-        limit: 5,
-        isSelect: false
-      },
-      {
-        id: 2,
-        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
-        price: 200,
-        vipPrice: 99,
-        num: 1,
-        limit: 5,
-        isSelect: false
-      },
-      {
-        id: 2,
-        src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-        title: "商品名称商品名称商品名称商品名称商品名称商品名称",
-        price: 200,
-        vipPrice: 99,
-        num: 1,
-        limit: 5,
-        isSelect: false
-      },
-    ]
-
-    setCartList(cartListData);
-    checkCartStatus(cartListData);
+    requestData();
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
@@ -138,6 +44,27 @@ export default function Index() {
       }, 1000);
     });
   };
+
+  // request
+  async function requestData(id) {
+    const params = {
+      id: id
+    }
+
+    Taro.HUD.showLoading()
+    const res = await Taro.NETWORK.cartList(params) 
+    Taro.HUD.hideLoading()
+
+    if (res.code === 0) {
+      const resData = res.data || {}
+      const list = resData.list || []
+
+      setCartList(list)
+      checkCartStatus(list)
+    } else {
+      Taro.HUD.showToastMessage(res.message)
+    }   
+  }
 
   // 购物车状态
   const [cartList, setCartList] = useState([])

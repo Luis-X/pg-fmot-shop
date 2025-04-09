@@ -41,43 +41,80 @@ export default function Index() {
     // }
     Taro.TRACKER.pageViewTracker("我的兑换");
     setIsShowPage(true);
-    init();
+
+    requestListData({
+      pageIndex: 0,
+    }, false)
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
 
   // 下拉刷新
   const refreshData = () => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve("done");
-      }, 1000);
-    });
+    return requestListData({
+      pageIndex: 0,
+    }, false)
   };
 
   // 上拉加载
-  const [defaultList, setDefaultList] = useState([]);
+  const [dataList, setDataList] = useState([]);
+  const [pageCurrentIndex, setPageCurrentIndex] = useState(0)
   const [hasMore, setHasMore] = useState(true);
 
   const loadMore = async () => {
-    await sleep(2000);
-    const curLen = defaultList.length;
-    for (let i = curLen; i < curLen + 10; i++) {
-      defaultList.push(`${i}`);
-    }
-    if (defaultList.length >= 30) {
-      setHasMore(false);
-    } else {
-      setDefaultList([...defaultList]);
-    }
+    await requestListData({
+      pageIndex: pageCurrentIndex,
+    }, true)
   };
 
-  const init = () => {
-    for (let i = 0; i < 20; i++) {
-      defaultList.push(`${i}`);
+  // request
+  async function requestListData(query, isLoadMore) {
+
+    const pageIndex = query.pageIndex || 0
+
+    if (!isLoadMore) {
+      setDataList([])
+    } else {
+      if (pageIndex > 0 && !hasMore) {
+        console.log('no more')
+        return
+      }
     }
-    setDefaultList([...defaultList]);
-  };
+
+    const params = {
+      page: pageIndex,
+      size: 10
+    }
+
+    const res = await Taro.NETWORK.mineExchangeList(params) 
+    Taro.HUD.hideLoading()
+
+    if (res.code === 0) {
+      const resData = res.data || {}
+
+      const list = resData.list || []
+
+      let newList = []
+      if (isLoadMore) {
+        newList = dataList.concat(list)
+      } else {
+        newList = list
+      }
+      
+      setDataList(newList)  
+      setPageCurrentIndex(pageIndex + 1)
+      
+      // 没有更多
+      if (pageIndex >= resData.totalPages - 1) {
+        setHasMore(false)
+      } else {
+        setHasMore(true)
+      }
+
+    } else {
+      Taro.HUD.showToastMessage(res.message)
+    } 
+  }
 
   // 活动首页
   const clickItem = (item) => {
@@ -87,15 +124,15 @@ export default function Index() {
 
   // 兑换列表
   const exchangeListView = () => {
-    return defaultList.map((item, index) => {
+    return dataList.map((item, index) => {
       return (
         <View className='exchange-bg-wrap' key={index} onClick={() => clickItem(index)}>
           <View className='exchange-wrap'>
             <Image className='exchange-img' fit='contain' src={imgIcon}></Image>
             <View className='exchange-info'>
-              <View className='exchange-name'>活动名称{index}</View>
-              <View className='exchange-desc'>开始时间：2025-01-01</View>
-              <View className='exchange-desc'>截止时间：2025-01-01</View>
+              <View className='exchange-name'>{item.name}</View>
+              <View className='exchange-desc'>{`开始时间：${item.startTime}`}</View>
+              <View className='exchange-desc'>{`截止时间：${item.endTime}`}</View>
             </View>
             <Image className='exchange-arrow' fit='contain' src={imgArrow}></Image>
           </View>
