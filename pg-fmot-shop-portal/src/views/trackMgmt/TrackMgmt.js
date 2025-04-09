@@ -24,6 +24,7 @@ import MyAlert from '../../components/MyAlert';
 import moment from 'moment';
 import zhCN from 'antd/es/locale/zh_CN';
 import Dict from '../../config/Dict';
+import Util from '../../utils/util';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -65,7 +66,7 @@ class TrackMgmt extends Component {
     const self = this;
     api.orgCodeList().then((res) => {
       if (res) {
-        const respData = res.data;
+        const respData = res.data || {};
         if (0 === respData.code) {
           self.setState({
             orgCodeList: respData.data,
@@ -86,8 +87,8 @@ class TrackMgmt extends Component {
     self.setState({ loadingShow: true });
     // 时间处理
     if (queryData && queryData.date) {
-      queryData.beginDate = moment(new Date(queryData.date[0])).format('YYYY-MM-DD HH:mm:ss');
-      queryData.endDate = moment(new Date(queryData.date[1])).format('YYYY-MM-DD HH:mm:ss');
+      queryData.beginDate = Util.dateFormatter(queryData.date[0]);
+      queryData.endDate = Util.dateFormatter(queryData.date[1]);
       delete queryData.date;
     }
     api.trackList({
@@ -97,7 +98,7 @@ class TrackMgmt extends Component {
     }).then((res) => {
       self.setState({ loadingShow: false });
       if (res) {
-        const respData = res.data;
+        const respData = res.data || {};
         if (0 === respData.code) {
           self.setState({
             data: respData.data.content,

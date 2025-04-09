@@ -59,7 +59,7 @@ export function AddEventFun({
   const requestOrgCodeListData = async () => {
     api.orgCodeList().then((res) => {
       if (res) {
-        const respData = res.data;
+        const respData = res.data || {};
         if (0 === respData.code) {
           let list = [];
           respData.data.forEach((item) => {
@@ -85,7 +85,7 @@ export function AddEventFun({
     try {
       const res = await api.eventDetail(eventId);
       if (res) {
-        const respData = res.data;
+        const respData = res.data || {};
         if (0 === respData.code) {
             detailData = respData.data;
             
@@ -128,12 +128,12 @@ export function AddEventFun({
       console.log('处理前：', values);
       // 开始时间
       if (values.startTime) {
-        let startTime = moment(new Date(values.startTime)).format('YYYY-MM-DD HH:mm:ss')
+        let startTime = Util.dateFormatter(values.startTime)
         values.startTime = startTime;
       }      
       // 结束时间
       if (values.endTime) {
-        let endTime = moment(new Date(values.endTime)).format('YYYY-MM-DD HH:mm:ss')
+        let endTime = Util.dateFormatter(values.endTime)
         values.endTime = endTime;
       }      
 
@@ -184,7 +184,7 @@ export function AddEventFun({
     }).then((res) => {
       if (res) {
         setLoading(false);
-        const respData = res.data;
+        const respData = res.data || {};
         if (0 === respData.code) {
           onHide();
           updateList();
@@ -207,7 +207,7 @@ export function AddEventFun({
     }).then((res) => {
       if (res) {
         setLoading(false);
-        const respData = res.data;
+        const respData = res.data || {};
         if (0 === respData.code) {
           onHide();
           updateList();
@@ -280,7 +280,7 @@ export function AddEventFun({
         searchText: searchText,
       });
       if (res) {
-        const respData = res.data;
+        const respData = res.data || {};
         if (0 === respData.code) {
           console.log('---goodsList---', respData.data);
           let dataList = respData.data || []

@@ -83,18 +83,19 @@ class ExternalAccount extends Component {
     self.setState({ loadingShow: true });    
     // 时间处理
     if (queryData && queryData.date) {
-      queryData.beginDate = moment(new Date(queryData.date[0])).format('YYYY-MM-DD HH:mm:ss');
-      queryData.endDate = moment(new Date(queryData.date[1])).format('YYYY-MM-DD HH:mm:ss');
+      queryData.beginDate = Util.dateFormatter(queryData.date[0]);
+      queryData.endDate = Util.dateFormatter(queryData.date[1]);
       delete queryData.date;
     }
     api.externalAccountList({
+      pointAccountType: 'CUSTOMER',
       ...queryData,
       page: pageNo,
       size: pageSize,
     }).then((res) => {
       self.setState({ loadingShow: false });
       if (res) {
-        const respData = res.data;
+        const respData = res.data || {};
         if (0 === respData.code) {
           self.setState({
             data: respData.data.content,
@@ -179,7 +180,7 @@ class ExternalAccount extends Component {
   clickAccountEnable = (record) => {
     this.requestAccountOperation('锁定', {
       id: record.id,
-      status: 2,
+      pointAccountStatus: 'LOCK',
     });
   }
 
@@ -187,7 +188,7 @@ class ExternalAccount extends Component {
   clickAccountDisable = (record) => {
     this.requestAccountOperation('正常', {
       id: record.id,
-      status: 1,
+      pointAccountStatus: 'NORMAL',
     });
   }
 
@@ -202,7 +203,7 @@ class ExternalAccount extends Component {
           params
         ).then((res) => {
           if (res) {
-            const respData = res.data;
+            const respData = res.data || {};
             if (0 === respData.code) {
               self.requestListData();
             } else {
@@ -380,7 +381,7 @@ class ExternalAccount extends Component {
                 </Row>
                 <Row gutter={24}>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('accountId',{})(
+                    <Form.Item>{getFieldDecorator('activityAccount',{})(
                       <Input placeholder="请输入外部账号" />
                     )}
                     </Form.Item>
@@ -393,7 +394,7 @@ class ExternalAccount extends Component {
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('loginStatus',{})(
+                    <Form.Item>{getFieldDecorator('pointAccountStatus',{})(
                       <Select placeholder="请选择登录状态" style={{ width: '100%' }} options={loginStatusList}>
                       </Select>
                     )}

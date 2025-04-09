@@ -45,7 +45,7 @@ export function AddGoodsFun({
   const requestCategoryListData = async () => {   
     api.goodsCategoryList().then((res) => {
       if (res) {
-        const respData = res.data;
+        const respData = res.data || {};
         if (0 === respData.code) {
           let list = [];
           respData.data.forEach((item) => {
@@ -71,7 +71,7 @@ export function AddGoodsFun({
     try {
       const res = await api.goodsDetail(goodsId);
       if (res) {
-        const respData = res.data;
+        const respData = res.data || {};
         if (0 === respData.code) {
           detailData = respData.data;
 
@@ -168,7 +168,7 @@ export function AddGoodsFun({
     }).then((res) => {
       if (res) {
         setLoading(false);
-        const respData = res.data;
+        const respData = res.data || {};
         if (0 === respData.code) {
           onHide();
           updateList();
@@ -191,7 +191,7 @@ export function AddGoodsFun({
     }).then((res) => {
       if (res) {
         setLoading(false);
-        const respData = res.data;
+        const respData = res.data || {};
         if (0 === respData.code) {
           onHide();
           updateList();

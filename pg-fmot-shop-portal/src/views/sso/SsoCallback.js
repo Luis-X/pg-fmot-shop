@@ -12,47 +12,50 @@ class SsoCallback extends Component {
   }
 
   async componentDidMount() {
-    let queryCode = this.getAllParams();
+    const self = this;
+    let queryCode = self.getAllParams();
     console.log(queryCode);
     if (queryCode) {
       if (queryCode.error) {
-        this.setState({
+        self.setState({
           errorMsg: `服务错误!`,
           loadingShow: false,
         });
       } else if (queryCode.code) {
         localStorage.clear();
         try {
-          const res = await api.SsoLogin({ code: queryCode.code });
+          const res = await api.ssoLogin({ 
+            code: queryCode.code,
+            redirectUri: 'aHR0cHM6Ly9taW5pc3RvcmUtcWEuc2hlbmdodW9qaWEuY29tL3Rlc3Q='
+          });
           if (res) {
-            this.setState({ loadingShow: false });
-            const respData = res.data;
+            self.setState({ loadingShow: false });
+            const respData = res.data || {};
             if (0 === respData.code) {
               setToken(respData.data.token);
               localStorage.setItem('token', respData.data.token);
-              localStorage.setItem('userName', respData.data.userName);
-              localStorage.setItem('roleName', respData.data.roleName);
-              localStorage.setItem('loginInfo', JSON.stringify(respData.data.menu));
-              this.props.history.push('/internalAccount');
+              localStorage.setItem('userName', respData.data.userName || '');
+              localStorage.setItem('roleName', respData.data.roleName || '');
+              self.props.history.push('/internalAccount');
             } else {
-              this.setState({
+              self.setState({
                 errorMsg: respData.message,
               });
             }
           }
         } catch (err) {
-          this.setState({
+          self.setState({
             errorMsg: `网络请求失败, 请重试!`,
           });
         }
       } else {
-        this.setState({
+        self.setState({
           loadingShow: false,
           errorMsg: `Code 获取失败!`,
         });
       }
     } else {
-      this.setState({
+      self.setState({
         errorMsg: `Code 获取失败, 请重试!`,
         loadingShow: false,
       });

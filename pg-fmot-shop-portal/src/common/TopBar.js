@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Col, Menu, message, Row } from 'antd';
+// import { Col, Menu, message, Row } from 'antd';
+import { Col, Menu, Row } from 'antd';
 import { withRouter } from 'react-router';
 import head from '../assets/images/head.png';
 import RoutePath from '../config/RoutePath';
-import * as api from '../api/api';
-import MyAlert from '../components/MyAlert';
+// import * as api from '../api/api';
+// import MyAlert from '../components/MyAlert';
 
 const { SubMenu } = Menu;
 
@@ -34,11 +35,12 @@ class TopBar extends Component {
 
   // 退出登录
   logout() {
-    // localStorage.clear();
-    // window.location.href = RoutePath.SsoLogout;
+    localStorage.clear();
+    window.location.href = RoutePath.SsoLogout;
+    /*
     api.logout({}).then((res) => {
       if (res) {
-        const respData = res.data;
+        const respData = res.data || {};
         if (0 === respData.code) {
           localStorage.clear();
           window.location.href = RoutePath.SsoLogout;
@@ -49,6 +51,7 @@ class TopBar extends Component {
     }).catch((err) => {
       message.error(err ? err : '网络请求失败, 请重试!', 2);
     });
+    */
   }
 
   componentDidMount() {

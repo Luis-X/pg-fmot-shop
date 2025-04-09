@@ -2,23 +2,23 @@
 let dict = {
   // 活动
   activityType: {
-    1: '内部活动',
-    2: '外部活动',
+    EMPLOYEE: '内部活动',
+    CUSTOMER: '外部活动',
   },
   activityStatus: {
-    1: '未开始',
-    2: '进行中',
-    3: '已结束',
+    NOT_BEGIN: '未开始',
+    RUNNING: '进行中',
+    END: '已结束',
   },
 
   // 账号
   accountBindStatus: {
-    1: '已绑定',
-    2: '未绑定',
+    BIND: '已绑定',
+    UNBIND: '未绑定',
   },
   accountLoginStatus: {
-    1: '正常',
-    2: '锁定',
+    NORMAL: '正常',
+    LOCK: '锁定',
   },
 
   // 商品
@@ -34,18 +34,19 @@ let dict = {
     9: 'Grooming',
   },
   goodsType: {
-    1: '实物',
-    2: '虚拟商品',
+    PHYSICAL_OBJECT: '实物',
+    VIRTUAL_OBJECT: '虚拟商品',
   },
 
   // 订单
   orderStatus: {
-    1: '交易成功',
-    2: '已取消',
+    COMPLETED: '交易成功',
+    CANCELED: '已取消',
   },
   deliveryType: {
-    1: '自提',
-    2: '邮寄',
+    SELF_PICKUP: '自提',
+    POST: '邮寄',
+    BOTH: '自提和邮寄',
   },
 
   // 埋点

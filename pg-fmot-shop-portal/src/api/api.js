@@ -94,22 +94,19 @@ export const uploadFileSign = (param) => {
 };
 
 // 登录、登出
-export const SsoLogin = (param) => {
-  // return client.post(URL.ssoLogin, param);
-  return {
-    "data": {
-      "code": 0,
-      "message": "success",
-      "data": { 
-        token: '1234567890',
-        userName: 'RichLuisX',
-        roleName: 'developer',
-        menu: [
-          
-        ]
-      }
-    }
-  }
+export const ssoLogin = (param) => {
+  return client.post(URL.ssoLogin, param);
+  // return {
+  //   "data": {
+  //     "code": 0,
+  //     "message": "success",
+  //     "data": { 
+  //       token: '1234567890',
+  //       userName: 'RichLuisX',
+  //       roleName: 'developer',
+  //     }
+  //   }
+  // }
 };
 export const logout = (param) => {
   // return client.post(URL.logout, param);
@@ -124,74 +121,74 @@ export const logout = (param) => {
 
 // 通用
 export const orgCodeList = (param) => {
-  // return client.post(URL.orgCodeList, param);
-  const res = {
-    data: {
-      code: 0,
-      data: [
-        {
-          id: 1,
-          name: '机构1',
-        },
-        {
-          id: 2,
-          name: '机构2',
-        },
-        {
-          id: 3,
-          name: '机构3',
-        }
-      ],
-    },
-  };
-  return clientMockData(res, param);
+  return client.get(URL.orgCodeList, param);
+  // const res = {
+  //   data: {
+  //     code: 0,
+  //     data: [
+  //       {
+  //         id: 1,
+  //         name: '机构1',
+  //       },
+  //       {
+  //         id: 2,
+  //         name: '机构2',
+  //       },
+  //       {
+  //         id: 3,
+  //         name: '机构3',
+  //       }
+  //     ],
+  //   },
+  // };
+  // return clientMockData(res, param);
 };
 
 // 内部账号
 export const internalAccountList = (param) => {
-  // return client.post(URL.internalAccountList, param);
-  const res = {
-    data: {
-      code: 0,
-      data: {
-        content: [
-          {
-            id: '1',
-            createTime: '2020-08-10 11:11:11',
-            bindTime: '2020-08-10 11:11:11',
-            email: 'test@163.com',
-            openid: '290834734975',
-            points: '2000',
-            bindStatus: '1',
-            loginStatus: '1',              
-          },
-          {
-            id: '2',
-            createTime: '2020-08-10 11:11:11',
-            bindTime: '2020-08-10 11:11:11',
-            email: 'test@163.com',
-            openid: '73495784957',
-            points: '2000',
-            bindStatus: '2',
-            loginStatus: '2',              
-          }
-        ],
-        totalElements: 2,
-        message: 'success',
-      }
-    }
-  };
-  return clientMockData(res, param);
+  return client.post(URL.internalAccountList, param);
+  // const res = {
+  //   data: {
+  //     code: 0,
+  //     data: {
+  //       content: [
+  //         {
+  //           id: '1',
+  //           createTime: '2020-08-10 11:11:11',
+  //           bindTime: '2020-08-10 11:11:11',
+  //           email: 'test@163.com',
+  //           openid: '290834734975',
+  //           points: '2000',
+  //           bindStatus: '1',
+  //           loginStatus: '1',              
+  //         },
+  //         {
+  //           id: '2',
+  //           createTime: '2020-08-10 11:11:11',
+  //           bindTime: '2020-08-10 11:11:11',
+  //           email: 'test@163.com',
+  //           openid: '73495784957',
+  //           points: '2000',
+  //           bindStatus: '2',
+  //           loginStatus: '2',              
+  //         }
+  //       ],
+  //       totalElements: 2,
+  //       message: 'success',
+  //     }
+  //   }
+  // };
+  // return clientMockData(res, param);
 };
 export const internalAccountChangeStatus = (param) => {
-  // return client.post(URL.internalAccountChangeStatus, param);
-  const res = {
-    data: {
-      code: 0,
-      message:'success',
-    }
-  };
-  return clientMockData(res, param);
+  return client.post(URL.internalAccountChangeStatus, param);
+  // const res = {
+  //   data: {
+  //     code: 0,
+  //     message:'success',
+  //   }
+  // };
+  // return clientMockData(res, param);
 };
 export const internalAccountImport = (param) => {
   return client.post(URL.internalAccountImport, param);
@@ -208,53 +205,53 @@ export const internalAccountImportTemplatePoints = (param) => {
 
 // 外部账号
 export const externalAccountList = (param) => {
-  // return client.post(URL.externalAccountList, param);
-  const res = {
-    data: {
-      code: 0,
-      data: {
-        content: [
-          {
-            createTime: '2020-08-10 11:11:11',
-            id: 1,
-            activityId: '123456',
-            activityName: '活动123',
-            bindTime: '2020-08-10 11:11:11',
-            accountId: 'testlousoiu',
-            openid: '34857834095',
-            points: '2000',
-            bindStatus: '1',
-            loginStatus: '1',              
-          },
-          {
-            createTime: '2020-08-10 11:11:11',
-            id: 2,
-            activityId: '123457',
-            activityName: '活动124',
-            bindTime: '2020-08-10 11:11:11',
-            accountId: 'testou9u08',
-            openid: '3458309548',
-            points: '2000',
-            bindStatus: '2',
-            loginStatus: '2',              
-          }
-        ],
-        totalElements: 2,
-        message: 'success',
-      }
-    }
-  };
-  return clientMockData(res, param);
+  return client.post(URL.externalAccountList, param);
+  // const res = {
+  //   data: {
+  //     code: 0,
+  //     data: {
+  //       content: [
+  //         {
+  //           createTime: '2020-08-10 11:11:11',
+  //           id: 1,
+  //           activityId: '123456',
+  //           activityName: '活动123',
+  //           bindTime: '2020-08-10 11:11:11',
+  //           accountId: 'testlousoiu',
+  //           openid: '34857834095',
+  //           points: '2000',
+  //           bindStatus: '1',
+  //           loginStatus: '1',              
+  //         },
+  //         {
+  //           createTime: '2020-08-10 11:11:11',
+  //           id: 2,
+  //           activityId: '123457',
+  //           activityName: '活动124',
+  //           bindTime: '2020-08-10 11:11:11',
+  //           accountId: 'testou9u08',
+  //           openid: '3458309548',
+  //           points: '2000',
+  //           bindStatus: '2',
+  //           loginStatus: '2',              
+  //         }
+  //       ],
+  //       totalElements: 2,
+  //       message: 'success',
+  //     }
+  //   }
+  // };
+  // return clientMockData(res, param);
 };
 export const externalAccountChangeStatus = (param) => {
-  // return client.post(URL.externalAccountChangeStatus, param);
-  const res = {
-    data: {
-      code: 0,
-      message:'success',
-    }
-  };
-  return clientMockData(res, param);
+  return client.post(URL.externalAccountChangeStatus, param);
+  // const res = {
+  //   data: {
+  //     code: 0,
+  //     message:'success',
+  //   }
+  // };
+  // return clientMockData(res, param);
 };
 export const externalAccountImport = (param) => {
   return client.post(URL.externalAccountImport, param);
@@ -271,55 +268,55 @@ export const externalAccountImportTemplatePoints = (param) => {
 
 // 活动
 export const eventList = (param) => {
-  // return client.post(URL.eventList, param);
-  const res = {
-    data: {
-      code: 0,
-      data: {
-        content: [
-          {
-            id: 1,
-            createTime: '2020-08-10 11:11:11',            
-            startTime: '2020-08-10 11:11:11',
-            endTime: '2021-08-10 11:11:11',
-            activityId: '123456',
-            activityName: '活动1',
-            activityType: '1',
-            activityStatus: '1',
-            link: 'https://www.baidu.com',
-            orgCode: '888',              
-          },
-          {
-            id: 2,
-            createTime: '2020-08-10 11:11:11',            
-            startTime: '2020-08-10 11:11:11',
-            endTime: '2021-08-10 11:11:11',
-            activityId: '123456',
-            activityName: '活动1',
-            activityType: '1',
-            activityStatus: '2',
-            link: 'https://www.baidu.com',
-            orgCode: '888',              
-          },
-          {
-            id: 3,
-            createTime: '2020-08-10 11:11:11',            
-            startTime: '2020-08-10 11:11:11',
-            endTime: '2021-08-10 11:11:11',
-            activityId: '123456',
-            activityName: '活动1',
-            activityType: '1',
-            activityStatus: '3',
-            link: 'https://www.baidu.com',
-            orgCode: '888',              
-          }
-        ],
-        totalElements: 2,
-        message: 'success',
-      }
-    }
-  };
-  return clientMockData(res, param);
+  return client.post(URL.eventList, param);
+  // const res = {
+  //   data: {
+  //     code: 0,
+  //     data: {
+  //       content: [
+  //         {
+  //           id: 1,
+  //           createTime: '2020-08-10 11:11:11',            
+  //           startTime: '2020-08-10 11:11:11',
+  //           endTime: '2021-08-10 11:11:11',
+  //           activityId: '123456',
+  //           activityName: '活动1',
+  //           activityType: '1',
+  //           activityStatus: '1',
+  //           link: 'https://www.baidu.com',
+  //           orgCode: '888',              
+  //         },
+  //         {
+  //           id: 2,
+  //           createTime: '2020-08-10 11:11:11',            
+  //           startTime: '2020-08-10 11:11:11',
+  //           endTime: '2021-08-10 11:11:11',
+  //           activityId: '123456',
+  //           activityName: '活动1',
+  //           activityType: '1',
+  //           activityStatus: '2',
+  //           link: 'https://www.baidu.com',
+  //           orgCode: '888',              
+  //         },
+  //         {
+  //           id: 3,
+  //           createTime: '2020-08-10 11:11:11',            
+  //           startTime: '2020-08-10 11:11:11',
+  //           endTime: '2021-08-10 11:11:11',
+  //           activityId: '123456',
+  //           activityName: '活动1',
+  //           activityType: '1',
+  //           activityStatus: '3',
+  //           link: 'https://www.baidu.com',
+  //           orgCode: '888',              
+  //         }
+  //       ],
+  //       totalElements: 2,
+  //       message: 'success',
+  //     }
+  //   }
+  // };
+  // return clientMockData(res, param);
 };
 export const eventCopy = (param) => {
   // return client.post(URL.eventCopy, param);

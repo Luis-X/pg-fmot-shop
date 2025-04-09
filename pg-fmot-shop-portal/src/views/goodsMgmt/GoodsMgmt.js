@@ -65,7 +65,7 @@ class GoodsMgmt extends Component {
     const self = this;
     api.goodsCategoryList().then((res) => {
       if (res) {
-        const respData = res.data;
+        const respData = res.data || {};
         if (0 === respData.code) {
           self.setState({
             goodsCategoryList: respData.data,
@@ -91,7 +91,7 @@ class GoodsMgmt extends Component {
     }).then((res) => {
       self.setState({ loadingShow: false });
       if (res) {
-        const respData = res.data;
+        const respData = res.data || {};
         if (0 === respData.code) {
           self.setState({
             data: respData.data.content,

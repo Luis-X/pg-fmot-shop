@@ -18,13 +18,14 @@ export function ImportDataPicker({ show, type, onHide, updateList }) { // type�
    * 导入excel的函数
    * @param {*} file
    */
-  const importForAdmin = (file) => {
+  const importForAdmin = (file, typeValue) => {
     setFirmLoading(true);
     let formData = new FormData();
     formData.append('file', file);
+    formData.append('type', typeValue);
     api.internalAccountImport(formData).then((res) => {
       if (res) {
-        const respData = res.data;
+        const respData = res.data || {};
         if (0 === respData.code) {
           setFirmLoading(false);
           document.getElementById('file').value = '';
@@ -87,7 +88,21 @@ export function ImportDataPicker({ show, type, onHide, updateList }) { // type�
     } else {
       let fileDom = document.querySelector('input[type=file]');
       let file = fileDom.files[0];
-      importForAdmin(file);
+
+      let typeValue = ''
+      if (type === 101) {
+        typeValue = 'IMPORT_EMPLOYEE_FOR_ADMIN';
+      if (type === 102) {
+        typeValue = 'IMPORT_EMPLOYEE_POINT_FOR_ADMIN';
+      }
+      if (type === 201) {
+        typeValue = 'IMPORT_CUSTOMER_FOR_ADMIN';
+      }
+      if (type === 202) {
+        typeValue = 'IMPORT_CUSTOMER_POINT_FOR_ADMIN';
+      }
+      
+      importForAdmin(file, typeValue);
     }
   };
 

@@ -27,6 +27,7 @@ import moment from 'moment';
 import { AddEventFun } from './AddEventFun';
 import zhCN from 'antd/es/locale/zh_CN';
 import Dict from '../../config/Dict';
+import Util from '../../utils/util';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -82,7 +83,7 @@ class EventMgmt extends Component {
     const self = this;
     api.orgCodeList().then((res) => {
       if (res) {
-        const respData = res.data;
+        const respData = res.data || {};
         if (0 === respData.code) {
           self.setState({
             orgCodeList: respData.data,
@@ -103,8 +104,8 @@ class EventMgmt extends Component {
     self.setState({ loadingShow: true });
     // 时间处理
     if (queryData && queryData.date) {
-      queryData.beginDate = moment(new Date(queryData.date[0])).format('YYYY-MM-DD HH:mm:ss');
-      queryData.endDate = moment(new Date(queryData.date[1])).format('YYYY-MM-DD HH:mm:ss');
+      queryData.beginDate = Util.dateFormatter(queryData.date[0]);
+      queryData.endDate = Util.dateFormatter(queryData.date[1]);
       delete queryData.date;
     }
     api.eventList({
@@ -113,7 +114,7 @@ class EventMgmt extends Component {
       size: pageSize,
     }).then((res) => {
       self.setState({ loadingShow: false });
-      const respData = res.data;
+      const respData = res.data || {};
       if (res) {
         if (0 === respData.code) {
           self.setState({
@@ -176,7 +177,7 @@ class EventMgmt extends Component {
     }).then((res) => {
       self.setState({ loadingShow: false });
       if (res) {
-        const respData = res.data;
+        const respData = res.data || {};
         if (0 === respData.code) {
           notification['success']({
             message: '复制活动成功！'
@@ -351,13 +352,13 @@ class EventMgmt extends Component {
                     </ConfigProvider>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('activityName',{})(
+                    <Form.Item>{getFieldDecorator('name',{})(
                       <Input placeholder="请输入活动名称" />
                     )}
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('activityId',{})(
+                    <Form.Item>{getFieldDecorator('id',{})(
                       <Input placeholder="请输入活动ID" />
                     )}
                     </Form.Item>
@@ -379,7 +380,7 @@ class EventMgmt extends Component {
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('orgCode',{})(
+                    <Form.Item>{getFieldDecorator('institutionId',{})(
                       <Select placeholder="请选择机构代码" style={{ width: '100%' }}>
                         {
                           orgCodeList.length > 0 && orgCodeList.map((item, index) => (
