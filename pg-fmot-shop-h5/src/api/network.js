@@ -36,6 +36,8 @@ export default {
 
   serviceInfo,
 
+  trackerSubmit,
+
   wxSignShare,
   wxConfigShareData,
 };
@@ -45,9 +47,9 @@ function aclUrl (params) {
   return REQUEST.post('/aclUrl', params)
 }
 
-// code 登录
+// code 登录 api
 function login (params) {
-  // return REQUEST.post('/codeToToken', params)
+  // return REQUEST.post('/user/login', params)
   const res = {
     code: 0,
     data: {
@@ -75,8 +77,9 @@ function login (params) {
   return clientMockData(res, params);
 }
 
-// 同意协议
+// 同意协议 api
 function agreeAgreement (params) {
+  // return REQUEST.post('/api/user/userAgreement', params)
   const res = {
     code: 0,
     data: {},
@@ -95,8 +98,9 @@ function bindOpenId (params) {
   return clientMockData(res, params);
 }
 
-// 账号绑定
+// 账号绑定 api
 function bindActivityId (params) {
+  // return REQUEST.post('/api/user/bindPointAccount', params)
   const res = {
     code: 0,
     data: {},
@@ -105,8 +109,9 @@ function bindActivityId (params) {
   return clientMockData(res, params);
 }
 
-// 活动列表
+// 活动列表 api
 function activityList (params) {
+  // return REQUEST.get('/api/activity/detailForH5', params)
   const res = {
     code: 0,
     data: {
@@ -257,8 +262,9 @@ function searchList (params) {
   return clientMockData(res, params);
 }
 
-// 商品详情
+// 商品详情 api
 function goodsDetail (params) {
+  // return REQUEST.post('/api/activity/activityProductForH5', params)
   const res = {
     code: 0,
     data: {      
@@ -329,8 +335,9 @@ function orderConfirmInfo (params) {
   }
   return clientMockData(res, params);
 }
-// 订单确认
+// 订单确认 api
 function orderConfirm (params) {
+  // return REQUEST.post('/api/shopCart/createOrder', params)
   const res = {
     code: 0,
     data: {},
@@ -339,8 +346,9 @@ function orderConfirm (params) {
   return clientMockData(res, params);
 }
 
-// 订单详情
+// 订单详情 api
 function orderDetailInfo (params) {
+  // return REQUEST.post('/api/shopCart/getOrderDetail', params)
   const res = {
     code: 0,
     data: {
@@ -381,8 +389,9 @@ function orderDetailInfo (params) {
   }
   return clientMockData(res, params);
 }
-// 取消订单
+// 取消订单 api
 function orderCancel (params) {
+  // return REQUEST.post('/api/shopCart/cancelOrder', params)
   const res = {
     code: 1,
     data: {},
@@ -401,8 +410,9 @@ function mineInfo (params) {
   }
   return clientMockData(res, params);
 }
-// 我的订单
+// 我的订单 api
 function mineOrderList (params) {
+  // return REQUEST.post('/api/shopCart/getMyInfo', params)
   const res = {
     code: 0,
     data: {
@@ -467,8 +477,9 @@ function mineExchangeList (params) {
   return clientMockData(res, params);
 }
 
-// 购物车
+// 购物车 api
 function cartList (params) {
+  // return REQUEST.post('/api/shopCart/getMy', params)
   const res = {
     code: 0,
     data: {
@@ -568,8 +579,9 @@ function cartList (params) {
   }
   return clientMockData(res, params);
 }
-// 加入购物车
+// 加入购物车 api
 function cartAdd (params) {
+  // return REQUEST.post('/api/shopCart/changeShopCartProduct', params)
   const res = {
     code: 0,
     data: {},
@@ -577,8 +589,9 @@ function cartAdd (params) {
   }
   return clientMockData(res, params);
 }
-// 删除购物车
+// 删除购物车 api
 function cartDel (params) {
+  // return REQUEST.post('/api/shopCart/changeShopCartProduct', params)
   const res = {
     code: 0,
     data: {},
@@ -596,6 +609,17 @@ function serviceInfo (params) {
       address: '联系地址：辽宁省大连市高新园区万达广场一单元1901',
     },
     message: '联系客服失败'
+  }
+  return clientMockData(res, params);
+}
+
+// 埋点上报 api
+function trackerSubmit (params) {
+  // return REQUEST.post('/api/userActionLog/addUserActionLog', params)
+  const res = {
+    code: 0,
+    data: {},
+    message: '埋点上报失败'
   }
   return clientMockData(res, params);
 }

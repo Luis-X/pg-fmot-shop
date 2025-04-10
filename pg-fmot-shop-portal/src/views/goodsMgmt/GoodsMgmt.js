@@ -47,7 +47,7 @@ class GoodsMgmt extends Component {
   async componentDidMount() {
     const self = this;    
     self.requestListData();
-    self.requestGoodsCategoryListtData();
+    self.requestGoodsCategoryListData();
     self.configGooodsTypeList();
   }
 
@@ -61,7 +61,7 @@ class GoodsMgmt extends Component {
   }
 
   // 商品类别
-  requestGoodsCategoryListtData = () => {
+  requestGoodsCategoryListData = () => {
     const self = this;
     api.goodsCategoryList().then((res) => {
       if (res) {
@@ -170,8 +170,8 @@ class GoodsMgmt extends Component {
       {
         title: '商品编码',
         width: 100,
-        dataIndex: 'id',
-        key: 'id',
+        dataIndex: 'code',
+        key: 'code',
         align: 'center',
       },
       {
@@ -190,21 +190,21 @@ class GoodsMgmt extends Component {
       },
       {
         title: '所属类别',
-        dataIndex: 'category',
+        dataIndex: 'productCategoryName',
         width: 100,
-        key: 'category',
+        key: 'productCategoryName',
         align: 'center',
-        render: (text) => (
-          <>
-            {Dict.getValue('goodsCategory', text, '')}
-          </>
-        ),
+        // render: (text) => (
+        //   <>
+        //     {Dict.getValue('goodsCategory', text, '')}
+        //   </>
+        // ),
       },
       {
         title: '商品类型',
-        dataIndex: 'type',
+        dataIndex: 'productType',
         width: 100,
-        key: 'type',
+        key: 'productType',
         align: 'center',
         render: (text) => (
           <>
@@ -255,19 +255,19 @@ class GoodsMgmt extends Component {
               <div className="flex1">
                 <Row gutter={24}>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('goodsId',{})(
+                    <Form.Item>{getFieldDecorator('code',{})(
                       <Input placeholder="请输入商品编码" />
                     )}
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('goodsName',{})(
+                    <Form.Item>{getFieldDecorator('name',{})(
                       <Input placeholder="请输入商品名称" />
                     )}
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('goodsCategory',{})(
+                    <Form.Item>{getFieldDecorator('productCategoryId',{})(
                       <Select placeholder="请选择商品类别" style={{ width: '100%' }}>                      
                         {
                           goodsCategoryList.length > 0 && goodsCategoryList.map((item, index) => (
@@ -281,7 +281,7 @@ class GoodsMgmt extends Component {
                 </Row>
                 <Row gutter={24}>                  
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('goodsType',{})(
+                    <Form.Item>{getFieldDecorator('productType',{})(
                       <Select placeholder="请选择商品类型" style={{ width: '100%' }} options={goodsTypeList}>
                       </Select>
                     )}

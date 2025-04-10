@@ -92,6 +92,7 @@ export function ImportDataPicker({ show, type, onHide, updateList }) { // typeã€
       let typeValue = ''
       if (type === 101) {
         typeValue = 'IMPORT_EMPLOYEE_FOR_ADMIN';
+      }
       if (type === 102) {
         typeValue = 'IMPORT_EMPLOYEE_POINT_FOR_ADMIN';
       }

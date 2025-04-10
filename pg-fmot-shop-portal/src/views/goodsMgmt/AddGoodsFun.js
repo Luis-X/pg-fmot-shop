@@ -69,39 +69,41 @@ export function AddGoodsFun({
     let detailData = {};  
 
     try {
-      const res = await api.goodsDetail(goodsId);
+      const res = await api.goodsDetail({
+        id: goodsId,
+      });
       if (res) {
         const respData = res.data || {};
         if (0 === respData.code) {
           detailData = respData.data;
 
           // 预览图
-          const goodsImgUrls = detailData.goodsImg ? [detailData.goodsImg] : [];
-          detailData.goodsImg = Util.imgUrlsToFiles(goodsImgUrls);
+          const goodsImgUrls = detailData.previewUrl ? [detailData.previewUrl] : [];
+          detailData.previewUrl = Util.imgUrlsToFiles(goodsImgUrls);
 
           // 轮播图（视频、封面、图片）
           let bannerPoster = [];
           let bannerVideo = [];
           let bannerImgs = [];
-          const bannerPosterUrls = detailData.bannerPoster ? [detailData.bannerPoster] : [];
+          const bannerPosterUrls = detailData.videoImgUrl ? [detailData.videoImgUrl] : [];
           bannerPoster = Util.imgUrlsToFiles(bannerPosterUrls);
-          const bannerVideoUrls = detailData.bannerVideo ? [detailData.bannerVideo] : [];
+          const bannerVideoUrls = detailData.videoUrl ? [detailData.videoUrl] : [];
           bannerVideo = Util.imgUrlsToFiles(bannerVideoUrls);
-          const bannerImgsUrls = detailData.bannerImgs ? detailData.bannerImgs : [];
+          const bannerImgsUrls = detailData.imgUrl ? detailData.imgUrl : [];
           bannerImgs = Util.imgUrlsToFiles(bannerImgsUrls);
-          detailData.goodsBanner = [{
-            bannerPoster: bannerPoster,
-            bannerVideo: bannerVideo,
-            bannerImgs: bannerImgs,
+          detailData.productCarouselImages = [{
+            videoImgUrl: bannerPoster,
+            videoUrl: bannerVideo,
+            imgUrl: bannerImgs,
           }];
 
           // 视频
-          const goodsVideoUrls = detailData.goodsVideo ? [detailData.goodsVideo] : [];
-          detailData.goodsVideo = Util.imgUrlsToFiles(goodsVideoUrls);
+          const goodsVideoUrls = detailData.productVideo ? [detailData.productVideo] : [];
+          detailData.productVideo = Util.imgUrlsToFiles(goodsVideoUrls);
 
           // 长图
-          const goodsIntroImgUrls = detailData.goodsIntroImg ? [detailData.goodsIntroImg] : [];
-          detailData.goodsIntroImg = Util.imgUrlsToFiles(goodsIntroImgUrls);
+          const goodsIntroImgUrls = detailData.longImageUrl ? [detailData.longImageUrl] : [];
+          detailData.longImageUrl = Util.imgUrlsToFiles(goodsIntroImgUrls);
 
         } else {
           MyAlert({ errorMsg: respData.message });
@@ -120,34 +122,44 @@ export function AddGoodsFun({
     form.validateFields().then((values) => {
       console.log('处理前：', values);
 
-      // 预览图
-      const goodsImgFiles = values.goodsImg ? values.goodsImg : [];
-      values.goodsImg = Util.filesToImgUrls(goodsImgFiles)[0] || '';
+      // // 预览图
+      const previewFiles = values.previewUrl || [];
+      values.previewUrl = Util.filesToImgUrls(previewFiles)[0] || '';
 
       // 轮播图（视频、封面、图片）
       let bannerPoster = '';
       let bannerVideo = '';
       let bannerImgs = [];
-      values.goodsBanner.forEach((item) => {
-        const bannerPosterFiles = item.bannerPoster ? item.bannerPoster : [];
+      let newBannerList = []
+      values.productCarouselImages.forEach((item) => {
+        const bannerPosterFiles = item.videoImgUrl || [];
         bannerPoster = Util.filesToImgUrls(bannerPosterFiles)[0] || '';
-        const bannerVideoFiles = item.bannerVideo ? item.bannerVideo : [];
+        const bannerVideoFiles = item.videoUrl || [];
         bannerVideo = Util.filesToImgUrls(bannerVideoFiles)[0] || '';
-        const bannerImgFiles = item.bannerImgs ? item.bannerImgs : [];
+        const bannerImgFiles = item.imgUrl || [];
         bannerImgs = Util.filesToImgUrls(bannerImgFiles) || [];
       });
-      values.bannerPoster = bannerPoster;
-      values.bannerVideo = bannerVideo;
-      values.bannerImgs = bannerImgs;
-      values.goodsBanner = [];
+
+      // banner-视频
+      newBannerList.push({
+        videoUrl: bannerPoster,
+        videoImgUrl: bannerVideo,
+      })
+      // banner-图片
+      bannerImgs.forEach((item) => {
+        newBannerList.push({
+          imgUrl: item,
+        })
+      })
+      values.productCarouselImages = newBannerList;
 
       // 视频
-      const goodsVideoFiles = values.goodsVideo ? values.goodsVideo : [];
-      values.goodsVideo = Util.filesToImgUrls(goodsVideoFiles)[0] || '';
+      const videoFiles = values.productVideo || [];
+      values.productVideo = Util.filesToImgUrls(videoFiles)[0] || '';
 
       // 长图
-      const goodsIntroFiles = values.goodsIntroImg ? values.goodsIntroImg : [];
-      values.goodsIntroImg = Util.filesToImgUrls(goodsIntroFiles)[0] || '';
+      const longImageFiles = values.longImageUrl || [];
+      values.longImageUrl = Util.filesToImgUrls(longImageFiles)[0] || '';
 
       // 操作
       if ('save' === type) {
@@ -188,6 +200,7 @@ export function AddGoodsFun({
     console.log('处理后，保存：', values);
     api.goodsSave({
       ...values,
+      id: goodsId,
     }).then((res) => {
       if (res) {
         setLoading(false);
@@ -207,23 +220,62 @@ export function AddGoodsFun({
   };
 
   // 上传图片
-  const beforeUpload = (file) => {
+  const beforeUpload = async (file, type) => {
     console.log('---file---', file);
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-    if (!isJpgOrPng) {
-      message.error('图片格式不是JPG/PNG!');
+    // 视频
+    if (type === 'video') {
+      // const isAllowVideo = file.type === 'video/mp4';
+      // if (!isAllowVideo) {
+      //   message.error('视频格式不是MP4!');
+      //   return Upload.LIST_IGNORE
+      // }
     }
-    const isLt2M = file.size / 1024 / 1024 <= 10.1;
-    if (!isLt2M) {
-      message.error('图片需要小于10MB!');
+    // 图片
+    if (type === 'img') {
+      const isAllowImg = file.type === 'image/jpeg' || file.type === 'image/png';
+      if (!isAllowImg) {
+        message.error('图片格式不是JPG/PNG!');
+        return Upload.LIST_IGNORE
+      }
+    }    
+    // 图片大小
+    const isAllowSize = file.size / 1024 <= 100;
+    if (!isAllowSize) {
+      message.error('文件需要小于100KB!');
+      return Upload.LIST_IGNORE
     }
-    return (isJpgOrPng && isLt2M) ? true : Upload.LIST_IGNORE;
+    // 刷新签名
+    await requestSignData();
+    return true
   };
 
-  const handleImgChange = (info) => {
-    console.log('---info---', info);
+  // 上传图片签名
+  const [signData, setSignData] = useState({})
+  const requestSignData = async () => {   
+    console.log('获取签名')
+    await api.uploadFileSignPublic().then((res) => {
+      if (res) {
+        const respData = res.data || {};
+        if (0 === respData.code) {
+          console.log('获取签名，成功', respData)
+          const signInfo = respData.data || {};
+          setSignData(signInfo);
+        } else {
+          console.log('获取签名，错误')
+          MyAlert({ errorMsg: respData.message });
+        }
+      }
+    }).catch((err) => {
+      console.log('获取签名，失败')
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    })
+  };
+
+  const handleImgChange = async (info) => {
+    console.log('上传信息', info);
     const { status } = info.file;
     if (status === 'uploading') {
+      console.log('上传中', info);
       setLoading(true);
       return;
     }
@@ -231,16 +283,39 @@ export function AddGoodsFun({
     if (status === 'done') {
       setLoading(false);
       const resp = info.file.response;
-      console.log('---resp---', resp);
-      if (resp.code === 0) {
-        const url = resp.data
-        console.log(url)
-      } else {
-        message.info(resp.message)
+      console.log('上传结束', resp);
+      const fileId = resp.fileId 
+      const url = resp.url
+
+      // 公有图片
+      if (url) {
+        console.log('上传成功-公有', url);
+        info.file.url = url;
+        return;
       }
+
+      // 私有图片 
+      if (fileId) {     
+        console.log('上传成功-私有', fileId);  
+        console.log('通过fileId获取url', fileId);          
+        const fileUrlResp = await api.uploadFileGetUrl([fileId]);
+        const respData = fileUrlResp.data || {};
+        if (0 === respData.code) {
+          console.log('获取url成功', respData);
+          const fileUrl = respData[fileId];
+          info.file.url = fileUrl;
+        } else {
+          console.log('获取url失败', fileId);
+          MyAlert({ errorMsg: respData.message });
+        }   
+        return
+      }
+
+      console.log('上传失败-无法获取fileId或url');  
+      message.info('上传失败，请重试')
     } else {
       setLoading(false);
-      console.log('file upload failed', info.file);
+      console.log('上传失败', info.file);
     }
   };
   
@@ -258,7 +333,7 @@ export function AddGoodsFun({
         <div className="goods-banner-row-wrap">
           <div className="goods-banner-row">
             <ProFormUploadButton
-              name="bannerVideo"
+              name="videoUrl"
               label="视频"
               extra="只能上传mp4文件，最好不要超过100KB"
               rules={[{ required: false, message: '请上传视频' }]}
@@ -266,16 +341,17 @@ export function AddGoodsFun({
               fieldProps={{
                 name: 'file',
                 listType: 'picture-card',
-                beforeUpload: beforeUpload,
+                beforeUpload: (file) => beforeUpload(file, 'video'),
+                data: signData.params
               }}
               title="上传视频"
-              action={api.uploadFile()}
+              action={signData.url}
               onChange={handleImgChange}
             />
           </div>
           <div className="goods-banner-row">
             <ProFormUploadButton
-              name="bannerPoster"
+              name="videoImgUrl"
               label="封面"
               extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：100x100"
               rules={[{ required: false, message: '请上传封面' }]}
@@ -283,26 +359,28 @@ export function AddGoodsFun({
               fieldProps={{
                 name: 'file',
                 listType: 'picture-card',
-                beforeUpload: beforeUpload,
+                beforeUpload: (file) => beforeUpload(file, 'img'),
+                data: signData.params
               }}
               title="上传图片"
-              action={api.uploadFile()}
+              action={signData.url}
               onChange={handleImgChange}
             />
           </div>
         </div>
         <ProFormUploadButton
-          name="bannerImgs"
+          name="imgUrl"
           label="图片"
           extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：100x100"
-          rules={[{ required: true, message: '请上传商品轮播图' }]}
+          rules={[{ required: false, message: '请上传商品轮播图' }]}
           fieldProps={{
             name: 'file',
             listType: 'picture-card',
-            beforeUpload: beforeUpload,
+            beforeUpload: (file) => beforeUpload(file, 'img'),
+            data: signData.params
           }}
           title="上传图片"
-          action={api.uploadFile()}
+          action={signData.url}
           onChange={handleImgChange}
         />
       </>      
@@ -355,62 +433,63 @@ export function AddGoodsFun({
           request={goodsId ? requestDetailData : null}
         >
           <ProFormRadio.Group
-            name="goodsType"
+            name="productType"
             label="商品类型"
-            rules={[{ required: true, message: '请选择商品类型' }]}
+            rules={[{ required: false, message: '请选择商品类型' }]}
             options={goodsTypeList}
           />
           <ProFormSelect
             options={categoryList}
-            name="goodsCategory"
+            name="productCategoryId"
             label="商品类别"
-            rules={[{ required: true, message: '请选择商品类别' }]}
+            rules={[{ required: false, message: '请选择商品类别' }]}
             placeholder="请选择商品类别"
           />
           <ProFormText
-            name="goodsCode"
+            name="code"
             label="商品编码"
-            rules={[{ required: true, message: '请输入商品编码' }]}
+            rules={[{ required: false, message: '请输入商品编码' }]}
             placeholder="请输入商品编码"
           />
           <ProFormText
-            name="goodsName"
+            name="name"
             label="商品名称"
-            rules={[{ required: true, message: '请输入商品名称' }]}
+            rules={[{ required: false, message: '请输入商品名称' }]}
             placeholder="请输入商品名称"
           />
           <ProFormDigit
-            name="goodsPrice"
+            name="price"
             label="商品价格"
-            rules={[{ required: true, message: '请输入商品价格' }]}
+            rules={[{ required: false, message: '请输入商品价格' }]}
             placeholder="请输入商品价格"
             fieldProps={{ precision: 1 }}
           />
           <ProFormText
-            name="goodsTag"
+            name="label"
             label="商品标签"
             rules={[{ required: false, message: '请输入商品标签' }]}
             placeholder="请输入商品标签"
           />
           <ProFormUploadButton
-            name="goodsImg"
+            name="previewUrl"
             label="商品预览图"
             extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：100x100"
-            rules={[{ required: true, message: '请上传商品预览图' }]}
+            rules={[{ required: false, message: '请上传商品预览图' }]}
             max={1}
             fieldProps={{ 
               name: 'file',
               listType: 'picture-card',
-              beforeUpload: beforeUpload,
+              beforeUpload: (file) => beforeUpload(file, 'img'),
+              data: signData.params
             }}
             title="上传图片"
-            action={api.uploadFile()}
+            action={signData.url}
             onChange={handleImgChange}
           />
           {
             goodsId? (
               <ProFormList
-                name="goodsBanner"
+                name="productCarouselImages"
                 label="商品轮播图"
                 creatorButtonProps={false}
                 copyIconProps={false}
@@ -423,7 +502,7 @@ export function AddGoodsFun({
               </ProFormList>
             ) : (
               <ProFormList
-                name="goodsBanner"
+                name="productCarouselImages"
                 label="商品轮播图"
                 creatorButtonProps={false}
                 copyIconProps={false}
@@ -433,9 +512,9 @@ export function AddGoodsFun({
                 )}
                 initialValue={[
                   {
-                    bannerVideo: [],
-                    bannerPoster: [],
-                    bannerImgs: [],
+                    videoUrl: [],
+                    videoImgUrl: [],
+                    imgUrl: [],
                   },
                 ]}
               >
@@ -444,7 +523,7 @@ export function AddGoodsFun({
             )
           }
           <ProFormUploadButton
-            name="goodsVideo"
+            name="productVideo"
             label="商品视频"
             extra="只能上传mp4文件，最好不要超过100KB"
             rules={[{ required: false, message: '请上传商品视频' }]}
@@ -452,14 +531,15 @@ export function AddGoodsFun({
             fieldProps={{
               name: 'file',
               listType: 'picture-card',
-              beforeUpload: beforeUpload,
+              beforeUpload: (file) => beforeUpload(file, 'video'),
+              data: signData.params
             }}
             title="上传视频"
-            action={api.uploadFile()}
+            action={signData.url}
             onChange={handleImgChange}
           />
           <ProFormUploadButton
-            name="goodsIntroImg"
+            name="longImageUrl"
             label="商品介绍长图"
             extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：100x100"
             rules={[{ required: true, message: '请上传商品介绍长图' }]}
@@ -467,11 +547,12 @@ export function AddGoodsFun({
             fieldProps={{
               name: 'file',
               listType: 'picture-card',
-              beforeUpload: beforeUpload,
+              beforeUpload: (file) => beforeUpload(file, 'img'),
+              data: signData.params
             }}
             title="上传图片"
             showUploadList={false}
-            action={api.uploadFile()}
+            action={signData.url}
             onChange={handleImgChange}
           />
         </ProForm>

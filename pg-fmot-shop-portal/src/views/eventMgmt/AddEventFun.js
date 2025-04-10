@@ -18,7 +18,6 @@ import '@ant-design/pro-components/dist/components.css';
 import * as api from '../../api/api';
 import MyAlert from '../../components/MyAlert';
 import zhCN from 'antd/es/locale/zh_CN';
-import moment from 'moment';
 import Dict from '../../config/Dict';
 import Util from '../../utils/util';
 
@@ -90,20 +89,20 @@ export function AddEventFun({
             detailData = respData.data;
             
             // 轮播图
-            let bannerList = detailData.activityBanner || [];
+            let bannerList = detailData.activityCarouselImages || [];
             let newBannerList = [];
             bannerList.forEach((item) => {
-              const imgUrls = item.bannerImg ? [item.bannerImg] : [];
+              const imgUrls = item.imageUrl ? [item.imageUrl] : [];
               let newItem = {
-                bannerImg: Util.imgUrlsToFiles(imgUrls),
-                bannerLink: item.bannerLink,
+                imageUrl: Util.imgUrlsToFiles(imgUrls),
+                url: item.url,
               }
               newBannerList.push(newItem);
             });
-            detailData.activityBanner = newBannerList;
+            detailData.activityCarouselImages = newBannerList;
 
             // 商品列表
-            let goodsList = detailData.goodsList || [];
+            let goodsList = detailData.activityProducts || [];
             let newGoodsList = [];
             goodsList.forEach((item) => {
               newGoodsList.push(item);
@@ -127,18 +126,18 @@ export function AddEventFun({
     form.validateFields().then((values) => {
       console.log('处理前：', values);
       // 开始时间
-      if (values.startTime) {
-        let startTime = Util.dateFormatter(values.startTime)
-        values.startTime = startTime;
+      if (values.beginDate) {
+        let startTime = Util.dateFormatter(values.beginDate)
+        values.beginDate = startTime;
       }      
       // 结束时间
-      if (values.endTime) {
-        let endTime = Util.dateFormatter(values.endTime)
-        values.endTime = endTime;
+      if (values.endDate) {
+        let endTime = Util.dateFormatter(values.endDate)
+        values.endDate = endTime;
       }      
 
       // 轮播图
-      let bannerList = values.activityBanner || [];      
+      let bannerList = values.activityCarouselImages || [];      
       if (bannerList.length <= 0) {
         message.error('请上传首页轮播图！', 2);
         setLoading(false);
@@ -146,15 +145,15 @@ export function AddEventFun({
       }
       let newBannerList = [];
       bannerList.forEach((item) => {
-        const imgFiles = item.bannerImg ? item.bannerImg : [];
+        const imgFiles = item.imageUrl ? item.imageUrl : [];
         const imgUrl = Util.filesToImgUrls(imgFiles)[0] || '';
         let newItem = {
-          bannerImg: imgUrl,
-          bannerLink: item.bannerLink,
+          imageUrl: imgUrl,
+          url: item.url,
         }
         newBannerList.push(newItem);
       });
-      values.activityBanner = newBannerList;
+      values.activityCarouselImages = newBannerList;
 
       // 商品列表
       let goodsList = goodsListData || [];      
@@ -163,7 +162,7 @@ export function AddEventFun({
         setLoading(false);
         return;
       }
-      values.goodsList = goodsList;
+      values.activityProducts = goodsList;
       
       // 操作
       if ('save' === type) {
@@ -202,24 +201,24 @@ export function AddEventFun({
   // 保存
   const saveHandler = (values) => {
     console.log('处理后，保存：', values);
-    api.eventSave({
-      ...values,
-    }).then((res) => {
-      if (res) {
-        setLoading(false);
-        const respData = res.data || {};
-        if (0 === respData.code) {
-          onHide();
-          updateList();
-          message.success('保存成功!', 3);
-        } else {
-          MyAlert({ errorMsg: respData.message });
-        }
-      }
-    }).catch((err) => {
-      setLoading(false);
-      message.error(err ? err : '网络请求失败, 请重试!', 2);
-    });
+    // api.eventSave({
+    //   ...values,
+    // }).then((res) => {
+    //   if (res) {
+    //     setLoading(false);
+    //     const respData = res.data || {};
+    //     if (0 === respData.code) {
+    //       onHide();
+    //       updateList();
+    //       message.success('保存成功!', 3);
+    //     } else {
+    //       MyAlert({ errorMsg: respData.message });
+    //     }
+    //   }
+    // }).catch((err) => {
+    //   setLoading(false);
+    //   message.error(err ? err : '网络请求失败, 请重试!', 2);
+    // });
   };
 
   // 商品列表
@@ -375,23 +374,48 @@ export function AddEventFun({
   };
 
   // 上传图片
-  const beforeUpload = (file) => {
-    console.log('---file---', file);
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-    if (!isJpgOrPng) {
+  const beforeUpload = async (file) => {
+    const isAllowImg = file.type === 'image/jpeg' || file.type === 'image/png';
+    if (!isAllowImg) {
       message.error('图片格式不是JPG/PNG!');
+      return Upload.LIST_IGNORE
     }
-    const isLt2M = file.size / 1024 / 1024 <= 10.1;
-    if (!isLt2M) {
-      message.error('图片需要小于10MB!');
+    const isAllowSize = file.size / 1024 <= 100;
+    if (!isAllowSize) {
+      message.error('文件需要小于100KB!');
+      return Upload.LIST_IGNORE
     }
-    return (isJpgOrPng && isLt2M) ? true : Upload.LIST_IGNORE;
+    await requestSignData();
+    return true
   };
 
-  const handleImgChange = (info) => {
-    console.log('---info---', info);
+  // 上传图片签名
+  const [signData, setSignData] = useState({})
+  const requestSignData = async () => {   
+    console.log('获取签名')
+    await api.uploadFileSignPublic().then((res) => {
+      if (res) {
+        const respData = res.data || {};
+        if (0 === respData.code) {
+          console.log('获取签名，成功', respData)
+          const signInfo = respData.data || {};
+          setSignData(signInfo);
+        } else {
+          console.log('获取签名，错误')
+          MyAlert({ errorMsg: respData.message });
+        }
+      }
+    }).catch((err) => {
+      console.log('获取签名，失败')
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    })
+  };
+
+  const handleImgChange = async (info) => {
+    console.log('上传信息', info);
     const { status } = info.file;
     if (status === 'uploading') {
+      console.log('上传中', info);
       setLoading(true);
       return;
     }
@@ -399,16 +423,39 @@ export function AddEventFun({
     if (status === 'done') {
       setLoading(false);
       const resp = info.file.response;
-      console.log('---resp---', resp);
-      if (resp.code === 0) {
-        const url = resp.data
-        console.log(url)
-      } else {
-        message.info(resp.message)
+      console.log('上传结束', resp);
+      const fileId = resp.fileId 
+      const url = resp.url
+
+      // 公有图片
+      if (url) {
+        console.log('上传成功-公有', url);
+        info.file.url = url;
+        return;
       }
+
+      // 私有图片 
+      if (fileId) {     
+        console.log('上传成功-私有', fileId);  
+        console.log('通过fileId获取url', fileId);          
+        const fileUrlResp = await api.uploadFileGetUrl([fileId]);
+        const respData = fileUrlResp.data || {};
+        if (0 === respData.code) {
+          console.log('获取url成功', respData);
+          const fileUrl = respData[fileId];
+          info.file.url = fileUrl;
+        } else {
+          console.log('获取url失败', fileId);
+          MyAlert({ errorMsg: respData.message });
+        }   
+        return
+      }
+
+      console.log('上传失败-无法获取fileId或url');  
+      message.info('上传失败，请重试')
     } else {
       setLoading(false);
-      console.log('file upload failed', info.file);
+      console.log('上传失败', info.file);
     }
   };
   
@@ -472,14 +519,14 @@ export function AddEventFun({
             options={activityTypeList}
           />
           <ProFormText
-            name="activityName"
+            name="name"
             label="活动名称"
             rules={[{ required: true, message: '请输入活动名称' }]}
             placeholder="请输入活动名称"
           />
           <ProFormSelect
             options={orgCodeList}
-            name="orgCode"
+            name="institutionId"
             label="机构代码"
             rules={[{ required: true, message: '请选择机构代码' }]}
             placeholder="请选择机构代码"
@@ -488,7 +535,7 @@ export function AddEventFun({
             <ProFormDateTimePicker 
             showTime={true}
             format='YYYY-MM-DD HH:mm:ss'
-            name="startTime"
+            name="beginDate"
             label="开始时间"
             rules={[{ required: true, message: '请选择活动开始时间' }]}
             placeholder={'请选择活动开始时间'}
@@ -498,7 +545,7 @@ export function AddEventFun({
             <ProFormDateTimePicker 
             showTime={true}
             format='YYYY-MM-DD HH:mm:ss'
-            name="endTime"
+            name="endDate"
             label="结束时间"
             rules={[{ required: true, message: '请选择活动结束时间' }]}
             placeholder={'请选择活动结束时间'}
@@ -511,25 +558,25 @@ export function AddEventFun({
             options={deliveryTypeList}
           />
           <ProFormTextArea
-            name="informNote"
+            name="informedConsentForm"
             label="知情同意条款"
             rules={[{ required: true, message: '请输入知情同意弹框内展示的文本内容' }]}
             placeholder={'请输入知情同意弹框内展示的文本内容'}
           />
           <ProFormTextArea
-            name="serviceNote"
+            name="contactCustomerServiceInfo"
             label="联系客服"
             rules={[{ required: true, message: '请输入联系客服页面内展示的文本内容' }]}
             placeholder={'请输入联系客服页面内展示的文本内容'}
           />
           <ProFormTextArea
-            name="activityDesc"
+            name="collectionInstructions"
             label="领取说明"
             rules={[{ required: true, message: '请输入活动领取说明展示的文本内容' }]}
             placeholder={'请输入活动领取说明展示的文本内容'}
           />
           <ProFormList
-            name="activityBanner"
+            name="activityCarouselImages"
             label="首页轮播图"             
             creatorButtonProps={{
               creatorButtonText: '新增图片',
@@ -540,22 +587,23 @@ export function AddEventFun({
             <ProFormGroup key="group" min={1}>
               <div className='banner-edit-wrap'>
                 <ProFormUploadButton
-                  name="bannerImg"
+                  name="imageUrl"
                   rules={[{ required: true, message: '请上传图片' }]}
                   max={1}
                   fieldProps={{
                     name: 'file',
                     listType: 'picture-card',
                     beforeUpload: beforeUpload,
+                    data: signData.params
                   }}
                   title="上传文件"
                   extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：100x100"
-                  action={api.uploadFile()}                  
+                  action={signData.url}                  
                   onChange={handleImgChange}
                 />
                 <ProFormText
                   width={'xl'}
-                  name="bannerLink"
+                  name="url"
                   rules={[{ required: true, message: '请填写点击跳转URL' }]}
                   placeholder={'请填写点击跳转URL'}
                 />
@@ -563,7 +611,7 @@ export function AddEventFun({
             </ProFormGroup>
           </ProFormList>
           <ProFormDigit
-            name="goodsLimitCount"
+            name="maxQuantity"
             label="商品限购数量"
             rules={[{ required: true, message: '请输入商品限购数量' }]}
             placeholder="请输入商品限购数量"

@@ -27,7 +27,6 @@ import {
 import HomeLayout from '../../common/LayoutStyle';
 import * as api from '../../api/api';
 import MyAlert from '../../components/MyAlert';
-import moment from 'moment';
 import zhCN from 'antd/es/locale/zh_CN';
 import { Line } from '@ant-design/charts';
 import Dict from '../../config/Dict';

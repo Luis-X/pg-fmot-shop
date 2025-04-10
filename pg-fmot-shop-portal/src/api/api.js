@@ -83,15 +83,36 @@ export const setToken = () => {
   });
 };
 
+
 // 上传文件
 export const uploadFile = (param) => {
   return URL.uploadFile;
 };
-
-// 文件签名
+// 根据fileId获取url
+export const uploadFileGetUrl = (param) => {
+  return client.post(URL.uploadFileGetUrl, param);
+};
+// 私有文件上传签名
 export const uploadFileSign = (param) => {
   return client.get(URL.uploadFileSign, param);
 };
+// 公共文件上传签名
+export const uploadFileSignPublic = (param) => {
+  return client.get(URL.uploadFileSignPublic, param);
+};
+// 分片上传签名
+export const uploadFileSignChunk = (param) => {
+  return client.post(URL.uploadFileSignChunk, param);
+};
+// 检查分片签名
+export const uploadFileChunkCheck = (param) => {
+  return client.post(URL.uploadFileChunkCheck, param);
+};
+// 合并分片签名
+export const uploadFileChunkMerge = (param) => {
+  return client.post(URL.uploadFileChunkMerge, param);
+};
+
 
 // 登录、登出
 export const ssoLogin = (param) => {
@@ -119,30 +140,33 @@ export const logout = (param) => {
   return clientMockData(res, param);
 };
 
+
 // 通用
 export const orgCodeList = (param) => {
-  return client.get(URL.orgCodeList, param);
-  // const res = {
-  //   data: {
-  //     code: 0,
-  //     data: [
-  //       {
-  //         id: 1,
-  //         name: '机构1',
-  //       },
-  //       {
-  //         id: 2,
-  //         name: '机构2',
-  //       },
-  //       {
-  //         id: 3,
-  //         name: '机构3',
-  //       }
-  //     ],
-  //   },
-  // };
-  // return clientMockData(res, param);
+  // return client.get(URL.orgCodeList, param);
+  const res = {
+    data: {
+      code: 0,
+      data: [
+        {
+          id: 1,
+          code: '机构1',
+        },
+        {
+          id: 2,
+          code: '机构2',
+        },
+        {
+          id: 3,
+          code: '机构3',
+        }
+      ],
+    },
+  };
+  return clientMockData(res, param);
 };
+
+
 
 // 内部账号
 export const internalAccountList = (param) => {
@@ -194,7 +218,7 @@ export const internalAccountImport = (param) => {
   return client.post(URL.internalAccountImport, param);
 };
 export const internalAccountImportTemplate = (param) => {
-  return URL.internalAccountImportTemplate;
+  return client.get(URL.internalAccountImportTemplate);
 }
 export const internalAccountImportPoints = (param) => {
   return client.post(URL.internalAccountImportPoints, param);
@@ -267,6 +291,21 @@ export const externalAccountImportTemplatePoints = (param) => {
 }
 
 // 活动
+export const eventAllInstitution = (param) => {
+  // return client.get(URL.eventAllInstitution, param);
+  const res = {
+    data: {
+      code: 0,
+      data: [
+        {
+          id: 1,
+          name: '机构1',
+        }
+      ],
+    },
+  };
+  return clientMockData(res, param);
+}
 export const eventList = (param) => {
   return client.post(URL.eventList, param);
   // const res = {
@@ -386,6 +425,24 @@ export const eventSave = (param) => {
   };
   return clientMockData(res, param);
 };
+export const eventGoodsEdit = (param) => {
+  // return client.post(URL.eventGoodsEdit, param);
+  const res = {
+    data: {
+      code: 0,
+    },
+  };
+  return clientMockData(res, param);
+}
+export const eventGoodsDelete = (param) => {
+  // return client.post(URL.eventGoodsDelete, param);
+  const res = {
+    data: {
+      code: 0,
+    },
+  };
+  return clientMockData(res, param);
+}
 
 // 订单
 export const orderList = (param) => {
@@ -506,80 +563,80 @@ export const goodsSearchList = (param) => {
   return clientMockData(res, param);
 };
 export const goodsList = (param) => {
-  // return client.post(URL.goodsList, param);
-  const res = {
-    data: {
-      code: 0,
-      data: {
-        content: [
-          {
-            id: '8888888',
-            name: '商品1',
-            price: '2000',
-            category: '1',
-            type: '1',              
-          },
-          {
-            id: '999999',
-            name: '商品2',
-            price: '2000',
-            category: '2',
-            type: '2',              
-          }
-        ],
-        totalElements: 2,
-        message: 'success',
-      }
-    }
-  };
-  return clientMockData(res, param);
+  return client.post(URL.goodsList, param);
+  // const res = {
+  //   data: {
+  //     code: 0,
+  //     data: {
+  //       content: [
+  //         {
+  //           id: '8888888',
+  //           name: '商品1',
+  //           price: '2000',
+  //           category: '1',
+  //           type: '1',              
+  //         },
+  //         {
+  //           id: '999999',
+  //           name: '商品2',
+  //           price: '2000',
+  //           category: '2',
+  //           type: '2',              
+  //         }
+  //       ],
+  //       totalElements: 2,
+  //       message: 'success',
+  //     }
+  //   }
+  // };
+  // return clientMockData(res, param);
 };
 export const goodsCategoryList = (param) => {
-  // return client.post(URL.goodsCategoryList, param);
-  const res = {
-    data: {
-      code: 0,
-      data: [
-        {
-          id: 1,
-          name: '洗发护理',
-        },
-        {
-          id: 2,
-          name: '女性护理',
-        },
-        {
-          id: 3,
-          name: '口腔护理',
-        },
-        {
-          id: 4,
-          name: '护肤',
-        },
-        {
-          id: 5,
-          name: '新品测试',
-        },
-        {
-          id: 6,
-          name: '个人护理',
-        },
-        {
-          id: 7,
-          name: '织物及家居护理',
-        },
-        {
-          id: 8,
-          name: '婴儿护理',
-        },
-        {
-          id: 9,
-          name: 'Grooming',
-        },
-      ],
-    },
-  };
-  return clientMockData(res, param);
+  return client.get(URL.goodsCategoryList, param);
+  // const res = {
+  //   data: {
+  //     code: 0,
+  //     data: [
+  //       {
+  //         id: 1,
+  //         name: '洗发护理',
+  //       },
+  //       {
+  //         id: 2,
+  //         name: '女性护理',
+  //       },
+  //       {
+  //         id: 3,
+  //         name: '口腔护理',
+  //       },
+  //       {
+  //         id: 4,
+  //         name: '护肤',
+  //       },
+  //       {
+  //         id: 5,
+  //         name: '新品测试',
+  //       },
+  //       {
+  //         id: 6,
+  //         name: '个人护理',
+  //       },
+  //       {
+  //         id: 7,
+  //         name: '织物及家居护理',
+  //       },
+  //       {
+  //         id: 8,
+  //         name: '婴儿护理',
+  //       },
+  //       {
+  //         id: 9,
+  //         name: 'Grooming',
+  //       },
+  //     ],
+  //   },
+  // };
+  // return clientMockData(res, param);
 };
 export const goodsDetail = (param) => {
   // return client.post(URL.goodsDetail, param);
@@ -607,13 +664,13 @@ export const goodsDetail = (param) => {
   return clientMockData(res, param);
 };
 export const goodsCreate = (param) => {
-  // return client.post(URL.goodsCreate, param);
-  const res = {
-    data: {
-      code: 0,
-    },
-  };
-  return clientMockData(res, param);
+  return client.post(URL.goodsCreate, param);
+  // const res = {
+  //   data: {
+  //     code: 0,
+  //   },
+  // };
+  // return clientMockData(res, param);
 };
 export const goodsSave = (param) => {
   // return client.post(URL.goodsSave, param);
@@ -665,6 +722,9 @@ export const trackList = (param) => {
   };
   return clientMockData(res, param);
 };
+export const trackExport = (param) => {
+  return URL.trackExport;
+}
 export const trackPeopleList = (param) => {
   // return client.post(URL.trackPeopleList, param);
   const res = {

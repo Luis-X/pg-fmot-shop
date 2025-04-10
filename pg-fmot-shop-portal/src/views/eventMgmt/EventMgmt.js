@@ -84,6 +84,7 @@ class EventMgmt extends Component {
     api.orgCodeList().then((res) => {
       if (res) {
         const respData = res.data || {};
+        console.log(respData)
         if (0 === respData.code) {
           self.setState({
             orgCodeList: respData.data,
@@ -113,9 +114,9 @@ class EventMgmt extends Component {
       page: pageNo,
       size: pageSize,
     }).then((res) => {
-      self.setState({ loadingShow: false });
-      const respData = res.data || {};
+      self.setState({ loadingShow: false });      
       if (res) {
+        const respData = res.data || {};
         if (0 === respData.code) {
           self.setState({
             data: respData.data.content,
@@ -220,9 +221,9 @@ class EventMgmt extends Component {
     const columns = [
       {
         title: '创建时间',
-        dataIndex: 'createTime',
+        dataIndex: 'createDate',
         width: 100,
-        key: 'createTime',
+        key: 'createDate',
         align: 'center',
         render: (text) => (
           <>{text ? moment(text).format('YYYY.MM.DD HH:mm:ss') : '--'}</>
@@ -231,29 +232,29 @@ class EventMgmt extends Component {
       {
         title: '活动ID',
         width: 50,
-        dataIndex: 'activityId',
-        key: 'activityId',
+        dataIndex: 'id',
+        key: 'id',
         align: 'center',
       },
       {
         title: '活动时间',
-        dataIndex: 'activityTime',
+        dataIndex: 'activityDate',
         width: 100,
-        key: 'activityTime',
+        key: 'activityDate',
         align: 'center',
         render: (text, record) => (
           <div className='activity-time-wrap'>
-            {<span>{record.startTime ? moment(record.startTime).format('YYYY.MM.DD HH:mm:ss') : '--'}</span>}
+            {<span>{record.beginDate ? moment(record.beginDate).format('YYYY.MM.DD HH:mm:ss') : '--'}</span>}
             {/* <span style={{ fontWeight: 'bold' }}>-</span> */}
-            {<span>{record.endTime ? moment(record.endTime).format('YYYY.MM.DD HH:mm:ss') : '--'}</span>}
+            {<span>{record.endDate ? moment(record.endDate).format('YYYY.MM.DD HH:mm:ss') : '--'}</span>}
           </div>
         ),
       },
       {
         title: '活动名称',
         width: 100,
-        dataIndex: 'activityName',
-        key: 'activityName',
+        dataIndex: 'name',
+        key: 'name',
         align: 'center',
       },
       {
@@ -285,9 +286,9 @@ class EventMgmt extends Component {
       },
       {
         title: '机构代码',
-        dataIndex: 'orgCode',
+        dataIndex: 'institutionCode',
         width: 50,
-        key: 'orgCode',
+        key: 'institutionCode',
         align: 'center',
       },
       {
