@@ -145,7 +145,7 @@ export function AddEventFun({
       }
       let newBannerList = [];
       bannerList.forEach((item) => {
-        const imgFiles = item.imageUrl ? item.imageUrl : [];
+        const imgFiles = item.imageUrl || [];
         const imgUrl = Util.filesToImgUrls(imgFiles)[0] || '';
         let newItem = {
           imageUrl: imgUrl,
@@ -230,25 +230,25 @@ export function AddEventFun({
   const columns = [
     {
       title: '商品编码',
-      dataIndex: 'goodsCode',
+      dataIndex: 'code',
       readonly: true,
       width: '15%',
     },
     {
       title: '商品名称',
-      dataIndex: 'goodsName',
+      dataIndex: 'name',
       readonly: true,
       width: '30%',
     },
     {
       title: '原价',
-      dataIndex: 'goodsPrice',
+      dataIndex: 'price',
       readonly: true,
       width: '15%',
     },
     {
       title: '活动价',
-      dataIndex: 'goodsActivityPrice',
+      dataIndex: 'discountPrice',
       editable: true,
       formItemProps: {
         rules: [
@@ -594,12 +594,12 @@ export function AddEventFun({
                     name: 'file',
                     listType: 'picture-card',
                     beforeUpload: beforeUpload,
-                    data: signData.params
+                    data: signData.params,
+                    onChange: handleImgChange
                   }}
                   title="上传文件"
                   extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：100x100"
                   action={signData.url}                  
-                  onChange={handleImgChange}
                 />
                 <ProFormText
                   width={'xl'}

@@ -78,8 +78,8 @@ export function AddGoodsFun({
           detailData = respData.data;
 
           // 预览图
-          const goodsImgUrls = detailData.previewUrl ? [detailData.previewUrl] : [];
-          detailData.previewUrl = Util.imgUrlsToFiles(goodsImgUrls);
+          const previewImgUrls = detailData.previewUrl ? [detailData.previewUrl] : [];
+          detailData.previewUrl = Util.imgUrlsToFiles(previewImgUrls);
 
           // 轮播图（视频、封面、图片）
           let bannerPoster = [];
@@ -89,7 +89,7 @@ export function AddGoodsFun({
           bannerPoster = Util.imgUrlsToFiles(bannerPosterUrls);
           const bannerVideoUrls = detailData.videoUrl ? [detailData.videoUrl] : [];
           bannerVideo = Util.imgUrlsToFiles(bannerVideoUrls);
-          const bannerImgsUrls = detailData.imgUrl ? detailData.imgUrl : [];
+          const bannerImgsUrls = detailData.imgUrl ? [detailData.imgUrl] : [];
           bannerImgs = Util.imgUrlsToFiles(bannerImgsUrls);
           detailData.productCarouselImages = [{
             videoImgUrl: bannerPoster,
@@ -98,12 +98,12 @@ export function AddGoodsFun({
           }];
 
           // 视频
-          const goodsVideoUrls = detailData.productVideo ? [detailData.productVideo] : [];
-          detailData.productVideo = Util.imgUrlsToFiles(goodsVideoUrls);
+          const videoUrls = detailData.productVideo ? [detailData.productVideo] : [];
+          detailData.productVideo = Util.imgUrlsToFiles(videoUrls);
 
           // 长图
-          const goodsIntroImgUrls = detailData.longImageUrl ? [detailData.longImageUrl] : [];
-          detailData.longImageUrl = Util.imgUrlsToFiles(goodsIntroImgUrls);
+          const longImageUrls = detailData.longImageUrl ? [detailData.longImageUrl] : [];
+          detailData.longImageUrl = Util.imgUrlsToFiles(longImageUrls);
 
         } else {
           MyAlert({ errorMsg: respData.message });
@@ -342,11 +342,11 @@ export function AddGoodsFun({
                 name: 'file',
                 listType: 'picture-card',
                 beforeUpload: (file) => beforeUpload(file, 'video'),
-                data: signData.params
+                data: signData.params,
+                onChange: handleImgChange
               }}
               title="上传视频"
-              action={signData.url}
-              onChange={handleImgChange}
+              action={signData.url}              
             />
           </div>
           <div className="goods-banner-row">
@@ -360,11 +360,11 @@ export function AddGoodsFun({
                 name: 'file',
                 listType: 'picture-card',
                 beforeUpload: (file) => beforeUpload(file, 'img'),
-                data: signData.params
+                data: signData.params,
+                onChange: handleImgChange
               }}
               title="上传图片"
               action={signData.url}
-              onChange={handleImgChange}
             />
           </div>
         </div>
@@ -377,11 +377,11 @@ export function AddGoodsFun({
             name: 'file',
             listType: 'picture-card',
             beforeUpload: (file) => beforeUpload(file, 'img'),
-            data: signData.params
+            data: signData.params,
+            onChange: handleImgChange
           }}
           title="上传图片"
           action={signData.url}
-          onChange={handleImgChange}
         />
       </>      
     )
@@ -480,11 +480,11 @@ export function AddGoodsFun({
               name: 'file',
               listType: 'picture-card',
               beforeUpload: (file) => beforeUpload(file, 'img'),
-              data: signData.params
+              data: signData.params,
+              onChange: handleImgChange
             }}
             title="上传图片"
             action={signData.url}
-            onChange={handleImgChange}
           />
           {
             goodsId? (
@@ -532,11 +532,11 @@ export function AddGoodsFun({
               name: 'file',
               listType: 'picture-card',
               beforeUpload: (file) => beforeUpload(file, 'video'),
-              data: signData.params
+              data: signData.params,
+              onChange: handleImgChange
             }}
             title="上传视频"
             action={signData.url}
-            onChange={handleImgChange}
           />
           <ProFormUploadButton
             name="longImageUrl"
@@ -548,12 +548,12 @@ export function AddGoodsFun({
               name: 'file',
               listType: 'picture-card',
               beforeUpload: (file) => beforeUpload(file, 'img'),
-              data: signData.params
+              data: signData.params,
+              onChange: handleImgChange
             }}
             title="上传图片"
             showUploadList={false}
             action={signData.url}
-            onChange={handleImgChange}
           />
         </ProForm>
       </Drawer>
