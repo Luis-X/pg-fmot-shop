@@ -188,23 +188,23 @@ class TrackMgmt extends Component {
       },      
       {
         title: '活动时间',
-        dataIndex: 'activityTime',
+        dataIndex: 'activityDate',
         width: 100,
-        key: 'activityTime',
+        key: 'activityDate',
         align: 'center',
         render: (text, record) => (
           <div className='activity-time-wrap'>
-            {<span>{record.startTime ? moment(record.startTime).format('YYYY.MM.DD HH:mm:ss') : '--'}</span>}
+            {<span>{record.beginDate ? moment(record.beginDate).format('YYYY.MM.DD HH:mm:ss') : '--'}</span>}
             {/* <span style={{ fontWeight: 'bold' }}>-</span> */}
-            {<span>{record.endTime ? moment(record.endTime).format('YYYY.MM.DD HH:mm:ss') : '--'}</span>}
+            {<span>{record.endDate ? moment(record.endDate).format('YYYY.MM.DD HH:mm:ss') : '--'}</span>}
           </div>
         ),
       },      
       {
         title: '机构代码',
-        dataIndex: 'orgCode',
+        dataIndex: 'institutionId',
         width: 50,
-        key: 'orgCode',
+        key: 'institutionId',
         align: 'center',
       },
       {
@@ -288,7 +288,7 @@ class TrackMgmt extends Component {
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('orgCode',{})(
+                    <Form.Item>{getFieldDecorator('institutionId',{})(
                       <Select placeholder="请选择机构代码" style={{ width: '100%' }}>
                         {
                           orgCodeList.length > 0 && orgCodeList.map((item, index) => (

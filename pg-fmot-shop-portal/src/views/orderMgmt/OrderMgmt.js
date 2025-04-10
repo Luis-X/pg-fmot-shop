@@ -233,17 +233,17 @@ class OrderMgmt extends Component {
     const columns = [
       {
         title: '下单时间',
-        dataIndex: 'createTime',
+        dataIndex: 'createDate',
         width: 100,
-        key: 'createTime',
+        key: 'createDate',
         align: 'center',
         render: (text) => <>{moment(text).format('YYYY-MM-DD HH:mm:ss')}</>,
       },
       {
         title: '订单编号',
-        dataIndex: 'orderNO',
+        dataIndex: 'orderCode',
         width: 100,
-        key: 'orderNO',
+        key: 'orderCode',
         align: 'center',
       },
       {
@@ -262,16 +262,16 @@ class OrderMgmt extends Component {
       },
       {
         title: '机构代码',
-        dataIndex: 'orgCode',
+        dataIndex: 'institutionCode',
         width: 100,
-        key: 'orgCode',
+        key: 'institutionCode',
         align: 'center',
       },
       {
         title: '用户账号',
-        dataIndex: 'accountId',
+        dataIndex: 'pointAccount',
         width: 100,
-        key: 'accountId',
+        key: 'pointAccount',
         align: 'center',
       },
       {
@@ -292,15 +292,15 @@ class OrderMgmt extends Component {
       },
       {
         title: '兑换商品',
-        dataIndex: 'goodsList',
+        dataIndex: 'orderItems',
         width: 100,
-        key: 'goodsList',
+        key: 'orderItems',
         align: 'center',
         render: (text, record) => {
           const goodsListView = (
             <div className="goods-list-wrap">
               {record.goodsList.map((item, index) => (
-                <span key={index}>{`${item.goodsId} ${item.goodsName}x${item.goodsNum} ${item.goodsPrice}积分`}</span>
+                <span key={index}>{`${item.code} ${item.name}x${item.quantity} ${item.price}积分`}</span>
               ))}
             </div>
           );
@@ -359,7 +359,7 @@ class OrderMgmt extends Component {
                 </Row>
                 <Row gutter={24}>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('orgCode',{})(
+                    <Form.Item>{getFieldDecorator('institutionId',{})(
                       <Select placeholder="请选择机构代码" style={{ width: '100%' }}>
                         {
                           orgCodeList.length > 0 && orgCodeList.map((item, index) => (
@@ -371,13 +371,13 @@ class OrderMgmt extends Component {
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('accountId',{})(
+                    <Form.Item>{getFieldDecorator('pointAccount',{})(
                       <Input placeholder="请输入用户账号" />
                     )}
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('goodsId',{})(
+                    <Form.Item>{getFieldDecorator('productCode',{})(
                       <Input placeholder="请输入商品编号" />
                     )}
                     </Form.Item>
@@ -385,7 +385,7 @@ class OrderMgmt extends Component {
                 </Row>
                 <Row gutter={24}>
                   <Col span={8}>
-                    <Form.Item>{getFieldDecorator('goodsName',{})(
+                    <Form.Item>{getFieldDecorator('productName',{})(
                       <Input placeholder="请输入商品名称" />
                     )}
                     </Form.Item>
