@@ -22,7 +22,7 @@ import Dict from '../../config/Dict';
 import Util from '../../utils/util';
 
 export function AddEventFun({
-  eventId,
+  activityId,
   show,
   onHide,
   updateList,
@@ -83,7 +83,7 @@ export function AddEventFun({
     
     try {
       const res = await api.eventDetail({
-        id: eventId,
+        id: activityId,
       });
       if (res) {
         const respData = res.data || {};
@@ -250,7 +250,7 @@ export function AddEventFun({
   const saveHandler = (values) => {
     console.log('处理后，保存：', values);
     api.eventSave({
-      id: eventId,
+      id: activityId,
       ...values,
     }).then((res) => {
       if (res) {
@@ -441,7 +441,7 @@ export function AddEventFun({
     return true
   };
 
-  // 上传图片签名
+  // 1.上传图片签名
   const [signData, setSignData] = useState({})
   const requestSignData = async () => {   
     console.log('获取签名')
@@ -463,6 +463,7 @@ export function AddEventFun({
     })
   };
 
+  // 2.上传图片处理
   const handleImgChange = async (info) => {
     console.log('上传信息', info);
     const { status } = info.file;
@@ -478,14 +479,12 @@ export function AddEventFun({
       console.log('上传结束', resp);
       const fileId = resp.fileId 
       const url = resp.url
-
       // 公有图片
       if (url) {
         console.log('上传成功-公有', url);
         info.file.url = url;
         return;
       }
-
       // 私有图片 
       if (fileId) {     
         console.log('上传成功-私有', fileId);  
@@ -494,7 +493,7 @@ export function AddEventFun({
         const respData = fileUrlResp.data || {};
         if (0 === respData.code) {
           console.log('获取url成功', respData);
-          const fileUrl = respData[fileId];
+          const fileUrl = respData[fileId] || '';
           info.file.url = fileUrl;
         } else {
           console.log('获取url失败', fileId);
@@ -502,7 +501,6 @@ export function AddEventFun({
         }   
         return
       }
-
       console.log('上传失败-无法获取fileId或url');  
       message.info('上传失败，请重试')
     } else {
@@ -522,11 +520,11 @@ export function AddEventFun({
   return (
     <React.Fragment>
       <Drawer 
-        title={eventId ? '编辑活动' : '创建活动'} 
+        title={activityId ? '编辑活动' : '创建活动'} 
         footer={
           <div className="create-event-btn">
             {
-              eventId ? (
+              activityId ? (
                 <Button type="primary" disabled={Loading} onClick={() => { saveAndCreateEvent('save') }}>保存</Button>
               ) : (
                 <Button type="primary" disabled={Loading} onClick={() => { saveAndCreateEvent('create')}}>创建活动</Button>
@@ -562,7 +560,7 @@ export function AddEventFun({
             },
           }}
           params={{}} //网络请求参数
-          request={eventId ? requestDetailData : null}
+          request={activityId ? requestDetailData : null}
         >
           <ProFormRadio.Group
             name="activityType"

@@ -224,9 +224,9 @@ class ExternalAccount extends Component {
     const columns = [
       {
         title: '创建时间',
-        dataIndex: 'createTime',
+        dataIndex: 'createDate',
         width: 100,
-        key: 'createTime',
+        key: 'createDate',
         align: 'center',
         render: (text) => (
           <>{text ? moment(text).format('YYYY.MM.DD HH:mm:ss') : '--'}</>
@@ -248,9 +248,9 @@ class ExternalAccount extends Component {
       },
       {
         title: '绑定时间',
-        dataIndex: 'bindTime',
+        dataIndex: 'bindDate',
         width: 100,
-        key: 'bindTime',
+        key: 'bindDate',
         align: 'center',
         render: (text) => (
           <>{text ? moment(text).format('YYYY.MM.DD HH:mm:ss') : '--'}</>
@@ -258,9 +258,9 @@ class ExternalAccount extends Component {
       },
       {
         title: '账号',
-        dataIndex: 'accountId',
+        dataIndex: 'activityAccount',
         width: 100,
-        key: 'accountId',
+        key: 'activityAccount',
         align: 'center',
       },
       {
@@ -272,9 +272,9 @@ class ExternalAccount extends Component {
       },
       {
         title: '可用积分',
-        dataIndex: 'points',
+        dataIndex: 'availablePoint',
         width: 50,
-        key: 'points',
+        key: 'availablePoint',
         align: 'center',
       },
       {
@@ -287,15 +287,18 @@ class ExternalAccount extends Component {
         render: (text) => (
           <>
             {
-              text === '1' ? (
+              text === 'BIND' ? (
                 <Tag color='green'>
                   <span>已绑定</span>
                 </Tag>              
-              ) : (
+              ) : null
+            }
+            {
+              text === 'UNBIND' ? (
                 <Tag color='red'>
                   <span>未绑定</span>
-                </Tag>
-              )
+                </Tag>              
+              ) : null
             }
           </>
         ),
@@ -303,22 +306,25 @@ class ExternalAccount extends Component {
       {
         title: '登录权限',
         width: 100,
-        dataIndex: 'loginStatus',
-        key: 'loginStatus',
+        dataIndex: 'pointAccountStatus',
+        key: 'pointAccountStatus',
         ellipsis: true,
         align: 'center',
         render: (text, record) => (
           <>                        
             {
-              text === '1' ? (     
+              text === 'NORMAL' ? (     
                 <Tooltip title="正常">
                   <span className="event-setting" onClick={() => { this.clickAccountEnable(record); }}>正常</span>
                 </Tooltip>          
-              ) : (
+              ) : null
+            }
+            {
+              text === 'LOCK' ? (     
                 <Tooltip title="锁定">
                   <span className="event-setting" onClick={() => { this.clickAccountDisable(record); }}>锁定</span>
-                </Tooltip>
-              )
+                </Tooltip>         
+              ) : null
             }
           </>
         ),

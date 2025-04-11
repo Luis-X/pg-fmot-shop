@@ -165,22 +165,22 @@ class TrackMgmt extends Component {
       {
         title: '活动ID',
         width: 100,
-        dataIndex: 'activityId',
-        key: 'activityId',
+        dataIndex: 'id',
+        key: 'id',
         align: 'center',
       },
       {
         title: '活动名称',
         width: 100,
-        dataIndex: 'activityName',
-        key: 'activityName',
+        dataIndex: 'name',
+        key: 'name',
         align: 'center',
       },
       {
         title: '创建时间',
-        dataIndex: 'createTime',
+        dataIndex: 'createDate',
         width: 100,
-        key: 'createTime',
+        key: 'createDate',
         align: 'center',
         render: (text) => (
           <>{text ? moment(text).format('YYYY.MM.DD HH:mm:ss') : '--'}</>
@@ -202,9 +202,9 @@ class TrackMgmt extends Component {
       },      
       {
         title: '机构代码',
-        dataIndex: 'institutionId',
+        dataIndex: 'institutionCode',
         width: 50,
-        key: 'institutionId',
+        key: 'institutionCode',
         align: 'center',
       },
       {
@@ -219,16 +219,16 @@ class TrackMgmt extends Component {
       },
       {
         title: '浏览人数',
-        dataIndex: 'count',
+        dataIndex: 'totalUser',
         width: 50,
-        key: 'count',
+        key: 'totalUser',
         align: 'center',
       },
       {
         title: '浏览次数',
-        dataIndex: 'times',
+        dataIndex: 'totalCount',
         width: 50,
-        key: 'times',
+        key: 'totalCount',
         align: 'center',
       },
       {
@@ -292,7 +292,7 @@ class TrackMgmt extends Component {
                       <Select placeholder="请选择机构代码" style={{ width: '100%' }}>
                         {
                           orgCodeList.length > 0 && orgCodeList.map((item, index) => (
-                            <Option key={index} value={item.id}>{item.name}</Option>
+                            <Option key={index} value={item.id}>{item.code}</Option>
                           ))
                         }
                       </Select>

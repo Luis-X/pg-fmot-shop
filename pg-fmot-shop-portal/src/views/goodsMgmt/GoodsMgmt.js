@@ -194,11 +194,6 @@ class GoodsMgmt extends Component {
         width: 100,
         key: 'productCategoryName',
         align: 'center',
-        // render: (text) => (
-        //   <>
-        //     {Dict.getValue('goodsCategory', text, '')}
-        //   </>
-        // ),
       },
       {
         title: '商品类型',

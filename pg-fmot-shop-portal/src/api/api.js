@@ -152,6 +152,11 @@ export const orgCodeList = (param) => {
 };
 
 
+// 异步任务
+export const asyncTaskDetail = (param) => {
+  return client.get(`${URL.asyncTaskDetail}/${param.id}`, {});
+};
+
 
 // 内部账号
 export const internalAccountList = (param) => {
@@ -291,98 +296,16 @@ export const eventCreate = (param) => {
 export const eventSave = (param) => {
   return client.post(URL.eventSave, param);
 };
-export const eventGoodsEdit = (param) => {
-  // return client.post(URL.eventGoodsEdit, param);
-  const res = {
-    data: {
-      code: 0,
-    },
-  };
-  return clientMockData(res, param);
-}
-export const eventGoodsDelete = (param) => {
-  // return client.post(URL.eventGoodsDelete, param);
-  const res = {
-    data: {
-      code: 0,
-    },
-  };
-  return clientMockData(res, param);
-}
+// export const eventGoodsEdit = (param) => {
+//   return client.post(URL.eventGoodsEdit, param);
+// }
+// export const eventGoodsDelete = (param) => {
+//   return client.post(URL.eventGoodsDelete, param);
+// }
 
 // 订单
 export const orderList = (param) => {
-  // return client.post(URL.orderList, param);
-  const res = {
-    data: {
-      code: 0,
-      data: {
-        content: [
-          {
-            id: '1',
-            createTime: '2022-01-01 12:00:00',
-            orderNO: '345694569-04596-0',
-            activityId: '123456',
-            activityName: '活动1',
-            orgCode: '888',
-            accountId: 'test@234214.com',
-            deliveryType: '1',
-            orderStatus: '1',
-            goodsList: [
-              {
-                id: '1',
-                goodsId: '12342134321',
-                goodsName: '商品1',
-                goodsNum: 1,
-                goodsPrice: 100,
-              },
-              {
-                id: '2',
-                goodsId: '12342134321',
-                goodsName: '商品2',
-                goodsNum: 1,
-                goodsPrice: 100,
-              }
-            ],
-            goodsCount: 2,
-            totalPoints: 1000,
-          },
-          {
-            id: '2',
-            createTime: '2022-01-01 12:00:00',
-            orderNO: '345694569-04596-0',
-            activityId: '123456',
-            activityName: '活动1',
-            orgCode: '888',
-            accountId: 'test@234214.com',
-            deliveryType: '2',
-            orderStatus: '2',
-            goodsList: [
-              {
-                id: '1',
-                goodsId: '12342134321',
-                goodsName: '商品商品1',
-                goodsNum: 1,
-                goodsPrice: 100,
-              },
-              {
-                id: '2',
-                goodsId: '12342134321',
-                goodsName: '商品商品2',
-                goodsNum: 1,
-                goodsPrice: 100,
-              }
-            ],
-            goodsCount: 2,
-            totalPoints: 1000,
-          }
-        ],
-        totalElements: 2,
-        message: 'success',
-      }
-    }
-  }
-  return clientMockData(res, param);
+  return client.post(URL.orderList, param);
 };
 export const orderListExport = (param) => {
   return URL.orderListExport;

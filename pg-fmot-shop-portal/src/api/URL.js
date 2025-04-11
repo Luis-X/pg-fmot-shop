@@ -9,30 +9,34 @@ export const uploadFileSignPublic = '/api/uploadFile/signaturePublic'           
 
       
 // 登录、登出
-export const ssoLogin = '/admin/ssoLogin'                                                                          // SSO登陆
-  export const logout = ''                                                                                           // 退出系统
+export const ssoLogin = '/admin/ssoLogin'                                                                                 // SSO登陆
+  export const logout = ''                                                                                                // 退出系统
 
 
 // 通用
-export const orgCodeList = '/api/admin/activity/getAllInstitution'                                                 //机构代码
+export const orgCodeList = '/api/admin/activity/getAllInstitution'                                                        //机构代码
+
+
+// 异步任务
+export const asyncTaskDetail = '/api/admin/asyncTask/detail'                                                              // 异步任务详情
 
 
 // 内部账户
 export const internalAccountList = '/api/admin/pointAccount/selectForAdmin'                                               // 内部账号列表
-  export const internalAccountChangeStatus = '/api/admin/pointAccount/changeStatus'                                       // 内部账号状态变更
-  export const internalAccountImport = '/api/admin/pointAccount/pointAccountImport'                                       // 内部账号导入
-export const internalAccountImportTemplate = '/api/admin/downloadTemplate?templateName=employee_template'               // 内部账号导入模版
-  export const internalAccountImportPoints = '/api/admin/pointAccount/pointAccountImport'                                 // 内部账号积分导入
-export const internalAccountImportTemplatePoints = '/api/admin/downloadTemplate?templateName=employee_point_template'   // 内部账号积分导入模版
+export const internalAccountChangeStatus = '/api/admin/pointAccount/changeStatus'                                         // 内部账号状态变更
+export const internalAccountImport = '/api/admin/pointAccount/pointAccountImport'                                         // 内部账号导入
+export const internalAccountImportTemplate = '/api/admin/downloadTemplate?templateName=employee_template'                 // 内部账号导入模版
+export const internalAccountImportPoints = '/api/admin/pointAccount/pointAccountImport'                                   // 内部账号积分导入
+export const internalAccountImportTemplatePoints = '/api/admin/downloadTemplate?templateName=employee_point_template'     // 内部账号积分导入模版
 
 
 // 外部账号
 export const externalAccountList = '/api/admin/pointAccount/selectForAdmin'                                                // 外部账号列表
-  export const externalAccountChangeStatus = '/api/admin/pointAccount/changeStatus'                                        // 外部账号状态变更
-  export const externalAccountImport = '/api/admin/pointAccount/pointAccountImport'                                        // 外部账号导入
-export const externalAccountImportTemplate = '/api/admin/downloadTemplate?templateName=customer_template'                // 外部账号导入模版
-  export const externalAccountImportPoints = '/api/admin/pointAccount/pointAccountImport'                                  // 外部账号积分导入
-export const externalAccountImportTemplatePoints = '/api/admin/downloadTemplate?templateName=customer_point_template'    // 外部账号积分导入模版
+export const externalAccountChangeStatus = '/api/admin/pointAccount/changeStatus'                                          // 外部账号状态变更
+export const externalAccountImport = '/api/admin/pointAccount/pointAccountImport'                                          // 外部账号导入
+export const externalAccountImportTemplate = '/api/admin/downloadTemplate?templateName=customer_template'                  // 外部账号导入模版
+export const externalAccountImportPoints = '/api/admin/pointAccount/pointAccountImport'                                    // 外部账号积分导入
+export const externalAccountImportTemplatePoints = '/api/admin/downloadTemplate?templateName=customer_point_template'      // 外部账号积分导入模版
 
 
 // 活动
@@ -41,8 +45,8 @@ export const eventCopy = '/api/admin/activity/addActivityForAdmin'              
 export const eventDetail = '/api/admin/activity/detailForAdmin'                                                    // 活动详情
 export const eventCreate = '/api/admin/activity/addActivityForAdmin'                                               // 活动创建
 export const eventSave = '/api/admin/activity/editForAdmin'                                                        // 活动保存
-  export const eventGoodsEdit = '/api/admin/activity/addOrUpdateActivityProduct'                                     // 活动商品新增、更新
-  export const eventGoodsDelete = '/api/admin/activity/deleteActivityProduct'                                        // 活动商品删除
+// export const eventGoodsEdit = '/api/admin/activity/addOrUpdateActivityProduct'                                     // 活动商品新增、更新
+// export const eventGoodsDelete = '/api/admin/activity/deleteActivityProduct'                                        // 活动商品删除
 
 
 // 订单

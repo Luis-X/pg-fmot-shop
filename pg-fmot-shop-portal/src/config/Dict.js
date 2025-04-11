@@ -22,17 +22,6 @@ let dict = {
   },
 
   // 商品
-  goodsCategory: {
-    1: '洗发护理',
-    2: '女性护理',
-    3: '口腔护理',
-    4: '护肤',
-    5: '新品测试',
-    6: '个人护理',
-    7: '织物及家居护理',
-    8: '婴儿护理',
-    9: 'Grooming',
-  },
   goodsType: {
     PHYSICAL_OBJECT: '实物',
     VIRTUAL_OBJECT: '虚拟商品',

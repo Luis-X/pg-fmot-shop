@@ -363,7 +363,7 @@ class OrderMgmt extends Component {
                       <Select placeholder="请选择机构代码" style={{ width: '100%' }}>
                         {
                           orgCodeList.length > 0 && orgCodeList.map((item, index) => (
-                            <Option key={index} value={item.id}>{item.name}</Option>
+                            <Option key={index} value={item.id}>{item.code}</Option>
                           ))
                         }
                       </Select>

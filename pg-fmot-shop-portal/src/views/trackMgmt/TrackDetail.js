@@ -315,7 +315,7 @@ class TrackDetail extends Component {
 
       data: [],
       loadingShow: false,
-      eventID: '',
+      activityId: '',
       queryData: {},
       tabIndex: 0, // 0: 人数 1: 次数 2: 图表
 
@@ -388,12 +388,11 @@ class TrackDetail extends Component {
   requestPeopleListData = () => {
     console.log('人数')
     const self = this;
-    const { pageNo, pageSize, queryData } = self.state;
+    const { pageNo, pageSize, activityId } = self.state;
     self.setState({ loadingShow: true });
     api.trackPeopleList({
-      activityId: '',
+      activityId: activityId,
       type: 'BY_USER',
-      ...queryData,
       page: pageNo,
       size: pageSize,
     }).then((res) => {
@@ -419,12 +418,11 @@ class TrackDetail extends Component {
   requestTimesListData = () => {
     console.log('次数')
     const self = this;
-    const { pageNo, pageSize, queryData } = self.state;
+    const { pageNo, pageSize, activityId } = self.state;
     self.setState({ loadingShow: true });
     api.trackTimesList({
-      activityId: '',
+      activityId: activityId,
       type: 'BY_COUNT',
-      ...queryData,
       page: pageNo,
       size: pageSize,
     }).then((res) => {

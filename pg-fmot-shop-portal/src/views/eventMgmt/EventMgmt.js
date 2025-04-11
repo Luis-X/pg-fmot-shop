@@ -49,7 +49,7 @@ class EventMgmt extends Component {
       totalNum: 10,
 
       isShow: false,
-      eventID: '',
+      activityId: '',
     };
   }
 
@@ -164,7 +164,7 @@ class EventMgmt extends Component {
     const self = this;
     self.setState({
       isShow: true,
-      eventID: record.id,
+      activityId: record.id,
     });
   }
 
@@ -257,7 +257,7 @@ class EventMgmt extends Component {
     const self = this;
     self.setState({
       isShow: true,
-      eventID: '',
+      activityId: '',
     });
   }
 
@@ -366,7 +366,7 @@ class EventMgmt extends Component {
         {
           this.state.isShow ? (
             <AddEventFun
-              eventId={this.state.eventID}
+              activityId={this.state.activityId}
               show={this.state.isShow}
               onHide={() => {
                 this.setState({ 

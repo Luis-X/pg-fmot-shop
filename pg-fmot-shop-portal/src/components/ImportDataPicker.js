@@ -79,64 +79,64 @@ export function ImportDataPicker({ show, type, onHide, updateList }) { // type�
     });
   };
 
-  // 上传文件签名
-  const requestSignData = async (file, typeValue) => {   
-    console.log(file)
-    console.log('获取签名')
-    await api.uploadFileSign().then((res) => {
+  // 1.上传文件签名
+  const requestSignData = (file, typeValue) => {
+    console.log('获取签名', file, typeValue)
+    setFirmLoading(true);
+    api.uploadFileSign().then((res) => {
       if (res) {
         const respData = res.data || {};
         if (0 === respData.code) {
           console.log('获取签名，成功', respData)
-          const signInfo = respData.data || {};
-          const signData = signInfo.params || {}
-          uploadFileStart(file, typeValue, signData);
+          const signData = respData.data || {};
+          const signParams = signData.params || {}
+          requestUploadFile(file, typeValue, signParams);
         } else {
           console.log('获取签名，错误')
+          setFirmLoading(false);
           MyAlert({ errorMsg: respData.message });
         }
       }
     }).catch((err) => {
       console.log('获取签名，失败')
+      setFirmLoading(false);
       message.error(err ? err : '网络请求失败, 请重试!', 2);
     })
   };
 
-  // 上传文件开始
-  const uploadFileStart = async (file, typeValue, signData) => {
+  // 2.上传文件开始
+  const requestUploadFile = (file, typeValue, signParams) => {
+    console.log('上传文件', file, typeValue, signParams)
     const formData = new FormData();
     formData.append('file', file, file.name);
-    formData.append('subscriptionKey', signData.subscriptionKey);
-    formData.append('public', signData.public);
-    formData.append('signature', signData.signature);
-    formData.append('timestamp', signData.timestamp);
-    formData.append('userId', signData.userId);
-    
-    console.log(formData)
-    console.log(typeValue)
-    console.log(signData)
-
-    await api.uploadFilePost(formData).then((res) => {
-      console.log('上传文件，res', res)
+    formData.append('subscriptionKey', signParams.subscriptionKey);
+    formData.append('public', signParams.public);
+    formData.append('signature', signParams.signature);
+    formData.append('timestamp', signParams.timestamp);
+    formData.append('userId', signParams.userId);
+    api.uploadFilePost(formData).then((res) => {
       if (res) {
-        const respData = res.data || '';
-        console.log('上传文件，成功', respData)
+        const respData = res.data || {};        
         const fileId = respData.fileId || '';
         if (fileId) {  
-          importFileForAdmin(fileId, typeValue);          
+          console.log('上传文件，成功', fileId)
+          requestImportFile(fileId, typeValue);          
         } else {
-          console.log('上传文件，失败')
-          message.error('上传失败，请重试')
+          console.log('上传文件，错误')
+          setFirmLoading(false);
+          MyAlert({ errorMsg: '上传文件失败，请重试!' });
         }
       }
     }).catch((err) => {
       console.log('上传文件，失败')
+      setFirmLoading(false);
       message.error(err ? err : '网络请求失败, 请重试!', 2);
     })
   }
 
-  // 导入文件
-  const importFileForAdmin = (fileId, typeValue) => {
+  // 3.导入文件
+  const requestImportFile = (fileId, typeValue) => {
+    console.log('导入文件', fileId, typeValue)
     api.internalAccountImport({
       uploadFileId: fileId,
       type: typeValue,
@@ -145,43 +145,98 @@ export function ImportDataPicker({ show, type, onHide, updateList }) { // type�
         const respData = res.data || {};
         if (0 === respData.code) {
           console.log('导入文件，成功', respData)
-          const importInfo = respData.data || {};
-          const importId = importInfo.id || '';
-          // 轮询查询导入结果
-          console.log('轮询查询导入结果', importId)
+          const importData = respData.data || {};
+          const taskId = importData.id || '';
+          requestImportFileResult(taskId);
         } else {
           console.log('导入文件，错误')
+          setFirmLoading(false);
           MyAlert({ errorMsg: respData.message });
         }
       }
     }).catch((err) => {
       console.log('导入文件，失败')
+      setFirmLoading(false);
       message.error(err ? err : '网络请求失败, 请重试!', 2);
     }) 
   }
 
-   // 轮询查询导入结果
-   const requestImportResult = async (taskId) => {
-    api.internalAccountImport({
-      taskId: taskId,
+   // 4.轮询查询导入结果
+   const requestImportFileResult = (taskId) => {
+    console.log('查询导入结果', taskId)
+    api.asyncTaskDetail({
+      id: taskId,
     }).then((res) => {
       if (res) {
         const respData = res.data || {};
         if (0 === respData.code) {
-          console.log('导入文件，成功', respData)
-          const importInfo = respData.data || {};
-          const importId = importInfo.id || '';
-          // 轮询查询导入结果
-          console.log('轮询查询导入结果', importId)
+          console.log('查询导入结果', respData)
+          const resultData = respData.data || {};
+          handleImportResult(resultData, taskId);
         } else {
-          console.log('导入文件，错误')
+          console.log('查询导入结果，错误')
+          setFileData(null);
+          setFileName('');
+          setFirmLoading(false);
           MyAlert({ errorMsg: respData.message });
         }
       }
     }).catch((err) => {
-      console.log('导入文件，失败')
+      console.log('查询导入结果，失败')
+      setFirmLoading(false);
       message.error(err ? err : '网络请求失败, 请重试!', 2);
     }) 
+  }
+
+  // 5.处理查询结果
+  const handleImportResult = (data, taskId) => {
+    const status = data.status || '';
+    const isSuccess = data.result;
+    const resultTxt = data.resultTxt || '';
+
+    if (status === 'INIT') {
+      console.log('查询导入结果，初始化')
+      setTimeout(() => {
+        requestImportFileResult(taskId);
+      }, 3000);
+    } else if (status === 'DOING') {            
+      console.log('查询导入结果，进行中')
+      setTimeout(() => {
+        requestImportFileResult(taskId);
+      }, 3000);
+    } else if (status === 'DONE') {
+      console.log('查询导入结果，完成')
+      setFirmLoading(false);
+      document.getElementById('file').value = '';
+      setFileData(null);
+      setFileName('');
+      updateList();
+
+      if (isSuccess) {
+        console.log('查询导入结果，成功')
+        setFirmLoading(false);
+        Modal.success({
+          title: '提示',
+          content: '文件导入成功！',
+          onOk: () => {
+            setFileData(null);
+            setFileName('');
+            onHide();
+          },
+        });
+      } else {
+        console.log('查询导入结果，失败')
+        Modal.error({
+          width: 610,
+          title: '导入数据错误',
+          content: resultTxt,
+          okText: '返回',
+          onOk: () => {},
+        });
+      }
+    } else {
+      console.log('查询导入结果，未知')
+    }
   }
 
   /**
