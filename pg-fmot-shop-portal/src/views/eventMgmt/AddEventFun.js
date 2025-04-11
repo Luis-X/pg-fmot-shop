@@ -63,7 +63,7 @@ export function AddEventFun({
           let list = [];
           respData.data.forEach((item) => {
             list.push({
-              label: item.name,
+              label: item.code,
               value: item.id,
             });
           })
@@ -82,7 +82,9 @@ export function AddEventFun({
     let detailData = {};
     
     try {
-      const res = await api.eventDetail(eventId);
+      const res = await api.eventDetail({
+        id: eventId,
+      });
       if (res) {
         const respData = res.data || {};
         if (0 === respData.code) {
@@ -97,15 +99,35 @@ export function AddEventFun({
                 imageUrl: Util.imgUrlsToFiles(imgUrls),
                 url: item.url,
               }
+              if (item.id) {
+                newItem.id = item.id;
+              }
               newBannerList.push(newItem);
             });
             detailData.activityCarouselImages = newBannerList;
+
+            // 发货方式
+            // SELF_PICKUP: '自提', POST: '邮寄', BOTH: '自提和邮寄',
+            let deliveryType = detailData.deliveryType;
+            let deliveryTypeQuery = [];
+            if (deliveryType) {
+              if ('BOTH' === deliveryType) {
+                deliveryTypeQuery = ['SELF_PICKUP', 'POST'];
+              } else {
+                deliveryTypeQuery = [deliveryType];
+              }             
+            }
+            detailData.deliveryType = deliveryTypeQuery
 
             // 商品列表
             let goodsList = detailData.activityProducts || [];
             let newGoodsList = [];
             goodsList.forEach((item) => {
-              newGoodsList.push(item);
+              let goodsObj = item.product;
+              if (item.discountPrice) {
+                goodsObj.discountPrice = item.discountPrice;
+              }
+              newGoodsList.push(goodsObj);
             });
             setGoodsListData(newGoodsList);
 
@@ -136,6 +158,19 @@ export function AddEventFun({
         values.endDate = endTime;
       }      
 
+      // 发货方式
+      // SELF_PICKUP: '自提', POST: '邮寄', BOTH: '自提和邮寄',
+      let deliveryTypeQuery = '';
+      let deliveryType = values.deliveryType.join(',');
+      if (deliveryType) {
+        if (deliveryType.includes('SELF_PICKUP') && deliveryType.includes('POST')) {
+          deliveryTypeQuery = 'BOTH';
+        } else {
+          deliveryTypeQuery = deliveryType;
+        }
+      }
+      values.deliveryType = deliveryTypeQuery
+
       // 轮播图
       let bannerList = values.activityCarouselImages || [];      
       if (bannerList.length <= 0) {
@@ -151,18 +186,31 @@ export function AddEventFun({
           imageUrl: imgUrl,
           url: item.url,
         }
+        if (item.id) {
+          newItem.id = item.id;
+        }
         newBannerList.push(newItem);
       });
       values.activityCarouselImages = newBannerList;
 
       // 商品列表
-      let goodsList = goodsListData || [];      
+      let goodsList = goodsListData || [];  
+      let activityProductsQuery = [];    
       if (goodsList.length <= 0) {
         message.error('请添加活动商品！', 2);
         setLoading(false);
         return;
       }
-      values.activityProducts = goodsList;
+      goodsList.forEach((item) => {
+        const itemObj = {
+          productId: item.id,
+        }
+        if (item.discountPrice) {
+          itemObj.discountPrice = item.discountPrice;
+        }
+        activityProductsQuery.push(itemObj);
+      })
+      values.activityProducts = activityProductsQuery;
       
       // 操作
       if ('save' === type) {
@@ -201,24 +249,25 @@ export function AddEventFun({
   // 保存
   const saveHandler = (values) => {
     console.log('处理后，保存：', values);
-    // api.eventSave({
-    //   ...values,
-    // }).then((res) => {
-    //   if (res) {
-    //     setLoading(false);
-    //     const respData = res.data || {};
-    //     if (0 === respData.code) {
-    //       onHide();
-    //       updateList();
-    //       message.success('保存成功!', 3);
-    //     } else {
-    //       MyAlert({ errorMsg: respData.message });
-    //     }
-    //   }
-    // }).catch((err) => {
-    //   setLoading(false);
-    //   message.error(err ? err : '网络请求失败, 请重试!', 2);
-    // });
+    api.eventSave({
+      id: eventId,
+      ...values,
+    }).then((res) => {
+      if (res) {
+        setLoading(false);
+        const respData = res.data || {};
+        if (0 === respData.code) {
+          onHide();
+          updateList();
+          message.success('保存成功!', 3);
+        } else {
+          MyAlert({ errorMsg: respData.message });
+        }
+      }
+    }).catch((err) => {
+      setLoading(false);
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    });
   };
 
   // 商品列表
@@ -272,17 +321,20 @@ export function AddEventFun({
   ];
 
   // 商品搜索列表
-  const requestGoodsSearchListData = async (searchText) => {
+  const requestGoodsSearchListData = async (searchData) => {
+    const searchText = searchData.keyWords || ''
     let list = [];
     try {
       const res = await api.goodsSearchList({
-        searchText: searchText,
+        code: searchText,
+        page: 0,
+        size: 100,
       });
       if (res) {
         const respData = res.data || {};
         if (0 === respData.code) {
           console.log('---goodsList---', respData.data);
-          let dataList = respData.data || []
+          let dataList = respData.data.content || []
           if (dataList.length > 0) {
             list = goodsSelectOptions(dataList);
             setGoodsSearchList(dataList);
@@ -302,7 +354,7 @@ export function AddEventFun({
     let newList = [];
     list.forEach((item) => {
       let newItem = {
-        label: item.goodsName,
+        label: item.name,
         value: item.id,
       }
       newList.push(newItem);

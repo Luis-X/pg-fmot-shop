@@ -79,6 +79,111 @@ export function ImportDataPicker({ show, type, onHide, updateList }) { // type�
     });
   };
 
+  // 上传文件签名
+  const requestSignData = async (file, typeValue) => {   
+    console.log(file)
+    console.log('获取签名')
+    await api.uploadFileSign().then((res) => {
+      if (res) {
+        const respData = res.data || {};
+        if (0 === respData.code) {
+          console.log('获取签名，成功', respData)
+          const signInfo = respData.data || {};
+          const signData = signInfo.params || {}
+          uploadFileStart(file, typeValue, signData);
+        } else {
+          console.log('获取签名，错误')
+          MyAlert({ errorMsg: respData.message });
+        }
+      }
+    }).catch((err) => {
+      console.log('获取签名，失败')
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    })
+  };
+
+  // 上传文件开始
+  const uploadFileStart = async (file, typeValue, signData) => {
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    formData.append('subscriptionKey', signData.subscriptionKey);
+    formData.append('public', signData.public);
+    formData.append('signature', signData.signature);
+    formData.append('timestamp', signData.timestamp);
+    formData.append('userId', signData.userId);
+    
+    console.log(formData)
+    console.log(typeValue)
+    console.log(signData)
+
+    await api.uploadFilePost(formData).then((res) => {
+      console.log('上传文件，res', res)
+      if (res) {
+        const respData = res.data || '';
+        console.log('上传文件，成功', respData)
+        const fileId = respData.fileId || '';
+        if (fileId) {  
+          importFileForAdmin(fileId, typeValue);          
+        } else {
+          console.log('上传文件，失败')
+          message.error('上传失败，请重试')
+        }
+      }
+    }).catch((err) => {
+      console.log('上传文件，失败')
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    })
+  }
+
+  // 导入文件
+  const importFileForAdmin = (fileId, typeValue) => {
+    api.internalAccountImport({
+      uploadFileId: fileId,
+      type: typeValue,
+    }).then((res) => {
+      if (res) {
+        const respData = res.data || {};
+        if (0 === respData.code) {
+          console.log('导入文件，成功', respData)
+          const importInfo = respData.data || {};
+          const importId = importInfo.id || '';
+          // 轮询查询导入结果
+          console.log('轮询查询导入结果', importId)
+        } else {
+          console.log('导入文件，错误')
+          MyAlert({ errorMsg: respData.message });
+        }
+      }
+    }).catch((err) => {
+      console.log('导入文件，失败')
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    }) 
+  }
+
+   // 轮询查询导入结果
+   const requestImportResult = async (taskId) => {
+    api.internalAccountImport({
+      taskId: taskId,
+    }).then((res) => {
+      if (res) {
+        const respData = res.data || {};
+        if (0 === respData.code) {
+          console.log('导入文件，成功', respData)
+          const importInfo = respData.data || {};
+          const importId = importInfo.id || '';
+          // 轮询查询导入结果
+          console.log('轮询查询导入结果', importId)
+        } else {
+          console.log('导入文件，错误')
+          MyAlert({ errorMsg: respData.message });
+        }
+      }
+    }).catch((err) => {
+      console.log('导入文件，失败')
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    }) 
+  }
+
   /**
    * 提交
    */
@@ -103,7 +208,8 @@ export function ImportDataPicker({ show, type, onHide, updateList }) { // type�
         typeValue = 'IMPORT_CUSTOMER_POINT_FOR_ADMIN';
       }
       
-      importForAdmin(file, typeValue);
+      // importForAdmin(file, typeValue);
+      requestSignData(file, typeValue)
     }
   };
 

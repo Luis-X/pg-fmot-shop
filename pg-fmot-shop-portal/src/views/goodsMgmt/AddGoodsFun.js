@@ -85,16 +85,28 @@ export function AddGoodsFun({
           let bannerPoster = [];
           let bannerVideo = [];
           let bannerImgs = [];
-          const bannerPosterUrls = detailData.videoImgUrl ? [detailData.videoImgUrl] : [];
-          bannerPoster = Util.imgUrlsToFiles(bannerPosterUrls);
-          const bannerVideoUrls = detailData.videoUrl ? [detailData.videoUrl] : [];
-          bannerVideo = Util.imgUrlsToFiles(bannerVideoUrls);
-          const bannerImgsUrls = detailData.imgUrl ? [detailData.imgUrl] : [];
-          bannerImgs = Util.imgUrlsToFiles(bannerImgsUrls);
+          detailData.productCarouselImages.forEach((item) => {
+            const id = item.id || '';
+            const bannerPosterUrls = item.videoImgUrl ? [item.videoImgUrl] : [];
+            if (bannerPosterUrls.length > 0) {
+              bannerPoster = Util.imgUrlsToFiles(bannerPosterUrls, id);
+            }
+
+            const bannerVideoUrls = item.videoUrl ? [item.videoUrl] : [];
+            if (bannerVideoUrls.length > 0) {
+              bannerVideo = Util.imgUrlsToFiles(bannerVideoUrls, id);
+            }
+
+            const bannerImgsUrls = item.imgUrl ? [item.imgUrl] : [];
+            if (bannerImgsUrls.length > 0) {
+              bannerImgs = Util.imgUrlsToFiles(bannerImgsUrls, id);
+            }   
+                                    
+          });
           detailData.productCarouselImages = [{
             videoImgUrl: bannerPoster,
             videoUrl: bannerVideo,
-            imgUrl: bannerImgs,
+            imgUrl: bannerImgs
           }];
 
           // 视频
@@ -117,12 +129,13 @@ export function AddGoodsFun({
   };
 
   // 创建、保存
+  // FIXME: 轮播图回传ID问题，需要处理
   const saveAndCreateGoods = (type) => {
     setLoading(true);
     form.validateFields().then((values) => {
       console.log('处理前：', values);
 
-      // // 预览图
+      // 预览图
       const previewFiles = values.previewUrl || [];
       values.previewUrl = Util.filesToImgUrls(previewFiles)[0] || '';
 
@@ -130,28 +143,41 @@ export function AddGoodsFun({
       let bannerPoster = '';
       let bannerVideo = '';
       let bannerImgs = [];
-      let newBannerList = []
+      let bannerQueryList = []
       values.productCarouselImages.forEach((item) => {
+
+        console.log('---item---', item);
         const bannerPosterFiles = item.videoImgUrl || [];
         bannerPoster = Util.filesToImgUrls(bannerPosterFiles)[0] || '';
-        const bannerVideoFiles = item.videoUrl || [];
-        bannerVideo = Util.filesToImgUrls(bannerVideoFiles)[0] || '';
-        const bannerImgFiles = item.imgUrl || [];
-        bannerImgs = Util.filesToImgUrls(bannerImgFiles) || [];
-      });
 
-      // banner-视频
-      newBannerList.push({
-        videoUrl: bannerPoster,
-        videoImgUrl: bannerVideo,
-      })
-      // banner-图片
-      bannerImgs.forEach((item) => {
-        newBannerList.push({
-          imgUrl: item,
+        const bannerVideoFiles = item.videoUrl || [];
+        const bannerVideoId = bannerVideoFiles[0] ? bannerVideoFiles[0].id : '';
+        console.log('---bannerVideoId---', bannerVideoId);
+        bannerVideo = Util.filesToImgUrls(bannerVideoFiles)[0] || '';
+
+        const bannerImgFiles = item.imgUrl || [];;
+        bannerImgs = Util.filesToImgUrls(bannerImgFiles) || [];
+        
+        // banner-视频、封面
+        if (bannerVideo || bannerPoster) {
+          const videoObj = {
+            videoImgUrl: bannerPoster,
+            videoUrl: bannerVideo,
+          }
+          if (bannerVideoId) {
+            videoObj.id = bannerVideoId;
+          }
+          bannerQueryList.push(videoObj);
+        }
+        // banner-图片
+        bannerImgs.forEach((item) => {
+          const imbObj = {
+            imgUrl: item,
+          }
+          bannerQueryList.push(imbObj)         
         })
-      })
-      values.productCarouselImages = newBannerList;
+      });
+      values.productCarouselImages = bannerQueryList;
 
       // 视频
       const videoFiles = values.productVideo || [];
@@ -199,8 +225,8 @@ export function AddGoodsFun({
   const saveHandler = (values) => {
     console.log('处理后，保存：', values);
     api.goodsSave({
-      ...values,
       id: goodsId,
+      ...values,      
     }).then((res) => {
       if (res) {
         setLoading(false);

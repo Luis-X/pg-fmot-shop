@@ -22,6 +22,12 @@ let RoutePath = {
     window.location.origin === 'https://ministore.shenghuojia.com'
       ? 'https://api-shared-prd.cn-pgcloud.com/sso/v3/logout?subscription-key=6ff8f86edd5541a5983ff7865de30183&app=rdfmotshopping' //生产
       : 'https://api-shared-qa.cn-pgcloud.com/sso/v3/logout?subscription-key=12047b54518b42448b20aeb394edca24&app=rdfmotshopping', //qa
+
+  //H5活动地址
+  ActivityUrl:
+    window.location.origin === 'https://ministore.shenghuojia.com'
+      ? 'https://ministore.shenghuojia.com/index' //生产
+      : 'https://ministore-qa.shenghuojia.com/index', //qa
 };
 
 export default RoutePath;

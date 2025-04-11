@@ -28,6 +28,7 @@ import { AddEventFun } from './AddEventFun';
 import zhCN from 'antd/es/locale/zh_CN';
 import Dict from '../../config/Dict';
 import Util from '../../utils/util';
+import RoutePath from '../../config/RoutePath';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -173,19 +174,66 @@ class EventMgmt extends Component {
     console.log(id)
     const self = this;
     self.setState({ loadingShow: true });
-    api.eventCopy({
+    api.eventDetail({
       id: id,
-    }).then((res) => {
-      self.setState({ loadingShow: false });
-      if (res) {
-        const respData = res.data || {};
-        if (0 === respData.code) {
-          notification['success']({
-            message: '复制活动成功！'
+    }).then((detailRes) => {
+      if (detailRes) {
+        const detailRespData = detailRes.data || {};
+        if (0 === detailRespData.code) {
+          const detailData = detailRespData.data || {};
+          // 轮播图
+          let activityCarouselImagesQuery = [];
+          if (detailData.activityCarouselImages && detailData.activityCarouselImages.length > 0) {
+            activityCarouselImagesQuery = detailData.activityCarouselImages.map((item) => {
+              return {
+                imageUrl: item.imageUrl,
+                url: item.url,
+              }
+            })
+          }
+          // 活动商品
+          let activityProductsQuery = [];
+          if (detailData.activityProducts && detailData.activityProducts.length > 0) {
+            activityProductsQuery = detailData.activityProducts.map((item) => {
+              return {
+                productId: item.product.id,
+                discountPrice: item.discountPrice,
+              }
+            })
+          }
+          const copyParams = {
+            activityType: detailData.activityType,
+            name: detailData.name,
+            institutionId: detailData.institutionId,
+            beginDate: detailData.beginDate,
+            endDate: detailData.endDate,
+            deliveryType: detailData.deliveryType,
+            informedConsentForm: detailData.informedConsentForm,
+            contactCustomerServiceInfo: detailData.contactCustomerServiceInfo,
+            collectionInstructions: detailData.collectionInstructions,
+            activityCarouselImages: activityCarouselImagesQuery,
+            maxQuantity: detailData.maxQuantity,
+            activityProducts: activityProductsQuery
+          }
+          api.eventCopy(copyParams).then((createRes) => {
+            self.setState({ loadingShow: false });
+            if (createRes) {
+              const createRespData = createRes.data || {};
+              if (0 === createRespData.code) {
+                notification['success']({
+                  message: '复制活动成功！'
+                });
+                self.requestListData();
+              } else {
+                MyAlert({ errorMsg: createRespData.message });
+              }
+            }
+          }).catch((err) => {
+            self.setState({ loadingShow: false });
+            message.error(err ? err : '网络请求失败, 请重试!', 2);
           });
-          self.requestListData();
         } else {
-          MyAlert({ errorMsg: respData.message });
+          MyAlert({ errorMsg: detailRespData.message });
         }
       }
     }).catch((err) => {
@@ -283,6 +331,9 @@ class EventMgmt extends Component {
         width: 100,
         key: 'link',
         align: 'center',
+        render: (text, record) => (
+          <>{`${RoutePath.ActivityUrl}?id=${record.id}`}</>
+        ),
       },
       {
         title: '机构代码',
@@ -385,7 +436,7 @@ class EventMgmt extends Component {
                       <Select placeholder="请选择机构代码" style={{ width: '100%' }}>
                         {
                           orgCodeList.length > 0 && orgCodeList.map((item, index) => (
-                            <Option key={index} value={item.id}>{item.name}</Option>
+                            <Option key={index} value={item.id}>{item.code}</Option>
                           ))
                         }
                       </Select>

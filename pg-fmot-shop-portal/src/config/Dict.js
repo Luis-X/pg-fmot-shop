@@ -46,7 +46,7 @@ let dict = {
   deliveryType: {
     SELF_PICKUP: '自提',
     POST: '邮寄',
-    BOTH: '自提和邮寄',
+    // BOTH: '自提和邮寄', （代码中处理，同时选中 SELF_PICKUP 和 POST ）
   },
 
   // 埋点

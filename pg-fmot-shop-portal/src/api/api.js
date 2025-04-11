@@ -9,6 +9,7 @@ export const client = axios.create({
   // baseURL: '/',
   timeout: 180000,
   headers: {
+    'Access-Control-Allow-Origin': '*',
     'Content-Type': 'application/json;charset=utf-8',
     'X-Content-Type-Options': 'nosniff',
     Pragma: 'no-cache',
@@ -88,6 +89,10 @@ export const setToken = () => {
 export const uploadFile = (param) => {
   return URL.uploadFile;
 };
+// 上传文件 post
+export const uploadFilePost = (param) => {
+  return client.post(URL.uploadFile, param);
+};
 // 根据fileId获取url
 export const uploadFileGetUrl = (param) => {
   return client.post(URL.uploadFileGetUrl, param);
@@ -143,27 +148,7 @@ export const logout = (param) => {
 
 // 通用
 export const orgCodeList = (param) => {
-  // return client.get(URL.orgCodeList, param);
-  const res = {
-    data: {
-      code: 0,
-      data: [
-        {
-          id: 1,
-          code: '机构1',
-        },
-        {
-          id: 2,
-          code: '机构2',
-        },
-        {
-          id: 3,
-          code: '机构3',
-        }
-      ],
-    },
-  };
-  return clientMockData(res, param);
+  return client.get(URL.orgCodeList, param);
 };
 
 
@@ -218,7 +203,7 @@ export const internalAccountImport = (param) => {
   return client.post(URL.internalAccountImport, param);
 };
 export const internalAccountImportTemplate = (param) => {
-  return client.get(URL.internalAccountImportTemplate);
+  return URL.internalAccountImportTemplate;
 }
 export const internalAccountImportPoints = (param) => {
   return client.post(URL.internalAccountImportPoints, param);
@@ -291,139 +276,20 @@ export const externalAccountImportTemplatePoints = (param) => {
 }
 
 // 活动
-export const eventAllInstitution = (param) => {
-  // return client.get(URL.eventAllInstitution, param);
-  const res = {
-    data: {
-      code: 0,
-      data: [
-        {
-          id: 1,
-          name: '机构1',
-        }
-      ],
-    },
-  };
-  return clientMockData(res, param);
-}
 export const eventList = (param) => {
   return client.post(URL.eventList, param);
-  // const res = {
-  //   data: {
-  //     code: 0,
-  //     data: {
-  //       content: [
-  //         {
-  //           id: 1,
-  //           createTime: '2020-08-10 11:11:11',            
-  //           startTime: '2020-08-10 11:11:11',
-  //           endTime: '2021-08-10 11:11:11',
-  //           activityId: '123456',
-  //           activityName: '活动1',
-  //           activityType: '1',
-  //           activityStatus: '1',
-  //           link: 'https://www.baidu.com',
-  //           orgCode: '888',              
-  //         },
-  //         {
-  //           id: 2,
-  //           createTime: '2020-08-10 11:11:11',            
-  //           startTime: '2020-08-10 11:11:11',
-  //           endTime: '2021-08-10 11:11:11',
-  //           activityId: '123456',
-  //           activityName: '活动1',
-  //           activityType: '1',
-  //           activityStatus: '2',
-  //           link: 'https://www.baidu.com',
-  //           orgCode: '888',              
-  //         },
-  //         {
-  //           id: 3,
-  //           createTime: '2020-08-10 11:11:11',            
-  //           startTime: '2020-08-10 11:11:11',
-  //           endTime: '2021-08-10 11:11:11',
-  //           activityId: '123456',
-  //           activityName: '活动1',
-  //           activityType: '1',
-  //           activityStatus: '3',
-  //           link: 'https://www.baidu.com',
-  //           orgCode: '888',              
-  //         }
-  //       ],
-  //       totalElements: 2,
-  //       message: 'success',
-  //     }
-  //   }
-  // };
-  // return clientMockData(res, param);
 };
 export const eventCopy = (param) => {
-  // return client.post(URL.eventCopy, param);
-  const res = {
-    data: {
-      code: 0,
-    },
-  };
-  return clientMockData(res, param);
+  return client.post(URL.eventCopy, param);
 };
 export const eventDetail = (param) => {
-  // return client.post(URL.eventDetail, param);
-  const res = {
-    data: {
-      code: 0,
-      data: {
-        activityType: '2',
-        activityName: "活动名称",
-        orgCode: "123456789",
-        startTime: "2023-01-01",
-        endTime: "2023-01-31",
-        deliveryType: ['1', '2'],
-        informNote: "活动通知",
-        serviceNote: "活动服务",
-        activityDesc: "活动描述",
-        activityBanner: [{
-          bannerImg: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-          bannerLink: "https://www.baidu.com"
-        }],
-        goodsLimitCount: 10,
-        goodsList: [
-          {
-            id: 100,
-            goodsCode: 111,
-            goodsName: '商品名称1',
-            goodsPrice: '100',
-            goodsActivityPrice: '100',
-          },
-          {
-            id: 200,
-            goodsCode: 222,
-            goodsName: '商品名称2',
-            goodsPrice: '200',
-            goodsActivityPrice: '200',
-          }
-        ]
-      }
-    }
-  }
-  return clientMockData(res, param);
+  return client.post(URL.eventDetail, param);
 };
 export const eventCreate = (param) => {
-  // return client.post(URL.eventCreate, param);
-  const res = {
-    data: {
-      code: 0,
-    },
-  };
-  return clientMockData(res, param);
+  return client.post(URL.eventCreate, param);
 };
 export const eventSave = (param) => {
-  // return client.post(URL.eventSave, param);
-  const res = {
-    data: {
-      code: 0,
-    },
-  };
-  return clientMockData(res, param);
+  return client.post(URL.eventSave, param);
 };
 export const eventGoodsEdit = (param) => {
   // return client.post(URL.eventGoodsEdit, param);
@@ -524,162 +390,22 @@ export const orderListExport = (param) => {
 
 // 商品
 export const goodsSearchList = (param) => {
-  // return client.post(URL.goodsSearchList, param);
-  const res = {
-    data: {
-      code: 0,
-      data: [
-        {
-          id: 100,
-          goodsCode: 111,
-          goodsName: '商品名称1',
-          goodsPrice: '100',
-          // goodsActivityPrice: '100',
-        },
-        {
-          id: 200,
-          goodsCode: 222,
-          goodsName: '商品名称2',
-          goodsPrice: '200',
-          goodsActivityPrice: '200',
-        },
-        {
-          id: 300,
-          goodsCode: 333,
-          goodsName: '商品名称3',
-          goodsPrice: '300',
-          goodsActivityPrice: '300',
-        },
-        {
-          id: 400,
-          goodsCode: 444,
-          goodsName: '商品名称4',
-          goodsPrice: '400',
-          goodsActivityPrice: '400',
-        }
-      ],
-    },
-  };
-  return clientMockData(res, param);
+  return client.post(URL.goodsSearchList, param);
 };
 export const goodsList = (param) => {
   return client.post(URL.goodsList, param);
-  // const res = {
-  //   data: {
-  //     code: 0,
-  //     data: {
-  //       content: [
-  //         {
-  //           id: '8888888',
-  //           name: '商品1',
-  //           price: '2000',
-  //           category: '1',
-  //           type: '1',              
-  //         },
-  //         {
-  //           id: '999999',
-  //           name: '商品2',
-  //           price: '2000',
-  //           category: '2',
-  //           type: '2',              
-  //         }
-  //       ],
-  //       totalElements: 2,
-  //       message: 'success',
-  //     }
-  //   }
-  // };
-  // return clientMockData(res, param);
 };
 export const goodsCategoryList = (param) => {
   return client.get(URL.goodsCategoryList, param);
-  // const res = {
-  //   data: {
-  //     code: 0,
-  //     data: [
-  //       {
-  //         id: 1,
-  //         name: '洗发护理',
-  //       },
-  //       {
-  //         id: 2,
-  //         name: '女性护理',
-  //       },
-  //       {
-  //         id: 3,
-  //         name: '口腔护理',
-  //       },
-  //       {
-  //         id: 4,
-  //         name: '护肤',
-  //       },
-  //       {
-  //         id: 5,
-  //         name: '新品测试',
-  //       },
-  //       {
-  //         id: 6,
-  //         name: '个人护理',
-  //       },
-  //       {
-  //         id: 7,
-  //         name: '织物及家居护理',
-  //       },
-  //       {
-  //         id: 8,
-  //         name: '婴儿护理',
-  //       },
-  //       {
-  //         id: 9,
-  //         name: 'Grooming',
-  //       },
-  //     ],
-  //   },
-  // };
-  // return clientMockData(res, param);
 };
 export const goodsDetail = (param) => {
-  // return client.post(URL.goodsDetail, param);
-  const res = {
-    data: {
-      code: 0,
-      data: {
-        goodsType: '2',
-        goodsCategory: 1,
-        goodsCode: '3',
-        goodsName: '4',
-        goodsPrice: '5.5',
-        goodsTag: '6',
-        goodsImg: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        goodsVideo: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        goodsIntroImg: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        bannerImgs: [
-          'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        ],
-        bannerPoster: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        bannerVideo: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-      },
-    },
-  };
-  return clientMockData(res, param);
+  return client.post(URL.goodsDetail, param);
 };
 export const goodsCreate = (param) => {
   return client.post(URL.goodsCreate, param);
-  // const res = {
-  //   data: {
-  //     code: 0,
-  //   },
-  // };
-  // return clientMockData(res, param);
 };
 export const goodsSave = (param) => {
-  // return client.post(URL.goodsSave, param);
-  const res = {
-    data: {
-      code: 0,
-    },
-  };
-  return clientMockData(res, param);
+  return client.post(URL.goodsSave, param);
 };
 
 // 数据统计
