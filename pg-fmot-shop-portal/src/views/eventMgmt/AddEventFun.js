@@ -413,8 +413,8 @@ export function AddEventFun({
 
   // 保存商品
   const goodsSaveWithData = async (rowKey, data, row) => {
-    console.log(`saved ${rowKey}`, data, row);
-    await waitTime(1000);
+    console.log(`编辑商品： ${rowKey}`, data, row);
+    await waitTime(300);
   }
 
   const waitTime = (time) => {
@@ -533,7 +533,7 @@ export function AddEventFun({
             <Button onClick={onHide}>取消</Button>
           </div>
         } 
-        width={920} 
+        width={1020} 
         open={show}
         onClose={() => { onHide() }} 
         bodyStyle={{ paddingBottom: 80 }}

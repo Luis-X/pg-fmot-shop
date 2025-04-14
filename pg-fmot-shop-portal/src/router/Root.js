@@ -23,7 +23,7 @@ const Root = () => (
       <Route exact path={RoutePath.Index} component={SsoLogin} />
       <Route exact path={RoutePath.Callback} component={SsoCallback} />
 
-      <Route exact path={RoutePath.ResultWarning + '/:id'} component={ResultWarning} />
+      <Route exact path={RoutePath.ResultWarning + '/:code'} component={ResultWarning} />
       <Route exact path={RoutePath.ResultCodePage + '/:code'} component={ResultCodePage} />
 
       <AuthRoute exact path={RoutePath.InternalAccount} component={InternalAccount} />
@@ -32,7 +32,7 @@ const Root = () => (
       <AuthRoute exact path={RoutePath.OrderMgmt} component={OrderMgmt} />
       <AuthRoute exact path={RoutePath.GoodsMgmt} component={GoodsMgmt} />
       <AuthRoute exact path={RoutePath.TrackMgmt} component={TrackMgmt} />
-      <AuthRoute exact path={RoutePath.TrackDetail + '/:id'} component={TrackDetail} />
+      <Route exact path={RoutePath.TrackDetail + '/:id'} component={TrackDetail} />
     </Switch>
   </Router>
 );

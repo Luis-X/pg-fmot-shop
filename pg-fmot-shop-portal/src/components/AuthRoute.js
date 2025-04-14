@@ -2,6 +2,8 @@ import { Route, Redirect } from 'react-router-dom';
 
 // 使用props 接收值
 export default function AuthRoute(props) {
+  console.log('AuthRoute');
+  console.log(props);
   const Com = props.component;
   return (
     <Route

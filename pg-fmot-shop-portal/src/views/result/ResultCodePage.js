@@ -10,9 +10,11 @@ class ResultCodePage extends Component {
     };
   }
 
-  async componentDidMount() {
-    let code = this.props.match.params.code || '';
-    this.setState({ code });
+  componentDidMount() {
+    const match = this.props.match || {};
+    const params = match.params || {};
+    const code = params.code || '';
+    this.setState({ code })
   }
 
   render() {

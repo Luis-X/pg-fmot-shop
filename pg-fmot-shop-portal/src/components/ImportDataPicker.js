@@ -8,78 +8,14 @@ import $ from 'jquery';
 // import axios from "axios";
 import Util from '../utils/util';
 
-export function ImportDataPicker({ show, type, onHide, updateList }) { // type【account: 导入账号 points: 导入积分】
+// type: 101-内部账号 102-内部积分 201-外部账号 202-外部积分
+export function ImportDataPicker({ show, type, onHide, updateList }) {
   const [fileData, setFileData] = useState(null);
   const [fileName, setFileName] = useState('');
-  const [firmLoading, setFirmLoading] = useState(false); // 导入数据成功loading
+  const [firmLoading, setFirmLoading] = useState(false);
   const [form] = Form.useForm();
 
-  /**
-   * 导入excel的函数
-   * @param {*} file
-   */
-  const importForAdmin = (file, typeValue) => {
-    setFirmLoading(true);
-    let formData = new FormData();
-    formData.append('file', file);
-    formData.append('type', typeValue);
-    api.internalAccountImport(formData).then((res) => {
-      if (res) {
-        const respData = res.data || {};
-        if (0 === respData.code) {
-          setFirmLoading(false);
-          document.getElementById('file').value = '';
-          setFileData(null);
-          setFileName('');
-          updateList();
-          if (respData.data.length > 0) {
-            let resultTxt = respData.data;
-            Modal.error({
-              width: 610,
-              title: '导入数据错误',
-              content: (
-                <div className="import-error">
-                  {resultTxt.map((value) => (
-                    <div>
-                      <span className="number">Line：</span>
-                      {value.lineNumber},
-                      <span className="email">Shop name：</span>
-                      {value.shopName},
-                      <span className="reason">Error message：</span>
-                      {value.errorMessage}.
-                    </div>
-                  ))}
-                </div>
-              ),
-              okText: 'Back',
-              onOk: () => {},
-            });
-          } else {
-            setFirmLoading(false);
-            Modal.success({
-              title: '提示',
-              content: '文件导入成功！',
-              onOk: () => {
-                setFileData(null);
-                setFileName('');
-                onHide();
-              },
-            });
-          }
-        } else {
-          setFileData(null);
-          setFileName('');
-          setFirmLoading(false);
-          MyAlert({ errorMsg: respData.message });
-        }
-      }
-    }).catch((err) => {
-      setFirmLoading(false);
-      message.error(err ? err : '网络请求失败, 请重试!', 2);
-    });
-  };
-
-  // 1.上传文件签名
+  // 1.获取上传文件签名
   const requestSignData = (file, typeValue) => {
     console.log('获取签名', file, typeValue)
     setFirmLoading(true);
@@ -104,7 +40,7 @@ export function ImportDataPicker({ show, type, onHide, updateList }) { // type�
     })
   };
 
-  // 2.上传文件开始
+  // 2.开始上传文件
   const requestUploadFile = (file, typeValue, signParams) => {
     console.log('上传文件', file, typeValue, signParams)
     const formData = new FormData();
@@ -134,7 +70,7 @@ export function ImportDataPicker({ show, type, onHide, updateList }) { // type�
     })
   }
 
-  // 3.导入文件
+  // 3.获取导入文件，任务id
   const requestImportFile = (fileId, typeValue) => {
     console.log('导入文件', fileId, typeValue)
     api.internalAccountImport({
@@ -192,18 +128,19 @@ export function ImportDataPicker({ show, type, onHide, updateList }) { // type�
   const handleImportResult = (data, taskId) => {
     const status = data.status || '';
     const isSuccess = data.result;
-    const resultTxt = data.resultTxt || '';
+    const resultTxt = data.resultTxt;
+    const resultTxtList = safeParseJsonArray(resultTxt);
 
     if (status === 'INIT') {
       console.log('查询导入结果，初始化')
       setTimeout(() => {
         requestImportFileResult(taskId);
-      }, 3000);
+      }, 1000);
     } else if (status === 'DOING') {            
       console.log('查询导入结果，进行中')
       setTimeout(() => {
         requestImportFileResult(taskId);
-      }, 3000);
+      }, 1000);
     } else if (status === 'DONE') {
       console.log('查询导入结果，完成')
       setFirmLoading(false);
@@ -225,11 +162,26 @@ export function ImportDataPicker({ show, type, onHide, updateList }) { // type�
           },
         });
       } else {
-        console.log('查询导入结果，失败')
+        console.log('查询导入结果，失败')       
         Modal.error({
           width: 610,
           title: '导入数据错误',
-          content: resultTxt,
+          content: (
+            <div className="import-error">
+              {
+                resultTxtList && resultTxtList.map((value) => (
+                  <div>
+                    <span className="number">错误行：</span>
+                    {value.left},
+                    <span className="email">错误值：</span>
+                    {value.middle},
+                    <span className="reason">错误原因：</span>
+                    {value.right}.
+                  </div>
+                ))
+              }
+            </div>
+          ),
           okText: '返回',
           onOk: () => {},
         });
@@ -238,6 +190,15 @@ export function ImportDataPicker({ show, type, onHide, updateList }) { // type�
       console.log('查询导入结果，未知')
     }
   }
+
+  const safeParseJsonArray = (jsonString) => {
+    try {
+      return JSON.parse(jsonString) || [];
+    } catch (error) {
+      console.error('JSON 解析失败:', error);
+      return [];
+    }
+  };
 
   /**
    * 提交

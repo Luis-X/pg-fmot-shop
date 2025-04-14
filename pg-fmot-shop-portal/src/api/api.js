@@ -134,16 +134,9 @@ export const ssoLogin = (param) => {
   //   }
   // }
 };
-export const logout = (param) => {
-  // return client.post(URL.logout, param);
-  const res = {
-    data: {
-      code: 0,
-      message:'success',
-    }
-  };
-  return clientMockData(res, param);
-};
+// export const logout = (param) => {
+//   return client.post(URL.logout, param);
+// };
 
 
 // 通用
@@ -161,48 +154,9 @@ export const asyncTaskDetail = (param) => {
 // 内部账号
 export const internalAccountList = (param) => {
   return client.post(URL.internalAccountList, param);
-  // const res = {
-  //   data: {
-  //     code: 0,
-  //     data: {
-  //       content: [
-  //         {
-  //           id: '1',
-  //           createTime: '2020-08-10 11:11:11',
-  //           bindTime: '2020-08-10 11:11:11',
-  //           email: 'test@163.com',
-  //           openid: '290834734975',
-  //           points: '2000',
-  //           bindStatus: '1',
-  //           loginStatus: '1',              
-  //         },
-  //         {
-  //           id: '2',
-  //           createTime: '2020-08-10 11:11:11',
-  //           bindTime: '2020-08-10 11:11:11',
-  //           email: 'test@163.com',
-  //           openid: '73495784957',
-  //           points: '2000',
-  //           bindStatus: '2',
-  //           loginStatus: '2',              
-  //         }
-  //       ],
-  //       totalElements: 2,
-  //       message: 'success',
-  //     }
-  //   }
-  // };
-  // return clientMockData(res, param);
 };
 export const internalAccountChangeStatus = (param) => {
   return client.post(URL.internalAccountChangeStatus, param);
-  // const res = {
-  //   data: {
-  //     code: 0,
-  //     message:'success',
-  //   }
-  // };
-  // return clientMockData(res, param);
 };
 export const internalAccountImport = (param) => {
   return client.post(URL.internalAccountImport, param);
@@ -220,52 +174,9 @@ export const internalAccountImportTemplatePoints = (param) => {
 // 外部账号
 export const externalAccountList = (param) => {
   return client.post(URL.externalAccountList, param);
-  // const res = {
-  //   data: {
-  //     code: 0,
-  //     data: {
-  //       content: [
-  //         {
-  //           createTime: '2020-08-10 11:11:11',
-  //           id: 1,
-  //           activityId: '123456',
-  //           activityName: '活动123',
-  //           bindTime: '2020-08-10 11:11:11',
-  //           accountId: 'testlousoiu',
-  //           openid: '34857834095',
-  //           points: '2000',
-  //           bindStatus: '1',
-  //           loginStatus: '1',              
-  //         },
-  //         {
-  //           createTime: '2020-08-10 11:11:11',
-  //           id: 2,
-  //           activityId: '123457',
-  //           activityName: '活动124',
-  //           bindTime: '2020-08-10 11:11:11',
-  //           accountId: 'testou9u08',
-  //           openid: '3458309548',
-  //           points: '2000',
-  //           bindStatus: '2',
-  //           loginStatus: '2',              
-  //         }
-  //       ],
-  //       totalElements: 2,
-  //       message: 'success',
-  //     }
-  //   }
-  // };
-  // return clientMockData(res, param);
 };
 export const externalAccountChangeStatus = (param) => {
   return client.post(URL.externalAccountChangeStatus, param);
-  // const res = {
-  //   data: {
-  //     code: 0,
-  //     message:'success',
-  //   }
-  // };
-  // return clientMockData(res, param);
 };
 export const externalAccountImport = (param) => {
   return client.post(URL.externalAccountImport, param);
@@ -308,7 +219,7 @@ export const orderList = (param) => {
   return client.post(URL.orderList, param);
 };
 export const orderListExport = (param) => {
-  return URL.orderListExport;
+  return client.post(URL.orderListExport, param);
 }
 
 // 商品
@@ -333,200 +244,62 @@ export const goodsSave = (param) => {
 
 // 数据统计
 export const trackList = (param) => {
-  // return client.post(URL.trackList, param);
-  const res = {
-    data: {
-      code: 0,
-      data: {
-        content: [
-          {
-            id: 1,
-            activityId: 1,
-            activityName: '活动1',
-            createTime: '2022-01-01 12:00:00',
-            startTime: '2020-08-10 11:11:11',
-            endTime: '2021-08-10 11:11:11',
-            orgCode: '123456',                      
-            activityType: 1,
-            count: 100,  
-            times: 200,
-          },
-          {
-            id: 2,
-            activityId: 1,
-            activityName: '活动1',
-            createTime: '2022-01-01 12:00:00',
-            startTime: '2020-08-10 11:11:11',
-            endTime: '2021-08-10 11:11:11',
-            orgCode: '123456',                      
-            activityType: 1,
-            count: 100,  
-            times: 200,
-          }
-        ],
-        totalElements: 2,
-        message: 'success',
-      }
-    }
-  };
-  return clientMockData(res, param);
+  return client.post(URL.trackList, param);
 };
 export const trackExport = (param) => {
-  return URL.trackExport;
+  return client.post(URL.trackExport, param);
 }
 export const trackPeopleList = (param) => {
-  // return client.post(URL.trackPeopleList, param);
-  const res = {
-    data: {
-      code: 0,
-      data: {
-        content: [
-          {
-            id: 1,
-            goodsName: '商品1',
-          },
-          {
-            id: 2,
-            goodsName: '商品2',
-          },
-          {
-            id: 3,
-            goodsName: '商品3',
-          },
-          {
-            id: 4,
-            goodsName: '商品4',
-          },
-          {
-            id: 5,
-            goodsName: '商品5',
-          },
-          {
-            id: 6,
-            goodsName: '商品6',
-          },
-          {
-            id: 7,
-            goodsName: '商品7',
-          },
-          {
-            id: 8,
-            goodsName: '商品8',
-          },
-          {
-            id: 9,
-            goodsName: '商品9',
-          },
-          {
-            id: 10,
-            goodsName: '商品10',
-          }
-        ],
-        totalElements: 12
-      },
-    },
-  };
-  return clientMockData(res, param);
+  return client.post(URL.trackPeopleList, param);
 };
 export const trackTimesList = (param) => {
-  // return client.post(URL.trackTimesList, param);
-  const res = {
-    data: {
-      code: 0,
-      data: {
-        content: [
-          {
-            id: 1,
-            goodsName: '商品1',
-          },
-          {
-            id: 2,
-            goodsName: '商品2',
-          },
-          {
-            id: 3,
-            goodsName: '商品3',
-          },
-          {
-            id: 4,
-            goodsName: '商品4',
-          },
-          {
-            id: 5,
-            goodsName: '商品5',
-          },
-          {
-            id: 6,
-            goodsName: '商品6',
-          },
-          {
-            id: 7,
-            goodsName: '商品7',
-          },
-          {
-            id: 8,
-            goodsName: '商品8',
-          },
-          {
-            id: 9,
-            goodsName: '商品9',
-          },
-          {
-            id: 10,
-            goodsName: '商品10',
-          }
-        ],
-        totalElements: 12
-      },
-    },
-  };
-  return clientMockData(res, param);
+  return client.post(URL.trackTimesList, param);
 };
 export const trackChart = (param) => {
-  // return client.post(URL.trackChart, param);
-  const res = {
-    data: {
-      code: 0,
-      data: {
-        content: [
-          { id: 1, type: '轮播图视频观看人数', duration: 3, people: 90 },
-          { id: 2, type: '轮播图视频观看人数', duration: 6, people: 90 },
-          { id: 3, type: '轮播图视频观看人数', duration: 9, people: 90 },
-          { id: 4, type: '轮播图视频观看人数', duration: 12, people: 85 },
-          { id: 5, type: '轮播图视频观看人数', duration: 15, people: 80 },
-          { id: 6, type: '轮播图视频观看人数', duration: 18, people: 80 },
-          { id: 7, type: '轮播图视频观看人数', duration: 21, people: 70 },
-          { id: 8, type: '轮播图视频观看人数', duration: 24, people: 70 },
-          { id: 9, type: '轮播图视频观看人数', duration: 27, people: 70 },
-          { id: 10, type: '轮播图视频观看人数', duration: 30, people: 60 },
-          { id: 11, type: '轮播图视频观看人数', duration: 33, people: 60 },
-          { id: 12, type: '轮播图视频观看人数', duration: 36, people: 60 },
-          { id: 13, type: '轮播图视频观看人数', duration: 39, people: 50 },
-          { id: 14, type: '轮播图视频观看人数', duration: 42, people: 50 },
-          { id: 15, type: '轮播图视频观看人数', duration: 45, people: 50 },
-          { id: 16, type: '轮播图视频观看人数', duration: 48, people: 40 },
-          { id: 17, type: '轮播图视频观看人数', duration: 51, people: 40 },
-          { id: 18, type: '轮播图视频观看人数', duration: 54, people: 40 },
-          { id: 19, type: '轮播图视频观看人数', duration: 57, people: 30 },
-          { id: 20, type: '轮播图视频观看人数', duration: 60, people: 30 },
-          // { id: 7, type: '商品详情视频观看人数', duration: 0, people: 0 },
-          // { id: 8, type: '商品详情视频观看人数', duration: 3, people: 10 },
-          // { id: 9, type: '商品详情视频观看人数', duration: 6, people: 15 },
-          // { id: 10, type: '商品详情视频观看人数', duration: 9, people: 20 },
-          // { id: 11, type: '商品详情视频观看人数', duration: 12, people: 25 },
-          // { id: 12, type: '商品详情视频观看人数', duration: 15, people: 30 },
-          // { id: 13, type: '商品详情视频观看人数', duration: 18, people: 35 },
-          // { id: 14, type: '商品详情视频观看人数', duration: 21, people: 40 },
-          // { id: 15, type: '商品详情视频观看人数', duration: 24, people: 10 },
-          // { id: 16, type: '商品详情视频观看人数', duration: 27, people: 5 },
-          // { id: 17, type: '商品详情视频观看人数', duration: 30, people: 50 },
-          // { id: 18, type: '商品详情视频观看人数', duration: 33, people: 100 },
-          // { id: 19, type: '商品详情视频观看人数', duration: 36, people: 0 },
-        ]
-      },
-    },
-  }
-  return clientMockData(res, param);
+  return client.post(URL.trackChart, param);
+//   const res = {
+//     data: {
+//       code: 0,
+//       data: {
+//         content: [
+//           { id: 1, type: '轮播图视频观看人数', duration: 3, people: 90 },
+//           { id: 2, type: '轮播图视频观看人数', duration: 6, people: 90 },
+//           { id: 3, type: '轮播图视频观看人数', duration: 9, people: 90 },
+//           { id: 4, type: '轮播图视频观看人数', duration: 12, people: 85 },
+//           { id: 5, type: '轮播图视频观看人数', duration: 15, people: 80 },
+//           { id: 6, type: '轮播图视频观看人数', duration: 18, people: 80 },
+//           { id: 7, type: '轮播图视频观看人数', duration: 21, people: 70 },
+//           { id: 8, type: '轮播图视频观看人数', duration: 24, people: 70 },
+//           { id: 9, type: '轮播图视频观看人数', duration: 27, people: 70 },
+//           { id: 10, type: '轮播图视频观看人数', duration: 30, people: 60 },
+//           { id: 11, type: '轮播图视频观看人数', duration: 33, people: 60 },
+//           { id: 12, type: '轮播图视频观看人数', duration: 36, people: 60 },
+//           { id: 13, type: '轮播图视频观看人数', duration: 39, people: 50 },
+//           { id: 14, type: '轮播图视频观看人数', duration: 42, people: 50 },
+//           { id: 15, type: '轮播图视频观看人数', duration: 45, people: 50 },
+//           { id: 16, type: '轮播图视频观看人数', duration: 48, people: 40 },
+//           { id: 17, type: '轮播图视频观看人数', duration: 51, people: 40 },
+//           { id: 18, type: '轮播图视频观看人数', duration: 54, people: 40 },
+//           { id: 19, type: '轮播图视频观看人数', duration: 57, people: 30 },
+//           { id: 20, type: '轮播图视频观看人数', duration: 60, people: 30 },
+//           // { id: 7, type: '商品详情视频观看人数', duration: 0, people: 0 },
+//           // { id: 8, type: '商品详情视频观看人数', duration: 3, people: 10 },
+//           // { id: 9, type: '商品详情视频观看人数', duration: 6, people: 15 },
+//           // { id: 10, type: '商品详情视频观看人数', duration: 9, people: 20 },
+//           // { id: 11, type: '商品详情视频观看人数', duration: 12, people: 25 },
+//           // { id: 12, type: '商品详情视频观看人数', duration: 15, people: 30 },
+//           // { id: 13, type: '商品详情视频观看人数', duration: 18, people: 35 },
+//           // { id: 14, type: '商品详情视频观看人数', duration: 21, people: 40 },
+//           // { id: 15, type: '商品详情视频观看人数', duration: 24, people: 10 },
+//           // { id: 16, type: '商品详情视频观看人数', duration: 27, people: 5 },
+//           // { id: 17, type: '商品详情视频观看人数', duration: 30, people: 50 },
+//           // { id: 18, type: '商品详情视频观看人数', duration: 33, people: 100 },
+//           // { id: 19, type: '商品详情视频观看人数', duration: 36, people: 0 },
+//         ]
+//       },
+//     },
+//   }
+//   return clientMockData(res, param);
 };
 
 

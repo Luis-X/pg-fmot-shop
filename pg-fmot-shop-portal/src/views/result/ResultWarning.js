@@ -12,11 +12,11 @@ class ResultWarning extends Component {
     };
   }
 
-  async componentDidMount() {
-    let query = this.props.location.pathname || '';
-    let index = query.lastIndexOf('result/');
-    let code = query.substring(index + 7, query.length);
-    this.setState({ code });
+  componentDidMount() {
+    const match = this.props.match || {};
+    const params = match.params || {};
+    const code = params.code || '';
+    this.setState({ code })
   }
 
   render() {

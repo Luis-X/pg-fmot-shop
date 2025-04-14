@@ -250,11 +250,11 @@ export function AddGoodsFun({
     console.log('---file---', file);
     // 视频
     if (type === 'video') {
-      // const isAllowVideo = file.type === 'video/mp4';
-      // if (!isAllowVideo) {
-      //   message.error('视频格式不是MP4!');
-      //   return Upload.LIST_IGNORE
-      // }
+      const isAllowVideo = file.type === 'video/mp4';
+      if (!isAllowVideo) {
+        message.error('视频格式不是MP4!');
+        return Upload.LIST_IGNORE
+      }
     }
     // 图片
     if (type === 'img') {
@@ -427,7 +427,7 @@ export function AddGoodsFun({
             <Button onClick={onHide}>取消</Button>
           </div>
         } 
-        width={920} 
+        width={1020} 
         open={show} 
         onClose={() => { onHide() }} 
         bodyStyle={{ paddingBottom: 80 }}
@@ -459,46 +459,47 @@ export function AddGoodsFun({
           <ProFormRadio.Group
             name="productType"
             label="商品类型"
-            rules={[{ required: false, message: '请选择商品类型' }]}
+            rules={[{ required: true, message: '请选择商品类型' }]}
             options={goodsTypeList}
           />
           <ProFormSelect
             options={categoryList}
             name="productCategoryId"
             label="商品类别"
-            rules={[{ required: false, message: '请选择商品类别' }]}
+            rules={[{ required: true, message: '请选择商品类别' }]}
             placeholder="请选择商品类别"
           />
           <ProFormText
             name="code"
             label="商品编码"
-            rules={[{ required: false, message: '请输入商品编码' }]}
+            rules={[{ required: true, message: '请输入商品编码' }]}
             placeholder="请输入商品编码"
           />
           <ProFormText
             name="name"
             label="商品名称"
-            rules={[{ required: false, message: '请输入商品名称' }]}
+            rules={[{ required: true, message: '请输入商品名称' }]}
             placeholder="请输入商品名称"
           />
           <ProFormDigit
             name="price"
             label="商品价格"
-            rules={[{ required: false, message: '请输入商品价格' }]}
+            rules={[{ required: true, message: '请输入商品价格' }]}
             placeholder="请输入商品价格"
             fieldProps={{ precision: 1 }}
           />
           <ProFormText
             name="label"
             label="商品标签"
-            rules={[{ required: false, message: '请输入商品标签' }]}
+            rules={[{ required: true
+              , message: '请输入商品标签' }]}
             placeholder="请输入商品标签"
           />
           <ProFormUploadButton
             name="previewUrl"
             label="商品预览图"
             extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：100x100"
-            rules={[{ required: false, message: '请上传商品预览图' }]}
+            rules={[{ required: true, message: '请上传商品预览图' }]}
             max={1}
             fieldProps={{ 
               name: 'file',
@@ -550,7 +551,7 @@ export function AddGoodsFun({
             name="productVideo"
             label="商品视频"
             extra="只能上传mp4文件，最好不要超过100KB"
-            rules={[{ required: false, message: '请上传商品视频' }]}
+            rules={[{ required: true, message: '请上传商品视频' }]}
             max={1}
             fieldProps={{
               name: 'file',

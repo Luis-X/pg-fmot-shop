@@ -53,7 +53,7 @@ class EventMgmt extends Component {
     };
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     const self = this;
     self.requestListData();
     self.requestOrgCodeListData();
@@ -120,7 +120,7 @@ class EventMgmt extends Component {
         const respData = res.data || {};
         if (0 === respData.code) {
           self.setState({
-            data: respData.data.content,
+            data: respData.data.content || [],
             totalNum: respData.data.totalElements,
           });
         } else {
@@ -261,6 +261,16 @@ class EventMgmt extends Component {
     });
   }
 
+  // 复制链接
+  clickCopyLink = (record) => {
+    const link = `${RoutePath.ActivityUrl}?id=${record.id}`;
+    Util.copyText(link).then(() => {
+      message.success('复制成功', 2);
+    }).catch((err) => {
+      message.error('复制失败', 2);
+    })
+  }
+
   render() {
     const { orgCodeList, activityTypeList, activityStatusList } = this.state;
     const {
@@ -332,7 +342,9 @@ class EventMgmt extends Component {
         key: 'link',
         align: 'center',
         render: (text, record) => (
-          <>{`${RoutePath.ActivityUrl}?id=${record.id}`}</>
+          <Tooltip title="点击复制">
+            <span className="event-setting" onClick={() => { this.clickCopyLink(record); }}>{`${RoutePath.ActivityUrl}?id=${record.id}`}</span>
+          </Tooltip>          
         ),
       },
       {
@@ -435,7 +447,7 @@ class EventMgmt extends Component {
                     <Form.Item>{getFieldDecorator('institutionId',{})(
                       <Select placeholder="请选择机构代码" style={{ width: '100%' }}>
                         {
-                          orgCodeList.length > 0 && orgCodeList.map((item, index) => (
+                          orgCodeList && orgCodeList.length > 0 && orgCodeList.map((item, index) => (
                             <Option key={index} value={item.id}>{item.code}</Option>
                           ))
                         }

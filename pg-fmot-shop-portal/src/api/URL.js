@@ -1,8 +1,8 @@
 // 上传文件
 export const uploadFile = window.location.origin === 'https://ministore.shenghuojia.com' ? 'https://storage.pg.com.cn/v2/files' : 'https://storage-qa.pg.com.cn/v2/files';
-export const uploadFileGetUrl = '/api/uploadFile/signature/getFileUrl'                    // 根据fileId获取url ok
-export const uploadFileSign = '/api/uploadFile/signature'                                 // 私有文件上传签名 ok
-export const uploadFileSignPublic = '/api/uploadFile/signaturePublic'                     // 公共文件上传签名 ok
+export const uploadFileGetUrl = '/api/uploadFile/signature/getFileUrl'                    // 根据fileId获取url
+export const uploadFileSign = '/api/uploadFile/signature'                                 // 私有文件上传签名
+export const uploadFileSignPublic = '/api/uploadFile/signaturePublic'                     // 公共文件上传签名
   export const uploadFileSignChunk = '/api/uploadFile/signatureUploadChunkFile'             // 分片上传签名
   export const uploadFileChunkCheck = '/api/uploadFile/signatureCheckChunk'                 // 检查分片签名
   export const uploadFileChunkMerge = '/api/uploadFile/signatureMergeChunkFile'             // 合并分片签名
@@ -10,7 +10,7 @@ export const uploadFileSignPublic = '/api/uploadFile/signaturePublic'           
       
 // 登录、登出
 export const ssoLogin = '/admin/ssoLogin'                                                                                 // SSO登陆
-  export const logout = ''                                                                                                // 退出系统
+// export const logout = ''                                                                                                  // 退出系统
 
 
 // 通用
@@ -50,8 +50,8 @@ export const eventSave = '/api/admin/activity/editForAdmin'                     
 
 
 // 订单
-  export const orderList = '/api/admin/order/selectForAdmin'                                                         // 订单列表
-  export const orderListExport = '/api/admin/order/exportForAdmin'                                                   // 订单列表导出
+export const orderList = '/api/admin/order/selectForAdmin'                                                         // 订单列表
+export const orderListExport = '/api/admin/order/exportForAdmin'                                                   // 订单列表导出
 
 
 // 商品
@@ -64,8 +64,8 @@ export const goodsSave = '/api/admin/product/editForAdmin'                      
 
 
 // 数据统计
-  export const trackList = '/api/admin/userActionLog/activitySelect'                                                 // 数据统计
-  export const trackExport = '/api/admin/userActionLog/exportForAdmin'                                               // 导出数据
-  export const trackPeopleList = '/api/admin/userActionLog/productSelect'                                            // 人数
-  export const trackTimesList = '/api/admin/userActionLog/productSelect'                                             // 次数
+export const trackList = '/api/admin/userActionLog/activitySelect'                                                 // 数据统计
+export const trackExport = '/api/admin/userActionLog/exportForAdmin'                                               // 导出数据
+export const trackPeopleList = '/api/admin/userActionLog/productSelect'                                            // 人数
+export const trackTimesList = '/api/admin/userActionLog/productSelect'                                             // 次数
   export const trackChart = '/api/admin/userActionLog/productVideoViewSelect'                                        // 图表

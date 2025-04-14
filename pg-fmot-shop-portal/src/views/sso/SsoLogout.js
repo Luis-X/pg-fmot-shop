@@ -9,7 +9,7 @@ class SsoLogout extends Component {
     this.state = {};
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     const iframe = document.getElementById('myIframe');
     iframe.style = 'display:none';
   }

@@ -44,7 +44,7 @@ class GoodsMgmt extends Component {
     };
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     const self = this;    
     self.requestListData();
     self.requestGoodsCategoryListData();
@@ -94,7 +94,7 @@ class GoodsMgmt extends Component {
         const respData = res.data || {};
         if (0 === respData.code) {
           self.setState({
-            data: respData.data.content,
+            data: respData.data.content || [],
             totalNum: respData.data.totalElements,
           });
         } else {
@@ -265,7 +265,7 @@ class GoodsMgmt extends Component {
                     <Form.Item>{getFieldDecorator('productCategoryId',{})(
                       <Select placeholder="请选择商品类别" style={{ width: '100%' }}>                      
                         {
-                          goodsCategoryList.length > 0 && goodsCategoryList.map((item, index) => (
+                          goodsCategoryList && goodsCategoryList.length > 0 && goodsCategoryList.map((item, index) => (
                             <Option key={index} value={item.id}>{item.name}</Option>
                           ))
                         }

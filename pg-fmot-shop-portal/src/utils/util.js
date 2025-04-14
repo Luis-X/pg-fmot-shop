@@ -91,6 +91,43 @@ const utils = {
     // const formatValue = 'YYYY-MM-DD HH:mm:ss';
     // return moment(new Date(dateValue)).format(formatValue);
     return moment(new Date(dateValue)).toISOString();
+  },
+
+  // josn 转数组
+  safeParseJsonArray: (jsonString) => {
+    try {
+      return JSON.parse(jsonString) || [];
+    } catch (error) {
+      console.error('JSON 解析失败:', error);
+      return [];
+    }
+  },
+
+  // 复制文本
+  copyText: (text) => {
+    return new Promise((resolve, reject) => {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text)
+          .then(() => resolve())
+          .catch((err) => reject(err));
+      } else {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+          const successful = document.execCommand('copy');
+          if (successful) {
+            resolve();
+          } else {
+            reject(new Error('复制失败'));
+          }
+        } catch (err) {
+          reject(err);
+        }
+        document.body.removeChild(textArea);
+      }
+    });
   }
 };
 

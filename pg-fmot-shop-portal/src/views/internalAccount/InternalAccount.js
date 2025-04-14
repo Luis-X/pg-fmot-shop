@@ -98,7 +98,7 @@ class InternalAccount extends Component {
         const respData = res.data || {};
         if (0 === respData.code) {
           self.setState({
-            data: respData.data.content,
+            data: respData.data.content || [],
             totalNum: respData.data.totalElements,
           });
         } else {
@@ -269,21 +269,18 @@ class InternalAccount extends Component {
         key: 'bindStatus',
         ellipsis: true,
         align: 'center',
-        render: (text) => (
+        render: (text, record) => (
           <>
             {
-              text === 'BIND' ? (
+              record.openid && record.openid.length > 0 ? (
                 <Tag color='green'>
                   <span>已绑定</span>
                 </Tag>              
-              ) : null
-            }
-            {
-              text === 'UNBIND' ? (
+              ) : (
                 <Tag color='red'>
                   <span>未绑定</span>
-                </Tag>              
-              ) : null
+                </Tag>
+              )
             }
           </>
         ),
@@ -307,7 +304,7 @@ class InternalAccount extends Component {
             {
               text === 'LOCK' ? (     
                 <Tooltip title="锁定">
-                  <span className="event-setting" onClick={() => { this.clickAccountDisable(record); }}>锁定</span>
+                  <span className="event-setting" style={{color: '#808080'}} onClick={() => { this.clickAccountDisable(record); }}>锁定</span>
                 </Tooltip>         
               ) : null
             }

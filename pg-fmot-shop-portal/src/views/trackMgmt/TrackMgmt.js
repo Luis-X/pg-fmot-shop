@@ -45,7 +45,7 @@ class TrackMgmt extends Component {
     };
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     const self = this;
     self.configActivityTypeList();
     self.requestListData();
@@ -101,7 +101,7 @@ class TrackMgmt extends Component {
         const respData = res.data || {};
         if (0 === respData.code) {
           self.setState({
-            data: respData.data.content,
+            data: respData.data.content || [],
             totalNum: respData.data.totalElements,
           });
         } else {
@@ -291,7 +291,7 @@ class TrackMgmt extends Component {
                     <Form.Item>{getFieldDecorator('institutionId',{})(
                       <Select placeholder="请选择机构代码" style={{ width: '100%' }}>
                         {
-                          orgCodeList.length > 0 && orgCodeList.map((item, index) => (
+                          orgCodeList && orgCodeList.length > 0 && orgCodeList.map((item, index) => (
                             <Option key={index} value={item.id}>{item.code}</Option>
                           ))
                         }

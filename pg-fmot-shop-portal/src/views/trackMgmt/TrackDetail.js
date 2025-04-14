@@ -55,7 +55,7 @@ class TrackDetail extends Component {
           dataIndex: 'productDetailPageCountByUser',
           key: 'productDetailPageCountByUser',
           align: 'center',
-          render: (text, record) => ( this.listTableItemView(text, record) ),
+          render: (text, record) => ( this.listTableItemView(text, record, 'PRODUCT_DETAIL_PAGE_BEGIN_TIME') ),
         },
         {
           id: '2',
@@ -64,7 +64,7 @@ class TrackDetail extends Component {
           dataIndex: 'productDetailPageAvgDuring',
           key: 'productDetailPageAvgDuring',
           align: 'center',
-          render: (text, record) => ( this.listTableItemView(text, record) ),
+          render: (text, record) => ( this.listTableItemView(text, record, 'PRODUCT_DETAIL_PAGE_DURING') ),
         },
         {
           id: '3',
@@ -73,7 +73,7 @@ class TrackDetail extends Component {
           dataIndex: 'productCarouselVideoAvgDuring',
           key: 'productCarouselVideoAvgDuring',
           align: 'center',
-          render: (text, record) => ( this.listTableItemView(text, record) ),
+          render: (text, record) => ( this.listTableItemView(text, record, 'PRODUCT_CAROUSEL_VIDEO_DURING') ),
         },
         {
           id: '4',
@@ -82,7 +82,7 @@ class TrackDetail extends Component {
           dataIndex: 'productCarouselVideoCountByUser',
           key: 'productCarouselVideoCountByUser',
           align: 'center',
-          render: (text, record) => ( this.listTableItemView(text, record) ),
+          render: (text, record) => ( this.listTableItemView(text, record, 'PRODUCT_CAROUSEL_VIDEO_BEGIN_TIME') ),
         },
         {
           id: '5',
@@ -91,7 +91,7 @@ class TrackDetail extends Component {
           dataIndex: 'productCarouselVideoFinishCountByUser',
           key: 'productCarouselVideoFinishCountByUser',
           align: 'center',
-          render: (text, record) => ( this.listTableItemView(text, record) ),
+          render: (text, record) => ( this.listTableItemView(text, record, 'PRODUCT_CAROUSEL_VIDEO_FINISH_TIME') ),
         },
         {
           id: '6',
@@ -100,7 +100,7 @@ class TrackDetail extends Component {
           dataIndex: 'productDetailVideoAvgDuring',
           key: 'productDetailVideoAvgDuring',
           align: 'center',
-          render: (text, record) => ( this.listTableItemView(text, record) ),
+          render: (text, record) => ( this.listTableItemView(text, record, 'PRODUCT_DETAIL_VIDEO_DURING') ),
         },
         {
           id: '7',
@@ -109,7 +109,7 @@ class TrackDetail extends Component {
           dataIndex: 'productDetailVideoCountByUser',
           key: 'productDetailVideoCountByUser',
           align: 'center',
-          render: (text, record) => ( this.listTableItemView(text, record) ),
+          render: (text, record) => ( this.listTableItemView(text, record, 'PRODUCT_DETAIL_VIDEO_BEGIN_TIME') ),
         },
         {
           id: '8',
@@ -118,7 +118,7 @@ class TrackDetail extends Component {
           dataIndex: 'productDetailVideoFinishCountByUser',
           key: 'productDetailVideoFinishCountByUser',
           align: 'center',
-          render: (text, record) => ( this.listTableItemView(text, record) ),
+          render: (text, record) => ( this.listTableItemView(text, record, 'PRODUCT_DETAIL_VIDEO_FINISH_TIME') ),
         },
         {
           id: '9',
@@ -127,7 +127,7 @@ class TrackDetail extends Component {
           dataIndex: 'orderCheckPageCountByUser',
           key: 'orderCheckPageCountByUser',
           align: 'center',
-          render: (text, record) => ( this.listTableItemView(text, record) ),
+          render: (text, record) => ( this.listTableItemView(text, record, 'ORDER_CHECK_PAGE') ),
         },
         {
           id: '10',
@@ -136,7 +136,7 @@ class TrackDetail extends Component {
           dataIndex: 'productAddCartCountByUser',
           key: 'productAddCartCountByUser',
           align: 'center',
-          render: (text, record) => ( this.listTableItemView(text, record) ),
+          render: (text, record) => ( this.listTableItemView(text, record, 'PRODUCT_ADD_CART') ),
         },
         {
           id: '11',
@@ -145,7 +145,7 @@ class TrackDetail extends Component {
           dataIndex: 'orderConfirmExchangeCountByUser',
           key: 'orderConfirmExchangeCountByUser',
           align: 'center',
-          render: (text, record) => ( this.listTableItemView(text, record) ),
+          render: (text, record) => ( this.listTableItemView(text, record, 'ORDER_CONFIRM_EXCHANGE') ),
         },
         {
           id: '12',
@@ -154,7 +154,7 @@ class TrackDetail extends Component {
           dataIndex: 'orderExchangeSuccessCountByUser',
           key: 'orderExchangeSuccessCountByUser',
           align: 'center',
-          render: (text, record) => ( this.listTableItemView(text, record) ),
+          render: (text, record) => ( this.listTableItemView(text, record, 'ORDER_EXCHANGE_SUCCESS') ),
         },
         {
           id: '13',
@@ -163,7 +163,7 @@ class TrackDetail extends Component {
           dataIndex: 'orderExchangeFailedCountByUser',
           key: 'orderExchangeFailedCountByUser',
           align: 'center',
-          render: (text, record) => ( this.listTableItemView(text, record) ),
+          render: (text, record) => ( this.listTableItemView(text, record, 'ORDER_EXCHANGE_FAILED') ),
         },
         {
           id: '14',
@@ -172,7 +172,7 @@ class TrackDetail extends Component {
           dataIndex: 'orderCancelCountByUser',
           key: 'orderCancelCountByUser',
           align: 'center',
-          render: (text, record) => ( this.listTableItemView(text, record) ),
+          render: (text, record) => ( this.listTableItemView(text, record, 'ORDER_CANCEL') ),
         },
       ],
       timesColumns: [
@@ -191,7 +191,7 @@ class TrackDetail extends Component {
           dataIndex: 'productDetailPageCount',
           key: 'productDetailPageCount',
           align: 'center',
-          render: (text, record) => ( this.listTableItemView(text, record) ),
+          render: (text, record) => ( this.listTableItemView(text, record, 'PRODUCT_DETAIL_PAGE_BEGIN_TIME') ),
         },
         {
           id: '2',
@@ -200,7 +200,7 @@ class TrackDetail extends Component {
           dataIndex: 'productDetailPageAvgDuring',
           key: 'productDetailPageAvgDuring',
           align: 'center',
-          render: (text, record) => ( this.listTableItemView(text, record) ),
+          render: (text, record) => ( this.listTableItemView(text, record, 'PRODUCT_DETAIL_PAGE_DURING') ),
         },
         {
           id: '3',
@@ -209,7 +209,7 @@ class TrackDetail extends Component {
           dataIndex: 'productCarouselVideoAvgDuring',
           key: 'productCarouselVideoAvgDuring',
           align: 'center',
-          render: (text, record) => ( this.listTableItemView(text, record) ),
+          render: (text, record) => ( this.listTableItemView(text, record, 'PRODUCT_CAROUSEL_VIDEO_DURING') ),
         },
         {
           id: '4',
@@ -218,7 +218,7 @@ class TrackDetail extends Component {
           dataIndex: 'productCarouselVideoCount',
           key: 'productCarouselVideoCount',
           align: 'center',
-          render: (text, record) => ( this.listTableItemView(text, record) ),
+          render: (text, record) => ( this.listTableItemView(text, record, 'PRODUCT_CAROUSEL_VIDEO_BEGIN_TIME') ),
         },
         {
           id: '5',
@@ -227,7 +227,7 @@ class TrackDetail extends Component {
           dataIndex: 'productCarouselVideoFinishCount',
           key: 'productCarouselVideoFinishCount',
           align: 'center',
-          render: (text, record) => ( this.listTableItemView(text, record) ),
+          render: (text, record) => ( this.listTableItemView(text, record, 'PRODUCT_CAROUSEL_VIDEO_FINISH_TIME') ),
         },
         {
           id: '6',
@@ -236,7 +236,7 @@ class TrackDetail extends Component {
           dataIndex: 'productDetailVideoAvgDuring',
           key: 'productDetailVideoAvgDuring',
           align: 'center',
-          render: (text, record) => ( this.listTableItemView(text, record) ),
+          render: (text, record) => ( this.listTableItemView(text, record, 'PRODUCT_DETAIL_VIDEO_DURING') ),
         },
         {
           id: '7',
@@ -245,7 +245,7 @@ class TrackDetail extends Component {
           dataIndex: 'productDetailVideoCount',
           key: 'productDetailVideoCount',
           align: 'center',
-          render: (text, record) => ( this.listTableItemView(text, record) ),
+          render: (text, record) => ( this.listTableItemView(text, record, 'PRODUCT_DETAIL_VIDEO_BEGIN_TIME') ),
         },
         {
           id: '8',
@@ -254,7 +254,7 @@ class TrackDetail extends Component {
           dataIndex: 'productDetailVideoFinishCount',
           key: 'productDetailVideoFinishCount',
           align: 'center',
-          render: (text, record) => ( this.listTableItemView(text, record) ),
+          render: (text, record) => ( this.listTableItemView(text, record, 'PRODUCT_DETAIL_VIDEO_FINISH_TIME') ),
         },
         {
           id: '9',
@@ -263,7 +263,7 @@ class TrackDetail extends Component {
           dataIndex: 'orderCheckPageCount',
           key: 'orderCheckPageCount',
           align: 'center',
-          render: (text, record) => ( this.listTableItemView(text, record) ),
+          render: (text, record) => ( this.listTableItemView(text, record, 'ORDER_CHECK_PAGE') ),
         },
         {
           id: '10',
@@ -272,7 +272,7 @@ class TrackDetail extends Component {
           dataIndex: 'productAddCartCount',
           key: 'productAddCartCount',
           align: 'center',
-          render: (text, record) => ( this.listTableItemView(text, record) ),
+          render: (text, record) => ( this.listTableItemView(text, record, 'PRODUCT_ADD_CART') ),
         },
         {
           id: '11',
@@ -281,7 +281,7 @@ class TrackDetail extends Component {
           dataIndex: 'orderConfirmExchangeCount',
           key: 'orderConfirmExchangeCount',
           align: 'center',
-          render: (text, record) => ( this.listTableItemView(text, record) ),
+          render: (text, record) => ( this.listTableItemView(text, record, 'ORDER_CONFIRM_EXCHANGE') ),
         },
         {
           id: '12',
@@ -290,7 +290,7 @@ class TrackDetail extends Component {
           dataIndex: 'orderExchangeSuccessCount',
           key: 'orderExchangeSuccessCount',
           align: 'center',
-          render: (text, record) => ( this.listTableItemView(text, record) ),
+          render: (text, record) => ( this.listTableItemView(text, record, 'ORDER_EXCHANGE_SUCCESS') ),
         },
         {
           id: '13',
@@ -299,7 +299,7 @@ class TrackDetail extends Component {
           dataIndex: 'orderExchangeFailedCount',
           key: 'orderExchangeFailedCount',
           align: 'center',
-          render: (text, record) => ( this.listTableItemView(text, record) ),
+          render: (text, record) => ( this.listTableItemView(text, record, 'ORDER_EXCHANGE_FAILED') ),
         },
         {
           id: '14',
@@ -308,7 +308,7 @@ class TrackDetail extends Component {
           dataIndex: 'orderCancelCount',
           key: 'orderCancelCount',
           align: 'center',
-          render: (text, record) => ( this.listTableItemView(text, record) ),
+          render: (text, record) => ( this.listTableItemView(text, record, 'ORDER_CANCEL') ),
         },
       ],
       goodsSearchList: [],
@@ -325,8 +325,14 @@ class TrackDetail extends Component {
     };
   }
 
-  async componentDidMount() {
-    const self = this;    
+  componentDidMount() {
+    const self = this;
+    const match = this.props.match || {};
+    const params = match.params || {};
+    const id = params.id || '';
+    self.setState({ 
+      activityId: id,
+     });
     self.tabOnChange('tab-1');
   }
 
@@ -401,7 +407,7 @@ class TrackDetail extends Component {
         const respData = res.data || {};
         if (0 === respData.code) {
           self.setState({
-            data: respData.data.content,
+            data: respData.data || [],
             totalNum: respData.data.totalElements,
           });
         } else {
@@ -422,7 +428,7 @@ class TrackDetail extends Component {
     self.setState({ loadingShow: true });
     api.trackTimesList({
       activityId: activityId,
-      type: 'BY_COUNT',
+      type: 'ALL',
       page: pageNo,
       size: pageSize,
     }).then((res) => {
@@ -431,7 +437,7 @@ class TrackDetail extends Component {
         const respData = res.data || {};
         if (0 === respData.code) {
           self.setState({
-            data: respData.data.content,
+            data: respData.data || [],
             totalNum: respData.data.totalElements,
           });
         } else {
@@ -448,7 +454,7 @@ class TrackDetail extends Component {
   requestChartData = () => {
     console.log('图表')
     const self = this;
-    const { queryData } = self.state;
+    const { queryData, activityId } = self.state;
     self.setState({ loadingShow: true });
     // 时间处理
     if (queryData && queryData.date) {
@@ -457,8 +463,7 @@ class TrackDetail extends Component {
       delete queryData.date;
     }
     api.trackChart({
-      activityId: '',
-      productId: '',
+      activityId: activityId,
       ...queryData,
     }).then((res) => {
       self.setState({ loadingShow: false });
@@ -466,7 +471,7 @@ class TrackDetail extends Component {
         const respData = res.data || {};
         if (0 === respData.code) {
           self.setState({
-            data: respData.data.content,
+            data: respData.data || [],
           });
         } else {
           MyAlert({ errorMsg: respData.message });
@@ -510,7 +515,7 @@ class TrackDetail extends Component {
     self.setState({
       pageNo: 0,
     }, () => {
-      self.requestDataHandler();
+      
     });
   };
 
@@ -547,10 +552,124 @@ class TrackDetail extends Component {
   }
 
   // 导出数据明细（Excel）
-  clickListItem = (record) => {
-    console.log(record)
+  clickListItem = (record, userActionType) => {
+    const self = this;
+    const productId = record.id || '';
+    self.requestExportFile(productId, userActionType);
+  }
+
+  // 1.获取导出文件，任务id
+  requestExportFile = (productId, userActionType) => {
+    console.log('导出文件')
+    const self = this;
+    const { activityId } = self.state;
+    self.setState({ loadingShow: true });
+    api.trackExport({
+      userActionType: userActionType,
+      activityId: activityId,
+      productId: productId
+    }).then((res) => {      
+      if (res) {
+        const respData = res.data || {};
+        if (0 === respData.code) {
+          console.log('导出文件，成功', respData)
+          const exportData = respData.data || {};
+          const taskId = exportData.id || '';
+          self.requestExportFileResult(taskId);
+        } else {
+          console.log('导出文件，错误')
+          self.setState({ loadingShow: false });
+          MyAlert({ errorMsg: respData.message });
+        }
+      }
+    }).catch((err) => {
+      console.log('导出文件，失败')
+      self.setState({ loadingShow: false });
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    });
+  }
+  
+  // 2.轮询查询导出结果
+  requestExportFileResult = (taskId) => {
+    console.log('查询导出结果', taskId)
+    const self = this;    
+    api.asyncTaskDetail({
+      id: taskId,
+    }).then((res) => {
+      if (res) {
+        const respData = res.data || {};
+        if (0 === respData.code) {
+          console.log('查询导出结果', respData)
+          const resultData = respData.data || {};
+          self.handleExportResult(resultData, taskId);
+        } else {
+          console.log('查询导出结果，错误')
+          self.setState({ loadingShow: false });
+          MyAlert({ errorMsg: respData.message });
+        }
+      }
+    }).catch((err) => {
+      console.log('查询导出结果，失败')
+      self.setState({ loadingShow: false });
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    }) 
+  }
+  
+  // 3.处理查询结果
+  handleExportResult = (data, taskId) => {
+    const self = this
+    const status = data.status || '';
+    const isSuccess = data.result;
+    const resultTxt = data.resultTxt;
+    const resultTxtList = Util.safeParseJsonArray(resultTxt);
+
+    if (status === 'INIT') {
+      console.log('查询导出结果，初始化')
+      setTimeout(() => {
+        self.requestExportFileResult(taskId);
+      }, 1000);
+    } else if (status === 'DOING') {            
+      console.log('查询导出结果，进行中')
+      setTimeout(() => {
+        self.requestExportFileResult(taskId);
+      }, 1000);
+    } else if (status === 'DONE') {
+      console.log('查询导出结果，完成')
+      const downloadFileId = data.downloadFileId || '';      
+      if (isSuccess) {
+        console.log('查询导出结果，成功')
+        self.downloadExportFile(downloadFileId);
+      } else {
+        console.log(resultTxtList)
+        console.log('查询导出结果，失败')    
+      }
+    } else {
+      console.log('查询导出结果，未知')
+    }
+  }
+  
+  // 4.下载导出文件
+  downloadExportFile = (url) => {
+    console.log('下载导出文件', url)
+    const self = this;
+    if (!url) {
+      self.setState({ loadingShow: false });
+      MyAlert({ errorMsg: '文件导出失败, 请重试!' });
+      return;
+    }
+    const objectUrl = url;
+    const elink = document.createElement('a');
+    elink.style.display = 'none';
+    elink.href = objectUrl;
+    document.body.appendChild(elink);
+    elink.click();
+    URL.revokeObjectURL(elink.href);
+    document.body.removeChild(elink);
+    // 导出成功
+    self.setState({ loadingShow: false });
     notification['success']({
-      message: '数据明细导出成功！'
+      message: '文件导出成功！',
+      description: '请打开Excel文件进行查看！',
     });
   }
 
@@ -625,32 +744,72 @@ class TrackDetail extends Component {
     );
   };
 
-  listTableItemView = (text, record) => {
+  listTableItemView = (text, record, userActionType) => {
     return (
       <Tooltip title="数据明细">
-        <span className="event-setting" onClick={() => { this.clickListItem(record); }}>{text}</span>
+        <span className="event-setting" onClick={() => { this.clickListItem(record, userActionType); }}>{text}</span>
       </Tooltip>
     )    
   }
 
   // 图表
+  // FIXME: 图表显示异常，可能是组件的问题
   lineChartView = () => {
-    // const data = this.state.data;
+    const dataList = this.state.data;
     let data = [];
     let list = [];
-    for (let i = 0; i < 61; i++) {
-      list.push({ 
-        type: '轮播图视频观看人数', 
-        second: i, 
-        value: 90 - i - Math.floor(Math.random() * 20)  
+    // for (let i = 0; i < 61; i++) {
+    //   list.push({ 
+    //     type: '轮播图视频观看人数', 
+    //     second: i, 
+    //     value: 90 - i - Math.floor(Math.random() * 20)  
+    //   })
+    //   list.push({ 
+    //     type: '商品详情视频观看人数', 
+    //     second: i, 
+    //     value: 90 - i - Math.floor(Math.random() * 20) 
+    //   })
+    // }
+    let keyList = [
+      'point_3',
+      'point_6',
+      'point_9',
+      'point_12',
+      'point_15',
+      'point_18',
+      'point_21',
+      'point_24',
+      'point_27',
+      'point_30',
+      'point_33',
+      'point_36',
+      'point_39',
+      'point_42',
+      'point_45',
+      'point_48',
+      'point_51',
+      'point_54',
+      'point_57',
+      'point_60',
+    ];
+    dataList.forEach((item, index) => {
+      const chartMap = item || {};
+      let type = '';
+      if (item.user_action_type === 2) {
+        type = '轮播图视频观看人数';
+      } else if (item.user_action_type === 3) {
+        type = '商品详情视频观看人数';
+      }
+      keyList.forEach((key, jndex) => {
+        const pointIem = {};
+        pointIem.type = type;
+        pointIem.second = (jndex + 1) * 3;
+        pointIem.value = chartMap[key];
+        list.push(pointIem);
       })
-      list.push({ 
-        type: '商品详情视频观看人数', 
-        second: i, 
-        value: 90 - i - Math.floor(Math.random() * 20) 
-      })
-    }
+    })
     data = list;
+    console.log(data)
 
     const config = {
       data,
@@ -665,10 +824,10 @@ class TrackDetail extends Component {
             fontSize: 12,
           },
         },
-        min: 0,
-        max: 60,
-        tickInterval: 3,
-        tickCount: 20,
+        // min: 0,
+        // max: 60,
+        // tickInterval: 1,
+        // tickCount: 20,
       },
       yAxis: {
         title: {
@@ -727,7 +886,7 @@ class TrackDetail extends Component {
                   </ConfigProvider>
                 </Col>
                 <Col span={8}>
-                  <Form.Item>{getFieldDecorator('goodsId',{})(
+                  <Form.Item>{getFieldDecorator('productId',{})(
                     <ProFormSelect
                       showSearch
                       showArrow={false}

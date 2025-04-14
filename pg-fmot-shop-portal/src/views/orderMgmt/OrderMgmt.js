@@ -25,7 +25,7 @@ import * as api from '../../api/api';
 import MyAlert from '../../components/MyAlert';
 import zhCN from 'antd/es/locale/zh_CN';
 import Dict from '../../config/Dict';
-import axios from 'axios';
+// import axios from 'axios';
 import Util from '../../utils/util';
 
 const { Option } = Select;
@@ -48,7 +48,7 @@ class OrderMgmt extends Component {
     };
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     const self = this;
     self.requestListData();
     self.requestOrgCodeListData();
@@ -114,7 +114,7 @@ class OrderMgmt extends Component {
         const respData = res.data || {};
         if (0 === respData.code) {
           self.setState({
-            data: respData.data.content,
+            data: respData.data.content || [],
             totalNum: respData.data.totalElements,
           });
         } else {
@@ -162,14 +162,15 @@ class OrderMgmt extends Component {
         self.setState({ 
           queryData: values 
         }, () => {
-          self.requestExportExcelData();
+          self.requestExportFile();
         });
       }      
     });
   };
 
-  // 导出Excel文件
-  requestExportExcelData = () => {
+  // 1.获取导出文件，任务id
+  requestExportFile = () => {
+    console.log('导出文件')
     const self = this;
     const { pageNo, pageSize, queryData } = self.state;
     self.setState({ loadingShow: true });
@@ -179,51 +180,115 @@ class OrderMgmt extends Component {
       queryData.endDate = Util.dateFormatter(queryData.date[1]);
       delete queryData.date;
     }
-    return new Promise(() => {
-      const fileName = '订单列表';
-      const exportUrl = api.orderListExport();
-      axios({
-        url: exportUrl,
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8',
-          'X-Content-Type-Options': 'nosniff',
-          Pragma: 'no-cache',
-          Authorization: localStorage.getItem('token') || '',
-        },
-        data: {
-          ...queryData,
-          page: pageNo,
-          size: pageSize,
-        },
-        responseType: 'blob',
-      }).then((res) => {
-        self.setState({ loadingShow: false });
-        if (res.status === 200) {
-          const blob = new Blob([res.data], {
-            type: 'application/vnd.ms-excel;charset=utf-8',
-          });
-          const objectUrl = URL.createObjectURL(blob);
-          const elink = document.createElement('a');
-          elink.download = `${fileName}.xlsx`;
-          elink.style.display = 'none';
-          elink.href = objectUrl;
-          document.body.appendChild(elink);
-          elink.click();
-          URL.revokeObjectURL(elink.href); // 释放URL 对象
-          document.body.removeChild(elink);
-
-          notification['success']({
-            message: '文件导出成功！',
-            description: '请打开Excel文件进行查看！',
-          });
+    api.orderListExport({
+      ...queryData,
+      page: pageNo,
+      size: pageSize,
+    }).then((res) => {      
+      if (res) {
+        const respData = res.data || {};
+        if (0 === respData.code) {
+          console.log('导出文件，成功', respData)
+          const exportData = respData.data || {};
+          const taskId = exportData.id || '';
+          self.requestExportFileResult(taskId);
+        } else {
+          console.log('导出文件，错误')
+          self.setState({ loadingShow: false });
+          MyAlert({ errorMsg: respData.message });
         }
-      }).catch((err) => {
-        self.setState({ loadingShow: false });
-        message.error('导出Excel失败, 请重试!', 2);
-      });
+      }
+    }).catch((err) => {
+      console.log('导出文件，失败')
+      self.setState({ loadingShow: false });
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
     });
   }
+
+  // 2.轮询查询导出结果
+  requestExportFileResult = (taskId) => {
+    console.log('查询导出结果', taskId)
+    const self = this;    
+    api.asyncTaskDetail({
+      id: taskId,
+    }).then((res) => {
+      if (res) {
+        const respData = res.data || {};
+        if (0 === respData.code) {
+          console.log('查询导出结果', respData)
+          const resultData = respData.data || {};
+          self.handleExportResult(resultData, taskId);
+        } else {
+          console.log('查询导出结果，错误')
+          self.setState({ loadingShow: false });
+          MyAlert({ errorMsg: respData.message });
+        }
+      }
+    }).catch((err) => {
+      console.log('查询导出结果，失败')
+      self.setState({ loadingShow: false });
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    }) 
+  }
+
+  // 3.处理查询结果
+  handleExportResult = (data, taskId) => {
+    const self = this
+    const status = data.status || '';
+    const isSuccess = data.result;
+    const resultTxt = data.resultTxt;
+    const resultTxtList = Util.safeParseJsonArray(resultTxt);
+
+    if (status === 'INIT') {
+      console.log('查询导出结果，初始化')
+      setTimeout(() => {
+        self.requestExportFileResult(taskId);
+      }, 1000);
+    } else if (status === 'DOING') {            
+      console.log('查询导出结果，进行中')
+      setTimeout(() => {
+        self.requestExportFileResult(taskId);
+      }, 1000);
+    } else if (status === 'DONE') {
+      console.log('查询导出结果，完成')
+      const downloadFileId = data.downloadFileId || '';      
+      if (isSuccess) {
+        console.log('查询导出结果，成功')
+        self.downloadExportFile(downloadFileId);
+      } else {
+        console.log(resultTxtList)
+        console.log('查询导出结果，失败')    
+      }
+    } else {
+      console.log('查询导出结果，未知')
+    }
+  }
+
+  // 4.下载导出文件
+  downloadExportFile = (url) => {
+    console.log('下载导出文件', url)
+    const self = this;
+    if (!url) {
+      self.setState({ loadingShow: false });
+      MyAlert({ errorMsg: '文件导出失败, 请重试!' });
+      return;
+    }
+    const objectUrl = url;
+    const elink = document.createElement('a');
+    elink.style.display = 'none';
+    elink.href = objectUrl;
+    document.body.appendChild(elink);
+    elink.click();
+    URL.revokeObjectURL(elink.href);
+    document.body.removeChild(elink);
+    // 导出成功
+    self.setState({ loadingShow: false });
+    notification['success']({
+      message: '文件导出成功！',
+      description: '请打开Excel文件进行查看！',
+    });
+  }
+
 
   render() {
     const { orgCodeList, deliveryTypeList, orderStatusList } = this.state;
@@ -299,9 +364,11 @@ class OrderMgmt extends Component {
         render: (text, record) => {
           const goodsListView = (
             <div className="goods-list-wrap">
-              {record.goodsList.map((item, index) => (
-                <span key={index}>{`${item.code} ${item.name}x${item.quantity} ${item.price}积分`}</span>
-              ))}
+              {
+                record.orderItems && record.orderItems.length > 0 && record.orderItems.map((item, index) => (
+                  <span key={index}>{`${item.code} ${item.name}x${item.quantity} ${item.price}积分`}</span>
+                ))
+              }
             </div>
           );
           return goodsListView;
@@ -309,16 +376,16 @@ class OrderMgmt extends Component {
       },
       {
         title: '商品数量',
-        dataIndex: 'goodsCount',
+        dataIndex: 'totalCount',
         width: 80,
-        key: 'goodsCount',
+        key: 'totalCount',
         align: 'center',
       },
       {
         title: '合计积分',
-        dataIndex: 'totalPoints',
+        dataIndex: 'totalAmount',
         width: 80,
-        key: 'totalPoints',
+        key: 'totalAmount',
         ellipsis: true,
         align: 'center',
       },
@@ -362,7 +429,7 @@ class OrderMgmt extends Component {
                     <Form.Item>{getFieldDecorator('institutionId',{})(
                       <Select placeholder="请选择机构代码" style={{ width: '100%' }}>
                         {
-                          orgCodeList.length > 0 && orgCodeList.map((item, index) => (
+                          orgCodeList && orgCodeList.length > 0 && orgCodeList.map((item, index) => (
                             <Option key={index} value={item.id}>{item.code}</Option>
                           ))
                         }
