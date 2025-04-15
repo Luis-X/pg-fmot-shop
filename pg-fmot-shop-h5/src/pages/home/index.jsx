@@ -89,8 +89,9 @@ export default function Index() {
     if (res.code === 0) {
       const resData = res.data || {}
 
-      const banner = resData.banner || []
-      const list = resData.list || []
+      const banner = resData.activityCarouselImages || []
+      const list = resData.activityProducts || []
+      const totalPages = resData.totalPages || 0
 
       let newList = []
       if (isLoadMore) {
@@ -106,7 +107,7 @@ export default function Index() {
       setPageCurrentIndex(pageIndex + 1)
       
       // 没有更多
-      if (pageIndex >= resData.totalPages - 1) {
+      if (pageIndex >= totalPages - 1) {
         setHasMore(false)
       } else {
         setHasMore(true)
@@ -123,7 +124,7 @@ export default function Index() {
       <View className='home-grid-bg-wrap'>
         <View className='home-grid-wrap'>
           {
-            dataList.map((item, index) => {
+            dataList && dataList.length > 0 && dataList.map((item, index) => {
               return (
                 <PGGoodsView key={index} item={item}></PGGoodsView>
               );
@@ -190,18 +191,22 @@ export default function Index() {
           onChange={onChangeSwiperItem}
         >
           {
-            bannerList.map((item, index) => {
+            bannerList && bannerList.length > 0 && bannerList.map((item, index) => {
               return (
                 <Swiper.Item key={index} className='swiper-item' onClick={() => clickBanner(item)}>
-                  <Image className='swiper-item-img' src={item.imgUrl} fit='cover' />
+                  <Image className='swiper-item-img' src={item.imageUrl} fit='cover' />
                 </Swiper.Item>
               );
             })
           }
         </Swiper>
-        <View className="home-swiper-slide">
-          <Indicator total={bannerList.length} type="dualScreen" current={currentIndex} />
-        </View>      
+        {
+          bannerList.length > 1? (
+            <View className="home-swiper-slide">
+              <Indicator total={bannerList.length} type="dualScreen" current={currentIndex} />
+            </View> 
+          ) : null
+        }
       </View>
     )
   };

@@ -90,9 +90,9 @@ export default function Index() {
     Taro.HUD.hideLoading()
 
     if (res.code === 0) {
-      const resData = res.data || {}
+      const resData = res.data || []
 
-      const list = resData.list || []
+      const list = resData
 
       let newList = []
       if (isLoadMore) {
@@ -118,8 +118,9 @@ export default function Index() {
 
   // 活动首页
   const clickItem = (item) => {
-    const id = item;
-    Taro.UTIL.goToActivityHomeWithId(id)
+    const activityId = item.activityId || '';
+    const pointAccountId = item.pointAccountId || '';
+    Taro.UTIL.checkUserStatusGoHome(activityId, pointAccountId)
   }
 
   // 兑换列表
@@ -131,8 +132,8 @@ export default function Index() {
             <Image className='exchange-img' fit='contain' src={imgIcon}></Image>
             <View className='exchange-info'>
               <View className='exchange-name'>{item.name}</View>
-              <View className='exchange-desc'>{`开始时间：${item.startTime}`}</View>
-              <View className='exchange-desc'>{`截止时间：${item.endTime}`}</View>
+              <View className='exchange-desc'>{`开始时间：${item.beginDate}`}</View>
+              <View className='exchange-desc'>{`截止时间：${item.endDate}`}</View>
             </View>
             <Image className='exchange-arrow' fit='contain' src={imgArrow}></Image>
           </View>

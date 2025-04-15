@@ -2,7 +2,7 @@ import { useState } from "react";
 import { PullToRefresh, Image, InputNumber } from "@nutui/nutui-react";
 import { CheckNormal, Checked } from '@nutui/icons-react'
 import { View } from "@tarojs/components";
-import Taro, { useLoad, useDidShow } from "@tarojs/taro";
+import Taro, { useLoad, useRouter, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
 import PGAlertAgree from "../../components/pgAlertAgree/index";
@@ -10,6 +10,8 @@ import PGLoading from "../../components/pgLoading/index";
 import PGTabBar from "../../components/pgTabbar/index";
 
 export default function Index() {
+
+  const router = useRouter()
 
   useLoad(() => {
     Taro.WXSDK.hideOptionMenu();
@@ -31,10 +33,13 @@ export default function Index() {
     Taro.TRACKER.pageViewTracker("购物车");
     setIsShowPage(true);
 
+    const activityId = router.params.activityId || '';
+    setQueryActivityId(activityId)
     requestData();
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
+  const [queryActivityId, setQueryActivityId] = useState('');
 
   // 下拉刷新
   const refreshData = () => {
@@ -48,7 +53,7 @@ export default function Index() {
   // request
   async function requestData(id) {
     const params = {
-      id: id
+      activityId: queryActivityId
     }
 
     Taro.HUD.showLoading()
@@ -78,8 +83,8 @@ export default function Index() {
     let selectNumVal = 0;
     list.forEach((item) => {
       if (item.isSelect) {
-        totalNumVal += item.num;
-        totalAmountVal += item.num * item.price;
+        totalNumVal += item.quantity;
+        totalAmountVal += item.quantity * item.price;
         selectNumVal += 1;
       }
     });
@@ -92,25 +97,39 @@ export default function Index() {
     }
   }
 
-  // 单个删除
-  const cartNumDelete = (index) => {
-    const newCartList = [...cartList];
-    newCartList.splice(index, 1);
-    setCartList(newCartList);
-    checkCartStatus(newCartList);
+  async function requestCartChangeData(val, id) {
+    const params = {
+      id: id,
+      quantity: val
+    }
+
+    Taro.HUD.showLoading()
+    const res = await Taro.NETWORK.cartChange(params) 
+    Taro.HUD.hideLoading()
+
+    if (res.code === 0) {
+      const newCartList = [...cartList];
+      for (let i = 0; i < newCartList.length; i++) {
+        const item = newCartList[i];
+        if (item.activityProductId === id) {
+          item.quantity = val;
+          if (val <= 0) {
+            newCartList.splice(i, 1);            
+          }
+          break;
+        }
+      }
+      setCartList(newCartList);
+      checkCartStatus(newCartList);
+    } else {
+      Taro.HUD.showToastMessage(res.message)
+    }   
   }
 
   // 单个添加、减少
-  const cartNumOnChange = (val, index) => {
-    // console.log(val, index);
-    if (val <= 0) {
-      cartNumDelete(index);
-      return;
-    }
-    const newCartList = [...cartList];    
-    newCartList[index].num = val;
-    setCartList(newCartList);
-    checkCartStatus(newCartList);
+  const cartNumOnChange = (val, item) => {
+    const productId = item.activityProductId || '';
+    requestCartChangeData(val, productId)
   }
 
   // 单个勾选、取消
@@ -169,16 +188,16 @@ export default function Index() {
                     </View>
                   )
                 }
-                <Image className='goods-img' src={item.src} fit='cover'></Image>
+                <Image className='goods-img' src={item.previewUrl} fit='cover'></Image>
                 <View className='goods-info'>
-                  <View className='goods-name'>{item.title}</View>
+                  <View className='goods-name'>{item.name}</View>
                   <View className='goods-price-old'>{item.price}积分</View>
                   <View className='goods-price-new-wrap'>
-                    <View className='goods-price-new'>{item.vipPrice}</View>
+                    <View className='goods-price-new'>{item.discountPrice}</View>
                     <View className='goods-price-new-unit'>积分</View>
                   </View>
                 </View>
-                <InputNumber className='goods-count' value={item.num} max={item.limit} min={0} allowEmpty onChange={(val) => cartNumOnChange(val, index)} />
+                <InputNumber className='goods-count' value={item.quantity} min={0} allowEmpty onChange={(val) => cartNumOnChange(val, item)} />
               </View>
               <View className="goods-line"></View>
             </View>

@@ -20,19 +20,18 @@ export default {
   goodsDetail,
   goodsAddCart,
 
+  orderActivityInfo,
   orderConfirmInfo,
   orderConfirm,
 
   orderDetailInfo,
   orderCancel,
 
-  mineInfo,
   mineOrderList,
   mineExchangeList,
 
   cartList,
-  cartAdd,
-  cartDel,
+  cartChange,
 
   serviceInfo,
 
@@ -47,7 +46,7 @@ function aclUrl (params) {
   return REQUEST.post('/aclUrl', params)
 }
 
-// code 登录 api
+// code 登录
 function login (params) {
   // return REQUEST.post('/user/login', params)
   const res = {
@@ -77,7 +76,7 @@ function login (params) {
   return clientMockData(res, params);
 }
 
-// 同意协议 api
+// 同意协议 [ok]
 function agreeAgreement (params) {
   // return REQUEST.post('/api/user/userAgreement', params)
   const res = {
@@ -98,7 +97,7 @@ function bindOpenId (params) {
   return clientMockData(res, params);
 }
 
-// 账号绑定 api
+// 账号绑定
 function bindActivityId (params) {
   // return REQUEST.post('/api/user/bindPointAccount', params)
   const res = {
@@ -109,87 +108,45 @@ function bindActivityId (params) {
   return clientMockData(res, params);
 }
 
-// 活动列表 api
+// 活动列表 [ok]
 function activityList (params) {
   // return REQUEST.get('/api/activity/detailForH5', params)
   const res = {
-    code: 0,
-    data: {
-      banner: [
+    "code": 0,
+    "message": "string",
+    "data": {
+      "id": "string",
+      "activityCarouselImages": [
         {
-          imgUrl: 'https://storage.360buyimg.com/jdc-article/NutUItaro34.jpg',
-          url: 'https://www.baidu.com'
-        },
-        {
-          imgUrl: 'https://storage.360buyimg.com/jdc-article/NutUItaro2.jpg',
-          url: 'https://www.baidu.com'
-        },
-        {
-          imgUrl: 'https://storage.360buyimg.com/jdc-article/welcomenutui.jpg',
-          url: 'https://www.baidu.com'
-        },
-        {
-          imgUrl: 'https://storage.360buyimg.com/jdc-article/fristfabu.jpg',
-          url: 'https://www.baidu.com'
+          "imageUrl": "https://storage.360buyimg.com/jdc-article/NutUItaro34.jpg",
+          "url": "https://www.baidu.com"
         },
       ],
-      list: [
+      "maxQuantity": 0,
+      "activityProducts": [
         {
-          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
-          title:
-            "洋甘菊无硅油天然洋甘菊无硅油天然",
-          price: "388.0",
-          vipPrice: "378",
-          shopDescription: "自营",
-          delivery: "厂商配送",
+          "id": "1",
+          "product": {
+            "id": "2",
+            "previewUrl": "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
+            "name": "洋甘菊无硅油天然洋甘菊无硅油天然",
+            "price": 388.0,
+            "label": "自营,厂商配送"
+          },
+          "discountPrice": 368
         },
         {
-          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
-          title:
-            "洋甘菊无硅油天然洋甘菊无硅油天然",
-          price: "388.0",
-          vipPrice: "378",
-          shopDescription: "自营",
-          delivery: "厂商配送",
-        },
-        {
-          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
-          title:
-            "洋甘菊无硅油天然洋甘菊无硅油天然",
-          price: "388.0",
-          vipPrice: "378",
-          shopDescription: "自营",
-          delivery: "厂商配送",
-        },
-        {
-          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
-          title:
-            "洋甘菊无硅油天然洋甘菊无硅油天然",
-          price: "388.0",
-          vipPrice: "378",
-          shopDescription: "自营",
-          delivery: "厂商配送",
-        },
-        {
-          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
-          title:
-            "洋甘菊无硅油天然洋甘菊无硅油天然",
-          price: "388.0",
-          vipPrice: "378",
-          shopDescription: "自营",
-          delivery: "厂商配送",
-        },
-        {
-          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
-          title:
-            "洋甘菊无硅油天然洋甘菊无硅油天然",
-          price: "388.0",
-          vipPrice: "378",
-          shopDescription: "自营",
-          delivery: "厂商配送",
+          "id": "1",
+          "product": {
+            "id": "2",
+            "previewUrl": "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
+            "name": "洋甘菊无硅油天然洋甘菊无硅油天然",
+            "price": 388.0,
+            "label": "自营,厂商配送"
+          },
+          "discountPrice": 368
         }
-      ],
-      totalPages: 2,
+      ]
     }
   }
   return clientMockData(res, params);
@@ -262,36 +219,45 @@ function searchList (params) {
   return clientMockData(res, params);
 }
 
-// 商品详情 api
+// 商品详情 [ok]
 function goodsDetail (params) {
   // return REQUEST.post('/api/activity/activityProductForH5', params)
   const res = {
-    code: 0,
-    data: {      
-      title: "【活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
-      price: "388",
-      vipPrice: "378",
-      shopDescription: "自营",
-      delivery: "厂商配送",
-      shopName: "阳澄湖大闸蟹自营店",
-      banner: [
-        "https://storage.360buyimg.com/jdc-article/NutUItaro34.jpg",
-        "https://storage.360buyimg.com/jdc-article/NutUItaro2.jpg",
-        "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-        "https://storage.360buyimg.com/jdc-article/fristfabu.jpg",
-      ],
-      video: {
-        src: 'https://storage.360buyimg.com/nutui/video/video_NutUI.mp4',
-        poster: 'https://storage.360buyimg.com/jdc-article/NutUItaro34.jpg',
-        type: 'video/mp4',
+    "code": 0,
+    "message": "string",
+    "data": {
+      "id": "1",
+      "product": {
+        "productCarouselImages": [
+          {
+            "videoUrl": "https://storage.360buyimg.com/nutui/video/video_NutUI.mp4",
+            "videoImgUrl": "",
+          },
+          {
+            "imgUrl": "https://storage.360buyimg.com/jdc-article/NutUItaro34.jpg"
+          },
+          {
+            "imgUrl": "https://storage.360buyimg.com/jdc-article/NutUItaro34.jpg"
+          }
+        ],
+        "price": 388,
+        "name": "【活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
+        "label": "自营,厂商配送,阳澄湖大闸蟹自营店",
+        "productVideo": "https://storage.360buyimg.com/nutui/video/video_NutUI.mp4",
+        "longImageUrl": "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg"
       },
-      src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
+      "discountPrice": 368,
+      "activity": {
+        "contactCustomerServiceInfo": "string"
+      },
+      "shopCartProductCount": 1
     }
   }
   return clientMockData(res, params);
 }
-// 加入购物车
+// 加入购物车 [ok]
 function goodsAddCart (params) {
+  // return REQUEST.post('/api/shopCart/changeShopCartProduct', params)
   const res = {
     code: 0,
     data: {},
@@ -300,42 +266,42 @@ function goodsAddCart (params) {
   return clientMockData(res, params);
 }
 
+// 订单活动信息 [ok]
+function orderActivityInfo (params) {
+  // return REQUEST.post('/api/activity/activityForOrderForH5', params) 
+  const res = {
+    "code": 0,
+    "message": "string",
+    "data": {
+      "deliveryType": "SELF_PICKUP",
+      "collectionInstructions": "文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本"
+    }
+  }
+  return clientMockData(res, params);
+}
 // 订单确认信息
+// FIXME: 前一页面携带参数过来，这里需要做处理
 function orderConfirmInfo (params) {
   const res = {
     code: 0,
     data: {
       goodsList: [
         {
-          id: 1,
-          src: "https://storage.360buyimg.com/jdc-article/NutUItaro34.jpg",
-          title: "商品名称商品名称商品名称商品名称商品名称商品名称",
-          price: 100,
-          vipPrice: 99,
-          num: 2,
-          limit: 10,
-          isSelect: true,
-          type: 1,
-        },
-        {
-          id: 2,
-          src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-          title: "商品名称商品名称商品名称商品名称商品名称商品名称",
-          price: 200,
-          vipPrice: 99,
-          num: 1,
-          limit: 5,
-          isSelect: false,
-          type: 2,
-        },
+          "activityProductId": "2",
+          "previewUrl": "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
+          "name": "活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
+          "price": 388,
+          "discountPrice": 368,
+          "quantity": 1,
+          "maxQuantity": 10
+        }
       ],
-      orderDesc: '文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本'
     },
     message: '订单确认失败'
   }
   return clientMockData(res, params);
 }
-// 订单确认 api
+// 订单确认 [ok]
 function orderConfirm (params) {
   // return REQUEST.post('/api/shopCart/createOrder', params)
   const res = {
@@ -346,50 +312,36 @@ function orderConfirm (params) {
   return clientMockData(res, params);
 }
 
-// 订单详情 api
+// 订单详情 [ok]
 function orderDetailInfo (params) {
   // return REQUEST.post('/api/shopCart/getOrderDetail', params)
   const res = {
-    code: 0,
-    data: {
-      orderId: '2022010100000000000000000000000000000000000000000000000000000000',
-      orderStatus: 1,
-      orderAmount: '100.00',
-      orderCreateTime: '2022-01-01 00:00:00',
-      orderDesc: '文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本',
-      totalNum: 10,
-      totalAmount: 100,
-      goodsList: [
-        {
-          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
-          title:
-            "【活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
-          price: "388.0",
-          vipPrice: "378",
-          num: "1",
-        },
-        {
-          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
-          title:
-            "【活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
-          price: "388.0",
-          vipPrice: "378",
-          num: "1",
-        },
-        {
-          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
-          title:
-            "【活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
-          price: "388.0",
-          vipPrice: "378",
-          num: "1",
-        },
-      ]
+    "code": 0,
+    "message": "string",
+    "data": {
+      "activity": {
+        "collectionInstructions": "文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本"
+      },
+      "order": {
+        "orderCode": "20220101xxxxx",
+        "createDate": "2025-04-15T06:03:25.283Z",
+        "orderStatus": "COMPLETED",
+        "totalCount": 1,
+        "totalAmount": 388,
+        "orderItems": [
+          {
+            "previewUrl": "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
+            "name": "活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
+            "price": 388,
+            "quantity": 1
+          }
+        ]
+      }
     }
   }
   return clientMockData(res, params);
 }
-// 取消订单 api
+// 取消订单 [ok]
 function orderCancel (params) {
   // return REQUEST.post('/api/shopCart/cancelOrder', params)
   const res = {
@@ -400,56 +352,28 @@ function orderCancel (params) {
   return clientMockData(res, params);
 }
 
-// 我的信息
-function mineInfo (params) {
-  const res = {
-    code: 0,
-    data: {
-      points: 0
-    }
-  }
-  return clientMockData(res, params);
-}
-// 我的订单 api
+// 我的订单 [ok]
 function mineOrderList (params) {
   // return REQUEST.post('/api/shopCart/getMyInfo', params)
   const res = {
     code: 0,
     data: {
-      list: [
+      "availablePoint": 0,
+      "orders": [
         {
-          orderId: '2022010100000000000000000000000000000000000000000000000000000000',
-          orderStatus: '待支付',
-          orderAmount: '100.00',
-          orderCreateTime: '2022-01-01 00:00:00',
-          orderDesc: '文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本',
-          totalNum: 10,
-          totalAmount: 100,
-          goodsList: [
+          "id": "20220101",
+          "orderCode": "20220101xxxxx",
+          "createDate": "2025-04-15T05:46:25.513Z",
+          "orderStatus": "COMPLETED",
+          "totalCount": 1,
+          "totalAmount": 388,
+          "orderItems": [
             {
-              src: "https://storage.360buyimg.com/jdc-article/NutUItaro34.jpg",
-              title:
-                "【活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
-              price: "388.0",
-              vipPrice: "378",
-              num: "1",
-            },
-            {
-              src: "https://storage.360buyimg.com/jdc-article/NutUItaro2.jpg",
-              title:
-                "【活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
-              price: "388.0",
-              vipPrice: "378",
-              num: "1",
-            },
-            {
-              src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-              title:
-                "【活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
-              price: "388.0",
-              vipPrice: "378",
-              num: "1",
-            },
+              "previewUrl": "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
+              "name": "活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
+              "price": 388,
+              "quantity": 1
+            }
           ]
         }
       ]
@@ -457,27 +381,26 @@ function mineOrderList (params) {
   }
   return clientMockData(res, params);
 }
-// 我的兑换
+// 我的兑换 [ok]
 function mineExchangeList (params) {
+  // return REQUEST.post('/api/activity/getMyForH5', params)
   const res = {
-    code: 0,
-    data: {
-      list: [
-        {
-          // 名称
-          name: '商品名称',
-          // 开始时间
-          startTime: '2022-01-01 00:00:00',
-          // 结束时间
-          endTime: '2022-01-01 00:00:00',
-        }
-      ]
-    }
+    "code": 0,
+    "message": "string",
+    "data": [
+      {
+        "name": "测试活动1",
+        "beginDate": "2025-04-15T06:24:50.387Z",
+        "endDate": "2025-04-15T06:24:50.387Z",
+        "activityId": "string",
+        "pointAccountId": "string"
+      }
+    ]
   }
   return clientMockData(res, params);
 }
 
-// 购物车 api
+// 购物车 [ok]
 function cartList (params) {
   // return REQUEST.post('/api/shopCart/getMy', params)
   const res = {
@@ -485,117 +408,25 @@ function cartList (params) {
     data: {
       list: [
         {
-          id: 1,
-          src: "https://storage.360buyimg.com/jdc-article/NutUItaro34.jpg",
-          title: "商品名称商品名称商品名称商品名称商品名称商品名称",
-          price: 100,
-          vipPrice: 99,
-          num: 2,
-          limit: 10,
-          isSelect: true
-        },
-        {
-          id: 2,
-          src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-          title: "商品名称商品名称商品名称商品名称商品名称商品名称",
-          price: 200,
-          vipPrice: 99,
-          num: 1,
-          limit: 5,
-          isSelect: false
-        },
-        {
-          id: 2,
-          src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-          title: "商品名称商品名称商品名称商品名称商品名称商品名称",
-          price: 200,
-          vipPrice: 99,
-          num: 1,
-          limit: 5,
-          isSelect: false
-        },
-        {
-          id: 2,
-          src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-          title: "商品名称商品名称商品名称商品名称商品名称商品名称",
-          price: 200,
-          vipPrice: 99,
-          num: 1,
-          limit: 5,
-          isSelect: false
-        },
-        {
-          id: 2,
-          src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-          title: "商品名称商品名称商品名称商品名称商品名称商品名称",
-          price: 200,
-          vipPrice: 99,
-          num: 1,
-          limit: 5,
-          isSelect: false
-        },
-        {
-          id: 2,
-          src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-          title: "商品名称商品名称商品名称商品名称商品名称商品名称",
-          price: 200,
-          vipPrice: 99,
-          num: 1,
-          limit: 5,
-          isSelect: false
-        },
-        {
-          id: 2,
-          src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-          title: "商品名称商品名称商品名称商品名称商品名称商品名称",
-          price: 200,
-          vipPrice: 99,
-          num: 1,
-          limit: 5,
-          isSelect: false
-        },
-        {
-          id: 2,
-          src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-          title: "商品名称商品名称商品名称商品名称商品名称商品名称",
-          price: 200,
-          vipPrice: 99,
-          num: 1,
-          limit: 5,
-          isSelect: false
-        },
-        {
-          id: 2,
-          src: "https://storage.360buyimg.com/jdc-article/welcomenutui.jpg",
-          title: "商品名称商品名称商品名称商品名称商品名称商品名称",
-          price: 200,
-          vipPrice: 99,
-          num: 1,
-          limit: 5,
-          isSelect: false
-        },
+          "activityProductId": "2",
+          "previewUrl": "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
+          "name": "活蟹】湖塘煙雨 阳澄湖大闸蟹公4.5两 母3.5两 4对8只 鲜活生鲜螃蟹现货水产礼盒海鲜水",
+          "price": 388,
+          "discountPrice": 368,
+          "quantity": 1
+        }
       ]
     }
   }
   return clientMockData(res, params);
 }
-// 加入购物车 api
-function cartAdd (params) {
+// 加入、删除、修改购物车 [ok]
+function cartChange (params) {
   // return REQUEST.post('/api/shopCart/changeShopCartProduct', params)
   const res = {
     code: 0,
     data: {},
     message: '加入购物车失败'
-  }
-  return clientMockData(res, params);
-}
-// 删除购物车 api
-function cartDel (params) {
-  // return REQUEST.post('/api/shopCart/changeShopCartProduct', params)
-  const res = {
-    code: 0,
-    data: {},
-    message: '删除购物车失败'
   }
   return clientMockData(res, params);
 }
@@ -613,7 +444,7 @@ function serviceInfo (params) {
   return clientMockData(res, params);
 }
 
-// 埋点上报 api
+// 埋点上报 [ok]
 function trackerSubmit (params) {
   // return REQUEST.post('/api/userActionLog/addUserActionLog', params)
   const res = {

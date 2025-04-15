@@ -4,7 +4,7 @@ import {
   CountDown
 } from "@nutui/nutui-react";
 import { View } from "@tarojs/components";
-import Taro, { useLoad, useDidShow } from "@tarojs/taro";
+import Taro, { useLoad, useRouter, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
 import PGOrderView from "../../components/pgOrderView/index";
@@ -12,6 +12,8 @@ import PGLoading from "../../components/pgLoading/index";
 import PGAlertConfirm from "../../components/pgAlertConfirm/index";
 
 export default function Index() {
+
+  const router = useRouter()
 
   useLoad(() => {
     Taro.WXSDK.hideOptionMenu();
@@ -35,10 +37,17 @@ export default function Index() {
     Taro.TRACKER.pageViewTracker("订单详情");
     setIsShowPage(true);
 
+    const activityId = router.params.activityId || '';
+    const orderId = router.params.id || '';
+    setQueryActivityId(activityId)
+    setQueryOrderId(orderId)
+
     requestData();
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
+  const [queryActivityId, setQueryActivityId] = useState('');
+  const [queryOrderId, setQueryOrderId] = useState('');
 
   const [orderInfo, setOrderInfo] = useState({})
 
@@ -48,9 +57,10 @@ export default function Index() {
   };
 
   // request
-  async function requestData(id) {
+  async function requestData() {
     const params = {
-      id: id
+      activityId: queryActivityId,
+      id: queryOrderId
     }
 
     Taro.HUD.showLoading()
@@ -58,7 +68,7 @@ export default function Index() {
     Taro.HUD.hideLoading()
 
     if (res.code === 0) {
-      const resData = res.data || {}
+      const resData = res.data || {}      
       setOrderInfo(resData)
     } else {
       Taro.HUD.showToastMessage(res.message)
@@ -68,7 +78,7 @@ export default function Index() {
   // 订单详情
   const orderInfoView = () => {
     return (
-      <PGOrderView orderInfo={orderInfo}></PGOrderView>    
+      <PGOrderView orderInfo={orderInfo.order}></PGOrderView>    
     )
   }
   
@@ -78,7 +88,7 @@ export default function Index() {
       <View className='order-detail-note-wrap'>
         <View className="note-wrap">
           <View className='note-title'>领取说明：</View>
-          <View className='note-content'>{orderInfo.orderDesc}</View>
+          <View className='note-content'>{orderInfo.activity.collectionInstructions}</View>
         </View>        
       </View> 
     )
@@ -94,9 +104,10 @@ export default function Index() {
     requestOrderCancelData() 
   };
   
-  const requestOrderCancelData = async (id) => {
+  const requestOrderCancelData = async () => {
     const params = {
-      id: id
+      activityId: queryActivityId,
+      id: queryOrderId
     }
 
     Taro.HUD.showLoading('取消中...')
@@ -117,7 +128,7 @@ export default function Index() {
   const btnView = () => {
     return (
       <View className='order-detail-btn-wrap'>
-        <View className='order-detail-cancel' onClick={clickCancel}>取消订单</View>
+        <View className='order-detail-cancel' onClick={() => clickCancel()}>取消订单</View>
         <View className='order-detail-count-down-wrap'>
           <View className='order-detail-count-down'>剩余可取消时间：</View>
           <CountDown remainingTime={60 * 60 * 1000} />
@@ -151,9 +162,9 @@ export default function Index() {
         <View className='pg-index'>
           <PullToRefresh onRefresh={() => refreshData()} renderIcon={(status) => Taro.UTIL.refreshRenderHeaderSvg(status)}>
             <View className='order-detail-list' id='scroll'>      
-              { orderInfo.orderId ? orderInfoView() : null}
-              { orderInfo.orderDesc ? noteView() : null }
-              { (orderInfo.orderStatus && orderInfo.orderStatus !== 2) ? btnView() : null}                              
+              { orderInfo.order ? orderInfoView() : null}
+              { orderInfo.activity && orderInfo.activity.collectionInstructions ? noteView() : null }
+              { orderInfo.order && orderInfo.order.orderStatus !== 'CANCELED' ? btnView() : null}                              
             </View>
           </PullToRefresh>                 
           {alertView()}        

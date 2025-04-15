@@ -18,22 +18,22 @@ export default function Index(props) {
 
   // 商品列表
   const goodsListView = () => {
-    const cartList = orderInfo.goodsList || [];
+    const cartList = orderInfo.orderItems || [];
     return (
       <>
         {
           cartList.map((item, index) => {
             return (
               <View className='pg-order-goods-wrap' key={index}>
-                <Image className='pg-order-goods-img' src={item.src} fit='cover'></Image>
+                <Image className='pg-order-goods-img' src={item.previewUrl} fit='cover'></Image>
                 <View className='pg-order-goods-info'>
-                  <View className='pg-order-goods-name'>{item.title}</View>
+                  <View className='pg-order-goods-name'>{item.name}</View>
                   <View className='pg-order-goods-price-old'>{item.price}积分</View>
                   <View className='pg-order-goods-price-wrap'>
-                    <View className='pg-order-goods-price'>{item.vipPrice}</View>
+                    <View className='pg-order-goods-price'>{item.price}</View>
                     <View className='pg-order-goods-price-unit'>积分</View>
                   </View>
-                  <View className='pg-order-goods-count'>{`x${item.num}`}</View>
+                  <View className='pg-order-goods-count'>{`x${item.quantity}`}</View>
                 </View>
                 <View className='pg-order-goods-line'></View>
               </View>
@@ -49,23 +49,23 @@ export default function Index(props) {
       <View className='pg-order-wrap'>
         <View className='pg-order-info-wrap'>
           <View className='pg-order-num-wrap'>
-            <View className='pg-order-num'>{`订单编号：${orderInfo.orderId}`}</View>
-            <View className='pg-order-date'>{`下单时间：${orderInfo.orderCreateTime}`}</View>
+            <View className='pg-order-num'>{`订单编号：${orderInfo.orderCode}`}</View>
+            <View className='pg-order-date'>{`下单时间：${orderInfo.createDate}`}</View>
           </View>          
           {
-            orderInfo.orderStatus === 1 ? (
+            orderInfo.orderStatus === 'COMPLETED' ? (
               <View className='pg-order-status'>交易成功</View>
             ) : null
           }
           {
-            orderInfo.orderStatus === 2 ? (
+            orderInfo.orderStatus === 'CANCELED' ? (
               <View className='pg-order-status'>已取消</View>
             ) : null
           }
         </View>       
         {goodsListView()}
         <View className='pg-order-total-wrap'>
-          <View className='pg-order-total-count'>{`共计${orderInfo.totalNum}件商品`}</View>
+          <View className='pg-order-total-count'>{`共计${orderInfo.totalCount}件商品`}</View>
           <View className='pg-order-total-price-wrap'>
             <View className='pg-order-total-price-text'>合计</View>
             <View className='pg-order-total-price-red'>{orderInfo.totalAmount}</View>

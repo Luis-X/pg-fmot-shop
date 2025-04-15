@@ -29,6 +29,9 @@ export default {
   checkUserStatusGoHome,
   checkAgreementStatusShow,
   ssoLogin,
+
+  configLabelTagList,
+  showPreviewImg,
 };
 
 function pgConfig() {
@@ -355,4 +358,26 @@ function refreshRenderFooterSvg(text) {
 function ssoLogin() {
   Taro.HUD.showToastMessage("内部-sso登录");
   Taro.ROUTER.navigateTo("/pages/ssoCallBack/index?test=1");
+}
+
+// 配置标签列表
+function configLabelTagList(label) {
+  const tagList = []
+  const labelValue = label || ''
+  labelValue.split(',').forEach((text) => {
+    if (text) {
+      tagList.push(text)
+    }      
+  })
+  return tagList
+}
+
+// 图片预览
+function showPreviewImg(imgUrl) {
+  const currentUrl = imgUrl;
+  const urlList = [imgUrl];
+  Taro.previewImage({
+    current: currentUrl,
+    urls: urlList
+  })
 }

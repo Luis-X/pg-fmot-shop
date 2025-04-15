@@ -7,7 +7,7 @@ import {
 } from "@nutui/nutui-react";
 import { CheckNormal, Checked } from '@nutui/icons-react'
 import { View } from "@tarojs/components";
-import Taro, { useLoad, useDidShow } from "@tarojs/taro";
+import Taro, { useLoad, useRouter, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
 import PGLoading from "../../components/pgLoading/index";
@@ -15,6 +15,8 @@ import PGAlertConfirm from "../../components/pgAlertConfirm/index";
 
 
 export default function Index() {
+
+  const router = useRouter()
 
   useLoad(() => {
     Taro.WXSDK.hideOptionMenu();
@@ -38,16 +40,21 @@ export default function Index() {
     Taro.TRACKER.pageViewTracker("确认订单");
     setIsShowPage(true);
 
+    const activityId = router.params.activityId || '';
+    setQueryActivityId(activityId)
+
+    requestOrderActivityInfo(activityId)
     requestData();
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
+  const [queryActivityId, setQueryActivityId] = useState('');
 
-  const [orderInfo, setOrderInfo] = useState({})
+  const [orderActivityInfo, setOrderActivityInfo] = useState({})
   const [cartList, setCartList] = useState([])
 
   // 选择发货方式
-  const [deliveryType, setDeliveryType] = useState('1')
+  const [deliveryType, setDeliveryType] = useState('SELF_PICKUP')
   const onDeliveryChange = (val) => {
     setDeliveryType(val)
   }
@@ -58,10 +65,8 @@ export default function Index() {
   };
 
   // request
-  async function requestData(id) {
-    const params = {
-      id: id
-    }
+  async function requestData() {
+    const params = {}
 
     Taro.HUD.showLoading()
     const res = await Taro.NETWORK.orderConfirmInfo(params) 
@@ -70,12 +75,47 @@ export default function Index() {
     if (res.code === 0) {
       const resData = res.data || {}
       const goodsList = resData.goodsList || []
-      setOrderInfo(resData)
       setCartList(goodsList)
     } else {
       Taro.HUD.showToastMessage(res.message)
     }   
   }
+
+  async function requestOrderActivityInfo(activityId) {
+    const params = {
+      activityId: activityId
+    }
+
+    Taro.HUD.showLoading()
+    const res = await Taro.NETWORK.orderActivityInfo(params) 
+    Taro.HUD.hideLoading()
+
+    if (res.code === 0) {
+      const resData = res.data || {}
+      setOrderActivityInfo(resData)
+    } else {
+      Taro.HUD.showToastMessage(res.message)
+    }   
+  }
+
+  // 单个添加、减少
+  const cartNumOnChange = (val, index) => {
+  // console.log(val, index);
+  if (val <= 0) {
+    cartNumDelete(index);
+    return;
+  }
+  const newCartList = [...cartList];    
+  newCartList[index].quantity = val;
+  setCartList(newCartList);
+}
+
+// 单个删除
+const cartNumDelete = (index) => {
+  const newCartList = [...cartList];
+  newCartList.splice(index, 1);
+  setCartList(newCartList);
+}
 
   // 商品列表
   const goodsListView = () => {
@@ -86,16 +126,16 @@ export default function Index() {
             return (
               <View className={index === 0 ? 'goods-bg-wrap-radius' : 'goods-bg-wrap'} key={index}>           
                 <View className='goods-wrap'>
-                  <Image className='goods-img' src={item.src} fit='cover'></Image>
+                  <Image className='goods-img' src={item.previewUrl} fit='cover'></Image>
                   <View className='goods-info'>
-                    <View className='goods-name'>{item.title}</View>
+                    <View className='goods-name'>{item.name}</View>
                     <View className='goods-price-old'>{item.price}积分</View>
                     <View className='goods-price-new-wrap'>
-                      <View className='goods-price-new'>{item.vipPrice}</View>
+                      <View className='goods-price-new'>{item.discountPrice}</View>
                       <View className='goods-price-new-unit'>积分</View>
                     </View>
                   </View>
-                  <InputNumber className='goods-count' value={item.num} max={item.limit} min={0} allowEmpty onChange={(val) => cartNumOnChange(val, index)} />
+                  <InputNumber className='goods-count' value={item.quantity} min={0} allowEmpty onChange={(val) => cartNumOnChange(val, index)} />
                 </View>
                 <View className="goods-line"></View>
               </View>
@@ -114,8 +154,8 @@ export default function Index() {
           <View className='delivery-title'>请选择发货方式：</View>
           <View className='delivery-option'>
           <Radio.Group defaultValue={deliveryType} direction='horizontal' onChange={onDeliveryChange}> 
-            <Radio className='delivery-option-item' icon={<CheckNormal />} activeIcon={<Checked style={{ color: 'red' }} />} value='1'>线下自提</Radio>
-            <Radio className='delivery-option-item' icon={<CheckNormal />} activeIcon={<Checked style={{ color: 'red' }} />} value='2'>邮寄</Radio>
+            <Radio className='delivery-option-item' icon={<CheckNormal />} activeIcon={<Checked style={{ color: 'red' }} />} value='SELF_PICKUP'>线下自提</Radio>
+            <Radio className='delivery-option-item' icon={<CheckNormal />} activeIcon={<Checked style={{ color: 'red' }} />} value='POST'>邮寄</Radio>
           </Radio.Group>                  
           </View>         
         </View>               
@@ -129,7 +169,7 @@ export default function Index() {
       <View className='order-confirm-note-wrap'>
         <View className="note-wrap">
           <View className='note-title'>领取说明：</View>
-          <View className='note-content'>{orderInfo.orderDesc}</View>
+          <View className='note-content'>{orderActivityInfo.collectionInstructions}</View>
         </View>        
       </View>                                       
     )
@@ -169,9 +209,21 @@ export default function Index() {
     requestOrderConfirmData()   
   };
 
-  const requestOrderConfirmData = async (id) => {  
+  const requestOrderConfirmData = async () => {  
+
+    const orderItems = []
+    cartList.forEach(item => {
+      const obj = {
+        activityProductId: item.activityProductId,
+        quantity: item.quantity
+      }
+      orderItems.push(obj)
+    })
+
     const params = {
-      id: id
+      activityId: queryActivityId,
+      deliveryType: deliveryType,
+      orderItems: orderItems
     }
 
     Taro.HUD.showLoading('兑换中...')
@@ -192,7 +244,14 @@ export default function Index() {
   const btnView = () => {
     return (
       <View className='order-confirm-btn-wrap'>
-        <View className='order-confirm-ok' onClick={clickExchange}>确认兑换</View>
+        {
+          cartList && cartList.length > 0 ? (
+            <View className='order-confirm-ok' onClick={clickExchange}>确认兑换</View>
+          ) : (
+            <View className='order-confirm-disable'>确认兑换</View>
+          )
+        }
+        
       </View> 
     )
   }
@@ -224,9 +283,9 @@ export default function Index() {
           <PullToRefresh onRefresh={() => refreshData()} renderIcon={(status) => Taro.UTIL.refreshRenderHeaderSvg(status)}>
             <View className='order-confirm-list' id='scroll'>                        
               { cartList && cartList.length > 0 ? goodsListView() : null }
-              { cartList && cartList.length > 0 ? deliveryView() : null }
-              { orderInfo.orderDesc ? noteView() : null }
-              { cartList && cartList.length > 0 ? btnView() : null }
+              { deliveryView() }
+              { orderActivityInfo.collectionInstructions ? noteView() : null }
+              { btnView() }
             </View>
           </PullToRefresh>                
           {alertView()}

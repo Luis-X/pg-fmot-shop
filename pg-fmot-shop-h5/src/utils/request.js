@@ -20,17 +20,26 @@ function post(url, data) {
 function baseRequest(url, data, method) {
   
   const realUrl = checkHostUrl(url);
+  let token = Taro.UTIL.getPGStorage('login_info').token || ''
+  let activityId = Taro.UTIL.getPGStorage('activityId') || ''
+  let pointAccountId = Taro.UTIL.getPGStorage('pointAccountId') || ''
 
-  // console.debug(`接口: ${url} 入参：`)
-  // console.debug(data)
+  let newData = {...data}
+  if (activityId) {
+    newData.activityId = activityId
+  }
+  if (pointAccountId) {
+    newData.pointAccountId = pointAccountId
+  }
 
-	let token = Taro.UTIL.getPGStorage('login_info').token || ''
-  
+  console.debug(`接口: ${url} 入参：`)
+  console.debug(newData)
+
   return new Promise(function (resolve, reject) {
 
     Taro.request({
       url: realUrl,
-      data: data,
+      data: newData,
       method: method,
       header: {
         'Access-Control-Allow-Origin': '*',

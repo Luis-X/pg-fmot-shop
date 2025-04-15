@@ -4,7 +4,7 @@ import {
   Image,
 } from "@nutui/nutui-react";
 import { View } from "@tarojs/components";
-import Taro, { useLoad, useDidShow } from "@tarojs/taro";
+import Taro, { useLoad, useRouter, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
 import PGAlertAgree from "../../components/pgAlertAgree/index";
@@ -16,6 +16,9 @@ import imgTopBar from '../../images/mine-top-bar.png';
 import imgOrder from '../../images/mine-order.png';
 
 export default function Index() {
+
+  const router = useRouter()
+  
 
   useLoad(() => {
     Taro.WXSDK.hideOptionMenu();
@@ -37,25 +40,26 @@ export default function Index() {
     Taro.TRACKER.pageViewTracker("我的");
     setIsShowPage(true);
 
+    const activityId = router.params.activityId || '';
+    setQueryActivityId(activityId);
+
     requestListData({
       pageIndex: 0,
       tabIndex: 0,
     }, false)
-
-    requestData()
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
+  const [queryActivityId, setQueryActivityId] = useState('');
   const [tabIndex, setTabIndex] = useState(0)
 
-  const [userInfo, setUserInfo] = useState({})
+  const [availablePoint, setAvailablePoint] = useState(0)
   const [dataList, setDataList] = useState([]);
   const [pageCurrentIndex, setPageCurrentIndex] = useState(0)
   const [hasMore, setHasMore] = useState(true);
 
   // 下拉刷新
   const refreshData = () => {
-    requestData()
     return requestListData({
       pageIndex: 0,
       tabIndex: tabIndex,
@@ -63,21 +67,6 @@ export default function Index() {
   };
 
   // request
-  async function requestData() {
-    const params = {}
-    Taro.HUD.showLoading()
-    const res = await Taro.NETWORK.mineInfo(params) 
-    Taro.HUD.hideLoading()
-
-    if (res.code === 0) {
-      const resData = res.data || {}
-      setUserInfo(resData)
-    } else {
-      Taro.HUD.showToastMessage(res.message)
-    }   
-  }
-  
-
   async function requestListData(query, isLoadMore) {
 
     const pageIndex = query.pageIndex || 0
@@ -93,6 +82,7 @@ export default function Index() {
     }
 
     const params = {
+      activityId: queryActivityId,
       page: pageIndex,
       size: 10,
       type: tabIndex,
@@ -104,7 +94,8 @@ export default function Index() {
     if (res.code === 0) {
       const resData = res.data || {}
 
-      const list = resData.list || []
+      const availablePoint = resData.availablePoint || 0      
+      const list = resData.orders || []
 
       let newList = []
       if (isLoadMore) {
@@ -113,6 +104,7 @@ export default function Index() {
         newList = list
       }
 
+      setAvailablePoint(availablePoint)
       setDataList(newList)  
       setPageCurrentIndex(pageIndex + 1)
       
@@ -143,9 +135,10 @@ export default function Index() {
   }
 
   // 订单详情
-  const clickOrderDetail = (orderId) => {
+  const clickOrderDetail = (item) => {    
+    const orderId = item.id || ''
     console.log(orderId)
-    Taro.ROUTER.navigateTo('/pages/orderDetail/index');
+    Taro.ROUTER.navigateTo(`/pages/orderDetail/index?id=${orderId}`);
   }
 
   // 我的积分
@@ -154,7 +147,7 @@ export default function Index() {
       <View className='mine-point-wrap'>
         <View className="point-bg-wrap">
           <Image className='point-img' fit='contain' src={imgTopBar}></Image>
-          <View className='point-title'>{userInfo.points >= 0 ? userInfo.points : '--'}</View>
+          <View className='point-title'>{availablePoint >= 0 ? availablePoint : '--'}</View>
           <View className='point-btn' onClick={clickMyExchange}>查看我正参与的兑换</View>
         </View>               
       </View>
@@ -188,7 +181,7 @@ export default function Index() {
     return (
       dataList.map((item, index) => {
         return (
-          <PGOrderView key={index} orderInfo={item} onClick={() => clickOrderDetail()}></PGOrderView>
+          <PGOrderView key={index} orderInfo={item} onClick={() => clickOrderDetail(item)}></PGOrderView>
         );
       })
     )

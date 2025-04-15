@@ -37,9 +37,8 @@ export default function Index(props) {
   }
 
   async function requestAgreeData() {
-    const timestamp = Date.parse(new Date())
     const params = {
-      creatime: timestamp,
+      activityId: '',
     }
 
     const res = await Taro.NETWORK.agreeAgreement(params) 

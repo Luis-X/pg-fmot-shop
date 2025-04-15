@@ -8,7 +8,7 @@ import {
   Indicator
 } from "@nutui/nutui-react";
 import { View, Video } from "@tarojs/components";
-import Taro, { useLoad, useDidShow } from "@tarojs/taro";
+import Taro, { useLoad, useRouter, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
 import PGLoading from "../../components/pgLoading/index";
@@ -21,6 +21,8 @@ import imgLine from "../../images/detail-line.png";
 import imgCartAdd from "../../images/detail-cart-add.png";
 
 export default function Index() {
+
+  const router = useRouter()
 
   useLoad(() => {
     Taro.WXSDK.hideOptionMenu();
@@ -44,14 +46,20 @@ export default function Index() {
     Taro.TRACKER.pageViewTracker("商品详情");
     setIsShowPage(true);
 
-    requestData()
+    const activityId = router.params.activityId || '';
+    const productId = router.params.id || '';
+    setQueryActivityId(activityId);
+    setQueryProductId(productId);
+    requestData(activityId, productId)
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
+  const [queryActivityId, setQueryActivityId] = useState('');
+  const [queryProductId, setQueryProductId] = useState('');
 
+  // 商品信息
   const [goodsInfo, setGoodsInfo] = useState({});  
-
-  // 视频
+  // 视频信息
   const [videoSource, setVideoSource] = useState({});
 
   const videoOptions = {
@@ -84,12 +92,16 @@ export default function Index() {
 
   // 下拉刷新
   const refreshData = () => {
-    return requestData()
+    return requestData({
+      activityId: queryActivityId,
+      id: queryProductId
+    })
   };
 
   // request
-  async function requestData(id) {
+  async function requestData(activityId, id) {
     const params = {
+      activityId: activityId,
       id: id
     }
 
@@ -99,11 +111,20 @@ export default function Index() {
 
     if (res.code === 0) {
       const resData = res.data || {}
-      const banner = resData.banner || []
-      const video = resData.video || {}
+      const productData = resData.product || {}
+      const banner = productData.productCarouselImages || []
+      const videoUrl = productData.productVideo || ''
+      const video = {
+        src: videoUrl,
+        poster: '',
+        type: 'video/mp4',
+      }
+      const shopCartProductCount = resData.shopCartProductCount || 0
+
       setGoodsInfo(resData)
       setBannerList(banner)
       setVideoSource(video)
+      setCartNum(shopCartProductCount)
     } else {
       Taro.HUD.showToastMessage(res.message)
     }   
@@ -112,7 +133,7 @@ export default function Index() {
   // 确认购买
   const clickConfirmBuy = () => {
     setIsAlertShow(false);
-    Taro.ROUTER.navigateTo('/pages/orderConfirm/index');
+    Taro.ROUTER.navigateTo(`/pages/orderConfirm/index?activityId=${queryActivityId}&id=${queryProductId}`);
   };
 
   // 客服
@@ -128,19 +149,19 @@ export default function Index() {
   // 加入购物车
   const [cartNum, setCartNum] = useState(0);
   const clickCartAdd = () => {
-    const id = 0;
     const maxLimit = 10;
-    const num = cartNum + 1;
-    if (num >= maxLimit) {
+    const newCartNum = cartNum + 1;
+    if (newCartNum >= maxLimit) {
       Taro.HUD.showToastMessage('加购商品超过数量上限')
       return;
     }
-    requestAddCartData(id, num)
+    requestAddCartData(newCartNum)
   }
 
-  async function requestAddCartData(id, num) {
+  async function requestAddCartData(newCartNum) {
     const params = {
-      id: id
+      id: queryProductId,
+      quantity: newCartNum,
     }
 
     Taro.HUD.showLoading()
@@ -149,7 +170,7 @@ export default function Index() {
 
     if (res.code === 0) {
       const resData = res.data || {}
-      setCartNum(num)
+      setCartNum(newCartNum)
       Taro.HUD.showToastMessage('加入购物车成功')
     } else {
       Taro.HUD.showToastMessage(res.message)
@@ -209,13 +230,8 @@ export default function Index() {
   const [bannerList, setBannerList] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0)
 
-  const clickSwiperItem = (item) => {
-    const currentUrl = item;
-    const urlList = list;
-    Taro.previewImage({
-      current: currentUrl,
-      urls: urlList
-    })
+  const clickPreviewImg = (url) => {
+    Taro.UTIL.showPreviewImg(url)
   }
 
   const [videoPauseTime, setVideoPauseTime] = useState(0);
@@ -252,37 +268,39 @@ export default function Index() {
           indicator={false}
           onChange={onChangeSwiperItem}
         >
-          {bannerList.map((item, index) => {
-            return (
-              <Swiper.Item key={index} className='swiper-item' >
-                {
-                  index === 0 ? (
-                    <View className='swiper-item'>
-                    <Video 
-                      className='swiper-video'
-                      id='swiper-video-ref'
-                      src={videoSource.src}
-                      poster={videoSource.poster}
-                      initialTime={videoOptions.initialTime}
-                      controls={videoOptions.controls}
-                      autoplay={videoOptions.autoplay}
-                      loop={videoOptions.loop}
-                      muted={videoOptions.muted}
-                      onPlay={onVideoPlay}
-                      onPause={onVideoPause}
-                      onPlayend={onVideoPlayend}
-                      onTimeUpdate={onVideoTimeUpdate}
-                    />
-                    </View>                    
-                  ) : (
-                    <View className='swiper-item'>
-                      <Image className='swiper-img' src={item} fit='cover' onClick={clickSwiperItem} />
-                    </View>                   
-                  )
-                }                
-              </Swiper.Item>
-            );
-          })}
+          {
+            bannerList && bannerList.length > 0 && bannerList.map((item, index) => {
+              return (
+                <Swiper.Item key={index} className='swiper-item' >
+                  {
+                    item.videoUrl && item.videoUrl.length > 0 ? (
+                      <View className='swiper-item'>
+                        <Video 
+                          className='swiper-video'
+                          id='swiper-video-ref'
+                          src={videoSource.src}
+                          poster={videoSource.poster}
+                          initialTime={videoOptions.initialTime}
+                          controls={videoOptions.controls}
+                          autoplay={videoOptions.autoplay}
+                          loop={videoOptions.loop}
+                          muted={videoOptions.muted}
+                          onPlay={onVideoPlay}
+                          onPause={onVideoPause}
+                          onPlayend={onVideoPlayend}
+                          onTimeUpdate={onVideoTimeUpdate}
+                        />
+                      </View>                    
+                    ) : (
+                      <View className='swiper-item'>
+                        <Image className='swiper-img' src={item.imgUrl} fit='cover' onClick={() => clickPreviewImg(item.imgUrl)} />
+                      </View>                   
+                    )
+                  }                
+                </Swiper.Item>
+              );
+            })
+          }
         </Swiper>
         <View className="detail-swiper-slide">
           <Indicator total={bannerList.length} type="dualScreen" current={currentIndex} />
@@ -299,24 +317,28 @@ export default function Index() {
           <Image className='detail-price-img' fit='fill' src={imgPriceBar}></Image>
           <View className='detail-price-item'>
             <View className='detail-price-new-wrap'>
-              <View className='detail-price-new'>{goodsInfo.vipPrice}</View>
+              <View className='detail-price-new'>{goodsInfo.discountPrice}</View>
               <View className='detail-price-new-unit'>积分</View>
             </View>       
             {
-              goodsInfo.price && (
-                <View className='detail-price-old'>{goodsInfo.price}积分</View>
+              goodsInfo.product.price && (
+                <View className='detail-price-old'>{goodsInfo.product.price}积分</View>
               )
             }     
           </View>           
         </View>
         <View className='detail-name-wrap'>
-          <View className='detail-name'>{goodsInfo.title}</View>
+          <View className='detail-name'>{goodsInfo.product.name}</View>
         </View>
         <View className='detail-tag-wrap'>
           <View className='detail-tag-item'>
-            <Tag className='detail-tag-text'>{goodsInfo.shopDescription}</Tag>
-            <Tag className='detail-tag-text'>{goodsInfo.shopName}</Tag>
-            <Tag className='detail-tag-text'>{goodsInfo.delivery}</Tag>
+            {
+              Taro.UTIL.configLabelTagList(goodsInfo.product.label).map((text, index) => {
+                return (
+                  <Tag key={index} className='detail-tag-text'>{text}</Tag>
+                )
+              })
+            }
           </View>          
         </View>
       </>
@@ -331,7 +353,7 @@ export default function Index() {
           <View className='detail-divider'>商品详情</View>
         </View>  
         {
-          videoSource.src ? (
+          videoSource && videoSource.src ? (
             <View className='detail-video-wrap'>
               <View className='detail-video-item'>
               <Video 
@@ -354,9 +376,9 @@ export default function Index() {
           ) : null
         }
         {
-          goodsInfo.src ? (
+          goodsInfo.product.longImageUrl ? (
             <View className='detail-img-wrap'>
-              <Image className='detail-img' src={goodsInfo.src} fit='contain'></Image>
+              <Image className='detail-img' src={goodsInfo.product.longImageUrl} fit='contain'></Image>
             </View>
           ) : null
         }                     
@@ -371,8 +393,8 @@ export default function Index() {
           <PullToRefresh onRefresh={() => refreshData()} renderIcon={(status) => Taro.UTIL.refreshRenderHeaderSvg(status)}>
             <View className='detail-list' id='scroll'>          
               {bannerList && bannerList.length > 0 ? swiperView() : null}
-              {goodsInfo && goodsInfo.title ? goodsInfoView() : null}
-              {(goodsInfo.video || goodsInfo.src) ? goodsVideoAndImgView() : null}
+              {goodsInfo && goodsInfo.product ? goodsInfoView() : null}
+              {goodsInfo && goodsInfo.product ? goodsVideoAndImgView() : null}
             </View>
           </PullToRefresh>
           {toolsView()}
