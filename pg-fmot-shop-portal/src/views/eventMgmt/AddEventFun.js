@@ -60,8 +60,9 @@ export function AddEventFun({
       if (res) {
         const respData = res.data || {};
         if (0 === respData.code) {
+          const orgCodeDataList = respData.data || [];
           let list = [];
-          respData.data.forEach((item) => {
+          orgCodeDataList.forEach((item) => {
             list.push({
               label: item.code,
               value: item.id,
@@ -356,6 +357,7 @@ export function AddEventFun({
     } catch (err) {
       message.error(err ? err : '网络请求失败, 请重试!', 2);
     }
+    console.log('---goodsList---', list);
     return list;
   }
   

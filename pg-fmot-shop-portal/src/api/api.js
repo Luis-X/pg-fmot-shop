@@ -121,18 +121,19 @@ export const uploadFileChunkMerge = (param) => {
 
 // 登录、登出
 export const ssoLogin = (param) => {
-  return client.post(URL.ssoLogin, param);
-  // return {
-  //   "data": {
-  //     "code": 0,
-  //     "message": "success",
-  //     "data": { 
-  //       token: '1234567890',
-  //       userName: 'RichLuisX',
-  //       roleName: 'developer',
-  //     }
-  //   }
-  // }
+  // return client.post(URL.ssoLogin, param);
+  const res =  {
+    "data": {
+      "code": 0,
+      "message": "success",
+      "data": { 
+        token: '1234567890',
+        userName: 'RichLuisX',
+        roleName: 'developer',
+      }
+    }
+  }
+  return clientMockData(res);
 };
 // export const logout = (param) => {
 //   return client.post(URL.logout, param);
@@ -141,7 +142,15 @@ export const ssoLogin = (param) => {
 
 // 通用
 export const orgCodeList = (param) => {
-  return client.get(URL.orgCodeList, param);
+  // return client.get(URL.orgCodeList, param);
+  const res = {
+    "data": {
+      "code": 0,
+      "message": "success",
+      "data": []
+    }
+  }
+  return clientMockData(res);
 };
 
 
@@ -153,7 +162,15 @@ export const asyncTaskDetail = (param) => {
 
 // 内部账号
 export const internalAccountList = (param) => {
-  return client.post(URL.internalAccountList, param);
+  // return client.post(URL.internalAccountList, param);
+  const res = {
+    "data": {
+      "code": 0,
+      "message": "success",
+      "data": {}
+    }
+  }
+  return clientMockData(res);
 };
 export const internalAccountChangeStatus = (param) => {
   return client.post(URL.internalAccountChangeStatus, param);
@@ -193,7 +210,15 @@ export const externalAccountImportTemplatePoints = (param) => {
 
 // 活动
 export const eventList = (param) => {
-  return client.post(URL.eventList, param);
+  // return client.post(URL.eventList, param);
+  const res = {
+    "data": {
+      "code": 0,
+      "message": "success",
+      "data": {}
+    }
+  }
+  return clientMockData(res);
 };
 export const eventCopy = (param) => {
   return client.post(URL.eventCopy, param);
@@ -224,13 +249,37 @@ export const orderListExport = (param) => {
 
 // 商品
 export const goodsSearchList = (param) => {
-  return client.post(URL.goodsSearchList, param);
+  // return client.post(URL.goodsSearchList, param);
+  const res = {
+    "data": {
+      "code": 0,
+      "message": "success",
+      "data": {}
+    }
+  }
+  return clientMockData(res, param);
 };
 export const goodsList = (param) => {
-  return client.post(URL.goodsList, param);
+  // return client.post(URL.goodsList, param);
+  const res = {
+    "data": {
+      "code": 0,
+      "message": "success",
+      "data": {}
+    }
+  }
+  return clientMockData(res, param);
 };
 export const goodsCategoryList = (param) => {
-  return client.get(URL.goodsCategoryList, param);
+  // return client.get(URL.goodsCategoryList, param);
+  const res = {
+    "data": {
+      "code": 0,
+      "message": "success",
+      "data": []
+    }
+  }
+  return clientMockData(res, param);
 };
 export const goodsDetail = (param) => {
   return client.post(URL.goodsDetail, param);
@@ -244,62 +293,113 @@ export const goodsSave = (param) => {
 
 // 数据统计
 export const trackList = (param) => {
-  return client.post(URL.trackList, param);
+  // return client.post(URL.trackList, param);
+  const res = {
+    "data": {
+      "code": 0,
+      "message": "string",
+      "data": {
+        "totalPages": 10,
+        "content": [
+          {
+            "id": "string",
+            "name": "string",
+            "createDate": "2025-04-16T14:06:52.639Z",
+            "beginDate": "2025-04-16T14:06:52.639Z",
+            "endDate": "2025-04-16T14:06:52.639Z",
+            "institutionCode": "string",
+            "activityType": "EMPLOYEE",
+            "totalCount": 0,
+            "totalUser": 0
+          }
+        ]
+      }
+    }
+  }
+  return clientMockData(res);
 };
 export const trackExport = (param) => {
   return client.post(URL.trackExport, param);
 }
 export const trackPeopleList = (param) => {
-  return client.post(URL.trackPeopleList, param);
+  // return client.post(URL.trackPeopleList, param);
+  const res = {
+    "data": {
+      "code": 0,
+      "message": "success",
+      "data": []
+    }
+  }
+  return clientMockData(res);
 };
 export const trackTimesList = (param) => {
-  return client.post(URL.trackTimesList, param);
+  // return client.post(URL.trackTimesList, param);
+  const res = {
+    "data": {
+      "code": 0,
+      "message": "success",
+      "data": []
+    }
+  }
+  return clientMockData(res);
 };
 export const trackChart = (param) => {
-  return client.post(URL.trackChart, param);
-//   const res = {
-//     data: {
-//       code: 0,
-//       data: {
-//         content: [
-//           { id: 1, type: '轮播图视频观看人数', duration: 3, people: 90 },
-//           { id: 2, type: '轮播图视频观看人数', duration: 6, people: 90 },
-//           { id: 3, type: '轮播图视频观看人数', duration: 9, people: 90 },
-//           { id: 4, type: '轮播图视频观看人数', duration: 12, people: 85 },
-//           { id: 5, type: '轮播图视频观看人数', duration: 15, people: 80 },
-//           { id: 6, type: '轮播图视频观看人数', duration: 18, people: 80 },
-//           { id: 7, type: '轮播图视频观看人数', duration: 21, people: 70 },
-//           { id: 8, type: '轮播图视频观看人数', duration: 24, people: 70 },
-//           { id: 9, type: '轮播图视频观看人数', duration: 27, people: 70 },
-//           { id: 10, type: '轮播图视频观看人数', duration: 30, people: 60 },
-//           { id: 11, type: '轮播图视频观看人数', duration: 33, people: 60 },
-//           { id: 12, type: '轮播图视频观看人数', duration: 36, people: 60 },
-//           { id: 13, type: '轮播图视频观看人数', duration: 39, people: 50 },
-//           { id: 14, type: '轮播图视频观看人数', duration: 42, people: 50 },
-//           { id: 15, type: '轮播图视频观看人数', duration: 45, people: 50 },
-//           { id: 16, type: '轮播图视频观看人数', duration: 48, people: 40 },
-//           { id: 17, type: '轮播图视频观看人数', duration: 51, people: 40 },
-//           { id: 18, type: '轮播图视频观看人数', duration: 54, people: 40 },
-//           { id: 19, type: '轮播图视频观看人数', duration: 57, people: 30 },
-//           { id: 20, type: '轮播图视频观看人数', duration: 60, people: 30 },
-//           // { id: 7, type: '商品详情视频观看人数', duration: 0, people: 0 },
-//           // { id: 8, type: '商品详情视频观看人数', duration: 3, people: 10 },
-//           // { id: 9, type: '商品详情视频观看人数', duration: 6, people: 15 },
-//           // { id: 10, type: '商品详情视频观看人数', duration: 9, people: 20 },
-//           // { id: 11, type: '商品详情视频观看人数', duration: 12, people: 25 },
-//           // { id: 12, type: '商品详情视频观看人数', duration: 15, people: 30 },
-//           // { id: 13, type: '商品详情视频观看人数', duration: 18, people: 35 },
-//           // { id: 14, type: '商品详情视频观看人数', duration: 21, people: 40 },
-//           // { id: 15, type: '商品详情视频观看人数', duration: 24, people: 10 },
-//           // { id: 16, type: '商品详情视频观看人数', duration: 27, people: 5 },
-//           // { id: 17, type: '商品详情视频观看人数', duration: 30, people: 50 },
-//           // { id: 18, type: '商品详情视频观看人数', duration: 33, people: 100 },
-//           // { id: 19, type: '商品详情视频观看人数', duration: 36, people: 0 },
-//         ]
-//       },
-//     },
-//   }
-//   return clientMockData(res, param);
+  // return client.post(URL.trackChart, param);
+  const res = {
+    "data": {
+      "code": 0,
+      "message": "success",
+      "data": [
+        {
+          "point_3": 0,
+          "point_6": 0,
+          "point_9": 0,
+          "point_12": 10,
+          "point_15": 0,
+          "point_18": 0,
+          "point_21": 0,
+          "point_24": 0,
+          "point_27": 0,
+          "point_30": 0,
+          "point_33": 0,
+          "point_36": 0,
+          "point_39": 0,
+          "point_42": 0,
+          "point_45": 0,
+          "point_48": 0,
+          "point_51": 0,
+          "point_54": 0,
+          "point_57": 0,
+          "point_60": 0,
+          "user_action_type": 2
+        },
+        {
+          "point_3": 0,
+          "point_6": 0,
+          "point_9": 0,
+          "point_12": 10,
+          "point_15": 0,
+          "point_18": 0,
+          "point_21": 0,
+          "point_24": 10,
+          "point_27": 0,
+          "point_30": 30,
+          "point_33": 0,
+          "point_36": 0,
+          "point_39": 20,
+          "point_42": 0,
+          "point_45": 0,
+          "point_48": 60,
+          "point_51": 0,
+          "point_54": 0,
+          "point_57": 80,
+          "point_60": 0,
+          "user_action_type": 3
+        }
+      ]
+    }
+  }
+  return clientMockData(res);
 };
 
 

@@ -13,12 +13,13 @@ import {
   Tabs,
   Spin,
   Tooltip,
-  notification
+  notification,
+  Button
 } from 'antd';
 import {
   SearchOutlined,
   ReloadOutlined,
-  LeftOutlined,
+  ArrowLeftOutlined
 } from '@ant-design/icons';
 import {
   ProFormCheckbox,
@@ -753,23 +754,10 @@ class TrackDetail extends Component {
   }
 
   // 图表
-  // FIXME: 图表显示异常，可能是组件的问题
   lineChartView = () => {
     const dataList = this.state.data;
     let data = [];
     let list = [];
-    // for (let i = 0; i < 61; i++) {
-    //   list.push({ 
-    //     type: '轮播图视频观看人数', 
-    //     second: i, 
-    //     value: 90 - i - Math.floor(Math.random() * 20)  
-    //   })
-    //   list.push({ 
-    //     type: '商品详情视频观看人数', 
-    //     second: i, 
-    //     value: 90 - i - Math.floor(Math.random() * 20) 
-    //   })
-    // }
     let keyList = [
       'point_3',
       'point_6',
@@ -802,8 +790,9 @@ class TrackDetail extends Component {
       }
       keyList.forEach((key, jndex) => {
         const pointIem = {};
+        const secondValue = (jndex + 1) * 3;
         pointIem.type = type;
-        pointIem.second = (jndex + 1) * 3;
+        pointIem.second = secondValue.toString();
         pointIem.value = chartMap[key];
         list.push(pointIem);
       })
@@ -824,10 +813,6 @@ class TrackDetail extends Component {
             fontSize: 12,
           },
         },
-        // min: 0,
-        // max: 60,
-        // tickInterval: 1,
-        // tickCount: 20,
       },
       yAxis: {
         title: {
@@ -1009,12 +994,9 @@ class TrackDetail extends Component {
     ];
     return (
       <HomeLayout>
-        <button className="current-btn" onClick={() => {
-          this.clickBackBtn();
-        }}>
-          <LeftOutlined />
-          <span>返回</span>
-        </button>
+        <div className='list-title-wrap'>
+          <Button className='list-title' type="text" icon={<ArrowLeftOutlined />} onClick={() => this.clickBackBtn()}>返回</Button>
+        </div>        
         <Divider style={{ margin: '3px 0' }} />
         <Tabs onChange={this.tabOnChange} items={tabItems}></Tabs>
       </HomeLayout>

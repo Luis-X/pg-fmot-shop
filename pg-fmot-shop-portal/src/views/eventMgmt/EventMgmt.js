@@ -87,8 +87,9 @@ class EventMgmt extends Component {
         const respData = res.data || {};
         console.log(respData)
         if (0 === respData.code) {
+          const orgCodeDataList = respData.data || [];
           self.setState({
-            orgCodeList: respData.data,
+            orgCodeList: orgCodeDataList,
           });
         } else {
           MyAlert({ errorMsg: respData.message });

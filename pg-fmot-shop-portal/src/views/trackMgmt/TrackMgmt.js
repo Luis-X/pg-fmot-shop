@@ -68,8 +68,9 @@ class TrackMgmt extends Component {
       if (res) {
         const respData = res.data || {};
         if (0 === respData.code) {
+          const orgCodeDataList = respData.data || [];
           self.setState({
-            orgCodeList: respData.data,
+            orgCodeList: orgCodeDataList,
           });
         } else {
           MyAlert({ errorMsg: respData.message });

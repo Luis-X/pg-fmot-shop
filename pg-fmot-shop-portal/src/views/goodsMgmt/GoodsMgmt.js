@@ -67,8 +67,9 @@ class GoodsMgmt extends Component {
       if (res) {
         const respData = res.data || {};
         if (0 === respData.code) {
+          const categoryDataList = respData.data || [];
           self.setState({
-            goodsCategoryList: respData.data,
+            goodsCategoryList: categoryDataList,
           });
         } else {
           MyAlert({ errorMsg: respData.message });

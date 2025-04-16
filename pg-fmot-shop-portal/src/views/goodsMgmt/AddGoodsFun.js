@@ -47,8 +47,9 @@ export function AddGoodsFun({
       if (res) {
         const respData = res.data || {};
         if (0 === respData.code) {
+          const categoryDataList = respData.data || [];
           let list = [];
-          respData.data.forEach((item) => {
+          categoryDataList.forEach((item) => {
             list.push({
               label: item.name,
               value: item.id,
@@ -251,7 +252,6 @@ export function AddGoodsFun({
         item.id = oldItem.id;
       }
     })
-    // FIXME: 无法保存
     console.log('处理id后，保存：', params);
 
     api.goodsSave(params).then((res) => {
@@ -562,7 +562,7 @@ const validateCommaSeparated = (rule, value) => {
                 copyIconProps={false}
                 deleteIconProps={false}
                 itemRender={({ listDom, action }, { index }) => (
-                  <ProCard bordered style={{ marginBlockEnd: 8 }} extra={action} bodyStyle={{ paddingBlockEnd: 0 }}>{listDom}</ProCard>
+                  <ProCard bordered style={{ marginBlockEnd: 8 }} extra={action} bodyStyle={{  paddingBlockEnd: 0 }}>{listDom}</ProCard>
                 )}
               >
                 {goodsBannerItemView()}
