@@ -15,6 +15,13 @@ export default function Index() {
 
   const router = useRouter()
 
+  const configTracker = (type) => {
+    const trackData = {}
+    if (type === 1) {
+      Taro.TRACKER.eventTracker('ORDER_CANCEL', trackData, "订单详情页-取消人数/次数")
+    }
+  }
+
   useLoad(() => {
     Taro.WXSDK.hideOptionMenu();
     setTimeout(() => {
@@ -115,6 +122,7 @@ export default function Index() {
     Taro.HUD.hideLoading()
 
     if (res.code === 0) {
+      configTracker(1)
       const resData = res.data || {}
       Taro.HUD.showToastMessage('取消成功')
       setTimeout(() => {

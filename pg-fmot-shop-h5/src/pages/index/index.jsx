@@ -24,7 +24,7 @@ export default function Index() {
 
   useEffect(() => {
     if (Object.keys(userData).length > 0) {
-      allHandler()
+      userDataHandler()
     }
   }, [userData]);
 
@@ -34,15 +34,29 @@ export default function Index() {
 
   async function requestData() {
     const params = {
-      code: "123456",
+      activityId: "string",
+      pointAccountId: "string",
+      code: "string",
+      timestamp: "string",
+      signature: "string",
+      openid: "string",
+      unionid: "string",
+      access_token: "string"  
     }
 
     const res = await Taro.NETWORK.login(params) 
 
     if (res.code === 0) {
       const resData = res.data || {}
-      Taro.UTIL.setPGStorage('login_info', resData)	
+      // 登录信息
       setUserData(resData)
+      Taro.UTIL.setPGStorage('login_info', resData)	
+      // 活动信息
+      const activityInfo = {
+        activityId: params.activityId,
+        pointAccountId: params.pointAccountId,
+      }
+      Taro.UTIL.setPGStorage('activity_info', activityInfo)	
     } else {
       Taro.HUD.showToastMessage(res.message)
     }
@@ -70,7 +84,7 @@ export default function Index() {
   }
 
   // 活动处理
-  const allHandler = () => {
+  const userDataHandler = () => {
     const isActivityTime = userData.isActivityTime;
     const activityType = userData.activityType;
 

@@ -82,7 +82,6 @@ export default function Index() {
     }
 
     const params = {
-      activityId: queryActivityId,
       page: pageIndex,
       size: 10,
       type: tabIndex,

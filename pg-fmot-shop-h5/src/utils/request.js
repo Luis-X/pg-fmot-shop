@@ -20,15 +20,21 @@ function post(url, data) {
 function baseRequest(url, data, method) {
   
   const realUrl = checkHostUrl(url);
-  let token = Taro.UTIL.getPGStorage('login_info').token || ''
-  let activityId = Taro.UTIL.getPGStorage('activityId') || ''
-  let pointAccountId = Taro.UTIL.getPGStorage('pointAccountId') || ''
+
+  // 所有接口带上token！！！
+  // 所有接口带上activityId和pointAccountId，如果参数中包含则忽略，否则从本地缓存中获取！！！
+  const loginInfo = Taro.UTIL.getPGStorage('login_info') || {}
+  let token = loginInfo.token || ''
+
+  const activityInfo = Taro.UTIL.getPGStorage('activity_info') || {}
+  let activityId = activityInfo.activityId || ''
+  let pointAccountId = activityInfo.pointAccountId || ''
 
   let newData = {...data}
-  if (activityId) {
+  if (!newData.activityId) {
     newData.activityId = activityId
   }
-  if (pointAccountId) {
+  if (!newData.pointAccountId) {
     newData.pointAccountId = pointAccountId
   }
 

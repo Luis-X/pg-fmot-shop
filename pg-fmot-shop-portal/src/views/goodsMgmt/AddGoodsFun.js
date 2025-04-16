@@ -65,6 +65,7 @@ export function AddGoodsFun({
   };
 
   // 详情数据
+  const [oldBannerList, setOldBannerList] = useState([]);
   const requestDetailData = async () => {
     let detailData = {};  
 
@@ -85,29 +86,33 @@ export function AddGoodsFun({
           let bannerPoster = [];
           let bannerVideo = [];
           let bannerImgs = [];
-          detailData.productCarouselImages.forEach((item) => {
-            const id = item.id || '';
+
+          let bannerList = detailData.productCarouselImages || [];
+          setOldBannerList(bannerList);
+          let newBannerList = [];
+          bannerList.forEach((item) => {
+            // 封面
             const bannerPosterUrls = item.videoImgUrl ? [item.videoImgUrl] : [];
             if (bannerPosterUrls.length > 0) {
-              bannerPoster = Util.imgUrlsToFiles(bannerPosterUrls, id);
+              bannerPoster = Util.imgUrlsToFiles(bannerPosterUrls);
             }
-
+            // 视频
             const bannerVideoUrls = item.videoUrl ? [item.videoUrl] : [];
             if (bannerVideoUrls.length > 0) {
-              bannerVideo = Util.imgUrlsToFiles(bannerVideoUrls, id);
+              bannerVideo = Util.imgUrlsToFiles(bannerVideoUrls);
             }
-
+            // 图片
             const bannerImgsUrls = item.imgUrl ? [item.imgUrl] : [];
             if (bannerImgsUrls.length > 0) {
-              bannerImgs = Util.imgUrlsToFiles(bannerImgsUrls, id);
-            }   
-                                    
+              bannerImgs = Util.imgUrlsToFiles(bannerImgsUrls);
+            }                                       
           });
-          detailData.productCarouselImages = [{
+          newBannerList = [{
             videoImgUrl: bannerPoster,
             videoUrl: bannerVideo,
             imgUrl: bannerImgs
-          }];
+          }]
+          detailData.productCarouselImages = newBannerList;
 
           // 视频
           const videoUrls = detailData.productVideo ? [detailData.productVideo] : [];
@@ -129,7 +134,6 @@ export function AddGoodsFun({
   };
 
   // 创建、保存
-  // FIXME: 轮播图回传ID问题，需要处理
   const saveAndCreateGoods = (type) => {
     setLoading(true);
     form.validateFields().then((values) => {
@@ -145,27 +149,20 @@ export function AddGoodsFun({
       let bannerImgs = [];
       let bannerQueryList = []
       values.productCarouselImages.forEach((item) => {
-
-        console.log('---item---', item);
+        // 封面
         const bannerPosterFiles = item.videoImgUrl || [];
         bannerPoster = Util.filesToImgUrls(bannerPosterFiles)[0] || '';
-
+        // 视频
         const bannerVideoFiles = item.videoUrl || [];
-        const bannerVideoId = bannerVideoFiles[0] ? bannerVideoFiles[0].id : '';
-        console.log('---bannerVideoId---', bannerVideoId);
         bannerVideo = Util.filesToImgUrls(bannerVideoFiles)[0] || '';
-
+        // 图片
         const bannerImgFiles = item.imgUrl || [];;
-        bannerImgs = Util.filesToImgUrls(bannerImgFiles) || [];
-        
+        bannerImgs = Util.filesToImgUrls(bannerImgFiles) || [];        
         // banner-视频、封面
         if (bannerVideo || bannerPoster) {
           const videoObj = {
             videoImgUrl: bannerPoster,
             videoUrl: bannerVideo,
-          }
-          if (bannerVideoId) {
-            videoObj.id = bannerVideoId;
           }
           bannerQueryList.push(videoObj);
         }
@@ -178,6 +175,21 @@ export function AddGoodsFun({
         })
       });
       values.productCarouselImages = bannerQueryList;
+
+      if (bannerVideo) {
+        if (!bannerPoster) {
+          message.error('请上传视频封面！', 2);
+          setLoading(false);
+          return;
+        }
+      } else {
+        if (bannerImgs.length <= 0) {
+          message.error('请上传轮播图！', 2);
+          setLoading(false);
+          return;
+        }
+      }
+      
 
       // 视频
       const videoFiles = values.productVideo || [];
@@ -222,12 +234,27 @@ export function AddGoodsFun({
   };
 
   // 保存
+  // productCarouselImages 修改需要携带id参数（后端要求）
   const saveHandler = (values) => {
     console.log('处理后，保存：', values);
-    api.goodsSave({
+    const params = {
       id: goodsId,
-      ...values,      
-    }).then((res) => {
+      ...values,
+    }
+
+    // 轮播图 id 
+    let bannerList = params.productCarouselImages || [];
+    bannerList.forEach((item, index) => {
+      const oldItem = oldBannerList[index] || {};
+      const id = oldItem.id || '';
+      if (id) {
+        item.id = oldItem.id;
+      }
+    })
+    // FIXME: 无法保存
+    console.log('处理id后，保存：', params);
+
+    api.goodsSave(params).then((res) => {
       if (res) {
         setLoading(false);
         const respData = res.data || {};
@@ -411,6 +438,18 @@ export function AddGoodsFun({
     )
   }
 
+// 检查输入是否以逗号分隔
+const validateCommaSeparated = (rule, value) => {
+  if (!value) {
+    return Promise.reject(new Error('请输入商品标签'));
+  }
+  const regex = /^[\u4e00-\u9fa5a-zA-Z0-9]+(,[\u4e00-\u9fa5a-zA-Z0-9]+)*$/;
+  if (regex.test(value)) {
+    return Promise.resolve();
+  }
+  return Promise.reject(new Error('请使用,分隔商品标签'));
+};
+
   return (
     <React.Fragment>
       <Drawer 
@@ -491,10 +530,13 @@ export function AddGoodsFun({
           <ProFormText
             name="label"
             label="商品标签"
-            rules={[{ required: true
-              , message: '请输入商品标签' }]}
+            rules={[
+              { required: true, message: '请输入商品标签' },
+              { validator: validateCommaSeparated }
+            ]}
             placeholder="请输入商品标签"
           />
+          {/* FIXME: label增加红色星号 */}
           <ProFormUploadButton
             name="previewUrl"
             label="商品预览图"
@@ -512,7 +554,7 @@ export function AddGoodsFun({
             action={signData.url}
           />
           {
-            goodsId? (
+            goodsId ? (
               <ProFormList
                 name="productCarouselImages"
                 label="商品轮播图"
@@ -551,7 +593,7 @@ export function AddGoodsFun({
             name="productVideo"
             label="商品视频"
             extra="只能上传mp4文件，最好不要超过100KB"
-            rules={[{ required: true, message: '请上传商品视频' }]}
+            rules={[{ required: false, message: '请上传商品视频' }]}
             max={1}
             fieldProps={{
               name: 'file',

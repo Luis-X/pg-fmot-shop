@@ -31,12 +31,10 @@ function App({ children }) {
   useLaunch(() => {
     console.log('App launch')
     Taro.TRACKER.startTracker('')
-    // Taro.TRACKER.eventTracker('MP_Open', '小程序启动', 'MP_Open', {})
   })
 
   useUnload(() => {
     console.log('App unload')
-    // Taro.TRACKER.eventTracker('MP_Close', '小程序退出', 'MP_Close', {})
   })
 
   // children 是将要会渲染的页面

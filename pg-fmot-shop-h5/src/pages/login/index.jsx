@@ -52,7 +52,6 @@ export default function Index() {
   // 绑定账号
    async function requestBindActivityIdData() {
     const params = {
-      activityId: "111",
       openId: "1234567890",
       userId: inputValue,
     }

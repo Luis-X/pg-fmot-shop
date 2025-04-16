@@ -24,6 +24,29 @@ export default function Index() {
 
   const router = useRouter()
 
+  const configTracker = (type) => {
+    const trackData = {}
+    if (type === 1) {
+      Taro.TRACKER.eventTracker('PRODUCT_DETAIL_PAGE', trackData, "商品详情页-浏览人数/次数")
+    } else if (type === 2) {
+      Taro.TRACKER.eventTracker('PRODUCT_DETAIL_PAGE', trackData, "商品详情页-页面停留时长")
+    } else if (type === 3) {
+      Taro.TRACKER.eventTracker('PRODUCT_CAROUSEL_VIDEO', trackData, "商品详情页-轮播图视频播放时长")
+    } else if (type === 4) {
+      Taro.TRACKER.eventTracker('PRODUCT_CAROUSEL_VIDEO', trackData, "商品详情页-轮播图视频播放人数/次数")
+    } else if (type === 5) {
+      Taro.TRACKER.eventTracker('PRODUCT_CAROUSEL_VIDEO', trackData, "商品详情页-轮播图视频完播人数/次数")
+    } else if (type === 6) {
+      Taro.TRACKER.eventTracker('PRODUCT_DETAIL_VIDEO', trackData, "商品详情页-商品详情视频播放时长")
+    } else if (type === 7) {
+      Taro.TRACKER.eventTracker('PRODUCT_DETAIL_VIDEO', trackData, "商品详情页-商品详情视频播放人数/次数")
+    } else if (type === 8) {
+      Taro.TRACKER.eventTracker('PRODUCT_DETAIL_VIDEO', trackData, "商品详情页-商品详情视频完播人数/次数")
+    } else if (type === 9) {
+      Taro.TRACKER.eventTracker('PRODUCT_ADD_CART', trackData, "商品详情页-加购物车人数/次数")
+    }
+  }
+
   useLoad(() => {
     Taro.WXSDK.hideOptionMenu();
     setTimeout(() => {
@@ -45,6 +68,8 @@ export default function Index() {
     // }
     Taro.TRACKER.pageViewTracker("商品详情");
     setIsShowPage(true);
+    configTracker(1)
+    configTracker(2)
 
     const activityId = router.params.activityId || '';
     const productId = router.params.id || '';
@@ -72,28 +97,44 @@ export default function Index() {
   }
 
   const [currentTime, setCurrentTime] = useState(0);
-  const onVideoPlay = (elm) => {
+  const onVideoPlay = (elm, sence) => {
     console.log('播放开始', elm)
+    
+    if (sence === 'banner') {
+      configTracker(4)
+    } else if (sence === 'detail') {
+      configTracker(7)
+    }
   }
-
-  const onVideoPause = (elm) => {
+  const onVideoPause = (elm, sence) => {
     console.log('播放暂停', elm)
   }
 
-  const onVideoPlayend = (elm) => {
+  const onVideoPlayend = (elm, sence) => {
     console.log('播放结束', elm)
+
+    if (sence === 'banner') {
+      configTracker(5)
+    } else if (sence === 'detail') {
+      configTracker(8)
+    }
   }
   
-  const onVideoTimeUpdate = (elm) => {   
+  const onVideoTimeUpdate = (elm, sence) => {   
     const time = elm.detail.currentTime;
     console.log('当前播放时长: ', time);
     setCurrentTime(time);
+    
+    if (sence === 'banner') {
+      configTracker(3)
+    } else if (sence === 'detail') {
+      configTracker(6)
+    }
   };
 
   // 下拉刷新
   const refreshData = () => {
     return requestData({
-      activityId: queryActivityId,
       id: queryProductId
     })
   };
@@ -101,7 +142,6 @@ export default function Index() {
   // request
   async function requestData(activityId, id) {
     const params = {
-      activityId: activityId,
       id: id
     }
 
@@ -169,6 +209,7 @@ export default function Index() {
     Taro.HUD.hideLoading()
 
     if (res.code === 0) {
+      configTracker(8)
       const resData = res.data || {}
       setCartNum(newCartNum)
       Taro.HUD.showToastMessage('加入购物车成功')
@@ -285,10 +326,10 @@ export default function Index() {
                           autoplay={videoOptions.autoplay}
                           loop={videoOptions.loop}
                           muted={videoOptions.muted}
-                          onPlay={onVideoPlay}
-                          onPause={onVideoPause}
-                          onPlayend={onVideoPlayend}
-                          onTimeUpdate={onVideoTimeUpdate}
+                          onPlay={(elm) => onVideoPlay(elm, 'banner')}
+                          onPause={(elm) => onVideoPause(elm, 'banner')}
+                          onPlayend={(elm) => onVideoPlayend(elm, 'banner')}
+                          onTimeUpdate={(elm) => onVideoTimeUpdate(elm, 'banner')}
                         />
                       </View>                    
                     ) : (
@@ -366,10 +407,10 @@ export default function Index() {
                 autoplay={videoOptions.autoplay}
                 loop={videoOptions.loop}
                 muted={videoOptions.muted}
-                onPlay={onVideoPlay}
-                onPause={onVideoPause}
-                onPlayend={onVideoPlayend}
-                onTimeUpdate={onVideoTimeUpdate}
+                onPlay={(elm) => onVideoPlay(elm, 'detail')}
+                onPause={(elm) => onVideoPause(elm, 'detail')}
+                onPlayend={(elm) => onVideoPlayend(elm, 'detail')}
+                onTimeUpdate={(elm) => onVideoTimeUpdate(elm, 'detail')}
               />
               </View>          
             </View>

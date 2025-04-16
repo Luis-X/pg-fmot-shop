@@ -271,6 +271,18 @@ class EventMgmt extends Component {
     })
   }
 
+  configDateView = (text, record) => {
+    const beginDate = record.beginDate ? moment(record.beginDate).format('YYYY.MM.DD HH:mm:ss') : '--';
+    const endDate = record.endDate? moment(record.endDate).format('YYYY.MM.DD HH:mm:ss') : '--';
+    return (
+      <div className='activity-time-wrap'>
+      {<span>{beginDate}</span>}
+      {<span>-</span>}
+      {<span>{endDate}</span>}
+    </div>
+    )
+  }
+
   render() {
     const { orgCodeList, activityTypeList, activityStatusList } = this.state;
     const {
@@ -301,11 +313,7 @@ class EventMgmt extends Component {
         key: 'activityDate',
         align: 'center',
         render: (text, record) => (
-          <div className='activity-time-wrap'>
-            {<span>{record.beginDate ? moment(record.beginDate).format('YYYY.MM.DD HH:mm:ss') : '--'}</span>}
-            {/* <span style={{ fontWeight: 'bold' }}>-</span> */}
-            {<span>{record.endDate ? moment(record.endDate).format('YYYY.MM.DD HH:mm:ss') : '--'}</span>}
-          </div>
+          this.configDateView(text, record)
         ),
       },
       {

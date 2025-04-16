@@ -63,7 +63,7 @@ function login (params) {
       // 账号是否正常
       isAvailableUser: true,
       // 是否同意协议
-      isAgreeAgreement: false,
+      agreement: false,
       // 邮箱是否白名单且未绑定过 (内部)
       isAvailableEmail: true,
       // 是否绑定openId为内部用户
@@ -71,6 +71,12 @@ function login (params) {
       // 是否绑定活动为外部用户
       isExternalUser: false,
     },
+    // data: {
+    //   "token": "string",
+    //   "pointAccountId": "string",
+    //   "agreement": true,
+    //   "informedConsentForm": "string"
+    // },
     message: '登录失败'
   }
   return clientMockData(res, params);
@@ -383,7 +389,7 @@ function mineOrderList (params) {
 }
 // 我的兑换 [ok]
 function mineExchangeList (params) {
-  // return REQUEST.post('/api/activity/getMyForH5', params)
+  // return REQUEST.get('/api/activity/getMyForH5', params)
   const res = {
     "code": 0,
     "message": "string",
@@ -525,8 +531,7 @@ async function wxConfigShareData (shareData, senceType) {
         imgUrl: shareData.imgUrl || '',
         success: function () {
           // 用户点击了分享后执行的回调函数 (即将废弃)
-          console.log('share - - 好友')   
-          shareTracker(shareData, senceType, 'message')      
+          console.log('share - - 好友')        
         }
       })
 
@@ -538,7 +543,6 @@ async function wxConfigShareData (shareData, senceType) {
         success: function () {
           // 用户点击了分享后执行的回调函数 (即将废弃)
           console.log('share - - 朋友圈')
-          shareTracker(shareData, senceType, 'timeline')
         }
       })
       
@@ -557,19 +561,6 @@ async function wxConfigShareData (shareData, senceType) {
     })
   } else {
     console.log('wxconfig data error')
-  }
-}
-
-function shareTracker(shareData, senceType) {
-  if (senceType === 'detail') {
-    // 文章详情
-    Taro.TRACKER.eventTracker('Page_Forward', '转发页面', 'PageForward', {
-      report_name: shareData.title || '',
-      work_type: Taro.TRACKER.userWorkType()
-    })
-  } else {
-    // 页面分享
-    // Taro.TRACKER.eventTracker('MP_Share', '小程序分享', 'MP_Share', {})
   }
 }
 

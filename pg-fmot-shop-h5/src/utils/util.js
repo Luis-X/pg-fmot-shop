@@ -344,9 +344,9 @@ function refreshRenderFooterSvg(text) {
  // 检查协议状态
  function checkAgreementStatusShow() {    
   const userData = Taro.UTIL.getPGStorage('login_info')
-  const isAgreeAgreement = userData.isAgreeAgreement;
+  const isAgreeAgreement = userData.agreement;
   if (isAgreeAgreement) {
-    console.log("同意协议");
+    console.log("已同意协议");
     return false
   } else {
     console.log("未同意协议");

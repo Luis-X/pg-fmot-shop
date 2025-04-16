@@ -302,7 +302,7 @@ class OrderMgmt extends Component {
         width: 100,
         key: 'createDate',
         align: 'center',
-        render: (text) => <>{moment(text).format('YYYY-MM-DD HH:mm:ss')}</>,
+        render: (text) => <>{moment(text).format('YYYY年MM月DD日 HH:mm:ss')}</>,
       },
       {
         title: '订单编号',

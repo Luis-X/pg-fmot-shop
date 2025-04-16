@@ -14,6 +14,13 @@ import imgSearchBarIcon from "../../images/home-search-bar-icon.png";
 
 export default function Index() {
 
+  const configTracker = (type) => {
+    const trackData = {}
+    if (type === 1) {
+      Taro.TRACKER.eventTracker('ACTIVITY_HOME_PAGE', trackData, "首页-浏览人数/次数")
+    }
+  }
+
   useLoad(() => {
     Taro.WXSDK.hideOptionMenu();
     createdPage();   
@@ -33,10 +40,10 @@ export default function Index() {
     // }
     Taro.TRACKER.pageViewTracker("首页");
     setIsShowPage(true);
+    configTracker(1)
 
     requestListData({
       pageIndex: 0,
-      activityId: '',
     }, false)
   };
 
@@ -46,7 +53,6 @@ export default function Index() {
   const refreshData = () => {
     return requestListData({
       pageIndex: 0,
-      activityId: '',
     }, false)
   };
 
@@ -58,7 +64,6 @@ export default function Index() {
   const loadMore = async () => {
     await requestListData({
       pageIndex: pageCurrentIndex,
-      activityId: '',
     }, true)
   };
 
@@ -80,7 +85,6 @@ export default function Index() {
     const params = {
       page: pageIndex,
       size: 10,
-      activityId: activityId,
     }
 
     const res = await Taro.NETWORK.activityList(params) 

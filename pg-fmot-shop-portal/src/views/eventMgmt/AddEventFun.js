@@ -78,6 +78,7 @@ export function AddEventFun({
   };
 
   // 详情数据
+  const [oldBannerList, setOldBannerList] = useState([]);
   const requestDetailData = async () => {
     let detailData = {};
     
@@ -92,15 +93,13 @@ export function AddEventFun({
             
             // 轮播图
             let bannerList = detailData.activityCarouselImages || [];
+            setOldBannerList(bannerList);            
             let newBannerList = [];
             bannerList.forEach((item) => {
               const imgUrls = item.imageUrl ? [item.imageUrl] : [];
               let newItem = {
                 imageUrl: Util.imgUrlsToFiles(imgUrls),
                 url: item.url,
-              }
-              if (item.id) {
-                newItem.id = item.id;
               }
               newBannerList.push(newItem);
             });
@@ -174,7 +173,7 @@ export function AddEventFun({
       // 轮播图
       let bannerList = values.activityCarouselImages || [];      
       if (bannerList.length <= 0) {
-        message.error('请上传首页轮播图！', 2);
+        message.error('请上传轮播图！', 2);
         setLoading(false);
         return;
       }
@@ -185,9 +184,6 @@ export function AddEventFun({
         let newItem = {
           imageUrl: imgUrl,
           url: item.url,
-        }
-        if (item.id) {
-          newItem.id = item.id;
         }
         newBannerList.push(newItem);
       });
@@ -247,12 +243,26 @@ export function AddEventFun({
   };
 
   // 保存
+  // activityCarouselImages 修改需要携带id参数（后端要求）
   const saveHandler = (values) => {
     console.log('处理后，保存：', values);
-    api.eventSave({
+    const params = {
       id: activityId,
       ...values,
-    }).then((res) => {
+    }
+
+    // 轮播图 id 
+    let bannerList = params.activityCarouselImages || [];
+    bannerList.forEach((item, index) => {
+      const oldItem = oldBannerList[index] || {};
+      const id = oldItem.id || '';
+      if (id) {
+        item.id = oldItem.id;
+      }
+    })
+    console.log('处理id后，保存：', params);
+
+    api.eventSave(params).then((res) => {
       if (res) {
         setLoading(false);
         const respData = res.data || {};
@@ -517,6 +527,36 @@ export function AddEventFun({
     wrapperCol: { span: 20 },
   };
 
+  const bannerItemView = () => {
+    return (
+      <ProFormGroup key="group" min={1}>
+        <div className='banner-edit-wrap'>
+          <ProFormUploadButton
+            name="imageUrl"
+            rules={[{ required: true, message: '请上传图片' }]}
+            max={1}
+            fieldProps={{
+              name: 'file',
+              listType: 'picture-card',
+              beforeUpload: beforeUpload,
+              data: signData.params,
+              onChange: handleImgChange
+            }}
+            title="上传文件"
+            extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：100x100"
+            action={signData.url}                  
+          />
+          <ProFormText
+            width={'xl'}
+            name="url"
+            rules={[{ required: true, message: '请填写点击跳转URL' }]}
+            placeholder={'请填写点击跳转URL'}
+          />
+        </div>             
+      </ProFormGroup>   
+    )
+  }
+
   return (
     <React.Fragment>
       <Drawer 
@@ -625,41 +665,40 @@ export function AddEventFun({
             rules={[{ required: true, message: '请输入活动领取说明展示的文本内容' }]}
             placeholder={'请输入活动领取说明展示的文本内容'}
           />
-          <ProFormList
-            name="activityCarouselImages"
-            label="首页轮播图"             
-            creatorButtonProps={{
-              creatorButtonText: '新增图片',
-            }}
-            copyIconProps={false}
-            rules={[{ required: true, message: '请上传首页轮播图' }]}
-          >
-            <ProFormGroup key="group" min={1}>
-              <div className='banner-edit-wrap'>
-                <ProFormUploadButton
-                  name="imageUrl"
-                  rules={[{ required: true, message: '请上传图片' }]}
-                  max={1}
-                  fieldProps={{
-                    name: 'file',
-                    listType: 'picture-card',
-                    beforeUpload: beforeUpload,
-                    data: signData.params,
-                    onChange: handleImgChange
-                  }}
-                  title="上传文件"
-                  extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：100x100"
-                  action={signData.url}                  
-                />
-                <ProFormText
-                  width={'xl'}
-                  name="url"
-                  rules={[{ required: true, message: '请填写点击跳转URL' }]}
-                  placeholder={'请填写点击跳转URL'}
-                />
-              </div>             
-            </ProFormGroup>
-          </ProFormList>
+          {/* FIXME: label增加红色星号 */}
+          {
+            activityId ? (
+              <ProFormList
+                name="activityCarouselImages"
+                label="首页轮播图"             
+                creatorButtonProps={{
+                  creatorButtonText: '新增图片',
+                }}
+                copyIconProps={false}
+                rules={[{ required: true, message: '请上传首页轮播图' }]}
+              >
+                {bannerItemView()}
+              </ProFormList>
+            ) : (
+              <ProFormList
+                name="activityCarouselImages"
+                label="首页轮播图"             
+                creatorButtonProps={{
+                  creatorButtonText: '新增图片',
+                }}
+                copyIconProps={false}
+                rules={[{ required: true, message: '请上传首页轮播图' }]}
+                initialValue={[
+                  {
+                    imageUrl: [],
+                    url: '',
+                  },
+                ]}
+              >
+                {bannerItemView()}
+              </ProFormList>
+            )
+          }                    
           <ProFormDigit
             name="maxQuantity"
             label="商品限购数量"
@@ -670,6 +709,7 @@ export function AddEventFun({
             fieldProps={{ precision: 0 }}
           />
           <div className='goods-edit-wrap'>
+            {/* FIXME: 修改为输入框和按钮分开 */}
             <ProFormSelect
               showSearch
               showArrow={false}

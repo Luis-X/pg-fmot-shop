@@ -57,7 +57,7 @@ const utils = {
   },
 
   // urls转files
-  imgUrlsToFiles: (imgUrls, id) => {
+  imgUrlsToFiles: (imgUrls) => {
     console.log('imgUrlsToFiles', imgUrls);
     let list = [];
     imgUrls.forEach((item) => {
@@ -65,7 +65,6 @@ const utils = {
       if (url) {
         list.push({
           url: url,
-          id: id || '',
         });
       }
     });

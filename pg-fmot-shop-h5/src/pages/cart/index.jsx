@@ -53,7 +53,7 @@ export default function Index() {
   // request
   async function requestData(id) {
     const params = {
-      activityId: queryActivityId
+      
     }
 
     Taro.HUD.showLoading()

@@ -18,6 +18,19 @@ export default function Index() {
 
   const router = useRouter()
 
+  const configTracker = (type) => {
+    const trackData = {}
+    if (type === 1) {
+      Taro.TRACKER.eventTracker('ORDER_CHECK_PAGE', trackData, "确认订单信息-购买人数")
+    } else if (type === 2) {
+      Taro.TRACKER.eventTracker('ORDER_CONFIRM_EXCHANGE', trackData, "确认订单信息-点击“确认兑换”人数/次数")
+    } else if (type === 3) {
+      Taro.TRACKER.eventTracker('ORDER_EXCHANGE_SUCCESS', trackData, "确认订单信息&确认购买弹窗-兑换成功人数/次数")
+    } else if (type === 4) {
+      Taro.TRACKER.eventTracker('ORDER_EXCHANGE_FAILED', trackData, "确认订单信息&确认购买弹窗-兑换失败人数/次数")
+    }
+  }
+
   useLoad(() => {
     Taro.WXSDK.hideOptionMenu();
     setTimeout(() => {
@@ -39,6 +52,7 @@ export default function Index() {
     // }
     Taro.TRACKER.pageViewTracker("确认订单");
     setIsShowPage(true);
+    configTracker(1)
 
     const activityId = router.params.activityId || '';
     setQueryActivityId(activityId)
@@ -180,7 +194,7 @@ const cartNumDelete = (index) => {
   const [hideConfimBtn, setHideConfimBtn] = useState(false);
 
   const clickExchange = () => {
-
+    configTracker(2)
     // 是否包含虚拟商品
     const newList = []
     cartList.forEach(item => {
@@ -231,12 +245,14 @@ const cartNumDelete = (index) => {
     Taro.HUD.hideLoading()
 
     if (res.code === 0) {
+      configTracker(3)
       const resData = res.data || {}
       Taro.HUD.showToastMessage('兑换成功')
       setTimeout(() => {
         Taro.ROUTER.navigateTo('/pages/mine/index');
       }, 2000);
     } else {
+      configTracker(4)
       Taro.HUD.showToastMessage(res.message)
     }        
   }

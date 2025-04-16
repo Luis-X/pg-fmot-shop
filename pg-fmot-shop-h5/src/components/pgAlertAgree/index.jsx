@@ -37,15 +37,16 @@ export default function Index(props) {
   }
 
   async function requestAgreeData() {
-    const params = {
-      activityId: '',
-    }
 
-    const res = await Taro.NETWORK.agreeAgreement(params) 
+    const res = await Taro.NETWORK.agreeAgreement({}) 
 
     if (res.code === 0) { 
       setIsAlertShow(false)
-      
+
+      let userData = Taro.UTIL.getPGStorage('login_info') || {}
+      userData.agreement = true
+      Taro.UTIL.setPGStorage('login_info', userData)	
+
       if (props.onConfirm) {
         props.onConfirm()
       } 
