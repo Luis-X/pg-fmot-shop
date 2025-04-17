@@ -747,7 +747,7 @@ class TrackDetail extends Component {
 
   listTableItemView = (text, record, userActionType) => {
     return (
-      <Tooltip title="数据明细">
+      <Tooltip title="点击导出">
         <span className="event-setting" onClick={() => { this.clickListItem(record, userActionType); }}>{text}</span>
       </Tooltip>
     )    
@@ -791,9 +791,10 @@ class TrackDetail extends Component {
       keyList.forEach((key, jndex) => {
         const pointIem = {};
         const secondValue = (jndex + 1) * 3;
+        const value = chartMap[key] || 0;
         pointIem.type = type;
         pointIem.second = secondValue.toString();
-        pointIem.value = chartMap[key];
+        pointIem.value = value;
         list.push(pointIem);
       })
     })
@@ -871,17 +872,20 @@ class TrackDetail extends Component {
                   </ConfigProvider>
                 </Col>
                 <Col span={8}>
+                  {/* FIXME：根据活动和商品编码搜索 */}
                   <Form.Item>{getFieldDecorator('productId',{})(
                     <ProFormSelect
                       showSearch
-                      showArrow={false}
-                      allowClear
-                      labelInValue
                       debounceTime={500}
                       label="活动商品"
                       request={this.requestGoodsSearchListData}
                       rules={[{ required: true, message: '请输入商品编号' }]}
                       placeholder="请输入商品编号"
+                      fieldProps={{
+                        showArrow: false,
+                        // labelInValue: true,
+                        filterOption: false,                        
+                      }}
                     />
                   )}
                   </Form.Item>
@@ -926,24 +930,28 @@ class TrackDetail extends Component {
   };
 
   // 商品搜索列表
-  requestGoodsSearchListData = async (searchText) => {
-    const self = this
+  requestGoodsSearchListData = async (searchData) => {
+    console.log('商品搜索列表', searchData)
+    const self = this;
+    const { activityId } = self.state;
+    const searchText = searchData.keyWords || ''
     let list = [];
     try {
       const res = await api.goodsSearchList({
-        searchText: searchText,
+        activityId: activityId,
+        code: searchText,
+        page: 0,
+        size: 100,
       });
       if (res) {
         const respData = res.data || {};
         if (0 === respData.code) {
-          console.log('---goodsList---', respData.data);
-          let dataList = respData.data || []
-          if (dataList.length > 0) {
-            list = self.goodsSelectOptions(dataList);
-            self.setState({
-              goodsSearchList: dataList,
-            })
-          }
+          const data = respData.data || {};
+          const dataList = data.content || []
+          list = self.goodsSelectOptions(dataList);
+          self.setState({
+            goodsSearchList: list,
+          })
         } else {
           MyAlert({ errorMsg: respData.message });
         }
@@ -958,8 +966,9 @@ class TrackDetail extends Component {
   goodsSelectOptions = (list) => {
     let newList = [];
     list.forEach((item) => {
+      const optionName = `${item.code} ${item.name}`
       let newItem = {
-        label: item.goodsName,
+        label: optionName,
         value: item.id,
       }
       newList.push(newItem);

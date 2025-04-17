@@ -57,15 +57,20 @@ const utils = {
   },
 
   // urls转files
-  imgUrlsToFiles: (imgUrls) => {
+  imgUrlsToFiles: (imgUrls, isVideo) => {
     console.log('imgUrlsToFiles', imgUrls);
     let list = [];
     imgUrls.forEach((item) => {
       const url = item || '';
       if (url) {
-        list.push({
+        const file = {
           url: url,
-        });
+        }
+        if (isVideo) {
+          file.type = 'video/mp4';
+          file.name = '查看视频';
+        }
+        list.push(file);
       }
     });
     return list;

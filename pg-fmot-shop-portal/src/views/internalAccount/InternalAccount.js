@@ -196,7 +196,7 @@ class InternalAccount extends Component {
     const self = this;
     ConfirmAlert({
       title: '温馨提示',
-      errorMsg: `您确定修改登录权限为 ${statusText} 吗?`,
+      errorMsg: `您确定修改登录权限为【${statusText}】吗?`,
       callbackOK: () => {
         api.internalAccountChangeStatus(
           params

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Drawer, Form, message, Button, Upload } from 'antd';
+import { Drawer, Form, message, Button, Upload, Modal} from 'antd';
 import {
   ProCard,
   ProForm,
@@ -90,34 +90,39 @@ export function AddGoodsFun({
 
           let bannerList = detailData.productCarouselImages || [];
           setOldBannerList(bannerList);
-          let newBannerList = [];
           bannerList.forEach((item) => {
-            // 封面
-            const bannerPosterUrls = item.videoImgUrl ? [item.videoImgUrl] : [];
-            if (bannerPosterUrls.length > 0) {
-              bannerPoster = Util.imgUrlsToFiles(bannerPosterUrls);
+            // banner封面
+            if (item.videoImgUrl) {
+              bannerPoster.push(item.videoImgUrl);
             }
-            // 视频
-            const bannerVideoUrls = item.videoUrl ? [item.videoUrl] : [];
-            if (bannerVideoUrls.length > 0) {
-              bannerVideo = Util.imgUrlsToFiles(bannerVideoUrls);
+            // banner视频
+            if (item.videoUrl) {
+              bannerVideo.push(item.videoUrl);
             }
-            // 图片
-            const bannerImgsUrls = item.imgUrl ? [item.imgUrl] : [];
-            if (bannerImgsUrls.length > 0) {
-              bannerImgs = Util.imgUrlsToFiles(bannerImgsUrls);
-            }                                       
+            // banner图片
+            if (item.imgUrl) {
+              bannerImgs.push(item.imgUrl);
+            }                                                   
           });
-          newBannerList = [{
-            videoImgUrl: bannerPoster,
-            videoUrl: bannerVideo,
-            imgUrl: bannerImgs
-          }]
-          detailData.productCarouselImages = newBannerList;
+
+          let newBannerItem = {}
+          // banner封面 file
+          if (bannerPoster.length > 0) {
+            newBannerItem.videoImgUrl = Util.imgUrlsToFiles(bannerPoster);
+          }
+          // banner视频 file
+          if (bannerVideo.length > 0) {
+            newBannerItem.videoUrl = Util.imgUrlsToFiles(bannerVideo, true);
+          }
+          // banner图片 file
+          if (bannerImgs.length > 0) {
+            newBannerItem.imgUrl = Util.imgUrlsToFiles(bannerImgs);
+          }
+          detailData.productCarouselImages = [newBannerItem];
 
           // 视频
           const videoUrls = detailData.productVideo ? [detailData.productVideo] : [];
-          detailData.productVideo = Util.imgUrlsToFiles(videoUrls);
+          detailData.productVideo = Util.imgUrlsToFiles(videoUrls, true);
 
           // 长图
           const longImageUrls = detailData.longImageUrl ? [detailData.longImageUrl] : [];
@@ -285,18 +290,18 @@ export function AddGoodsFun({
     }
     // 图片
     if (type === 'img') {
-      const isAllowImg = file.type === 'image/jpeg' || file.type === 'image/png';
+      const isAllowImg = file.type === 'image/jpg' || file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/gif';
       if (!isAllowImg) {
-        message.error('图片格式不是JPG/PNG!');
+        message.error('图片格式不是JPG/JPEG/PNG/GIF!');
         return Upload.LIST_IGNORE
       }
     }    
     // 图片大小
-    const isAllowSize = file.size / 1024 <= 100;
-    if (!isAllowSize) {
-      message.error('文件需要小于100KB!');
-      return Upload.LIST_IGNORE
-    }
+    // const isAllowSize = file.size / 1024 <= 100;
+    // if (!isAllowSize) {
+    //   message.error('文件需要小于100KB!');
+    //   return Upload.LIST_IGNORE
+    // }
     // 刷新签名
     await requestSignData();
     return true
@@ -394,11 +399,12 @@ export function AddGoodsFun({
                 listType: 'picture-card',
                 beforeUpload: (file) => beforeUpload(file, 'video'),
                 data: signData.params,
-                onChange: handleImgChange
+                onChange: handleImgChange,
+                onPreview: (file) => handlePreview(file, 'video')
               }}
               title="上传视频"
               action={signData.url}              
-            />
+            />            
           </div>
           <div className="goods-banner-row">
             <ProFormUploadButton
@@ -412,7 +418,8 @@ export function AddGoodsFun({
                 listType: 'picture-card',
                 beforeUpload: (file) => beforeUpload(file, 'img'),
                 data: signData.params,
-                onChange: handleImgChange
+                onChange: handleImgChange,
+                onPreview: (file) => handlePreview(file, 'img')
               }}
               title="上传图片"
               action={signData.url}
@@ -429,7 +436,8 @@ export function AddGoodsFun({
             listType: 'picture-card',
             beforeUpload: (file) => beforeUpload(file, 'img'),
             data: signData.params,
-            onChange: handleImgChange
+            onChange: handleImgChange,
+            onPreview: (file) => handlePreview(file, 'img')
           }}
           title="上传图片"
           action={signData.url}
@@ -438,17 +446,35 @@ export function AddGoodsFun({
     )
   }
 
-// 检查输入是否以逗号分隔
-const validateCommaSeparated = (rule, value) => {
-  if (!value) {
-    return Promise.reject(new Error('请输入商品标签'));
+  // 检查输入是否以逗号分隔
+  const validateCommaSeparated = (rule, value) => {
+    const regex = /^[\u4e00-\u9fa5a-zA-Z0-9]+(,[\u4e00-\u9fa5a-zA-Z0-9]+)*$/;
+    if (regex.test(value)) {
+      return Promise.resolve();
+    }
+    return Promise.reject(new Error('请使用,分隔商品标签'));
+  };
+
+  // 预览图片
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState('');
+  const [previewVideo, setPreviewVideo] = useState('');
+  const handleCancel = () => {
+    setPreviewImage('');
+    setPreviewVideo('');
+    setPreviewOpen(false);
   }
-  const regex = /^[\u4e00-\u9fa5a-zA-Z0-9]+(,[\u4e00-\u9fa5a-zA-Z0-9]+)*$/;
-  if (regex.test(value)) {
-    return Promise.resolve();
-  }
-  return Promise.reject(new Error('请使用,分隔商品标签'));
-};
+  const handlePreview = (file, type) => {
+    const url = file.url || ''
+    if (type === 'video') {
+      setPreviewImage('');
+      setPreviewVideo(url);
+    } else {
+      setPreviewImage(url);
+      setPreviewVideo('');
+    }   
+    setPreviewOpen(true);
+  };
 
   return (
     <React.Fragment>
@@ -548,7 +574,8 @@ const validateCommaSeparated = (rule, value) => {
               listType: 'picture-card',
               beforeUpload: (file) => beforeUpload(file, 'img'),
               data: signData.params,
-              onChange: handleImgChange
+              onChange: handleImgChange,
+              onPreview: (file) => handlePreview(file, 'img')
             }}
             title="上传图片"
             action={signData.url}
@@ -600,7 +627,8 @@ const validateCommaSeparated = (rule, value) => {
               listType: 'picture-card',
               beforeUpload: (file) => beforeUpload(file, 'video'),
               data: signData.params,
-              onChange: handleImgChange
+              onChange: handleImgChange,
+              onPreview: (file) => handlePreview(file, 'video')
             }}
             title="上传视频"
             action={signData.url}
@@ -616,13 +644,26 @@ const validateCommaSeparated = (rule, value) => {
               listType: 'picture-card',
               beforeUpload: (file) => beforeUpload(file, 'img'),
               data: signData.params,
-              onChange: handleImgChange
+              onChange: handleImgChange,
+              onPreview: (file) => handlePreview(file, 'img')
             }}
             title="上传图片"
             showUploadList={false}
             action={signData.url}
           />
         </ProForm>
+        <Modal open={previewOpen} title={null} footer={null} onCancel={handleCancel}>
+          {
+            previewImage ? (
+              <img alt="example" style={{ width: '100%' }} src={previewImage} width={500} height={500} />
+            ) : null
+          }
+          {
+            previewVideo ? (
+              <video alt="example" controls style={{ width: '100%' }} src={previewVideo} width={500} height={500} />
+            ) : null
+          }
+        </Modal>
       </Drawer>
     </React.Fragment>
   );

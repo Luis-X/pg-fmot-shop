@@ -22,7 +22,7 @@ import {
 } from '@ant-design/icons';
 import HomeLayout from '../../common/LayoutStyle';
 import * as api from '../../api/api';
-import MyAlert from '../../components/MyAlert';
+import MyAlert, { ConfirmAlert } from '../../components/MyAlert';
 import moment from 'moment';
 import { AddEventFun } from './AddEventFun';
 import zhCN from 'antd/es/locale/zh_CN';
@@ -171,8 +171,19 @@ class EventMgmt extends Component {
 
   // 复制活动
   clickItemCopy = (record) => {
-    const id = record.id;
-    console.log(id)
+    ConfirmAlert({
+      title: '温馨提示',
+      errorMsg: `您确定复制【${record.name}】吗?`,
+      callbackOK: () => {
+        const id = record.id;
+        console.log(id)
+        this.requestCopyActivityData(id);
+      },
+      callbackCancel: () => {},
+    });
+  };
+
+  requestCopyActivityData = (id) => {    
     const self = this;
     self.setState({ loadingShow: true });
     api.eventDetail({
@@ -241,7 +252,7 @@ class EventMgmt extends Component {
       self.setState({ loadingShow: false });
       message.error(err ? err : '网络请求失败, 请重试!', 2);
     });
-  };
+  }
 
   // 查询
   clickSearchBtn = () => {
@@ -278,7 +289,7 @@ class EventMgmt extends Component {
     return (
       <div className='activity-time-wrap'>
       {<span>{beginDate}</span>}
-      {<span>-</span>}
+      {/* {<span>-</span>} */}
       {<span>{endDate}</span>}
     </div>
     )

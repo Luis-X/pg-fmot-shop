@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Drawer, Form, message, Button, ConfigProvider, Row, Col, Upload} from 'antd';
+import { Drawer, Form, message, Button, ConfigProvider, Row, Col, Upload, Modal } from 'antd';
 import {
   ProForm,
   ProFormGroup,
@@ -333,6 +333,7 @@ export function AddEventFun({
 
   // 商品搜索列表
   const requestGoodsSearchListData = async (searchData) => {
+    console.log('商品搜索列表', searchData)
     const searchText = searchData.keyWords || ''
     let list = [];
     try {
@@ -344,12 +345,10 @@ export function AddEventFun({
       if (res) {
         const respData = res.data || {};
         if (0 === respData.code) {
-          console.log('---goodsList---', respData.data);
-          let dataList = respData.data.content || []
-          if (dataList.length > 0) {
-            list = goodsSelectOptions(dataList);
-            setGoodsSearchList(dataList);
-          }
+          const data = respData.data || {};
+          const dataList = data.content || []
+          list = goodsSelectOptions(dataList);
+          setGoodsSearchList(dataList);
         } else {
           MyAlert({ errorMsg: respData.message });
         }
@@ -357,7 +356,6 @@ export function AddEventFun({
     } catch (err) {
       message.error(err ? err : '网络请求失败, 请重试!', 2);
     }
-    console.log('---goodsList---', list);
     return list;
   }
   
@@ -365,8 +363,9 @@ export function AddEventFun({
   const goodsSelectOptions = (list) => {
     let newList = [];
     list.forEach((item) => {
+      const optionName = `${item.code} ${item.name}`
       let newItem = {
-        label: item.name,
+        label: optionName,
         value: item.id,
       }
       newList.push(newItem);
@@ -439,16 +438,16 @@ export function AddEventFun({
 
   // 上传图片
   const beforeUpload = async (file) => {
-    const isAllowImg = file.type === 'image/jpeg' || file.type === 'image/png';
+    const isAllowImg = file.type === 'image/jpg' || file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/gif';
     if (!isAllowImg) {
-      message.error('图片格式不是JPG/PNG!');
+      message.error('图片格式不是JPG/JPEG/PNG/GIF!');
       return Upload.LIST_IGNORE
     }
-    const isAllowSize = file.size / 1024 <= 100;
-    if (!isAllowSize) {
-      message.error('文件需要小于100KB!');
-      return Upload.LIST_IGNORE
-    }
+    // const isAllowSize = file.size / 1024 <= 100;
+    // if (!isAllowSize) {
+    //   message.error('文件需要小于100KB!');
+    //   return Upload.LIST_IGNORE
+    // }
     await requestSignData();
     return true
   };
@@ -520,6 +519,19 @@ export function AddEventFun({
       console.log('上传失败', info.file);
     }
   };
+
+  // 预览图片
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState('');
+  const handleCancel = () => {
+    setPreviewImage('');
+    setPreviewOpen(false);
+  }
+  const handlePreview = (file) => {
+    const url = file.url || ''
+    setPreviewImage(url);
+    setPreviewOpen(true);
+  };
   
   /**
   * Form布局
@@ -542,7 +554,8 @@ export function AddEventFun({
               listType: 'picture-card',
               beforeUpload: beforeUpload,
               data: signData.params,
-              onChange: handleImgChange
+              onChange: handleImgChange,
+              onPreview: handlePreview
             }}
             title="上传文件"
             extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：100x100"
@@ -714,15 +727,17 @@ export function AddEventFun({
             {/* FIXME: 修改为输入框和按钮分开 */}
             <ProFormSelect
               showSearch
-              showArrow={false}
-              allowClear
-              labelInValue
               debounceTime={500}
               label="活动商品"
               request={requestGoodsSearchListData}
               rules={[{ required: true, message: '请输入商品编号' }]}
               placeholder="请输入商品编号"
               onChange={(id) => { goodsAddWithId(id); }}
+              fieldProps={{
+                showArrow: false,
+                // labelInValue: true,
+                filterOption: false,                        
+              }}
             />
             <Row>
               <Col span={4}></Col>
@@ -747,6 +762,9 @@ export function AddEventFun({
             </Row>            
           </div>         
         </ProForm>
+        <Modal open={previewOpen} title={null} footer={null} onCancel={handleCancel}>
+          <img alt="example" style={{ width: '100%' }} src={previewImage} width={500} height={500} />
+        </Modal>
       </Drawer>
     </React.Fragment>
   );
