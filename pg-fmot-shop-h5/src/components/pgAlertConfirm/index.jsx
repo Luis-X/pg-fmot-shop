@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
-import { Overlay, Image } from '@nutui/nutui-react'
-import { View, Text } from '@tarojs/components'
+import { Overlay } from '@nutui/nutui-react'
+import { View, Image } from '@tarojs/components'
 import Taro, { useLoad } from '@tarojs/taro'
 import './index.scss'
 
@@ -41,7 +41,7 @@ export default function Index(props) {
   const alertViewStyleNormal = () =>  {
     return (
       <View className='alert-content'>
-        <Image className='alert-img' fit='contain' src={imgLight}></Image>
+        <Image className='alert-img' mode='aspectFit' src={imgLight}></Image>
         <View className='text-title'>{title}</View>
         <View className='text-content'>{desc}</View>         
         <View className='btn-wrap'>   
@@ -63,7 +63,7 @@ export default function Index(props) {
   const alertViewStyleBuy = () =>  {
     return (
       <View className='alert-content'>
-        <Image className='alert-img' fit='contain' src={imgCart}></Image>
+        <Image className='alert-img' mode='aspectFit' src={imgCart}></Image>
         <View className='text-title'>{title}</View>
         <View className='text-content'>{desc}</View>        
         <View className='btn-wrap'>   
@@ -85,7 +85,7 @@ export default function Index(props) {
   const alertViewStyleOrder = () =>  {
     return (
       <View className='alert-content'>
-        <Image className='alert-img' fit='contain' src={imgLight}></Image>
+        <Image className='alert-img' mode='aspectFit' src={imgLight}></Image>
         <View className='text-title'>{title}</View>
         <View className='text-content-left'>{desc}</View>  
         <View className='text-goods-scroll'>       

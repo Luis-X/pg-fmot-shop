@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { PullToRefresh, InfiniteLoading, Image } from "@nutui/nutui-react";
-import { View, Input } from "@tarojs/components";
+import { PullToRefresh, InfiniteLoading } from "@nutui/nutui-react";
+import { View, Input, Image } from "@tarojs/components";
 import Taro, { useLoad, useRouter, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
@@ -67,7 +67,7 @@ export default function Index() {
   const searchBarView = () => {
     return (
       <View className="search-search-wrap">
-        <Image className='search-search-img' fit='fill' src={imgSearchBar}></Image>
+        <Image className='search-search-img' mode='aspectFill' src={imgSearchBar}></Image>
         <View className='search-search-bar-wrap'>                   
           <View className='search-search-bar'>
             <Input 
@@ -79,7 +79,7 @@ export default function Index() {
               onConfirm={searchOnConfirm}
             />
             <View className="search-search-btn" onClick={searchOnConfirm}>
-              <Image className='search-search-icon' fit='contain' src={imgSearchBarIcon}></Image>                      
+              <Image className='search-search-icon' mode='aspectFit' src={imgSearchBarIcon}></Image>                      
             </View>
           </View>
         </View>                 
@@ -128,6 +128,7 @@ export default function Index() {
       keyword: keyword,
     }
 
+    Taro.HUD.showLoading()
     const res = await Taro.NETWORK.searchList(params) 
     Taro.HUD.hideLoading()
 
@@ -180,9 +181,9 @@ export default function Index() {
     <>
       {isShowPage ? (
         <View className='pg-index'>
-          <PullToRefresh onRefresh={() => refreshData()} renderIcon={(status) => Taro.UTIL.refreshRenderHeaderSvg(status)}>
+          <PullToRefresh onRefresh={() => refreshData()}>
             <View className='search-list' id='scroll'>              
-                <InfiniteLoading target='scroll' hasMore={hasMore} onLoadMore={loadMore} loadingText={Taro.UTIL.refreshRenderFooterSvg('加载中')} loadMoreText={Taro.UTIL.refreshRenderFooterSvg('没有更多了')}>
+                <InfiniteLoading target='scroll' hasMore={hasMore} onLoadMore={loadMore} loadingText={'加载中...'} loadMoreText={'没有更多了'}>
                 {searchBarView()}
                 {goodsListView()}
               </InfiniteLoading>

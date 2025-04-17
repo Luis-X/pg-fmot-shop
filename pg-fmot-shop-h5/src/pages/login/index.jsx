@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Input, Image } from '@nutui/nutui-react'
-import { View } from '@tarojs/components'
+import { Input } from '@nutui/nutui-react'
+import { View, Image } from '@tarojs/components'
 import Taro, { useLoad, useDidShow } from '@tarojs/taro'
 import './index.scss'
 
@@ -87,19 +87,19 @@ export default function Index() {
     <>
       {isShowPage ? (
         <View className='login-list'>
-          <Image className='login-bg-img' fit='fill' src={imgBG}></Image>
+          <Image className='login-bg-img' mode='aspectFill' src={imgBG}></Image>
           <View className='login-wrap'>
-            <Image className='login-title-img' fit='contain' src={imgTitle}></Image>
+            <Image className='login-title-img' mode='aspectFit' src={imgTitle}></Image>
             <Input className='login-input' placeholder='请输入您的账号登录' onChange={inputOnChange} />
             <View className='login-desc'>（注意：同一活动内只能绑定1个账号，绑定后无法解绑，请使用本人微信进行绑定。）</View>
             <View className='login-btn-bind-wrap' onClick={clickBindConfirm}>
-              <Image className='login-btn-bind-img' fit='contain' src={imgBtnBind}></Image>
+              <Image className='login-btn-bind-img' mode='aspectFit' src={imgBtnBind}></Image>
               <View className='login-btn-bind-text-wrap'>
                 <View className='login-btn-bind-text'>确认绑定并查看活动</View>
               </View>              
             </View>                                 
           </View>     
-          <Image className='login-btn-login' fit='fill' src={imgBtnLogin} onClick={clickInternalLogin}></Image>
+          <Image className='login-btn-login' mode='aspectFill' src={imgBtnLogin} onClick={clickInternalLogin}></Image>
         </View>
       ) : (
         <PGLoading></PGLoading>

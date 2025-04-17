@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Image } from "@nutui/nutui-react";
-import { View } from "@tarojs/components";
+import { View, Image } from "@tarojs/components";
 import Taro, { useLoad, useRouter, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
@@ -52,9 +51,9 @@ export default function Index() {
     <>
       {isShowPage ? (  
         <View className='disable-list'>
-          <Image className='disable-bg-img' fit='fill' src={imgBG}></Image>
+          <Image className='disable-bg-img' mode='aspectFill' src={imgBG}></Image>
           <View className="disable-empty">
-            <Image className='disable-empty-img' fit='contain' src={imgIcon}></Image>
+            <Image className='disable-empty-img' mode='aspectFit' src={imgIcon}></Image>
             {statusType === 1 && (
               <>
                 <View className='disable-empty-desc'>抱歉！</View>

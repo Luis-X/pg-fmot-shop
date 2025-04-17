@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Overlay, Image } from '@nutui/nutui-react'
-import { View } from '@tarojs/components'
+import { Overlay } from '@nutui/nutui-react'
+import { View, Image } from '@tarojs/components'
 import Taro, { useLoad } from '@tarojs/taro'
 import './index.scss'
 
@@ -59,7 +59,7 @@ export default function Index(props) {
     <Overlay visible={isAlertShow}>
       <View className='pg-agree-alert-wrap'>
         <View className='alert-content'>
-          <Image className='alert-img' fit='contain' src={imgStar}></Image>
+          <Image className='alert-img' mode='aspectFit' src={imgStar}></Image>
           <View className='text-title'>请同意协议条款</View>
           <View className='text-scroll'>请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。</View>              
           <View className='confirm-btn' onClick={() => clickConfirm()}>同意</View>                              

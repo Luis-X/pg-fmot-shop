@@ -1,9 +1,21 @@
 .cart-list {
+  position: relative;
   width: 100vw;
-  height: calc(100vh - 406rpx);
+  // height: calc(100vh - 406rpx);
+  height: calc(100vh - 96rpx - 28rpx - 84rpx - 140rpx);
   padding: 0;
   overflow-y: auto;
   overflow-x: hidden;
+  .cart-empty-bg {    
+    position: absolute;
+    top: 20rpx;
+    left: 20rpx;
+    width: 710rpx;
+    height: calc(100% - 26rpx);
+    border-top-left-radius: 12rpx;
+    border-top-right-radius: 12rpx;
+    background: #ffffff;
+  }
 }
 
 
@@ -125,7 +137,7 @@
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 200rpx;
+  bottom: 140rpx;
   display: flex;
   flex-direction: column;
   align-items: center;

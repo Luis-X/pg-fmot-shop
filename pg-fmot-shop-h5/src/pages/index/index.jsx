@@ -34,9 +34,9 @@ export default function Index() {
 
   async function requestData() {
     const params = {
-      activityId: "string",
-      pointAccountId: "string",
-      code: "string",
+      activityId: "123",
+      pointAccountId: "456",
+      code: "789",
       timestamp: "string",
       signature: "string",
       openid: "string",
@@ -102,7 +102,7 @@ export default function Index() {
       }
     } else {
       console.log("不在活动时间内");
-      Taro.ROUTER.navigateTo("/pages/disable/index?status=1");
+      Taro.ROUTER.redirectTo("/pages/disable/index?status=1");
     }
   }
 
@@ -140,7 +140,7 @@ export default function Index() {
     console.log("未绑定过，内部用户");
     console.log("未绑定过，外部用户");
     console.log("进入登录页");
-    Taro.ROUTER.navigateTo("/pages/login/index");
+    Taro.ROUTER.redirectTo("/pages/login/index");
   };
 
   // 检查用户状态

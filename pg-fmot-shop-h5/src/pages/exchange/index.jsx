@@ -1,10 +1,6 @@
 import { useState } from "react";
-import {
-  PullToRefresh,
-  InfiniteLoading,
-  Image
-} from "@nutui/nutui-react";
-import { View  } from "@tarojs/components";
+import { PullToRefresh, InfiniteLoading } from "@nutui/nutui-react";
+import { View, Image } from "@tarojs/components";
 import Taro, { useLoad, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
@@ -129,13 +125,13 @@ export default function Index() {
       return (
         <View className='exchange-bg-wrap' key={index} onClick={() => clickItem(index)}>
           <View className='exchange-wrap'>
-            <Image className='exchange-img' fit='contain' src={imgIcon}></Image>
+            <Image className='exchange-img' mode='aspectFit' src={imgIcon}></Image>
             <View className='exchange-info'>
               <View className='exchange-name'>{item.name}</View>
               <View className='exchange-desc'>{`开始时间：${item.beginDate}`}</View>
               <View className='exchange-desc'>{`截止时间：${item.endDate}`}</View>
             </View>
-            <Image className='exchange-arrow' fit='contain' src={imgArrow}></Image>
+            <Image className='exchange-arrow' mode='aspectFit' src={imgArrow}></Image>
           </View>
         </View>        
       );
@@ -146,9 +142,9 @@ export default function Index() {
     <>
       {isShowPage ? (
         <View className='pg-index'>
-          <PullToRefresh onRefresh={() =>refreshData()} renderIcon={(status) => Taro.UTIL.refreshRenderHeaderSvg(status)}>
+          <PullToRefresh onRefresh={() =>refreshData()}>
             <View className='exchange-list' id='scroll'>
-              <InfiniteLoading target='scroll' hasMore={hasMore} onLoadMore={loadMore} loadingText={Taro.UTIL.refreshRenderFooterSvg('加载中')} loadMoreText={Taro.UTIL.refreshRenderFooterSvg('没有更多了')}>
+              <InfiniteLoading target='scroll' hasMore={hasMore} onLoadMore={loadMore} loadingText={'加载中...'} loadMoreText={'没有更多了'}>
                 <View className="exchange-space-top"></View>
                 {exchangeListView()}
               </InfiniteLoading>

@@ -168,7 +168,7 @@ export default function Index() {
     <>
       {isShowPage ? (
         <View className='pg-index'>
-          <PullToRefresh onRefresh={() => refreshData()} renderIcon={(status) => Taro.UTIL.refreshRenderHeaderSvg(status)}>
+          <PullToRefresh onRefresh={() => refreshData()}>
             <View className='order-detail-list' id='scroll'>      
               { orderInfo.order ? orderInfoView() : null}
               { orderInfo.activity && orderInfo.activity.collectionInstructions ? noteView() : null }

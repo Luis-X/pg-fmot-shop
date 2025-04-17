@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Image } from "@nutui/nutui-react";
+import { Image as ImageNut } from "@nutui/nutui-react";
 import { View } from '@tarojs/components'
 import Taro, { useLoad } from '@tarojs/taro'
 import './index.scss'
@@ -25,7 +25,7 @@ export default function Index(props) {
           cartList.map((item, index) => {
             return (
               <View className='pg-order-goods-wrap' key={index}>
-                <Image className='pg-order-goods-img' src={item.previewUrl} fit='cover'></Image>
+                <ImageNut className='pg-order-goods-img' src={item.previewUrl} fit='cover' lazy />
                 <View className='pg-order-goods-info'>
                   <View className='pg-order-goods-name'>{item.name}</View>
                   <View className='pg-order-goods-price-old'>{item.price}积分</View>

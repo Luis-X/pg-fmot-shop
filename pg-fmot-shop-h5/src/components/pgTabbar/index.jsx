@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
-import { Image } from "@nutui/nutui-react";
-import { View } from '@tarojs/components'
+import { View, Image } from '@tarojs/components'
 import Taro, { useLoad } from '@tarojs/taro'
 import './index.scss'
 
@@ -39,27 +38,27 @@ export default function Index(props) {
       <View className='pg-tabbar-item' onClick={() => clickTabbar(0)}>
         {
           sence === 'home' ? (
-            <Image className='pg-tabbar-icon' src={imgHomeOn} fit='contain'></Image>
+            <Image className='pg-tabbar-icon' src={imgHomeOn} mode='aspectFit'></Image>
           ) : (
-            <Image className='pg-tabbar-icon' src={imgHome} fit='contain'></Image>
+            <Image className='pg-tabbar-icon' src={imgHome} mode='aspectFit'></Image>
           )
         }                
       </View>
       <View className='pg-tabbar-item' onClick={() => clickTabbar(1)}>
         {
           sence === 'cart' ? (
-            <Image className='pg-tabbar-icon' src={imgCartOn} fit='contain'></Image>
+            <Image className='pg-tabbar-icon' src={imgCartOn} mode='aspectFit'></Image>
           ) : (
-            <Image className='pg-tabbar-icon' src={imgCart} fit='contain'></Image>
+            <Image className='pg-tabbar-icon' src={imgCart} mode='aspectFit'></Image>
           )
         }     
       </View>
       <View className='pg-tabbar-item' onClick={() => clickTabbar(2)}>
         {
           sence === 'mine' ? (
-            <Image className='pg-tabbar-icon' src={imgMineOn} fit='contain'></Image>
+            <Image className='pg-tabbar-icon' src={imgMineOn} mode='aspectFit'></Image>
           ) : (
-            <Image className='pg-tabbar-icon' src={imgMine} fit='contain'></Image>
+            <Image className='pg-tabbar-icon' src={imgMine} mode='aspectFit'></Image>
           )
         }     
       </View>

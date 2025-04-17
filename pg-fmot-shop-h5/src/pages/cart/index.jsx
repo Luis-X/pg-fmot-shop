@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PullToRefresh, Image, InputNumber } from "@nutui/nutui-react";
+import { PullToRefresh, InputNumber, Image as ImageNut } from "@nutui/nutui-react";
 import { CheckNormal, Checked } from '@nutui/icons-react'
 import { View } from "@tarojs/components";
 import Taro, { useLoad, useRouter, useDidShow } from "@tarojs/taro";
@@ -56,7 +56,6 @@ export default function Index() {
       
     }
 
-    Taro.HUD.showLoading()
     const res = await Taro.NETWORK.cartList(params) 
     Taro.HUD.hideLoading()
 
@@ -73,7 +72,7 @@ export default function Index() {
 
   // 购物车状态
   const [cartList, setCartList] = useState([])
-  const [isAllSelect, setIsAllSelect] = useState(true);
+  const [isAllSelect, setIsAllSelect] = useState(false);
   const [totalNum, setTotalNum] = useState(0);
   const [totalAmount, setTotalAmount] = useState(0);
 
@@ -171,7 +170,7 @@ export default function Index() {
   // 商品列表
   const goodsListView = () => {
     return (
-      <View className='cart-item-wrap'>
+      <View className='cart-item-wrap'>        
       {
         cartList.map((item, index) => {
           return (
@@ -188,7 +187,7 @@ export default function Index() {
                     </View>
                   )
                 }
-                <Image className='goods-img' src={item.previewUrl} fit='cover'></Image>
+                <ImageNut className='goods-img' src={item.previewUrl} fit='cover' lazy />
                 <View className='goods-info'>
                   <View className='goods-name'>{item.name}</View>
                   <View className='goods-price-old'>{item.price}积分</View>
@@ -245,10 +244,11 @@ export default function Index() {
     <>
       {isShowPage ? (
         <View className='pg-index'>
-          <PullToRefresh onRefresh={() => refreshData()} renderIcon={(status) => Taro.UTIL.refreshRenderHeaderSvg(status)}>
+          <PullToRefresh onRefresh={() => refreshData()}>
             <View className='cart-list' id='scroll'>
+              <View className="cart-empty-bg"></View>
               <View className='cart-space-top'></View>
-              {goodsListView()}                                                                       
+              {goodsListView()}                                                                                     
             </View>
           </PullToRefresh>
           {toolsView()}

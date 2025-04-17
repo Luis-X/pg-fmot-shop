@@ -1,9 +1,9 @@
 import { useState } from "react";
 import {
   PullToRefresh,
-  Radio,
-  Image,
-  InputNumber
+  Radio,  
+  InputNumber,
+  Image as ImageNut
 } from "@nutui/nutui-react";
 import { CheckNormal, Checked } from '@nutui/icons-react'
 import { View } from "@tarojs/components";
@@ -140,7 +140,7 @@ const cartNumDelete = (index) => {
             return (
               <View className={index === 0 ? 'goods-bg-wrap-radius' : 'goods-bg-wrap'} key={index}>           
                 <View className='goods-wrap'>
-                  <Image className='goods-img' src={item.previewUrl} fit='cover'></Image>
+                  <ImageNut className='goods-img' src={item.previewUrl} fit='cover' lazy />
                   <View className='goods-info'>
                     <View className='goods-name'>{item.name}</View>
                     <View className='goods-price-old'>{item.price}积分</View>
@@ -296,7 +296,7 @@ const cartNumDelete = (index) => {
     <>
       {isShowPage ? (
         <View className='pg-index'>
-          <PullToRefresh onRefresh={() => refreshData()} renderIcon={(status) => Taro.UTIL.refreshRenderHeaderSvg(status)}>
+          <PullToRefresh onRefresh={() => refreshData()}>
             <View className='order-confirm-list' id='scroll'>                        
               { cartList && cartList.length > 0 ? goodsListView() : null }
               { deliveryView() }

@@ -1,6 +1,7 @@
 .home-list {
   width: 100vw;
-  height: calc(100vh - 168rpx);
+  // height: calc(100vh - 168rpx);
+  height: calc(100vh - 120rpx);
   padding: 0;
   overflow-y: auto;
   overflow-x: hidden;
@@ -71,6 +72,8 @@
     .swiper-item-img {
       width: 100%;
       height: 100%;
+      background: #ffffff;
+      border-radius: 40px !important;
       .nut-img {
         border-radius: 40px !important;
       }

@@ -1,6 +1,12 @@
 import { useState } from "react";
-import { PullToRefresh, InfiniteLoading, Swiper, Image, Indicator } from "@nutui/nutui-react";
-import { View, Input } from "@tarojs/components";
+import { 
+  PullToRefresh, 
+  InfiniteLoading, 
+  Swiper, 
+  Indicator, 
+  Image as ImageNut
+} from "@nutui/nutui-react";
+import { View, Input, Image } from "@tarojs/components";
 import Taro, { useLoad, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
@@ -74,6 +80,8 @@ export default function Index() {
     const activityId = query.activityId || ''
 
     if (!isLoadMore) {
+      setBannerList([])
+      setCurrentIndex(0)
       setDataList([])
     } else {
       if (pageIndex > 0 && !hasMore) {
@@ -95,7 +103,7 @@ export default function Index() {
 
       const banner = resData.activityCarouselImages || []
       const list = resData.activityProducts || []
-      const totalPages = resData.totalPages || 0
+      const totalPages = resData.totalPages || 10
 
       let newList = []
       if (isLoadMore) {
@@ -157,7 +165,7 @@ export default function Index() {
   const searchBarView = () => {
     return (
       <View className="home-search-wrap">
-        <Image className='home-search-img' fit='fill' src={imgSearchBar}></Image>
+        <Image className='home-search-img' mode='aspectFill' src={imgSearchBar}></Image>
         <View className='home-search-bar-wrap'>                   
           <View className='home-search-bar'>
             <Input 
@@ -169,7 +177,7 @@ export default function Index() {
               onConfirm={searchOnConfirm}
             />
             <View className="home-search-btn" onClick={searchOnConfirm}>
-              <Image className='home-search-icon' fit='contain' src={imgSearchBarIcon}></Image>                      
+              <Image className='home-search-icon' mode='aspectFit' src={imgSearchBarIcon}></Image>                      
             </View>
           </View>
         </View>                 
@@ -192,13 +200,14 @@ export default function Index() {
           className='swiper-item'
           loop
           indicator={false}
+          touchable={bannerList.length > 1 ? true : false}
           onChange={onChangeSwiperItem}
         >
           {
             bannerList && bannerList.length > 0 && bannerList.map((item, index) => {
               return (
                 <Swiper.Item key={index} className='swiper-item' onClick={() => clickBanner(item)}>
-                  <Image className='swiper-item-img' src={item.imageUrl} fit='cover' />
+                  <ImageNut className='swiper-item-img' fit="cover" src={item.imageUrl} />
                 </Swiper.Item>
               );
             })
@@ -225,9 +234,9 @@ export default function Index() {
     <>
       {isShowPage ? (
         <View className='pg-index'>
-          <PullToRefresh onRefresh={() => refreshData()} renderIcon={(status) => Taro.UTIL.refreshRenderHeaderSvg(status)}>
+          <PullToRefresh onRefresh={() => refreshData()}>
             <View className='home-list' id='scroll'>              
-              <InfiniteLoading target='scroll' hasMore={hasMore} onLoadMore={loadMore} loadingText={Taro.UTIL.refreshRenderFooterSvg('加载中')} loadMoreText={Taro.UTIL.refreshRenderFooterSvg('没有更多了')}>
+              <InfiniteLoading target='scroll' hasMore={hasMore} onLoadMore={loadMore} loadingText={'加载中...'} loadMoreText={'没有更多了'}>
                 {searchBarView()}      
                 {bannerList && bannerList.length > 0 ? swiperView() : null}
                 {goodsListView()}                

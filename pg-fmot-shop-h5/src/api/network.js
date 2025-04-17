@@ -59,7 +59,7 @@ function login (params) {
       // 活动类型 1: 内部活动 2: 外部活动
       activityType: 2,
       // 是否绑定OpenId
-      isBindOpenId: false,
+      isBindOpenId: true,
       // 账号是否正常
       isAvailableUser: true,
       // 是否同意协议
@@ -127,6 +127,10 @@ function activityList (params) {
           "imageUrl": "https://storage.360buyimg.com/jdc-article/NutUItaro34.jpg",
           "url": "https://www.baidu.com"
         },
+        {
+          "imageUrl": "https://storage.360buyimg.com/jdc-article/NutUItaro34.jpg",
+          "url": "https://www.baidu.com"
+        },
       ],
       "maxQuantity": 0,
       "activityProducts": [
@@ -151,7 +155,51 @@ function activityList (params) {
             "label": "自营,厂商配送"
           },
           "discountPrice": 368
-        }
+        },
+        {
+          "id": "1",
+          "product": {
+            "id": "2",
+            "previewUrl": "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
+            "name": "洋甘菊无硅油天然洋甘菊无硅油天然",
+            "price": 388.0,
+            "label": "自营,厂商配送"
+          },
+          "discountPrice": 368
+        },
+        {
+          "id": "1",
+          "product": {
+            "id": "2",
+            "previewUrl": "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
+            "name": "洋甘菊无硅油天然洋甘菊无硅油天然",
+            "price": 388.0,
+            "label": "自营,厂商配送"
+          },
+          "discountPrice": 368
+        },
+        {
+          "id": "1",
+          "product": {
+            "id": "2",
+            "previewUrl": "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
+            "name": "洋甘菊无硅油天然洋甘菊无硅油天然",
+            "price": 388.0,
+            "label": "自营,厂商配送"
+          },
+          "discountPrice": 368
+        },
+        {
+          "id": "1",
+          "product": {
+            "id": "2",
+            "previewUrl": "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
+            "name": "洋甘菊无硅油天然洋甘菊无硅油天然",
+            "price": 388.0,
+            "label": "自营,厂商配送"
+          },
+          "discountPrice": 368
+        },
       ]
     }
   }
@@ -165,59 +213,16 @@ function searchList (params) {
     data: {
       list: [
         {
-          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
-          title:
-            "洋甘菊无硅油天然洋甘菊无硅油天然",
-          price: "388.0",
-          vipPrice: "378",
-          shopDescription: "自营",
-          delivery: "厂商配送",
+          "id": "1",
+          "product": {
+            "id": "2",
+            "previewUrl": "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
+            "name": "洋甘菊无硅油天然洋甘菊无硅油天然",
+            "price": 388.0,
+            "label": "自营,厂商配送"
+          },
+          "discountPrice": 368
         },
-        {
-          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
-          title:
-            "洋甘菊无硅油天然洋甘菊无硅油天然",
-          price: "388.0",
-          vipPrice: "378",
-          shopDescription: "自营",
-          delivery: "厂商配送",
-        },
-        {
-          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
-          title:
-            "洋甘菊无硅油天然洋甘菊无硅油天然",
-          price: "388.0",
-          vipPrice: "378",
-          shopDescription: "自营",
-          delivery: "厂商配送",
-        },
-        {
-          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
-          title:
-            "洋甘菊无硅油天然洋甘菊无硅油天然",
-          price: "388.0",
-          vipPrice: "378",
-          shopDescription: "自营",
-          delivery: "厂商配送",
-        },
-        {
-          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
-          title:
-            "洋甘菊无硅油天然洋甘菊无硅油天然",
-          price: "388.0",
-          vipPrice: "378",
-          shopDescription: "自营",
-          delivery: "厂商配送",
-        },
-        {
-          src: "//img10.360buyimg.com/n2/s240x240_jfs/t1/210890/22/4728/163829/6163a590Eb7c6f4b5/6390526d49791cb9.jpg!q70.jpg",
-          title:
-            "洋甘菊无硅油天然洋甘菊无硅油天然",
-          price: "388.0",
-          vipPrice: "378",
-          shopDescription: "自营",
-          delivery: "厂商配送",
-        }
       ],
       totalPages: 2,
     }
@@ -570,5 +575,5 @@ const clientMockData = (res, param) => new Promise((resolve, reject) => {
   console.log('param', param);
   setTimeout(() => {
     resolve(res);
-  }, 1000);
+  }, 500);
 })

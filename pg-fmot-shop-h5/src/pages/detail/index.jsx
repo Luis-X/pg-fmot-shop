@@ -3,11 +3,11 @@ import {
   PullToRefresh,
   Badge,
   Swiper,
-  Tag,
-  Image,
-  Indicator
+  Tag,  
+  Indicator,
+  Image as ImageNut
 } from "@nutui/nutui-react";
-import { View, Video } from "@tarojs/components";
+import { View, Video, Image } from "@tarojs/components";
 import Taro, { useLoad, useRouter, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
@@ -183,7 +183,7 @@ export default function Index() {
 
   // 购物车
   const clickCart = () => {
-    Taro.ROUTER.navigateTo('/pages/cart/index');
+    Taro.ROUTER.reLaunchTo('/pages/cart/index');
   }
 
   // 加入购物车
@@ -230,17 +230,17 @@ export default function Index() {
         <View className='tools-bar'>
           <View className='left-btn-wrap'>
             <View className='left-btn' onClick={() => clickService()}>
-              <Image className='left-btn-img' fit='contain' src={imgService}></Image>
+              <Image className='left-btn-img' mode='aspectFit' src={imgService}></Image>
             </View>
-            <Image className='left-btn-line' fit='contain' src={imgLine}></Image>            
+            <Image className='left-btn-line' mode='aspectFit' src={imgLine}></Image>            
               <View className='left-btn' onClick={() => clickCart()}>
-                <Image className='left-btn-img' fit='contain' src={imgCart}></Image>
+                <Image className='left-btn-img' mode='aspectFit' src={imgCart}></Image>
                 <Badge className="left-btn-tag" value={cartNum} max={99}></Badge>                
               </View> 
           </View>              
           <View className='right-btn-wrap'>
             <View className='right-btn-add'onClick={() => clickCartAdd()}>
-              <Image className='right-btn-add-img' fit='contain' src={imgCartAdd}></Image>
+              <Image className='right-btn-add-img' mode='aspectFit' src={imgCartAdd}></Image>
             </View>
             <View className='right-btn-buy'onClick={() => clickBuyNow()}>立即购买</View>
           </View>
@@ -334,7 +334,7 @@ export default function Index() {
                       </View>                    
                     ) : (
                       <View className='swiper-item'>
-                        <Image className='swiper-img' src={item.imgUrl} fit='cover' onClick={() => clickPreviewImg(item.imgUrl)} />
+                        <ImageNut className='swiper-img' src={item.imgUrl} fit='contain' onClick={() => clickPreviewImg(item.imgUrl)} />
                       </View>                   
                     )
                   }                
@@ -355,7 +355,7 @@ export default function Index() {
     return (
       <>
         <View className='detail-price-wrap'>
-          <Image className='detail-price-img' fit='fill' src={imgPriceBar}></Image>
+          <Image className='detail-price-img' mode='aspectFill' src={imgPriceBar}></Image>
           <View className='detail-price-item'>
             <View className='detail-price-new-wrap'>
               <View className='detail-price-new'>{goodsInfo.discountPrice}</View>
@@ -419,7 +419,7 @@ export default function Index() {
         {
           goodsInfo.product.longImageUrl ? (
             <View className='detail-img-wrap'>
-              <Image className='detail-img' src={goodsInfo.product.longImageUrl} fit='contain'></Image>
+              <ImageNut className='detail-img' src={goodsInfo.product.longImageUrl} fit='contain' />
             </View>
           ) : null
         }                     
@@ -431,7 +431,7 @@ export default function Index() {
     <>
       {isShowPage ? (
         <View className='pg-index'>
-          <PullToRefresh onRefresh={() => refreshData()} renderIcon={(status) => Taro.UTIL.refreshRenderHeaderSvg(status)}>
+          <PullToRefresh onRefresh={() => refreshData()}>
             <View className='detail-list' id='scroll'>          
               {bannerList && bannerList.length > 0 ? swiperView() : null}
               {goodsInfo && goodsInfo.product ? goodsInfoView() : null}

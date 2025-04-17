@@ -1,9 +1,6 @@
 import { useState } from "react";
-import {
-  PullToRefresh,
-  Image,
-} from "@nutui/nutui-react";
-import { View } from "@tarojs/components";
+import { PullToRefresh } from "@nutui/nutui-react";
+import { View, Image } from "@tarojs/components";
 import Taro, { useLoad, useRouter, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
@@ -145,7 +142,7 @@ export default function Index() {
     return (
       <View className='mine-point-wrap'>
         <View className="point-bg-wrap">
-          <Image className='point-img' fit='contain' src={imgTopBar}></Image>
+          <Image className='point-img' mode='aspectFit' src={imgTopBar} ></Image>
           <View className='point-title'>{availablePoint >= 0 ? availablePoint : '--'}</View>
           <View className='point-btn' onClick={clickMyExchange}>查看我正参与的兑换</View>
         </View>               
@@ -158,7 +155,7 @@ export default function Index() {
     return (
       <>
         <View className='mine-order-wrap'>
-          <Image className='order-img' fit='contain' src={imgOrder}></Image>
+          <Image className='order-img' mode='aspectFit' src={imgOrder}></Image>
           <View className='order-title'>我的订单</View>
         </View>
         <View className='mine-tab-wrap'>
@@ -190,7 +187,7 @@ export default function Index() {
     <>
       {isShowPage ? (
         <View className='pg-index'>
-          <PullToRefresh onRefresh={() => refreshData()} renderIcon={(status) => Taro.UTIL.refreshRenderHeaderSvg(status)}>
+          <PullToRefresh onRefresh={() => refreshData()}>
             <View className='mine-list' id='scroll'>
               {topBarView()}
               {tabView()}
