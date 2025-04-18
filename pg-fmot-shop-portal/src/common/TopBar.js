@@ -4,6 +4,7 @@ import { Col, Menu, Row } from 'antd';
 import { withRouter } from 'react-router';
 import head from '../assets/images/head.png';
 import RoutePath from '../config/RoutePath';
+import Util from '../utils/util';
 // import * as api from '../api/api';
 // import MyAlert from '../components/MyAlert';
 
@@ -36,14 +37,14 @@ class TopBar extends Component {
   // 退出登录
   logout() {
     localStorage.clear();
-    window.location.href = RoutePath.SsoLogout;
+    Util.navigationToUrl(RoutePath.SSOLogoutUrl);
     /*
     api.logout({}).then((res) => {
       if (res) {
         const respData = res.data || {};
         if (0 === respData.code) {
           localStorage.clear();
-          window.location.href = RoutePath.SsoLogout;
+          Util.navigationToUrl(RoutePath.SSOLogoutUrl);
         } else {
           MyAlert({ errorMsg: respData.message });
         }

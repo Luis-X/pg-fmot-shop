@@ -1,8 +1,49 @@
 import $ from 'jquery';
 import * as api from '../api/api';
 import moment from 'moment';
+import CryptoJS from 'crypto-js';
 
 const utils = {
+  encodeBaseStr(str) {
+    let result = ''
+    try {
+      const utf8Bytes = CryptoJS.enc.Utf8.parse(str);
+      result = CryptoJS.enc.Base64.stringify(utf8Bytes);
+    } catch (error) {
+      console.log(error)
+    } 
+    console.log(result) 
+    return result
+  },
+  decodeBaseStr(str) {
+    let result = ''
+    try {
+      const words = CryptoJS.enc.Base64.parse(str);
+      result = CryptoJS.enc.Utf8.stringify(words);
+    } catch (error) {
+      console.log(error)
+    } 
+    return result
+  },
+
+  // 页面跳转 path
+  navigationToPath: (path, query) => {    
+    let url = ''
+    if (path) {
+      url += `/portal/#${path}`;
+    }
+    if (query) {
+      url += `/${query}`;
+    }
+    console.log('navigationToPath', url);
+    window.location.href = url;
+  },
+  // 页面跳转 url
+  navigationToUrl: (url) => {    
+    console.log('navigationToUrl', url);
+    window.location.href = url;
+  },
+
   // 根据类型下载模板文件
   downloadTemplateFile: (type) => {
     console.log(type);

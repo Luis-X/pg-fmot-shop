@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Result, Button } from 'antd';
 
-class ResultCodePage extends Component {
+class ResultCode extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -26,7 +26,9 @@ class ResultCodePage extends Component {
           title={code ? code : ''}
           subTitle="抱歉, 出错了"
           extra={
-            <Button type="primary" onClick={() => { this.props.history.go(-1)}}>{' '}返回</Button>
+            <Button type="primary" onClick={() => { 
+              this.props.history.go(-1)
+            }}>{' '}返回</Button>
           }
         />
       </>
@@ -34,4 +36,4 @@ class ResultCodePage extends Component {
   }
 }
 
-export default ResultCodePage;
+export default ResultCode;

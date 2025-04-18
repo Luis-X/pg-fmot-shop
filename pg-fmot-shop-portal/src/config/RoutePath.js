@@ -1,8 +1,12 @@
+import Util from '../utils/util';
+
+const isRelease = window.location.origin === 'https://ministore.shenghuojia.com' ? true : false
+
 let RoutePath = {
   Index: '/',
   Callback: '/callback',
-  ResultWarning: '/result',
-  ResultCodePage: '/resultCode',
+  ResultWarn: '/result',
+  ResultCode: '/resultCode',
   InternalAccount: '/internalAccount',
   ExternalAccount: '/externalAccount',
   EventMgmt: '/eventMgmt',
@@ -10,24 +14,24 @@ let RoutePath = {
   GoodsMgmt: '/goodsMgmt',
   TrackMgmt: '/trackMgmt',
   TrackDetail: '/trackDetail',
-
-  //sso登录
-  SsoUrlJump:
-    window.location.origin === 'https://ministore.shenghuojia.com'
-      ? 'https://api-shared-prd.cn-pgcloud.com/sso/v3/oauth/login?client_id=rdfmotshopping&app=rdfmotshopping&subscription-key=6ff8f86edd5541a5983ff7865de30183&pfidpadapterid=ad..OAuth&redirect_uri=https://ministore.shenghuojia.com/portal/callback&scope=openid%20profile%20GDPR' //生产
-      : 'https://api-shared-qa.cn-pgcloud.com/sso/v3/oauth/login?client_id=rdfmotshopping&app=rdfmotshopping&subscription-key=12047b54518b42448b20aeb394edca24&pfidpadapterid=ad..OAuth&redirect_uri=https://ministore-qa.shenghuojia.com/portal/callback&scope=openid%20profile%20GDPR', //qa
-
-  //sso登出
-  SsoLogout:
-    window.location.origin === 'https://ministore.shenghuojia.com'
-      ? 'https://api-shared-prd.cn-pgcloud.com/sso/v3/logout?subscription-key=6ff8f86edd5541a5983ff7865de30183&app=rdfmotshopping' //生产
-      : 'https://api-shared-qa.cn-pgcloud.com/sso/v3/logout?subscription-key=12047b54518b42448b20aeb394edca24&app=rdfmotshopping', //qa
-
-  //H5活动地址
-  ActivityUrl:
-    window.location.origin === 'https://ministore.shenghuojia.com'
-      ? 'https://ministore.shenghuojia.com/index' //生产
-      : 'https://ministore-qa.shenghuojia.com/index', //qa
 };
+
+if (isRelease) {
+  console.log('生产环境');
+  const skId = 'NmZmOGY4NmVkZDU1NDFhNTk4M2ZmNzg2NWRlMzAxODM='
+  RoutePath.SSOCallbackUrl = 'https://ministore.shenghuojia.com/portal/#/callback'
+  RoutePath.SSOLoginUrl = `https://api-shared-prd.cn-pgcloud.com/sso/v3/oauth/login?client_id=rdfmotshopping&app=rdfmotshopping&subscription-key=${Util.decodeBaseStr(skId)}&pfidpadapterid=ad..OAuth&redirect_uri=${encodeURIComponent(RoutePath.SSOCallbackUrl)}&scope=openid%20profile%20GDPR`
+  RoutePath.SSOLogoutUrl = `https://api-shared-prd.cn-pgcloud.com/sso/v3/logout?subscription-key=${Util.decodeBaseStr(skId)}&app=rdfmotshopping`
+  RoutePath.H5ActivityUrl = 'https://ministore.shenghuojia.com/index'
+} else {
+  console.log('测试环境');
+  const skId = 'MTIwNDdiNTQ1MThiNDI0NDhiMjBhZWIzOTRlZGNhMjQ='
+  RoutePath.SSOCallbackUrl = 'https://ministore-qa.shenghuojia.com/portal/#/callback'
+  RoutePath.SSOLoginUrl = `https://api-shared-qa.cn-pgcloud.com/sso/v3/oauth/login?client_id=rdfmotshopping&app=rdfmotshopping&subscription-key=${Util.decodeBaseStr(skId)}&pfidpadapterid=ad..OAuth&redirect_uri=${encodeURIComponent(RoutePath.SSOCallbackUrl)}&scope=openid%20profile%20GDPR`
+  RoutePath.SSOLogoutUrl = `https://api-shared-qa.cn-pgcloud.com/sso/v3/logout?subscription-key=${Util.decodeBaseStr(skId)}&app=rdfmotshopping`
+  RoutePath.H5ActivityUrl = 'https://ministore-qa.shenghuojia.com/index'
+}
+
+console.log('RoutePath', RoutePath)
 
 export default RoutePath;

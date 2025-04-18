@@ -275,7 +275,7 @@ class EventMgmt extends Component {
 
   // 复制链接
   clickCopyLink = (record) => {
-    const link = `${RoutePath.ActivityUrl}?id=${record.id}`;
+    const link = `${RoutePath.H5ActivityUrl}?id=${record.id}`;
     Util.copyText(link).then(() => {
       message.success('复制成功', 2);
     }).catch((err) => {
@@ -363,7 +363,7 @@ class EventMgmt extends Component {
         align: 'center',
         render: (text, record) => (
           <Tooltip title="点击复制">
-            <span className="event-setting" onClick={() => { this.clickCopyLink(record); }}>{`${RoutePath.ActivityUrl}?id=${record.id}`}</span>
+            <span className="event-setting" onClick={() => { this.clickCopyLink(record); }}>{`${RoutePath.H5ActivityUrl}?id=${record.id}`}</span>
           </Tooltip>          
         ),
       },

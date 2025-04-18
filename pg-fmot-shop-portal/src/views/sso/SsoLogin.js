@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid';
 import RoutePath from '../../config/RoutePath';
+import Util from '../../utils/util';
 
 class SsoLogin extends Component {
   constructor(props) {
@@ -10,9 +11,8 @@ class SsoLogin extends Component {
 
   componentDidMount() {    
     // FIXME: 为了调试，先注释sso登录
-    const id = uuidv4();
-    window.location.href = RoutePath.Callback + `?code=${id}`;
-    // window.location.href = RoutePath.SsoUrlJump;
+    // const id = uuidv4();
+    Util.navigationToUrl(RoutePath.SSOLoginUrl);
   }
 
   render() {

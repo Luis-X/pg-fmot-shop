@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Result } from 'antd';
 import RoutePath from '../../config/RoutePath';
 import { LoginOutlined } from '@ant-design/icons';
+import Util from '../../utils/util';
 
 class SsoLogout extends Component {
   constructor(props) {
@@ -24,7 +25,9 @@ class SsoLogout extends Component {
             title="您已成功退出本次登录！"
             subTitle="重新登录请点击下方按钮。"
             extra={
-              <button className="current-btn" onClick={() => {window.location.href = RoutePath.SsoUrlJump;}}>
+              <button className="current-btn" onClick={() => {
+                Util.navigationToUrl(RoutePath.SSOLoginUrl);
+              }}>
                 <LoginOutlined />
                 <span>重新登录</span>
               </button>

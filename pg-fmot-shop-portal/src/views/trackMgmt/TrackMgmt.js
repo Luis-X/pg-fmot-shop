@@ -25,6 +25,7 @@ import moment from 'moment';
 import zhCN from 'antd/es/locale/zh_CN';
 import Dict from '../../config/Dict';
 import Util from '../../utils/util';
+import RoutePath from '../../config/RoutePath';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -144,7 +145,7 @@ class TrackMgmt extends Component {
   // 查看明细
   clickItemDetail = (record) => {
     const { id } = record;
-    window.location.href = `/portal/trackDetail/${id}`
+    Util.navigationToPath(RoutePath.TrackDetail, id);
   }
 
   // 查询

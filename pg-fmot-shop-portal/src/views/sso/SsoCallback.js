@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import { Spin, Result } from 'antd';
 import * as api from '../../api/api';
 import { setToken } from '../../api/api';
+import RoutePath from '../../config/RoutePath';
+import Util from '../../utils/util';
+
 class SsoCallback extends Component {
   constructor(props) {
     super(props);
@@ -14,6 +17,7 @@ class SsoCallback extends Component {
   async componentDidMount() {
     const self = this;
     let queryCode = self.getAllParams();
+    console.log('callback')
     console.log(queryCode);
     if (queryCode) {
       if (queryCode.error) {
@@ -24,9 +28,10 @@ class SsoCallback extends Component {
       } else if (queryCode.code) {
         localStorage.clear();
         try {
+          const url = Util.encodeBaseStr(RoutePath.SSOCallbackUrl)
           const res = await api.ssoLogin({ 
             code: queryCode.code,
-            redirectUri: 'aHR0cHM6Ly9taW5pc3RvcmUtcWEuc2hlbmdodW9qaWEuY29tL3Rlc3Q='
+            redirectUri: url
           });
           if (res) {
             self.setState({ loadingShow: false });
