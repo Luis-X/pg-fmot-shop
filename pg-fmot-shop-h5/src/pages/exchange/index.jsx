@@ -147,31 +147,7 @@ export default function Index() {
             <View className='exchange-list' id='scroll'>
               <InfiniteLoading target='scroll' hasMore={hasMore} onLoadMore={loadMore} loadingText={'加载中...'} loadMoreText={'没有更多了'}>
                 <View className="exchange-space-top"></View>
-                <View className="exchange-space-top"></View>
-                <View className="exchange-space-top"></View>
-                <View className="exchange-space-top"></View>
-                <View className="exchange-space-top"></View>
-                <View className="exchange-space-top"></View>
-                <View className="exchange-space-top"></View>
-                <View className="exchange-space-top"></View>
-                <View className="exchange-space-top"></View>
-                <View className="exchange-space-top"></View>
-                <View className="exchange-space-top"></View>
-                <View className="exchange-space-top"></View>
-                <View className="exchange-space-top"></View>
-                <View className="exchange-space-top"></View>
-                <View className="exchange-space-top"></View>
-                <View className="exchange-space-top"></View>
-                <View className="exchange-space-top"></View>
-                <View className="exchange-space-top"></View>
-                <View className="exchange-space-top"></View>
-                <View className="exchange-space-top"></View>
-                <View className="exchange-space-top"></View>
-                <View className="exchange-space-top"></View>
-                <View className="exchange-space-top"></View>
-                <View className="exchange-space-top"></View>
-                <View className="exchange-space-top"></View>
-                {/* {exchangeListView()} */}
+                {exchangeListView()}
               </InfiniteLoading>
             </View>
           </PullToRefresh>
