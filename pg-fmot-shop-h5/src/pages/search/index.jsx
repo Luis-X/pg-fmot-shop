@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { PullToRefresh, InfiniteLoading } from "@nutui/nutui-react";
-import { View, Input, Image } from "@tarojs/components";
+import { View, Input, Image, ScrollView } from "@tarojs/components";
 import Taro, { useLoad, useRouter, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
@@ -111,9 +111,10 @@ export default function Index() {
   async function requestListData(query, isLoadMore) {
 
     const pageIndex = query.pageIndex || 0
-    const keyword = query.keyword || ''
+    const keyword = query.keyword || ''    
 
     if (!isLoadMore) {
+      // Taro.HUD.showLoading()
       setDataList([])
     } else {
       if (pageIndex > 0 && !hasMore) {
@@ -127,8 +128,7 @@ export default function Index() {
       size: 10,
       keyword: keyword,
     }
-
-    Taro.HUD.showLoading()
+    
     const res = await Taro.NETWORK.searchList(params) 
     Taro.HUD.hideLoading()
 
@@ -136,6 +136,7 @@ export default function Index() {
       const resData = res.data || {}
 
       const list = resData.list || []
+      const totalPages = resData.totalPages || 10
 
       let newList = []
       if (isLoadMore) {
@@ -148,7 +149,7 @@ export default function Index() {
       setPageCurrentIndex(pageIndex + 1)
       
       // 没有更多
-      if (pageIndex >= resData.totalPages - 1) {
+      if (pageIndex >= totalPages - 1) {
         setHasMore(false)
       } else {
         setHasMore(true)

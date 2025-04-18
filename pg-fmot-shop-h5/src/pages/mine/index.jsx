@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PullToRefresh } from "@nutui/nutui-react";
+import { PullToRefresh, InfiniteLoading } from "@nutui/nutui-react";
 import { View, Image } from "@tarojs/components";
 import Taro, { useLoad, useRouter, useDidShow } from "@tarojs/taro";
 import "./index.scss";
@@ -50,10 +50,7 @@ export default function Index() {
   const [queryActivityId, setQueryActivityId] = useState('');
   const [tabIndex, setTabIndex] = useState(0)
 
-  const [availablePoint, setAvailablePoint] = useState(0)
-  const [dataList, setDataList] = useState([]);
-  const [pageCurrentIndex, setPageCurrentIndex] = useState(0)
-  const [hasMore, setHasMore] = useState(true);
+  const [availablePoint, setAvailablePoint] = useState(-1)
 
   // 下拉刷新
   const refreshData = () => {
@@ -61,6 +58,18 @@ export default function Index() {
       pageIndex: 0,
       tabIndex: tabIndex,
     }, false);
+  };
+
+  // 上拉加载
+  const [dataList, setDataList] = useState([]);
+  const [pageCurrentIndex, setPageCurrentIndex] = useState(0)
+  const [hasMore, setHasMore] = useState(true);
+
+  const loadMore = async () => {
+    await requestListData({
+      pageIndex: pageCurrentIndex,
+      tabIndex: tabIndex,
+    }, true)
   };
 
   // request
@@ -92,6 +101,7 @@ export default function Index() {
 
       const availablePoint = resData.availablePoint || 0      
       const list = resData.orders || []
+      const totalPages = resData.totalPages || 10
 
       let newList = []
       if (isLoadMore) {
@@ -105,7 +115,7 @@ export default function Index() {
       setPageCurrentIndex(pageIndex + 1)
       
       // 没有更多
-      if (pageIndex >= resData.totalPages - 1) {
+      if (pageIndex >= totalPages - 1) {
         setHasMore(false)
       } else {
         setHasMore(true)
@@ -141,10 +151,10 @@ export default function Index() {
   const topBarView = () => {
     return (
       <View className='mine-point-wrap'>
-        <View className="point-bg-wrap">
+        <View className="point-bg-wrap" onClick={clickMyExchange}>
           <Image className='point-img' mode='aspectFit' src={imgTopBar} ></Image>
           <View className='point-title'>{availablePoint >= 0 ? availablePoint : '--'}</View>
-          <View className='point-btn' onClick={clickMyExchange}>查看我正参与的兑换</View>
+          <View className='point-btn'>查看我正参与的兑换</View>
         </View>               
       </View>
     )
@@ -189,9 +199,11 @@ export default function Index() {
         <View className='pg-index'>
           <PullToRefresh onRefresh={() => refreshData()}>
             <View className='mine-list' id='scroll'>
-              {topBarView()}
-              {tabView()}
-              {listView()}                                                          
+              <InfiniteLoading target='scroll' hasMore={hasMore} onLoadMore={loadMore} loadingText={'加载中...'} loadMoreText={'没有更多了'}>
+                {topBarView()}
+                {tabView()}
+                {listView()}        
+              </InfiniteLoading>                                                  
             </View>
           </PullToRefresh>
           <PGTabBar sence='mine'></PGTabBar>

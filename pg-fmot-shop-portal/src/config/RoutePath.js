@@ -14,8 +14,8 @@ let RoutePath = {
   //sso登录
   SsoUrlJump:
     window.location.origin === 'https://ministore.shenghuojia.com'
-      ? 'https://api-shared-prd.cn-pgcloud.com/sso/v3/oauth/login?client_id=rdfmotshopping&app=rdfmotshopping&subscription-key=6ff8f86edd5541a5983ff7865de30183&pfidpadapterid=ad..OAuth&redirect_uri=https://ministore.shenghuojia.com/test&scope=openid%20profile%20GDPR' //生产
-      : 'https://api-shared-qa.cn-pgcloud.com/sso/v3/oauth/login?client_id=rdfmotshopping&app=rdfmotshopping&subscription-key=12047b54518b42448b20aeb394edca24&pfidpadapterid=ad..OAuth&redirect_uri=https://ministore-qa.shenghuojia.com/test&scope=openid%20profile%20GDPR', //qa
+      ? 'https://api-shared-prd.cn-pgcloud.com/sso/v3/oauth/login?client_id=rdfmotshopping&app=rdfmotshopping&subscription-key=6ff8f86edd5541a5983ff7865de30183&pfidpadapterid=ad..OAuth&redirect_uri=https://ministore.shenghuojia.com/portal/callback&scope=openid%20profile%20GDPR' //生产
+      : 'https://api-shared-qa.cn-pgcloud.com/sso/v3/oauth/login?client_id=rdfmotshopping&app=rdfmotshopping&subscription-key=12047b54518b42448b20aeb394edca24&pfidpadapterid=ad..OAuth&redirect_uri=https://ministore-qa.shenghuojia.com/portal/callback&scope=openid%20profile%20GDPR', //qa
 
   //sso登出
   SsoLogout:

@@ -112,24 +112,89 @@ export default function Index() {
     }   
   }
 
-  // 单个添加、减少
-  const cartNumOnChange = (val, index) => {
-  // console.log(val, index);
-  if (val <= 0) {
-    cartNumDelete(index);
-    return;
-  }
-  const newCartList = [...cartList];    
-  newCartList[index].quantity = val;
-  setCartList(newCartList);
-}
+  async function requestCartChangeData(val, id) {
+    if (!id) {
+      Taro.HUD.showToastMessage('缺少商品ID')
+      setDelAlertQuery({})
+      return;
+    }
+    
+    const params = {
+      id: id,
+      quantity: val
+    }
 
-// 单个删除
-const cartNumDelete = (index) => {
-  const newCartList = [...cartList];
-  newCartList.splice(index, 1);
-  setCartList(newCartList);
-}
+    Taro.HUD.showLoading()
+    const res = await Taro.NETWORK.cartChange(params) 
+    Taro.HUD.hideLoading()
+    setDelAlertQuery({})
+
+    if (res.code === 0) {
+      const newCartList = [...cartList];
+      for (let i = 0; i < newCartList.length; i++) {
+        const item = newCartList[i];
+        if (item.activityProductId === id) {
+          item.quantity = val;
+          if (val <= 0) {
+            newCartList.splice(i, 1);            
+          }
+          break;
+        }
+      }
+      setCartList(newCartList);
+    } else {
+      Taro.HUD.showToastMessage(res.message)
+    }   
+  }
+
+  // 单个添加、减少
+  const cartNumOnChange = (val, item) => {
+    console.log('cartNumOnChange', val, item);
+    const productId = item.activityProductId || '';
+
+    if (val <= 0) {
+      setDelAlertQuery({
+        val: val,
+        productId: productId
+      })
+      setDelAlertShow(true);
+    } else {
+      requestCartChangeData(val, productId)
+    }    
+  }
+
+  // 积分展示
+  const priceView = (item) => {
+    const isDiscountPrice = item.discountPrice;
+    let result = null;
+    if (isDiscountPrice) {
+      result = (
+        <>
+          <View className='goods-price-old'>{item.price}积分</View>
+          <View className='goods-price-new-wrap'>
+            <View className='goods-price-new'>{item.discountPrice}</View>
+            <View className='goods-price-new-unit'>积分</View>
+          </View>
+        </>        
+      )
+    } else {
+      result = (
+        <View className='goods-price-new-wrap'>
+          <View className='goods-price-new'>{item.price}</View>
+          <View className='goods-price-new-unit'>积分</View>
+        </View>
+      )
+    }
+    return result
+  }
+
+  // 商品详情
+  const clickGoods = (item) => {
+    console.log('clickGoods', item);
+    // const activityId = item.id || '';
+    // const productId = item.activityProductId || '';
+    // Taro.ROUTER.navigateTo(`/pages/detail/index?activityId=${activityId}&id=${productId}`);
+  }
 
   // 商品列表
   const goodsListView = () => {
@@ -140,16 +205,12 @@ const cartNumDelete = (index) => {
             return (
               <View className={index === 0 ? 'goods-bg-wrap-radius' : 'goods-bg-wrap'} key={index}>           
                 <View className='goods-wrap'>
-                  <ImageNut className='goods-img' src={item.previewUrl} fit='cover' lazy />
-                  <View className='goods-info'>
+                  <ImageNut className='goods-img' src={item.previewUrl} fit='cover' lazy onClick={() => clickGoods(item)} />
+                  <View className='goods-info' onClick={() => clickGoods(item)}>
                     <View className='goods-name'>{item.name}</View>
-                    <View className='goods-price-old'>{item.price}积分</View>
-                    <View className='goods-price-new-wrap'>
-                      <View className='goods-price-new'>{item.discountPrice}</View>
-                      <View className='goods-price-new-unit'>积分</View>
-                    </View>
+                    {priceView(item)}
                   </View>
-                  <InputNumber className='goods-count' value={item.quantity} min={0} allowEmpty onChange={(val) => cartNumOnChange(val, index)} />
+                  <InputNumber className='goods-count' value={item.quantity} min={0} allowEmpty onChange={(val) => cartNumOnChange(val, item)} />
                 </View>
                 <View className="goods-line"></View>
               </View>
@@ -195,6 +256,13 @@ const cartNumDelete = (index) => {
 
   const clickExchange = () => {
     configTracker(2)
+
+    // 是否选择商品
+    if (cartList.length <= 0) {
+      Taro.HUD.showToastMessage('您还没有选择商品')
+      return;
+    }
+
     // 是否包含虚拟商品
     const newList = []
     cartList.forEach(item => {
@@ -212,16 +280,11 @@ const cartNumDelete = (index) => {
       } else {
         setHideConfimBtn(false)
       }
-      setIsAlertShow(true)
+      setShortageAlertShow(true)
     } else {
       requestOrderConfirmData()      
     }    
-  };
-
-  const clickExchangeConfirm = () => {
-    setIsAlertShow(false);
-    requestOrderConfirmData()   
-  };
+  };  
 
   const requestOrderConfirmData = async () => {  
 
@@ -260,37 +323,71 @@ const cartNumDelete = (index) => {
   const btnView = () => {
     return (
       <View className='order-confirm-btn-wrap'>
-        {
-          cartList && cartList.length > 0 ? (
-            <View className='order-confirm-ok' onClick={clickExchange}>确认兑换</View>
-          ) : (
-            <View className='order-confirm-disable'>确认兑换</View>
-          )
-        }
-        
+        <View className='order-confirm-ok' onClick={clickExchange}>确认兑换</View>
       </View> 
     )
   }
   
-  // 弹框
-  const [isAlertShow, setIsAlertShow] = useState(false);
+  // 缺货弹框
+  const [shortageAlertShow, setShortageAlertShow] = useState(false);
 
-  const alertView = () => {
+  const shortageAlertView = () => {
     return (
       <PGAlertConfirm
-        show={isAlertShow}
+        show={shortageAlertShow}
         styleType={2}
         title='提示'
         desc='以下商品缺货，是否继续结算？'        
         goodsList={shortageList}
         confirmText={hideConfimBtn ? '' : '继续结算'}
         cancelText='放弃'            
-        onConfirm={() => clickExchangeConfirm()}
-        onCancel={() => setIsAlertShow(false)}
+        onConfirm={() => clickConfirmExchange()}
+        onCancel={() => clickCancelExchange()}
       >
       </PGAlertConfirm>
     )
   }
+
+  const clickConfirmExchange = () => {
+    setShortageAlertShow(false);
+    requestOrderConfirmData()   
+  };
+
+  const clickCancelExchange = () => {
+    setShortageAlertShow(false); 
+  };
+
+  // 删除弹框
+  const [delAlertShow, setDelAlertShow] = useState(false);
+  const [delAlertQuery, setDelAlertQuery] = useState({});
+
+  const delAlertView = () => {
+    return (
+      <PGAlertConfirm
+        show={delAlertShow}
+        styleType={0}
+        title='提示'
+        desc='确认删除商品吗？'        
+        confirmText='确认'
+        cancelText='取消'            
+        onConfirm={() => clickConfirmDel()}
+        onCancel={() => clickCancelDel()}
+      >
+      </PGAlertConfirm>
+    )
+  }
+
+  const clickConfirmDel = () => {
+    setDelAlertShow(false);
+    const val = delAlertQuery.val || '';
+    const productId = delAlertQuery.productId || '';
+    requestCartChangeData(val, productId)
+  };
+
+  const clickCancelDel = () => {
+    setDelAlertQuery({})
+    setDelAlertShow(false);
+  };
 
   return (
     <>
@@ -304,7 +401,8 @@ const cartNumDelete = (index) => {
               { btnView() }
             </View>
           </PullToRefresh>                
-          {alertView()}
+          {shortageAlertView()}
+          {delAlertView()}
         </View>
       ) : (
         <PGLoading></PGLoading>

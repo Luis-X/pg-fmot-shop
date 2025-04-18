@@ -89,6 +89,7 @@ export default function Index() {
       const resData = res.data || []
 
       const list = resData
+      const totalPages = resData.totalPages || 10
 
       let newList = []
       if (isLoadMore) {
@@ -101,7 +102,7 @@ export default function Index() {
       setPageCurrentIndex(pageIndex + 1)
       
       // 没有更多
-      if (pageIndex >= resData.totalPages - 1) {
+      if (pageIndex >= totalPages - 1) {
         setHasMore(false)
       } else {
         setHasMore(true)
@@ -128,8 +129,8 @@ export default function Index() {
             <Image className='exchange-img' mode='aspectFit' src={imgIcon}></Image>
             <View className='exchange-info'>
               <View className='exchange-name'>{item.name}</View>
-              <View className='exchange-desc'>{`开始时间：${item.beginDate}`}</View>
-              <View className='exchange-desc'>{`截止时间：${item.endDate}`}</View>
+              <View className='exchange-desc'>{`开始时间：${Taro.UTIL.dateFormatter(item.beginDate, 'YYYY-MM-DD HH:mm:ss')}`}</View>
+              <View className='exchange-desc'>{`截止时间：${Taro.UTIL.dateFormatter(item.endDate, 'YYYY-MM-DD HH:mm:ss')}`}</View>
             </View>
             <Image className='exchange-arrow' mode='aspectFit' src={imgArrow}></Image>
           </View>
@@ -146,7 +147,31 @@ export default function Index() {
             <View className='exchange-list' id='scroll'>
               <InfiniteLoading target='scroll' hasMore={hasMore} onLoadMore={loadMore} loadingText={'加载中...'} loadMoreText={'没有更多了'}>
                 <View className="exchange-space-top"></View>
-                {exchangeListView()}
+                <View className="exchange-space-top"></View>
+                <View className="exchange-space-top"></View>
+                <View className="exchange-space-top"></View>
+                <View className="exchange-space-top"></View>
+                <View className="exchange-space-top"></View>
+                <View className="exchange-space-top"></View>
+                <View className="exchange-space-top"></View>
+                <View className="exchange-space-top"></View>
+                <View className="exchange-space-top"></View>
+                <View className="exchange-space-top"></View>
+                <View className="exchange-space-top"></View>
+                <View className="exchange-space-top"></View>
+                <View className="exchange-space-top"></View>
+                <View className="exchange-space-top"></View>
+                <View className="exchange-space-top"></View>
+                <View className="exchange-space-top"></View>
+                <View className="exchange-space-top"></View>
+                <View className="exchange-space-top"></View>
+                <View className="exchange-space-top"></View>
+                <View className="exchange-space-top"></View>
+                <View className="exchange-space-top"></View>
+                <View className="exchange-space-top"></View>
+                <View className="exchange-space-top"></View>
+                <View className="exchange-space-top"></View>
+                {/* {exchangeListView()} */}
               </InfiniteLoading>
             </View>
           </PullToRefresh>

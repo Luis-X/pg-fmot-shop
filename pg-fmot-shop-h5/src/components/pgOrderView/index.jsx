@@ -6,7 +6,7 @@ import './index.scss'
 
 export default function Index(props) {
 
-  const { orderInfo, onClick } = props
+  const { scenceType, orderInfo, onClick } = props
 
   useLoad(() => {
     console.log('order view loaded.')
@@ -15,6 +15,41 @@ export default function Index(props) {
   useEffect(() => {
     console.log('order view effect.') 
   }, []);
+
+  // 商品详情
+  const clickGoods = (item) => {
+    console.log('clickGoods', item);
+    if (scenceType === 'order-detail') {
+      const activityId = item.id || '';
+      const productId = item.activityProductId || '';
+      Taro.ROUTER.navigateTo(`/pages/detail/index?activityId=${activityId}&id=${productId}`);
+    }    
+  }
+
+  // 积分展示
+  const priceView = (item) => {
+    const isDiscountPrice = item.discountPrice;
+    let result = null;
+    if (isDiscountPrice) {
+      result = (
+        <>
+          <View className='pg-order-goods-price-old'>{item.price}积分</View>
+          <View className='pg-order-goods-price-wrap'>
+            <View className='pg-order-goods-price'>{item.discountPrice}</View>
+            <View className='pg-order-goods-price-unit'>积分</View>
+          </View>
+        </>        
+      )
+    } else {
+      result = (
+        <View className='pg-order-goods-price-wrap'>
+          <View className='pg-order-goods-price'>{item.price}</View>
+          <View className='pg-order-goods-price-unit'>积分</View>
+        </View>
+      )
+    }
+    return result
+  }
 
   // 商品列表
   const goodsListView = () => {
@@ -25,14 +60,10 @@ export default function Index(props) {
           cartList.map((item, index) => {
             return (
               <View className='pg-order-goods-wrap' key={index}>
-                <ImageNut className='pg-order-goods-img' src={item.previewUrl} fit='cover' lazy />
-                <View className='pg-order-goods-info'>
+                <ImageNut className='pg-order-goods-img' src={item.previewUrl} fit='cover' lazy onClick={() => clickGoods(item)}/>
+                <View className='pg-order-goods-info' onClick={() => clickGoods(item)}>
                   <View className='pg-order-goods-name'>{item.name}</View>
-                  <View className='pg-order-goods-price-old'>{item.price}积分</View>
-                  <View className='pg-order-goods-price-wrap'>
-                    <View className='pg-order-goods-price'>{item.price}</View>
-                    <View className='pg-order-goods-price-unit'>积分</View>
-                  </View>
+                  {priceView(item)}
                   <View className='pg-order-goods-count'>{`x${item.quantity}`}</View>
                 </View>
                 <View className='pg-order-goods-line'></View>
@@ -50,7 +81,7 @@ export default function Index(props) {
         <View className='pg-order-info-wrap'>
           <View className='pg-order-num-wrap'>
             <View className='pg-order-num'>{`订单编号：${orderInfo.orderCode}`}</View>
-            <View className='pg-order-date'>{`下单时间：${orderInfo.createDate}`}</View>
+            <View className='pg-order-date'>{`下单时间：${Taro.UTIL.dateFormatter(orderInfo.createDate, 'YYYY-MM-DD HH:mm:ss')}`}</View>
           </View>          
           {
             orderInfo.orderStatus === 'COMPLETED' ? (

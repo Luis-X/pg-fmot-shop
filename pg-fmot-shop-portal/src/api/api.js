@@ -404,9 +404,9 @@ export const trackChart = (param) => {
 
 
 // 模拟请求
-const clientMockData = (res, param) => new Promise((resolve, reject) => {
-  console.log('param', param);
-  setTimeout(() => {
-    resolve(res);
-  }, 1000);
-})
+// const clientMockData = (res, param) => new Promise((resolve, reject) => {
+//   console.log('param', param);
+//   setTimeout(() => {
+//     resolve(res);
+//   }, 1000);
+// })

@@ -38,7 +38,9 @@ export default function Index(props) {
 
   async function requestAgreeData() {
 
+    Taro.HUD.showLoading()
     const res = await Taro.NETWORK.agreeAgreement({}) 
+    Taro.HUD.hideLoading()
 
     if (res.code === 0) { 
       setIsAlertShow(false)

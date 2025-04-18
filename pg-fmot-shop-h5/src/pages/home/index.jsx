@@ -6,7 +6,7 @@ import {
   Indicator, 
   Image as ImageNut
 } from "@nutui/nutui-react";
-import { View, Input, Image } from "@tarojs/components";
+import { View, Input, Image, ScrollView } from "@tarojs/components";
 import Taro, { useLoad, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
@@ -80,6 +80,7 @@ export default function Index() {
     const activityId = query.activityId || ''
 
     if (!isLoadMore) {
+      // Taro.HUD.showLoading()
       setBannerList([])
       setCurrentIndex(0)
       setDataList([])

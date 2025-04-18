@@ -8,6 +8,7 @@ import "./index.scss";
 import PGAlertAgree from "../../components/pgAlertAgree/index";
 import PGLoading from "../../components/pgLoading/index";
 import PGTabBar from "../../components/pgTabbar/index";
+import PGAlertConfirm from "../../components/pgAlertConfirm/index";
 
 export default function Index() {
 
@@ -87,6 +88,7 @@ export default function Index() {
         selectNumVal += 1;
       }
     });
+    totalAmountVal = parseFloat(totalAmountVal.toFixed(1));
     setTotalNum(totalNumVal);
     setTotalAmount(totalAmountVal);
     if (selectNumVal > 0 && selectNumVal === list.length) {
@@ -97,6 +99,12 @@ export default function Index() {
   }
 
   async function requestCartChangeData(val, id) {
+    if (!id) {
+      Taro.HUD.showToastMessage('缺少商品ID')
+      setDelAlertQuery({})
+      return;
+    }
+    
     const params = {
       id: id,
       quantity: val
@@ -105,6 +113,7 @@ export default function Index() {
     Taro.HUD.showLoading()
     const res = await Taro.NETWORK.cartChange(params) 
     Taro.HUD.hideLoading()
+    setDelAlertQuery({})
 
     if (res.code === 0) {
       const newCartList = [...cartList];
@@ -127,8 +136,18 @@ export default function Index() {
 
   // 单个添加、减少
   const cartNumOnChange = (val, item) => {
+    console.log('cartNumOnChange', val, item);
     const productId = item.activityProductId || '';
-    requestCartChangeData(val, productId)
+
+    if (val <= 0) {
+      setDelAlertQuery({
+        val: val,
+        productId: productId
+      })
+      setDelAlertShow(true);
+    } else {
+      requestCartChangeData(val, productId)
+    }    
   }
 
   // 单个勾选、取消
@@ -151,6 +170,8 @@ export default function Index() {
 
   // 下一步
   const clickNextStep = () => {
+
+    // 提取选中的商品ID
     const ids = [];
     cartList.forEach((item) => {
       if (item.isSelect) {
@@ -158,14 +179,23 @@ export default function Index() {
       }
     });
 
+    // 是否选择商品
     if (ids.length <= 0) {
-      Taro.HUD.showToastMessage('请选择商品')
+      Taro.HUD.showToastMessage('您还没有选择商品')
       return;
     }
 
     console.log(ids);
     Taro.ROUTER.navigateTo('/pages/orderConfirm/index');
   };
+
+  // 商品详情
+  const clickGoods = (item) => {
+    console.log('clickGoods', item);
+    // const activityId = item.id || '';
+    // const productId = item.activityProductId || '';
+    // Taro.ROUTER.navigateTo(`/pages/detail/index?activityId=${activityId}&id=${productId}`);
+  }
 
   // 商品列表
   const goodsListView = () => {
@@ -187,8 +217,8 @@ export default function Index() {
                     </View>
                   )
                 }
-                <ImageNut className='goods-img' src={item.previewUrl} fit='cover' lazy />
-                <View className='goods-info'>
+                <ImageNut className='goods-img' src={item.previewUrl} fit='cover' lazy onClick={() => clickGoods(item)} />
+                <View className='goods-info' onClick={() => clickGoods(item)}>
                   <View className='goods-name'>{item.name}</View>
                   <View className='goods-price-old'>{item.price}积分</View>
                   <View className='goods-price-new-wrap'>
@@ -240,6 +270,38 @@ export default function Index() {
     )
   }
 
+   // 删除弹框
+   const [delAlertShow, setDelAlertShow] = useState(false);
+   const [delAlertQuery, setDelAlertQuery] = useState({});
+
+   const delAlertView = () => {
+    return (
+      <PGAlertConfirm
+        show={delAlertShow}
+        styleType={0}
+        title='提示'
+        desc='确认删除商品吗？'        
+        confirmText='确认'
+        cancelText='取消'            
+        onConfirm={() => clickConfirmDel()}
+        onCancel={() => clickCancelDel()}
+      >
+      </PGAlertConfirm>
+    )
+  }
+
+  const clickConfirmDel = () => {
+    setDelAlertShow(false);
+    const val = delAlertQuery.val || '';
+    const productId = delAlertQuery.productId || '';
+    requestCartChangeData(val, productId)
+  };
+
+  const clickCancelDel = () => {
+    setDelAlertQuery({})
+    setDelAlertShow(false);
+  };
+
   return (
     <>
       {isShowPage ? (
@@ -254,6 +316,7 @@ export default function Index() {
           {toolsView()}
           <PGTabBar sence='cart'></PGTabBar>
           <PGAlertAgree></PGAlertAgree>
+          {delAlertView()}
         </View>
       ) : (
         <PGLoading></PGLoading>

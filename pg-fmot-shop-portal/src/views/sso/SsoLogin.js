@@ -8,11 +8,11 @@ class SsoLogin extends Component {
     this.state = {};
   }
 
-  componentDidMount() {
-    const id = uuidv4();
+  componentDidMount() {    
     // FIXME: 为了调试，先注释sso登录
+    const id = uuidv4();
     window.location.href = RoutePath.Callback + `?code=${id}`;
-    // window.location.href = RoutePath.SsoUrlJump + `&state=${id}`;
+    // window.location.href = RoutePath.SsoUrlJump;
   }
 
   render() {

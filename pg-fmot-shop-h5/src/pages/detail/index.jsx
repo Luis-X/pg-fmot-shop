@@ -7,7 +7,7 @@ import {
   Indicator,
   Image as ImageNut
 } from "@nutui/nutui-react";
-import { View, Video, Image } from "@tarojs/components";
+import { View, Video, Image, ScrollView } from "@tarojs/components";
 import Taro, { useLoad, useRouter, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
@@ -19,6 +19,7 @@ import imgService from "../../images/detail-service.png";
 import imgCart from "../../images/detail-cart.png";
 import imgLine from "../../images/detail-line.png";
 import imgCartAdd from "../../images/detail-cart-add.png";
+import imgVideoPlay from "../../images/detail-video-play.png";
 
 export default function Index() {
 
@@ -85,7 +86,9 @@ export default function Index() {
   // 商品信息
   const [goodsInfo, setGoodsInfo] = useState({});  
   // 视频信息
+  const [isVideoPlay, setIsVideoPlay] = useState(false);
   const [videoSource, setVideoSource] = useState({});
+  const [detailVideoSource, setDetailVideoSource] = useState({});
 
   const videoOptions = {
     initialTime: 0,
@@ -97,8 +100,37 @@ export default function Index() {
   }
 
   const [currentTime, setCurrentTime] = useState(0);
-  const onVideoPlay = (elm, sence) => {
-    console.log('播放开始', elm)
+  // 视频播放
+  const clickPreviewVideo = () => {
+    console.log('clickPreviewVideo', videoSource)
+    videoPlay()   
+  }
+
+  // 视频播放
+  const videoPlay = () => {
+    setIsVideoPlay(true)
+    console.log('videoPlay', videoSource)
+    setTimeout(() => {
+      const videoContext = Taro.createVideoContext('swiper-video-ref');
+      if (videoContext) {
+        videoContext.play();
+      }   
+    }, 500);    
+  }
+
+  // 视频暂停
+  const videoPause = () => {
+    console.log('videoPause', videoSource)
+    const videoContext = Taro.createVideoContext('swiper-video-ref');
+    if (videoContext) {
+      videoContext.pause();
+    }   
+    setIsVideoPlay(false)
+  }
+
+  // 视频播放开始~
+  const onVideoPlayEvent = (elm, sence) => {
+    console.log('video 播放开始', elm)
     
     if (sence === 'banner') {
       configTracker(4)
@@ -106,12 +138,15 @@ export default function Index() {
       configTracker(7)
     }
   }
-  const onVideoPause = (elm, sence) => {
-    console.log('播放暂停', elm)
+
+  // 视频播放暂停~
+  const onVideoPauseEvent = (elm, sence) => {
+    console.log('video 播放暂停', elm)
   }
 
-  const onVideoPlayend = (elm, sence) => {
-    console.log('播放结束', elm)
+  // 视频播放结束~
+  const onVideoPlayendEvent = (elm, sence) => {
+    console.log('video 播放结束', elm)
 
     if (sence === 'banner') {
       configTracker(5)
@@ -145,7 +180,7 @@ export default function Index() {
       id: id
     }
 
-    Taro.HUD.showLoading()
+    // Taro.HUD.showLoading()
     const res = await Taro.NETWORK.goodsDetail(params) 
     Taro.HUD.hideLoading()
 
@@ -153,28 +188,36 @@ export default function Index() {
       const resData = res.data || {}
       const productData = resData.product || {}
       const banner = productData.productCarouselImages || []
-      const videoUrl = productData.productVideo || ''
-      const video = {
-        src: videoUrl,
-        poster: '',
-        type: 'video/mp4',
-      }
-      const shopCartProductCount = resData.shopCartProductCount || 0
 
       setGoodsInfo(resData)
       setBannerList(banner)
+
+      // banner 视频
+      const videoUrl = banner[0].videoUrl || ''
+      const videoImgUrl = banner[0].videoImgUrl || ''
+      const video = {
+        src: videoUrl,
+        poster: videoImgUrl,
+        type: 'video/mp4',
+      }
       setVideoSource(video)
+
+      // 详情视频
+      const detailVideoUrl = productData.productVideo || ''
+      const detailVideo = {
+        src: detailVideoUrl,
+        poster: '',
+        type: 'video/mp4',
+      }
+      setDetailVideoSource(detailVideo)
+      
+      // 购物车信息
+      const shopCartProductCount = resData.shopCartProductCount || 0
       setCartNum(shopCartProductCount)
     } else {
       Taro.HUD.showToastMessage(res.message)
     }   
   }
-
-  // 确认购买
-  const clickConfirmBuy = () => {
-    setIsAlertShow(false);
-    Taro.ROUTER.navigateTo(`/pages/orderConfirm/index?activityId=${queryActivityId}&id=${queryProductId}`);
-  };
 
   // 客服
   const clickService = () => {
@@ -204,7 +247,7 @@ export default function Index() {
       quantity: newCartNum,
     }
 
-    Taro.HUD.showLoading()
+    // Taro.HUD.showLoading()
     const res = await Taro.NETWORK.goodsAddCart(params) 
     Taro.HUD.hideLoading()
 
@@ -220,7 +263,7 @@ export default function Index() {
 
   // 立即购买
   const clickBuyNow = () => {
-    setIsAlertShow(true);
+    setBuyAlertShow(true);
   }
 
   // 工具栏
@@ -249,23 +292,32 @@ export default function Index() {
     )
   }
 
-  // 弹窗
-  const [isAlertShow, setIsAlertShow] = useState(false);
-  const alertView = () => {
+  // 购买弹窗
+  const [buyAlertShow, setBuyAlertShow] = useState(false);
+  const buyAlertView = () => {
     return (
       <PGAlertConfirm
-        show={isAlertShow}
+        show={buyAlertShow}
         styleType={1}
         title='确认购买'
         desc='直接跳转至积分结算页面'        
         confirmText='兑换'
         cancelText='取消'            
         onConfirm={() => clickConfirmBuy()}
-        onCancel={() => setIsAlertShow(false)}
+        onCancel={() => clickCancelBuy()}
       >
       </PGAlertConfirm>
     )
   }
+
+  const clickConfirmBuy = () => {
+    setBuyAlertShow(false);
+    Taro.ROUTER.navigateTo(`/pages/orderConfirm/index?activityId=${queryActivityId}&id=${queryProductId}`);
+  };
+
+  const clickCancelBuy = () => {
+    setBuyAlertShow(false);
+  };
   
   // 轮播图
   const [bannerList, setBannerList] = useState([]);
@@ -274,32 +326,22 @@ export default function Index() {
   const clickPreviewImg = (url) => {
     Taro.UTIL.showPreviewImg(url)
   }
-
-  const [videoPauseTime, setVideoPauseTime] = useState(0);
   
   const onChangeSwiperItem = (index) => {
     console.log('onChangeSwiperItem', index)
 
-    setCurrentIndex(index)
-
-    const videoContext = Taro.createVideoContext('swiper-video-ref');
-    if(!videoContext) {
-      return
-    }
-
-    if (index === 0) {
-      if (videoPauseTime > 0) {
-        videoContext.seek(videoPauseTime);
-        // videoContext.play();
-      }     
-    } else {
-      if (currentTime > 0) {
-        setVideoPauseTime(currentTime)
-        videoContext.pause();
-      }    
+    if (currentIndex != index) {      
+      if (index === 0) {
+        console.log('banner 0')
+      } else {
+        if (isVideoPlay) {
+          videoPause()
+        }       
+      }      
+      setCurrentIndex(index)
     }
   }
-  
+
   const swiperView = () => {
     return (
       <View className='detail-swiper-wrap'>
@@ -315,25 +357,34 @@ export default function Index() {
                 <Swiper.Item key={index} className='swiper-item' >
                   {
                     item.videoUrl && item.videoUrl.length > 0 ? (
-                      <View className='swiper-item'>
-                        <Video 
-                          className='swiper-video'
-                          id='swiper-video-ref'
-                          src={videoSource.src}
-                          poster={videoSource.poster}
-                          initialTime={videoOptions.initialTime}
-                          controls={videoOptions.controls}
-                          autoplay={videoOptions.autoplay}
-                          loop={videoOptions.loop}
-                          muted={videoOptions.muted}
-                          onPlay={(elm) => onVideoPlay(elm, 'banner')}
-                          onPause={(elm) => onVideoPause(elm, 'banner')}
-                          onPlayend={(elm) => onVideoPlayend(elm, 'banner')}
-                          onTimeUpdate={(elm) => onVideoTimeUpdate(elm, 'banner')}
-                        />
+                      <View className='swiper-item-content'>
+                        {
+                          isVideoPlay ? (
+                            <Video 
+                              className='swiper-video'
+                              id='swiper-video-ref'
+                              src={videoSource.src}
+                              poster={videoSource.poster}
+                              initialTime={videoOptions.initialTime}
+                              controls={videoOptions.controls}
+                              autoplay={videoOptions.autoplay}
+                              loop={videoOptions.loop}
+                              muted={videoOptions.muted}
+                              onPlay={(elm) => onVideoPlayEvent(elm, 'banner')}
+                              onPause={(elm) => onVideoPauseEvent(elm, 'banner')}
+                              onPlayend={(elm) => onVideoPlayendEvent(elm, 'banner')}
+                              onTimeUpdate={(elm) => onVideoTimeUpdate(elm, 'banner')}
+                            />
+                          ) : (
+                            <>
+                              <ImageNut className='swiper-img' src={item.videoImgUrl} fit='contain' />
+                              <Image className='swiper-video-play' mode='aspectFit' src={imgVideoPlay} onClick={() => clickPreviewVideo()}></Image>
+                            </>
+                          )
+                        }                        
                       </View>                    
                     ) : (
-                      <View className='swiper-item'>
+                      <View className='swiper-item-content'>
                         <ImageNut className='swiper-img' src={item.imgUrl} fit='contain' onClick={() => clickPreviewImg(item.imgUrl)} />
                       </View>                   
                     )
@@ -343,9 +394,13 @@ export default function Index() {
             })
           }
         </Swiper>
-        <View className="detail-swiper-slide">
-          <Indicator total={bannerList.length} type="dualScreen" current={currentIndex} />
-        </View>   
+        {
+          !isVideoPlay ? (
+            <View className="detail-swiper-slide">
+              <Indicator total={bannerList.length} type="dualScreen" current={currentIndex} />
+            </View>  
+          ) : null
+        }         
       </View>     
     )
   }
@@ -394,22 +449,22 @@ export default function Index() {
           <View className='detail-divider'>商品详情</View>
         </View>  
         {
-          videoSource && videoSource.src ? (
+          detailVideoSource && detailVideoSource.src ? (
             <View className='detail-video-wrap'>
               <View className='detail-video-item'>
               <Video 
                 className='detail-video'
                 id='video'
-                src={videoSource.src}
-                poster={videoSource.poster}
+                src={detailVideoSource.src}
+                poster={detailVideoSource.poster}
                 initialTime={videoOptions.initialTime}
                 controls={videoOptions.controls}
                 autoplay={videoOptions.autoplay}
                 loop={videoOptions.loop}
                 muted={videoOptions.muted}
-                onPlay={(elm) => onVideoPlay(elm, 'detail')}
-                onPause={(elm) => onVideoPause(elm, 'detail')}
-                onPlayend={(elm) => onVideoPlayend(elm, 'detail')}
+                onPlay={(elm) => onVideoPlayEvent(elm, 'detail')}
+                onPause={(elm) => onVideoPauseEvent(elm, 'detail')}
+                onPlayend={(elm) => onVideoPlayendEvent(elm, 'detail')}
                 onTimeUpdate={(elm) => onVideoTimeUpdate(elm, 'detail')}
               />
               </View>          
@@ -439,7 +494,7 @@ export default function Index() {
             </View>
           </PullToRefresh>
           {toolsView()}
-          {alertView()}                   
+          {buyAlertView()}                   
         </View>
       ) : (
         <PGLoading></PGLoading>

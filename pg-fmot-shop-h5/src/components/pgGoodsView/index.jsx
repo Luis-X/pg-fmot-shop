@@ -24,6 +24,31 @@ export default function Index(props) {
     Taro.ROUTER.navigateTo(`/pages/detail/index?activityId=${activityId}&id=${productId}`);
   }
 
+  // 积分展示
+  const priceView = (product) => {
+    const isDiscountPrice = product.discountPrice;
+    let result = null;
+    if (isDiscountPrice) {
+      result = (
+        <>
+          <View className='goods-price-new-wrap'>
+            <View className='goods-price-new'>{product.discountPrice}</View>
+            <View className='goods-price-new-unit'>积分</View>
+          </View>              
+          <View className='goods-price-old'>{product.price}积分</View>
+        </>       
+      )
+    } else {
+      result = (
+        <View className='goods-price-new-wrap'>
+          <View className='goods-price-new'>{product.price}</View>
+          <View className='goods-price-new-unit'>积分</View>
+        </View>
+      )
+    }
+    return result
+  }
+
   const goodsView = () => {
     const product = item.product || {}
     return (
@@ -31,15 +56,7 @@ export default function Index(props) {
       <ImageNut className='goods-img' src={product.previewUrl} fit='cover' lazy />
       <Text className='goods-name'>{product.name}</Text>
       <View className='goods-price-wrap'>
-        <View className='goods-price-new-wrap'>
-          <View className='goods-price-new'>{item.discountPrice}</View>
-          <View className='goods-price-new-unit'>积分</View>
-        </View>       
-        {
-          product.price && (
-            <View className='goods-price-old'>{product.price}积分</View>
-          )
-        }        
+        {priceView(product)}            
       </View>          
       <View className='goods-tag-wrap'>
         {

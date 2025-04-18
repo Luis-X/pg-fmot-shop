@@ -1,6 +1,6 @@
 .detail-list {
   width: 100w;
-  height: calc(100vh - 110rpx);
+  height: calc(100vh - 156rpx);
   // display: flex;
   // flex-direction: column;
   // align-items: center;
@@ -11,27 +11,50 @@
 
 
 .detail-swiper-wrap {
-  margin-top: 20rpx;
+  // margin-top: 20rpx;
   position: relative;
   width: 100vw;  
   display: flex;
   flex-direction: column;
   align-items: center;
   .swiper-item {
-    position: relative;
     width: 100vw;
     height: 100vw;
-    .swiper-video {
+    .swiper-item-content {
+      position: relative;
       width: 100%;
       height: 100%;
-      .taro-video-cover {
-        background-color: rgba(1, 1, 1, .2) !important;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      .swiper-video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        .taro-video-cover {
+          background-color: rgba(1, 1, 1, .2) !important;
+        }
       }
-    }
-    .swiper-img {
-      width: 100%;
-      height: 100%;
-    }
+      .swiper-video-play {
+        z-index: 999;
+        width: 100rpx;
+        height: 100rpx;
+      }
+      .swiper-img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+      }
+    }    
   }
   .detail-swiper-slide {
     position: absolute;

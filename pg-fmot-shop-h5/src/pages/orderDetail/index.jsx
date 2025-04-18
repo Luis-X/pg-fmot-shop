@@ -85,7 +85,7 @@ export default function Index() {
   // 订单详情
   const orderInfoView = () => {
     return (
-      <PGOrderView orderInfo={orderInfo.order}></PGOrderView>    
+      <PGOrderView scenceType='order-detail' orderInfo={orderInfo.order}></PGOrderView>    
     )
   }
   
@@ -103,13 +103,8 @@ export default function Index() {
 
   // 取消订单
   const clickCancel = () => {
-    setIsAlertShow(true)
-  };
-
-  const clickCancelConfirm = () => {
-    setIsAlertShow(false);
-    requestOrderCancelData() 
-  };
+    setCancelAlertShow(true)
+  };  
   
   const requestOrderCancelData = async () => {
     const params = {
@@ -145,24 +140,33 @@ export default function Index() {
     )
   }
 
-  // 弹框
-  const [isAlertShow, setIsAlertShow] = useState(false);
+  // 取消弹框
+  const [cancelAlertShow, setCancelAlertShow] = useState(false);
 
-  const alertView = () => {
+  const cancelAlertView = () => {
     return (
       <PGAlertConfirm
-        show={isAlertShow}
+        show={cancelAlertShow}
         styleType={0}
         title='提示'
         desc='确认取消订单？'        
         confirmText='确认'
         cancelText='取消'            
-        onConfirm={() => clickCancelConfirm()}
-        onCancel={() => setIsAlertShow(false)}
+        onConfirm={() => clickConfirmCancel()}
+        onCancel={() => clickCancelCancel()}
       >
       </PGAlertConfirm>
     )
   }
+
+  const clickConfirmCancel = () => {
+    setCancelAlertShow(false);
+    requestOrderCancelData() 
+  };
+
+  const clickCancelCancel = () => {
+    setCancelAlertShow(false);
+  };
 
   return (
     <>
@@ -175,7 +179,7 @@ export default function Index() {
               { orderInfo.order && orderInfo.order.orderStatus !== 'CANCELED' ? btnView() : null}                              
             </View>
           </PullToRefresh>                 
-          {alertView()}        
+          {cancelAlertView()}        
         </View>
       ) : (
         <PGLoading></PGLoading>
