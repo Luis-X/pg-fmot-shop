@@ -183,8 +183,8 @@ export default function Index() {
       {isShowPage ? (
         <View className='pg-index'>
           <PullToRefresh onRefresh={() => refreshData()}>
-            <View className='search-list' id='scroll'>              
-                <InfiniteLoading target='scroll' hasMore={hasMore} onLoadMore={loadMore} loadingText={'加载中...'} loadMoreText={'没有更多了'}>
+            <View className='search-list' id='search-scroll'>              
+                <InfiniteLoading target='search-scroll' hasMore={hasMore} onLoadMore={loadMore} loadingText={'加载中...'} loadMoreText={'没有更多了'}>
                 {searchBarView()}
                 {goodsListView()}
               </InfiniteLoading>

@@ -217,7 +217,7 @@ export default function Index() {
                     </View>
                   )
                 }
-                <ImageNut className='goods-img' src={item.previewUrl} fit='cover' lazy onClick={() => clickGoods(item)} />
+                <ImageNut className='goods-img' src={item.previewUrl} fit='cover' lazy loading={true} onClick={() => clickGoods(item)} />
                 <View className='goods-info' onClick={() => clickGoods(item)}>
                   <View className='goods-name'>{item.name}</View>
                   <View className='goods-price-old'>{item.price}积分</View>

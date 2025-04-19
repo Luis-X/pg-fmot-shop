@@ -53,7 +53,7 @@ export default function Index(props) {
     const product = item.product || {}
     return (
       <View className='pg-goods-wrap' onClick={() => clickGoods()}>
-      <ImageNut className='goods-img' src={product.previewUrl} fit='cover' lazy />
+      <ImageNut className='goods-img' src={product.previewUrl} fit='cover' lazy loading={true}/>
       <Text className='goods-name'>{product.name}</Text>
       <View className='goods-price-wrap'>
         {priceView(product)}            

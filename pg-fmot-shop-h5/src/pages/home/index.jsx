@@ -208,7 +208,7 @@ export default function Index() {
             bannerList && bannerList.length > 0 && bannerList.map((item, index) => {
               return (
                 <Swiper.Item key={index} className='swiper-item' onClick={() => clickBanner(item)}>
-                  <ImageNut className='swiper-item-img' fit="cover" src={item.imageUrl} />
+                  <ImageNut className='swiper-item-img' src={item.imageUrl} fit="cover" loading={true} />
                 </Swiper.Item>
               );
             })
@@ -236,8 +236,8 @@ export default function Index() {
       {isShowPage ? (
         <View className='pg-index'>
           <PullToRefresh onRefresh={() => refreshData()}>
-            <View className='home-list' id='scroll'>              
-              <InfiniteLoading target='scroll' hasMore={hasMore} onLoadMore={loadMore} loadingText={'加载中...'} loadMoreText={'没有更多了'}>
+            <View className='home-list' id='home-scroll'>              
+              <InfiniteLoading target='home-scroll' hasMore={hasMore} onLoadMore={loadMore} loadingText={'加载中...'} loadMoreText={'没有更多了'}>
                 {searchBarView()}      
                 {bannerList && bannerList.length > 0 ? swiperView() : null}
                 {goodsListView()}                

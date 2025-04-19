@@ -205,7 +205,7 @@ export default function Index() {
             return (
               <View className={index === 0 ? 'goods-bg-wrap-radius' : 'goods-bg-wrap'} key={index}>           
                 <View className='goods-wrap'>
-                  <ImageNut className='goods-img' src={item.previewUrl} fit='cover' lazy onClick={() => clickGoods(item)} />
+                  <ImageNut className='goods-img' src={item.previewUrl} fit='cover' lazy loading={true} onClick={() => clickGoods(item)} />
                   <View className='goods-info' onClick={() => clickGoods(item)}>
                     <View className='goods-name'>{item.name}</View>
                     {priceView(item)}
