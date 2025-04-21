@@ -6,7 +6,7 @@ import MyAlert from './MyAlert';
 import { LoadingOutlined } from '@ant-design/icons';
 import $ from 'jquery';
 // import axios from "axios";
-import Util from '../utils/util';
+// import Util from '../utils/util';
 
 // type: 101-内部账号 102-内部积分 201-外部账号 202-外部积分
 export function ImportDataPicker({ show, type, onHide, updateList }) {
@@ -232,9 +232,9 @@ export function ImportDataPicker({ show, type, onHide, updateList }) {
   /**
    * 下载
    */
-  const pointImportTemplateUrl = () => {
-    Util.downloadTemplateFile(type)
-  };
+  // const pointImportTemplateUrl = () => {
+  //   Util.downloadTemplateFile(type)
+  // };
 
   /**
    * 选择文件
@@ -306,7 +306,7 @@ export function ImportDataPicker({ show, type, onHide, updateList }) {
           </h2>
           <h4 style={{ marginBottom: 10 }}>
             提示: 请按照模版上传.xlsx文件
-            <span className="event-setting" style={{ textDecoration: 'underline' }} onClick={() => pointImportTemplateUrl()}> 点击下载模版</span>
+            {/* <span className="event-setting" style={{ textDecoration: 'underline' }} onClick={() => pointImportTemplateUrl()}> 点击下载模版</span> */}
           </h4>
           <div className="upload-btn">
             <>

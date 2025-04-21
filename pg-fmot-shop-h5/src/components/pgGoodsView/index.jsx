@@ -6,7 +6,7 @@ import './index.scss'
 
 export default function Index(props) {
 
-  const { item } = props
+  const { item, act, acc } = props
 
   useLoad(() => {
     console.log('goods view loaded.')
@@ -18,10 +18,12 @@ export default function Index(props) {
 
    // 商品详情
    const clickGoods = () => {
-    console.log('clickGoods', item);
-    const activityId = item.id || '';
+    console.log('clickGoods', item);    
     const productId = item.product.id || '';
-    Taro.ROUTER.navigateTo(`/pages/detail/index?activityId=${activityId}&id=${productId}`);
+    const actId = act || ''
+    const accId = acc || ''
+
+    Taro.ROUTER.navigateTo(`/pages/detail/index?act=${actId}&acc=${accId}&id=${productId}`);
   }
 
   // 积分展示

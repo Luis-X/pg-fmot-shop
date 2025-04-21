@@ -5,6 +5,12 @@
 }
 
 
+.order-space-top {
+  width: 100%;
+  height: 20rpx;
+}
+
+
 .order-confirm-item-wrap {
   position: relative;
   width: 100%;
@@ -73,6 +79,7 @@
           color: #000000;
           font-size: 36rpx;
           line-height: 36rpx;
+          font-weight: 600;
         }
         .goods-price-new-unit {
           margin-left: 5rpx;
@@ -89,6 +96,8 @@
       right: 0rpx;
       border: 2rpx solid #B7BED1;
       border-radius: 14rpx;
+      font-size: 50rpx;
+      font-weight: 600;
       .nut-input-minus {
         border-right: 2rpx solid #B7BED1 !important;
       }
@@ -105,6 +114,55 @@
     height: 6rpx;
     background: #F6F9FF;
   }
+}
+
+.order-confirm-total-wrap {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;  
+  align-items: center;
+  .total-wrap {
+    position: relative;
+    width: 710rpx;
+    height: 76rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    border-bottom-left-radius: 12rpx;
+    border-bottom-right-radius: 12rpx;
+    background: #ffffff;    
+    .total-text-wrap {
+      margin-right: 20rpx;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      .total-count {
+        font-size: 28rpx;
+        color: #000000;
+      }
+      .total-price-wrap {
+        margin-left: 20rpx;
+        margin-bottom: 4rpx;
+        display: flex;
+        flex-direction: row;
+        align-items: flex-end;
+        .total-price-red {
+          color: #EE3A43;
+          font-size: 36rpx;
+          line-height: 36rpx;
+          font-weight: 600;
+        }
+        .total-price-text {
+          margin-bottom: 2rpx;
+          color: #000000;
+          font-size: 28rpx;
+          line-height: 28rpx;
+        }
+      } 
+    }   
+  }  
 }
 
 
@@ -126,7 +184,7 @@
       margin-top: 20rpx;
       width: 666rpx;
       font-size: 28rpx;
-      font-weight: bold;
+      font-weight: 600;
       color: #000000;
     }
     .delivery-option {
@@ -160,7 +218,7 @@
       margin-top: 20rpx;
       width: 666rpx;
       font-size: 28rpx;
-      font-weight: bold;
+      font-weight: 600;
       color: #000000;
     }
     .note-content {
@@ -188,7 +246,7 @@
     background: #EE3A43;
     box-shadow: 0rpx 4rpx 12rpx 0rpx rgba(239,51,64,0.24);
     border-radius: 42rpx;
-    // font-weight: bold;
+    font-weight: 500;
     font-size: 32rpx;
     color: #FFFFFF;
     line-height: 84rpx;
@@ -199,7 +257,7 @@
     height: 84rpx;
     background: #808080;
     border-radius: 42rpx;
-    // font-weight: bold;
+    font-weight: 500;
     font-size: 32rpx;
     color: #FFFFFF;
     line-height: 84rpx;

@@ -2,9 +2,11 @@ import $ from 'jquery';
 import * as api from '../api/api';
 import moment from 'moment';
 import CryptoJS from 'crypto-js';
+import Tools from '../utils/tools';
 
 const utils = {
-  encodeBaseStr(str) {
+  
+  encodeBaseStr: (str) => {
     let result = ''
     try {
       const utf8Bytes = CryptoJS.enc.Utf8.parse(str);
@@ -15,7 +17,7 @@ const utils = {
     console.log(result) 
     return result
   },
-  decodeBaseStr(str) {
+  decodeBaseStr: (str) => {
     let result = ''
     try {
       const words = CryptoJS.enc.Base64.parse(str);
@@ -71,10 +73,10 @@ const utils = {
     }
     console.log(url);
 
+    const token = Tools.getToken();
     var xhh = new XMLHttpRequest();
     xhh.open('get', url, true);
-    // xhh.setRequestHeader("Authorization", localStorage.getItem('token'));
-    xhh.setRequestHeader('Authorization', localStorage.getItem('token'));
+    xhh.setRequestHeader('Authorization', token);
     xhh.setRequestHeader('Content-Type', 'application/json');
     xhh.responseType = 'blob';
 

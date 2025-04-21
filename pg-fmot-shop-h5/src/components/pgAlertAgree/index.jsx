@@ -10,25 +10,42 @@ const imgBG = ASSET_IMG.assetImgWithName('alert-bg.png')
 import imgStar from "../../images/alert-star.png";
 
 export default function Index(props) {
-
   useLoad(() => {
     console.log('agree alert loaded.')
   })
 
   useEffect(() => {
     console.log('agree alert effect.') 
-    checkAgreementStatus()
+    checkAgreementStatus()    
   }, []);
 
+  // 是否显示弹框
   const [isAlertShow, setIsAlertShow] = useState(false)
-
   const checkAgreementStatus = () => {
     const isAgreeShow = Taro.UTIL.checkAgreementStatusShow()
-    if (isAgreeShow) {
-      setIsAlertShow(true)
+    if (isAgreeShow) {      
+      requestData()
     } else {
       setIsAlertShow(false)
     }
+  }
+
+  // 弹框内容
+  const [contentText, setContentText] = useState('')
+  async function requestData(activityId) {
+    const params = {
+      activityId: activityId
+    }
+
+    const res = await Taro.NETWORK.activityAlert(params) 
+
+    if (res.code === 0) {
+      const resData = res.data || {}
+      setContentText(resData.activity.alertText)
+      setIsAlertShow(true)
+    } else {
+      Taro.HUD.showToastMessage(res.message)
+    }   
   }
 
   // 确定
@@ -63,7 +80,7 @@ export default function Index(props) {
         <View className='alert-content'>
           <Image className='alert-img' mode='aspectFit' src={imgStar}></Image>
           <View className='text-title'>请同意协议条款</View>
-          <View className='text-scroll'>请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。请查看最新条款内容，以继续使用会员权益。</View>              
+          <View className='text-scroll'>{contentText}</View>              
           <View className='confirm-btn' onClick={() => clickConfirm()}>同意</View>                              
         </View>              
       </View>            

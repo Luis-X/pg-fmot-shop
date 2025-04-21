@@ -5,6 +5,7 @@ import { withRouter } from 'react-router';
 import head from '../assets/images/head.png';
 import RoutePath from '../config/RoutePath';
 import Util from '../utils/util';
+import Tools from '../utils/tools';
 // import * as api from '../api/api';
 // import MyAlert from '../components/MyAlert';
 
@@ -88,7 +89,8 @@ class TopBar extends Component {
   }
 
   render() {
-    let exist = localStorage.getItem('token');
+    const token = Tools.getToken();
+    let exist = token ? true : false;
     const userName = localStorage.getItem('userName') ? localStorage.getItem('userName') : 'admin';
     const roleName = localStorage.getItem('roleName') ? localStorage.getItem('roleName') : 'admin';
     let role = -1; //未登录
@@ -106,8 +108,10 @@ class TopBar extends Component {
       {
         key: 'home',
         role: allRoles,
-        // onClick: () => this.props.history.push('/home'),
-        txt: 'FMOT Management Portal',
+        onClick: () => {
+          Util.navigationToPath(RoutePath.InternalAccount);
+        },
+        txt: 'Management Portal',
         childs: null,
       },
     ];
@@ -116,7 +120,9 @@ class TopBar extends Component {
       {
         key: 'login',
         role: [onLogin],
-        onClick: () => this.props.history.push(RoutePath.Index),
+        onClick: () => {
+          Util.navigationToPath(RoutePath.Index);
+        },
         txt: '请登录',
         childs: null,
       },
@@ -148,12 +154,12 @@ class TopBar extends Component {
         <div>
           <Row>
             <Col span={20}>
-              <Menu mode="horizontal" style={{ background: '#0071c0', lineHeight: '60px', paddingLeft: '10px', fontWeight: '600', fontSize: '19px', color: '#fff' }}>
+              <Menu mode="horizontal" selectable={false} style={{ background: '#0071c0', lineHeight: '60px', paddingLeft: '10px', fontWeight: '600', fontSize: '19px', color: '#fff' }}>
                 {this.restructMenu(dataLeft, 0)}
               </Menu>
             </Col>
             <Col span={4}>
-              <Menu mode="horizontal" style={{ lineHeight: '60px', background: '#0071c0', color: '#fff' }}>
+              <Menu mode="horizontal" selectable={false} style={{ lineHeight: '60px', background: '#0071c0', color: '#fff' }}>
                 <Menu.Item key="log" style={{ border: '0px', paddingRight: '0px', color: '#fff' }} onClick={() => {}}>
                   <img alt="" style={{ width: '28px' }} src={head} />
                 </Menu.Item>

@@ -276,17 +276,17 @@ function decodeBaseStr(str) {
 }
 
  // 检查用户状态，跳转活动首页
- function checkUserStatusGoHome() {    
+ function checkUserStatusGoHome(activityId, pointAccountId) {    
   const userData = Taro.UTIL.getPGStorage('login_info')
   const isAvailableUser = userData.isAvailableUser;
   if (isAvailableUser) {
     console.log("用户正常");
     console.log("进入首页");
-    Taro.ROUTER.redirectTo("/pages/home/index");
+    Taro.ROUTER.redirectTo(`/pages/home/index?act=${activityId}&acc=${pointAccountId}`);
   } else {
     console.log("用户异常");
     console.log("暂不符合活动资格");
-    Taro.ROUTER.redirectTo("/pages/disable/index?status=2");
+    Taro.ROUTER.redirectTo(`/pages/disable/index?act=${activityId}&acc=${pointAccountId}&status=2`);
   }
 }
 

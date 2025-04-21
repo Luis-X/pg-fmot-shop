@@ -96,6 +96,7 @@
           color: #000000;
           font-size: 36rpx;
           line-height: 36rpx;
+          font-weight: 600;
         }
         .goods-price-new-unit {
           margin-left: 5rpx;
@@ -184,6 +185,7 @@
           color: #EE3A43;
           font-size: 36rpx;
           line-height: 36rpx;
+          font-weight: 600;
         }
         .total-price-text {
           margin-bottom: 2rpx;
@@ -201,7 +203,7 @@
     background: #EE3A43;
     box-shadow: 0rpx 4rpx 12rpx 0rpx rgba(239,51,64,0.24);
     border-radius: 42rpx;
-    // font-weight: bold;
+    font-weight: 500;
     font-size: 32rpx;
     color: #FFFFFF;
     line-height: 84rpx;

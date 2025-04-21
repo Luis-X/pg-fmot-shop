@@ -24,9 +24,9 @@
     .point-title {
       position: absolute;
       top: 24rpx;
-      left: 56rpx;
-      font-weight: bold;
+      left: 56rpx;      
       font-size: 54rpx;
+      font-weight: 600;
       color: #FFFFFF;
     }
     .point-btn {
@@ -35,6 +35,7 @@
       left: 60rpx;
       padding: 0rpx 10rpx;
       font-size: 22rpx;
+      font-weight: 600;
       color: #B46820;
       background: #FEF2E0;
       border-radius: 4rpx;
@@ -57,7 +58,7 @@
   }
   .order-title {
     margin-left: 10rpx;
-    font-weight: bold;
+    font-weight: 600;
     font-size: 32rpx;
     color: #000000;
   }
@@ -79,6 +80,7 @@
     justify-content: center;
     .tab-item-text-focus {
       font-size: 32rpx;
+      font-weight: 600;
       color: #EE3A43;      
     }
     .tab-item-text {
@@ -89,12 +91,14 @@
       margin-top: 4rpx;
       width: 66rpx;
       height: 4rpx;
+      border-radius: 4rpx;
       background: #EE3A43;
     }
     .tab-item-line {
       margin-top: 4rpx;
       width: 66rpx;
       height: 4rpx;
+      border-radius: 4rpx;
       background: transparent;
     }
   }

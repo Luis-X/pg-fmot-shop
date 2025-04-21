@@ -41,13 +41,13 @@
       }          
       .pg-order-status {
         margin-right: 22rpx;
-        font-weight: bold;
+        font-weight: 600;
         font-size: 28rpx;
         color: #FE7F01;
       }
       .pg-order-status-cancel {
         margin-right: 22rpx;
-        font-weight: bold;
+        font-weight: 600;
         font-size: 28rpx;
         color: #777777;
       }
@@ -97,6 +97,7 @@
             color: #000000;
             font-size: 36rpx;
             line-height: 36rpx;
+            font-weight: 600;
           }
           .pg-order-goods-price-unit {
             margin-left: 5rpx;
@@ -111,7 +112,7 @@
           bottom: 0rpx;
           right: 0rpx;
           font-size: 28rpx;
-          font-weight: bold;
+          font-weight: 500;
           color: #000000;
         }        
       }  

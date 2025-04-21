@@ -66,6 +66,23 @@ export default function Index() {
 
   const [orderActivityInfo, setOrderActivityInfo] = useState({})
   const [cartList, setCartList] = useState([])
+  const [totalNum, setTotalNum] = useState(0);
+  const [totalAmount, setTotalAmount] = useState(0);
+
+  // 合计
+  const checkCartStatus = (list) => {
+    let totalNumVal = 0;
+    let totalAmountVal = 0;
+    let selectNumVal = 0;
+    list.forEach((item) => {
+      totalNumVal += item.quantity;
+      totalAmountVal += item.quantity * item.price;
+      selectNumVal += 1;
+    });
+    totalAmountVal = parseFloat(totalAmountVal.toFixed(1));
+    setTotalNum(totalNumVal);
+    setTotalAmount(totalAmountVal);
+  }
 
   // 选择发货方式
   const [deliveryType, setDeliveryType] = useState('SELF_PICKUP')
@@ -90,6 +107,7 @@ export default function Index() {
       const resData = res.data || {}
       const goodsList = resData.goodsList || []
       setCartList(goodsList)
+      checkCartStatus(goodsList);
     } else {
       Taro.HUD.showToastMessage(res.message)
     }   
@@ -142,6 +160,7 @@ export default function Index() {
         }
       }
       setCartList(newCartList);
+      checkCartStatus(newCartList);
     } else {
       Taro.HUD.showToastMessage(res.message)
     }   
@@ -220,6 +239,25 @@ export default function Index() {
       </View>
     )
   };
+
+
+  // 工具栏
+  const totalView = () => {
+    return (
+      <View className='order-confirm-total-wrap'>            
+        <View className='total-wrap'>
+          <View className='total-text-wrap'>
+            <View className='total-count'>{`共计${totalNum}件商品`}</View>
+            <View className='total-price-wrap'>
+              <View className='total-price-text'>合计</View>
+              <View className='total-price-red'>{totalAmount}</View>
+              <View className='total-price-text'>积分</View>
+            </View>
+          </View>              
+        </View>
+      </View>
+    )
+  }
 
   // 发货方式
   const deliveryView = () => {
@@ -389,13 +427,16 @@ export default function Index() {
     setDelAlertShow(false);
   };
 
+  // FIXME: 缺少积分计算
   return (
     <>
       {isShowPage ? (
         <View className='pg-index'>
           <PullToRefresh onRefresh={() => refreshData()}>
-            <View className='order-confirm-list' id='scroll'>                        
+            <View className='order-confirm-list' id='scroll'>           
+              <View className='order-space-top'></View>             
               { cartList && cartList.length > 0 ? goodsListView() : null }
+              { cartList && cartList.length > 0 ? totalView() : null  }
               { deliveryView() }
               { orderActivityInfo.collectionInstructions ? noteView() : null }
               { btnView() }

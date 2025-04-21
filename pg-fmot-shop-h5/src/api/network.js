@@ -15,6 +15,7 @@ export default {
   bindActivityId,
 
   activityList,
+  activityAlert,
   searchList,
 
   goodsDetail,
@@ -41,7 +42,7 @@ export default {
   wxConfigShareData,
 };
 
-// acl 授权 [ok]
+// acl 授权
 function aclUrl (params) {
   return REQUEST.post('/aclUrl', params)
 }
@@ -53,7 +54,7 @@ function login (params) {
     code: 0,
     data: {
       // token
-      token: '1234567890',
+      token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZC1mbW90LXNob3BwaW5nIiwiYXVkIjoicmQtZm1vdC1zaG9wcGluZyIsIm5iZiI6MTc0NTIyMDE0OSwicm9sZSI6Ind4LW1pbmktdXNlciIsImRhdGEiOiJ7fSIsImlzcyI6InJkLWZtb3Qtc2hvcHBpbmciLCJleHAiOjM2MzczODAxNDksImlhdCI6MTc0NTIyMDE0OSwidXNlcklkIjoiMiJ9.qr7CpMAJUXZzlvH1bq1Npw8ykd0E9SrHZugrkIaUa5Y',
       // 是否在活动时间内
       isActivityTime: true,
       // 活动类型 1: 内部活动 2: 外部活动
@@ -82,7 +83,7 @@ function login (params) {
   return clientMockData(res, params);
 }
 
-// 同意协议 [ok]
+// 同意协议
 function agreeAgreement (params) {
   // return REQUEST.post('/api/user/userAgreement', params)
   const res = {
@@ -103,82 +104,64 @@ function bindOpenId (params) {
   return clientMockData(res, params);
 }
 
-// 账号绑定
+// 账号绑定 [ok]
 function bindActivityId (params) {
   // return REQUEST.post('/api/user/bindPointAccount', params)
   const res = {
-    code: 0,
-    data: {},
-    message: '账号不正确'
+    "code": 0,
+    "message": "成功",
+    "data": {
+        "pointAccountId": "cb1ed71576134705b21033ee2bddd4ab",
+        "agreement": false,
+        "informedConsentForm": "1"
+    }
   }
   return clientMockData(res, params);
 }
 
 // 活动列表 [ok]
 function activityList (params) {
+  return REQUEST.post('/api/activity/detailForH5', params)
+  // const res = {
+  //   "code": 0,
+  //   "message": "成功",
+  //   "data": {
+  //       "id": "a725a5da3bf74e669918107fd711a8af",
+  //       "activityCarouselImages": [
+  //           {
+  //               "imageUrl": "https://storage-qa.pg.com.cn/v2/files/f8da6472bc734ff4a7995dac5839b8f0",
+  //               "url": "https://www.google.com"
+  //           }
+  //       ],
+  //       "maxQuantity": 1,
+  //       "activityProducts": [
+  //           {
+  //               "id": "67f31e3b29ec4921bccbc577bdb840e1",
+  //               "product": {
+  //                   "id": "ba62ef8fa6614d1686d1daac85d96331",
+  //                   "previewUrl": "https://storage-qa.pg.com.cn/v2/files/02d54b1e72244210a59c5c26b29f6bb8",
+  //                   "name": "潘婷深水泡弹洗发水洗发露玫瑰香氛强韧防断型530g男女通用第三代",
+  //                   "price": 79.80,
+  //                   "label": "自营,京东超市,官方正品"
+  //               },
+  //               "discountPrice": null
+  //           }
+  //       ]
+  //   }
+  // }
+  // return clientMockData(res, params);
+}
+// 活动弹框
+function activityAlert (params) {
   // return REQUEST.get('/api/activity/detailForH5', params)
   const res = {
     "code": 0,
     "message": "string",
     "data": {
-      "id": "string",
-      "activityCarouselImages": [
-        {
-          "imageUrl": "https://storage-qa.pg.com.cn/v2/files/d3fb4196d58d43e6952709d9469a284e",
-          "url": "https://www.baidu.com"
-        },
-        {
-          "imageUrl": "https://storage-qa.pg.com.cn/v2/files/d794218a09e9427c993acbb9e35526c1",
-          "url": "https://www.baidu.com"
-        },
-      ],
-      "maxQuantity": 0,
-      "activityProducts": [
-        {
-          "id": "1",
-          "product": {
-            "id": "935ccebd9e134286957900f4fb02b747",
-            "previewUrl": "https://storage-qa.pg.com.cn/v2/files/d3fb4196d58d43e6952709d9469a284e",
-            "name": "海飞丝头皮护理洗发水控油蓬松男士女士670g去屑弱酸绿瓶洗头膏京东自营",
-            "price": 57.9,
-            "label": "自营,自营,官方正品"
-          },
-          "discountPrice": null
-        },
-        {
-          "id": "2",
-          "product": {
-            "id": "ba62ef8fa6614d1686d1daac85d96331",
-            "previewUrl": "https://storage-qa.pg.com.cn/v2/files/02d54b1e72244210a59c5c26b29f6bb8",
-            "name": "潘婷深水泡弹洗发水洗发露玫瑰香氛强韧防断型530g男女通用第三代",
-            "price": 79.8,
-            "label": "自营,京东超市,官方正品"
-          },
-          "discountPrice": null
-        },
-        {
-          "id": "3",
-          "product": {
-            "id": "935ccebd9e134286957900f4fb02b747",
-            "previewUrl": "https://storage-qa.pg.com.cn/v2/files/d3fb4196d58d43e6952709d9469a284e",
-            "name": "海飞丝头皮护理洗发水控油蓬松男士女士670g去屑弱酸绿瓶洗头膏京东自营",
-            "price": 57.9,
-            "label": "自营,自营,官方正品"
-          },
-          "discountPrice": 47.9
-        },
-        {
-          "id": "4",
-          "product": {
-            "id": "ba62ef8fa6614d1686d1daac85d96331",
-            "previewUrl": "https://storage-qa.pg.com.cn/v2/files/02d54b1e72244210a59c5c26b29f6bb8",
-            "name": "潘婷深水泡弹洗发水洗发露玫瑰香氛强韧防断型530g男女通用第三代",
-            "price": 79.8,
-            "label": "自营,京东超市,官方正品"
-          },
-          "discountPrice": 69.8
-        },
-      ]
+      "activity": {
+        "contactCustomerServiceInfo": "联系客服",
+        "alertText": "1.文本文本文本文本文本文本文本文本文本\n2.文本文本文本文本文本文本文本文本文本\n3.文本文本文本文本文本文本文本文本文本文本\n4.文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本"
+      },
     }
   }
   return clientMockData(res, params);
@@ -263,49 +246,49 @@ function searchList (params) {
   return clientMockData(res, params);
 }
 
-// 商品详情 [ok]
+// 商品详情
 function goodsDetail (params) {
-  // return REQUEST.post('/api/activity/activityProductForH5', params)
-  const res = {
-    "code": 0,
-    "message": "string",
-    "data": {
-      "id": "ba62ef8fa6614d1686d1daac85d96331",
-      "product": {
-        "productCarouselImages": [
-          {
-            "videoUrl": "https://storage-qa.pg.com.cn/v2/files/79cabeed99224a2cb961c84e08162890",
-            "videoImgUrl": "https://storage-qa.pg.com.cn/v2/files/17fe0218cf864f799ece0fa958b0681a",
-          },
-          {
-            "imgUrl": "https://storage-qa.pg.com.cn/v2/files/d794218a09e9427c993acbb9e35526c1"
-          },
-          {
-            "imgUrl": "https://storage-qa.pg.com.cn/v2/files/c54b52f095a3418297d9f18d37b490cf"
-          },
-          {
-            "imgUrl": "https://storage-qa.pg.com.cn/v2/files/70bf0d0bf3e94f30a5b18199de807a96"
-          },
-          {
-            "imgUrl": "https://storage-qa.pg.com.cn/v2/files/4e6884fa592c4f5bbbb00c05c169dad3"
-          }
-        ],
-        "price": 79.8,
-        "name": "潘婷深水泡弹洗发水洗发露玫瑰香氛强韧防断型530g男女通用第三代",
-        "label": "自营,京东超市,官方正品",
-        "productVideo": "https://storage-qa.pg.com.cn/v2/files/79cabeed99224a2cb961c84e08162890",
-        "longImageUrl": "https://storage-qa.pg.com.cn/v2/files/3b7ddc5bf6294ecfa882f263c3a413c7"
-      },
-      "discountPrice": 69.8,
-      "activity": {
-        "contactCustomerServiceInfo": "联系客服"
-      },
-      "shopCartProductCount": 1
-    }
-  }
-  return clientMockData(res, params);
+  return REQUEST.post('/api/activity/activityProductForH5', params)
+  // const res = {
+  //   "code": 0,
+  //   "message": "string",
+  //   "data": {
+  //     "id": "ba62ef8fa6614d1686d1daac85d96331",
+  //     "product": {
+  //       "productCarouselImages": [
+  //         {
+  //           "videoUrl": "https://storage-qa.pg.com.cn/v2/files/79cabeed99224a2cb961c84e08162890",
+  //           "videoImgUrl": "https://storage-qa.pg.com.cn/v2/files/17fe0218cf864f799ece0fa958b0681a",
+  //         },
+  //         {
+  //           "imgUrl": "https://storage-qa.pg.com.cn/v2/files/d794218a09e9427c993acbb9e35526c1"
+  //         },
+  //         {
+  //           "imgUrl": "https://storage-qa.pg.com.cn/v2/files/c54b52f095a3418297d9f18d37b490cf"
+  //         },
+  //         {
+  //           "imgUrl": "https://storage-qa.pg.com.cn/v2/files/70bf0d0bf3e94f30a5b18199de807a96"
+  //         },
+  //         {
+  //           "imgUrl": "https://storage-qa.pg.com.cn/v2/files/4e6884fa592c4f5bbbb00c05c169dad3"
+  //         }
+  //       ],
+  //       "price": 79.8,
+  //       "name": "潘婷深水泡弹洗发水洗发露玫瑰香氛强韧防断型530g男女通用第三代",
+  //       "label": "自营,京东超市,官方正品",
+  //       "productVideo": "https://storage-qa.pg.com.cn/v2/files/79cabeed99224a2cb961c84e08162890",
+  //       "longImageUrl": "https://storage-qa.pg.com.cn/v2/files/3b7ddc5bf6294ecfa882f263c3a413c7"
+  //     },
+  //     "discountPrice": 69.8,
+  //     "activity": {
+  //       "contactCustomerServiceInfo": "联系客服"
+  //     },
+  //     "shopCartProductCount": 1
+  //   }
+  // }
+  // return clientMockData(res, params);
 }
-// 加入购物车 [ok]
+// 加入购物车
 function goodsAddCart (params) {
   // return REQUEST.post('/api/shopCart/changeShopCartProduct', params)
   const res = {
@@ -316,7 +299,7 @@ function goodsAddCart (params) {
   return clientMockData(res, params);
 }
 
-// 订单活动信息 [ok]
+// 订单活动信息
 function orderActivityInfo (params) {
   // return REQUEST.post('/api/activity/activityForOrderForH5', params) 
   const res = {
@@ -351,7 +334,7 @@ function orderConfirmInfo (params) {
   }
   return clientMockData(res, params);
 }
-// 订单确认 [ok]
+// 订单确认
 function orderConfirm (params) {
   // return REQUEST.post('/api/shopCart/createOrder', params)
   const res = {
@@ -362,7 +345,7 @@ function orderConfirm (params) {
   return clientMockData(res, params);
 }
 
-// 订单详情 [ok]
+// 订单详情
 function orderDetailInfo (params) {
   // return REQUEST.post('/api/shopCart/getOrderDetail', params)
   const res = {
@@ -392,7 +375,7 @@ function orderDetailInfo (params) {
   }
   return clientMockData(res, params);
 }
-// 取消订单 [ok]
+// 取消订单
 function orderCancel (params) {
   // return REQUEST.post('/api/shopCart/cancelOrder', params)
   const res = {
@@ -403,7 +386,7 @@ function orderCancel (params) {
   return clientMockData(res, params);
 }
 
-// 我的订单 [ok]
+// 我的订单
 function mineOrderList (params) {
   // return REQUEST.post('/api/shopCart/getMyInfo', params)
   const res = {
@@ -518,7 +501,7 @@ function mineOrderList (params) {
   }
   return clientMockData(res, params);
 }
-// 我的兑换 [ok]
+// 我的兑换
 function mineExchangeList (params) {
   // return REQUEST.get('/api/activity/getMyForH5', params)
   const res = {
@@ -600,7 +583,7 @@ function mineExchangeList (params) {
   return clientMockData(res, params);
 }
 
-// 购物车 [ok]
+// 购物车
 function cartList (params) {
   // return REQUEST.post('/api/shopCart/getMy', params)
   const res = {
@@ -660,7 +643,7 @@ function cartList (params) {
   }
   return clientMockData(res, params);
 }
-// 加入、删除、修改购物车 [ok]
+// 加入、删除、修改购物车
 function cartChange (params) {
   // return REQUEST.post('/api/shopCart/changeShopCartProduct', params)
   const res = {
@@ -684,7 +667,7 @@ function serviceInfo (params) {
   return clientMockData(res, params);
 }
 
-// 埋点上报 [ok]
+// 埋点上报
 function trackerSubmit (params) {
   // return REQUEST.post('/api/userActionLog/addUserActionLog', params)
   const res = {

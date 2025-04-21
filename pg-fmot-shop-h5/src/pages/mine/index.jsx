@@ -154,7 +154,7 @@ export default function Index() {
         <View className="point-bg-wrap" onClick={clickMyExchange}>
           <Image className='point-img' mode='aspectFit' src={imgTopBar} ></Image>
           <View className='point-title'>{availablePoint >= 0 ? availablePoint : '--'}</View>
-          <View className='point-btn'>查看我正参与的兑换</View>
+          <View className='point-btn'>查看我正在参与的兑换</View>
         </View>               
       </View>
     )

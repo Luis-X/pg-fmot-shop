@@ -26,17 +26,17 @@ function baseRequest(url, data, method) {
   const loginInfo = Taro.UTIL.getPGStorage('login_info') || {}
   let token = loginInfo.token || ''
 
-  const activityInfo = Taro.UTIL.getPGStorage('activity_info') || {}
-  let activityId = activityInfo.activityId || ''
-  let pointAccountId = activityInfo.pointAccountId || ''
+  // const activityInfo = Taro.UTIL.getPGStorage('activity_info') || {}
+  // let activityId = activityInfo.activityId || ''
+  // let pointAccountId = activityInfo.pointAccountId || ''
 
   let newData = {...data}
-  if (!newData.activityId) {
-    newData.activityId = activityId
-  }
-  if (!newData.pointAccountId) {
-    newData.pointAccountId = pointAccountId
-  }
+  // if (!newData.activityId) {
+  //   newData.activityId = activityId
+  // }
+  // if (!newData.pointAccountId) {
+  //   newData.pointAccountId = pointAccountId
+  // }
 
   console.debug(`接口: ${url} 入参：`)
   console.debug(newData)

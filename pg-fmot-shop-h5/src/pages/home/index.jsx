@@ -7,7 +7,7 @@ import {
   Image as ImageNut
 } from "@nutui/nutui-react";
 import { View, Input, Image, ScrollView } from "@tarojs/components";
-import Taro, { useLoad, useDidShow } from "@tarojs/taro";
+import Taro, { useLoad, useRouter, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
 import PGAlertAgree from "../../components/pgAlertAgree/index";
@@ -19,6 +19,8 @@ import imgSearchBar from "../../images/home-search-bar.png";
 import imgSearchBarIcon from "../../images/home-search-bar-icon.png";
 
 export default function Index() {
+
+  const router = useRouter()
 
   const configTracker = (type) => {
     const trackData = {}
@@ -48,16 +50,27 @@ export default function Index() {
     setIsShowPage(true);
     configTracker(1)
 
+    const actId = router.params.act || ''
+    const accId = router.params.acc || ''
+    setActivityId(actId)
+    setPointAccountId(accId)
+
     requestListData({
+      activityId: actId,
+      pointAccountId: accId,
       pageIndex: 0,
     }, false)
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
+  const [activityId, setActivityId] = useState('');
+  const [pointAccountId, setPointAccountId] = useState('');
 
   // 下拉刷新
   const refreshData = () => {
     return requestListData({
+      activityId: activityId,
+      pointAccountId: pointAccountId,
       pageIndex: 0,
     }, false)
   };
@@ -69,6 +82,8 @@ export default function Index() {
 
   const loadMore = async () => {
     await requestListData({
+      activityId: activityId,
+      pointAccountId: pointAccountId,
       pageIndex: pageCurrentIndex,
     }, true)
   };
@@ -77,7 +92,6 @@ export default function Index() {
   async function requestListData(query, isLoadMore) {
 
     const pageIndex = query.pageIndex || 0
-    const activityId = query.activityId || ''
 
     if (!isLoadMore) {
       // Taro.HUD.showLoading()
@@ -92,11 +106,13 @@ export default function Index() {
     }
 
     const params = {
+      activityId: query.activityId || '',
+      pointAccountId: query.pointAccountId || '',
       page: pageIndex,
       size: 10,
     }
 
-    const res = await Taro.NETWORK.activityList(params) 
+    const res = await Taro.NETWORK.activityList(params)
     Taro.HUD.hideLoading()
 
     if (res.code === 0) {
@@ -139,7 +155,7 @@ export default function Index() {
           {
             dataList && dataList.length > 0 && dataList.map((item, index) => {
               return (
-                <PGGoodsView key={index} item={item}></PGGoodsView>
+                <PGGoodsView key={index} item={item} act={activityId} acc={pointAccountId}></PGGoodsView>
               );
             })
           }

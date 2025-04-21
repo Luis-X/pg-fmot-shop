@@ -72,16 +72,25 @@ export default function Index() {
     configTracker(1)
     configTracker(2)
 
-    const activityId = router.params.activityId || '';
+    const actId = router.params.act || ''
+    const accId = router.params.acc || ''
+    setActivityId(actId)
+    setPointAccountId(accId)
+
     const productId = router.params.id || '';
-    setQueryActivityId(activityId);
-    setQueryProductId(productId);
-    requestData(activityId, productId)
+    setProductId(productId);
+    
+    requestData({
+      activityId: actId,
+      pointAccountId: accId,
+      id: productId,
+    })
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
-  const [queryActivityId, setQueryActivityId] = useState('');
-  const [queryProductId, setQueryProductId] = useState('');
+  const [activityId, setActivityId] = useState('');
+  const [pointAccountId, setPointAccountId] = useState('');
+  const [productId, setProductId] = useState('');
 
   // 商品信息
   const [goodsInfo, setGoodsInfo] = useState({});  
@@ -170,14 +179,16 @@ export default function Index() {
   // 下拉刷新
   const refreshData = () => {
     return requestData({
-      id: queryProductId
+      activityId: activityId,
+      pointAccountId: pointAccountId,
+      id: productId
     })
   };
 
   // request
-  async function requestData(activityId, id) {
+  async function requestData(query) {
     const params = {
-      id: id
+      ...query
     }
 
     // Taro.HUD.showLoading()
@@ -243,7 +254,7 @@ export default function Index() {
 
   async function requestAddCartData(newCartNum) {
     const params = {
-      id: queryProductId,
+      id: productId,
       quantity: newCartNum,
     }
 
@@ -312,7 +323,7 @@ export default function Index() {
 
   const clickConfirmBuy = () => {
     setBuyAlertShow(false);
-    Taro.ROUTER.navigateTo(`/pages/orderConfirm/index?activityId=${queryActivityId}&id=${queryProductId}`);
+    Taro.ROUTER.navigateTo(`/pages/orderConfirm/index?act=${activityId}&acc=${pointAccountId}&id=${productId}`);
   };
 
   const clickCancelBuy = () => {

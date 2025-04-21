@@ -1,6 +1,6 @@
 import React from 'react';
 import RoutePath from '../config/RoutePath';
-import { BrowserRouter as Router, Switch, Route, HashRouter } from 'react-router-dom';
+import { Switch, Route, HashRouter } from 'react-router-dom';
 import AuthRoute from '../components/AuthRoute';
 
 import SsoLogin from '../views/sso/SsoLogin';
@@ -15,6 +15,7 @@ import EventMgmt from '../views/eventMgmt/EventMgmt';
 import OrderMgmt from '../views/orderMgmt/OrderMgmt';
 import GoodsMgmt from '../views/goodsMgmt/GoodsMgmt';
 import TrackMgmt from '../views/trackMgmt/TrackMgmt';
+
 import TrackDetail from '../views/trackMgmt/TrackDetail';
 
 const Root = () => (
@@ -33,7 +34,8 @@ const Root = () => (
         <AuthRoute exact path={RoutePath.OrderMgmt} component={OrderMgmt} />
         <AuthRoute exact path={RoutePath.GoodsMgmt} component={GoodsMgmt} />
         <AuthRoute exact path={RoutePath.TrackMgmt} component={TrackMgmt} />
-        <AuthRoute exact path={RoutePath.TrackDetail + '/:id'} component={TrackDetail} />
+        
+        <Route exact path={RoutePath.TrackDetail + '/:id'} component={TrackDetail} />
       </Switch>
     {/* </Router> */}
   </HashRouter>

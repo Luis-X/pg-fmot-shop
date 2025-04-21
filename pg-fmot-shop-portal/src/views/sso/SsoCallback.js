@@ -17,8 +17,8 @@ class SsoCallback extends Component {
   async componentDidMount() {
     const self = this;
     let queryCode = self.getAllParams();
-    console.log('callback')
-    console.log(queryCode);
+    // console.log('callback')
+    // console.log(queryCode);
     if (queryCode) {
       if (queryCode.error) {
         self.setState({

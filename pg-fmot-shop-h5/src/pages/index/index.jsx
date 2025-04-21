@@ -34,8 +34,8 @@ export default function Index() {
 
   async function requestData() {
     const params = {
-      activityId: "123",
-      pointAccountId: "456",
+      activityId: "20662ccb82914d1d87ea043e18146d3e",
+      pointAccountId: "test9",
       code: "789",
       timestamp: "string",
       signature: "string",

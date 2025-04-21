@@ -2,8 +2,10 @@ import axios from 'axios';
 import CONFIG from '../config/const';
 import * as URL from './URL';
 import RoutePath from '../config/RoutePath';
-import { Modal } from 'antd';
 import Util from '../utils/util';
+import Tools from '../utils/tools';
+import { Modal } from 'antd';
+
 
 export const client = axios.create({
   baseURL: CONFIG.SERVER_HOST,
@@ -14,7 +16,7 @@ export const client = axios.create({
     'Content-Type': 'application/json;charset=utf-8',
     'X-Content-Type-Options': 'nosniff',
     Pragma: 'no-cache',
-    Authorization: localStorage.getItem('token') || '',
+    Authorization: Tools.getToken(),
   },
 });
 
@@ -22,9 +24,10 @@ client.interceptors.response.use((response) => {
   //响应拦截
   const status = response.status;
   const code = response.data.code;
+  const token = Tools.getToken();
   if (status === 200) {
     if (code === -2) {
-      if (localStorage.getItem('token')) {
+      if (token) {
         //未登录/登录超时
         apiWarning('登录超时');
       } else {
@@ -72,7 +75,7 @@ export const apiWarning = (title) => {
 
 export const setToken = () => {
   client.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token');
+    const token = Tools.getToken();
     if (token) {
       // 判断是否存在token，如果存在的话，则每个http header都加上token
       config.headers['Authorization'] = token;
@@ -120,19 +123,7 @@ export const uploadFileChunkMerge = (param) => {
 
 // 登录、登出
 export const ssoLogin = (param) => {
-  // return client.post(URL.ssoLogin, param);
-  const res =  {
-    "data": {
-      "code": 0,
-      "message": "success",
-      "data": { 
-        token: '1234567890',
-        userName: 'RichLuisX',
-        roleName: 'developer',
-      }
-    }
-  }
-  return clientMockData(res);
+  return client.post(URL.ssoLogin, param);
 };
 // export const logout = (param) => {
 //   return client.post(URL.logout, param);
@@ -141,15 +132,7 @@ export const ssoLogin = (param) => {
 
 // 通用
 export const orgCodeList = (param) => {
-  // return client.get(URL.orgCodeList, param);
-  const res = {
-    "data": {
-      "code": 0,
-      "message": "success",
-      "data": []
-    }
-  }
-  return clientMockData(res);
+  return client.get(URL.orgCodeList, param);
 };
 
 
@@ -161,15 +144,7 @@ export const asyncTaskDetail = (param) => {
 
 // 内部账号
 export const internalAccountList = (param) => {
-  // return client.post(URL.internalAccountList, param);
-  const res = {
-    "data": {
-      "code": 0,
-      "message": "success",
-      "data": {}
-    }
-  }
-  return clientMockData(res);
+  return client.post(URL.internalAccountList, param);
 };
 export const internalAccountChangeStatus = (param) => {
   return client.post(URL.internalAccountChangeStatus, param);
@@ -189,15 +164,7 @@ export const internalAccountImportTemplatePoints = (param) => {
 
 // 外部账号
 export const externalAccountList = (param) => {
-  // return client.post(URL.externalAccountList, param);
-  const res = {
-    "data": {
-      "code": 0,
-      "message": "success",
-      "data": {}
-    }
-  }
-  return clientMockData(res);
+  return client.post(URL.externalAccountList, param);
 };
 export const externalAccountChangeStatus = (param) => {
   return client.post(URL.externalAccountChangeStatus, param);
@@ -217,15 +184,7 @@ export const externalAccountImportTemplatePoints = (param) => {
 
 // 活动
 export const eventList = (param) => {
-  // return client.post(URL.eventList, param);
-  const res = {
-    "data": {
-      "code": 0,
-      "message": "success",
-      "data": {}
-    }
-  }
-  return clientMockData(res);
+  return client.post(URL.eventList, param);
 };
 export const eventCopy = (param) => {
   return client.post(URL.eventCopy, param);
@@ -248,15 +207,7 @@ export const eventSave = (param) => {
 
 // 订单
 export const orderList = (param) => {
-  // return client.post(URL.orderList, param);
-  const res = {
-    "data": {
-      "code": 0,
-      "message": "success",
-      "data": {}
-    }
-  }
-  return clientMockData(res, param);
+  return client.post(URL.orderList, param);
 };
 export const orderListExport = (param) => {
   return client.post(URL.orderListExport, param);
@@ -264,37 +215,13 @@ export const orderListExport = (param) => {
 
 // 商品
 export const goodsSearchList = (param) => {
-  // return client.post(URL.goodsSearchList, param);
-  const res = {
-    "data": {
-      "code": 0,
-      "message": "success",
-      "data": {}
-    }
-  }
-  return clientMockData(res, param);
+  return client.post(URL.goodsSearchList, param);
 };
 export const goodsList = (param) => {
-  // return client.post(URL.goodsList, param);
-  const res = {
-    "data": {
-      "code": 0,
-      "message": "success",
-      "data": {}
-    }
-  }
-  return clientMockData(res, param);
+  return client.post(URL.goodsList, param);
 };
 export const goodsCategoryList = (param) => {
-  // return client.get(URL.goodsCategoryList, param);
-  const res = {
-    "data": {
-      "code": 0,
-      "message": "success",
-      "data": []
-    }
-  }
-  return clientMockData(res, param);
+  return client.get(URL.goodsCategoryList, param);
 };
 export const goodsDetail = (param) => {
   return client.post(URL.goodsDetail, param);
@@ -308,120 +235,17 @@ export const goodsSave = (param) => {
 
 // 数据统计
 export const trackList = (param) => {
-  // return client.post(URL.trackList, param);
-  const res = {
-    "data": {
-      "code": 0,
-      "message": "string",
-      "data": {
-        "totalPages": 10,
-        "content": [
-          {
-            "id": "string",
-            "name": "string",
-            "createDate": "2025-04-16T14:06:52.639Z",
-            "beginDate": "2025-04-16T14:06:52.639Z",
-            "endDate": "2025-04-16T14:06:52.639Z",
-            "institutionCode": "string",
-            "activityType": "EMPLOYEE",
-            "totalCount": 0,
-            "totalUser": 0
-          }
-        ]
-      }
-    }
-  }
-  return clientMockData(res);
+  return client.post(URL.trackList, param);
 };
 export const trackExport = (param) => {
   return client.post(URL.trackExport, param);
 }
 export const trackPeopleList = (param) => {
-  // return client.post(URL.trackPeopleList, param);
-  const res = {
-    "data": {
-      "code": 0,
-      "message": "success",
-      "data": []
-    }
-  }
-  return clientMockData(res);
+  return client.post(URL.trackPeopleList, param);
 };
 export const trackTimesList = (param) => {
-  // return client.post(URL.trackTimesList, param);
-  const res = {
-    "data": {
-      "code": 0,
-      "message": "success",
-      "data": []
-    }
-  }
-  return clientMockData(res);
+  return client.post(URL.trackTimesList, param);
 };
 export const trackChart = (param) => {
-  // return client.post(URL.trackChart, param);
-  const res = {
-    "data": {
-      "code": 0,
-      "message": "success",
-      "data": [
-        {
-          "point_3": 0,
-          "point_6": 0,
-          "point_9": 0,
-          "point_12": 10,
-          "point_15": 0,
-          "point_18": 0,
-          "point_21": 0,
-          "point_24": 0,
-          "point_27": 0,
-          "point_30": 0,
-          "point_33": 0,
-          "point_36": 0,
-          "point_39": 0,
-          "point_42": 0,
-          "point_45": 0,
-          "point_48": 0,
-          "point_51": 0,
-          "point_54": 0,
-          "point_57": 0,
-          "point_60": 0,
-          "user_action_type": 2
-        },
-        {
-          "point_3": 0,
-          "point_6": 0,
-          "point_9": 0,
-          "point_12": 10,
-          "point_15": 0,
-          "point_18": 0,
-          "point_21": 0,
-          "point_24": 10,
-          "point_27": 0,
-          "point_30": 30,
-          "point_33": 0,
-          "point_36": 0,
-          "point_39": 20,
-          "point_42": 0,
-          "point_45": 0,
-          "point_48": 60,
-          "point_51": 0,
-          "point_54": 0,
-          "point_57": 80,
-          "point_60": 0,
-          "user_action_type": 3
-        }
-      ]
-    }
-  }
-  return clientMockData(res);
+  return client.post(URL.trackChart, param);
 };
-
-
-// 模拟请求
-const clientMockData = (res, param) => new Promise((resolve, reject) => {
-  console.log('param', param);
-  setTimeout(() => {
-    resolve(res);
-  }, 1000);
-})

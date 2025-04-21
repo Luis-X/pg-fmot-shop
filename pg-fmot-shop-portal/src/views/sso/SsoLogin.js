@@ -9,8 +9,7 @@ class SsoLogin extends Component {
     this.state = {};
   }
 
-  componentDidMount() {    
-    // FIXME: 为了调试，先注释sso登录
+  componentDidMount() {
     // const id = uuidv4();
     Util.navigationToUrl(RoutePath.SSOLoginUrl);
   }
