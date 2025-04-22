@@ -48,13 +48,23 @@ export default function Index() {
 
     if (res.code === 0) {
       const resData = res.data || {}
-      // 登录信息
       setUserData(resData)
-      Taro.UTIL.setPGStorage('login_info', resData)	
+      
+      // 登录信息      
+      const token = resData.token || ''
+      const tokenInfo = {
+        token: token
+      }
+      Taro.UTIL.setPGStorage('token_info', tokenInfo)	
+      
+      // 用户信息
+      const loginInfo = resData
+      Taro.UTIL.setPGStorage('login_info', loginInfo)	
+      
       // 活动信息
       const activityInfo = {
-        activityId: params.activityId,
-        pointAccountId: params.pointAccountId,
+        act: params.activityId,
+        acc: params.pointAccountId,
       }
       Taro.UTIL.setPGStorage('activity_info', activityInfo)	
     } else {

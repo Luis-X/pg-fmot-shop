@@ -19,33 +19,22 @@ export default function Index(props) {
     checkAgreementStatus()    
   }, []);
 
-  // 是否显示弹框
+  // 弹框
   const [isAlertShow, setIsAlertShow] = useState(false)
-  const checkAgreementStatus = () => {
-    const isAgreeShow = Taro.UTIL.checkAgreementStatusShow()
-    if (isAgreeShow) {      
-      requestData()
-    } else {
-      setIsAlertShow(false)
-    }
-  }
-
-  // 弹框内容
   const [contentText, setContentText] = useState('')
-  async function requestData(activityId) {
-    const params = {
-      activityId: activityId
-    }
 
-    const res = await Taro.NETWORK.activityAlert(params) 
-
-    if (res.code === 0) {
-      const resData = res.data || {}
-      setContentText(resData.activity.alertText)
-      setIsAlertShow(true)
+  const checkAgreementStatus = () => {
+    const loginInfo = Taro.UTIL.getPGStorage('login_info')
+    const isAgree = loginInfo.agreement;
+    const contentText = loginInfo.informedConsentForm || '';
+    if (isAgree) {
+      console.log("已同意协议");
+      setIsAlertShow(false)
     } else {
-      Taro.HUD.showToastMessage(res.message)
-    }   
+      console.log("未同意协议");
+      setContentText(contentText)
+      setIsAlertShow(true)
+    }
   }
 
   // 确定
@@ -54,17 +43,25 @@ export default function Index(props) {
   }
 
   async function requestAgreeData() {
+    const activityInfo = Taro.UTIL.getPGStorage('activity_info')
+    const act = activityInfo.act || ''
+    const acc = activityInfo.acc || ''
+
+    const params = {
+      activityId: act,
+      pointAccountId: acc,
+    }
 
     Taro.HUD.showLoading()
-    const res = await Taro.NETWORK.agreeAgreement({}) 
+    const res = await Taro.NETWORK.agreeAgreement(params) 
     Taro.HUD.hideLoading()
 
     if (res.code === 0) { 
       setIsAlertShow(false)
 
-      let userData = Taro.UTIL.getPGStorage('login_info') || {}
-      userData.agreement = true
-      Taro.UTIL.setPGStorage('login_info', userData)	
+      let loginInfo = Taro.UTIL.getPGStorage('login_info') || {}
+      loginInfo.agreement = true
+      Taro.UTIL.setPGStorage('login_info', loginInfo)	
 
       if (props.onConfirm) {
         props.onConfirm()

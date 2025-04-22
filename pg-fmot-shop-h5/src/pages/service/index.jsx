@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { View, Image } from '@tarojs/components'
-import Taro, { useLoad, useDidShow } from '@tarojs/taro'
+import Taro, { useLoad, useRouter, useDidShow } from '@tarojs/taro'
 import './index.scss'
 
 import PGLoading from "../../components/pgLoading/index";
@@ -12,6 +12,8 @@ import imgAddress from '../../images/service-address.png';
 
 
 export default function Index() {
+
+  const router = useRouter()
 
   useLoad(() => {   
     Taro.WXSDK.hideOptionMenu()    
@@ -35,16 +37,26 @@ export default function Index() {
     Taro.TRACKER.pageViewTracker('客服')
     setIsShowPage(true)
 
-    requestData()
+    const act = router.params.act || ''
+    const acc = router.params.acc || ''
+    setActId(act)
+    setAccId(acc)
+
+    requestData({
+      activityId: act,
+      pointAccountId: acc,
+    })
   }
 
   const [isShowPage, setIsShowPage] = useState(false)
+  const [actId, setActId] = useState('');
+  const [accId, setAccId] = useState('');
   const [serviceInfo, setServiceInfo] = useState([])
 
   // request
-  async function requestData(id) {
+  async function requestData(query) {
     const params = {
-      id: id
+      ...query,
     }
 
     const res = await Taro.NETWORK.serviceInfo(params) 

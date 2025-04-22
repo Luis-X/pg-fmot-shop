@@ -6,7 +6,7 @@ import './index.scss'
 
 export default function Index(props) {
 
-  const { scenceType, orderInfo, onClick } = props
+  const { scenceType, orderInfo, act, acc, onClick } = props
 
   useLoad(() => {
     console.log('order view loaded.')
@@ -20,9 +20,10 @@ export default function Index(props) {
   const clickGoods = (item) => {
     console.log('clickGoods', item);
     if (scenceType === 'order-detail') {
-      const activityId = item.id || '';
-      const productId = item.activityProductId || '';
-      Taro.ROUTER.navigateTo(`/pages/detail/index?activityId=${activityId}&id=${productId}`);
+      // const productId = item.id || '';
+      // const actId = act || ''
+      // const accId = acc || '' 
+      // Taro.ROUTER.navigateTo(`/pages/detail/index?act=${actId}&acc=${accId}&id=${productId}`);
     }    
   }
 
@@ -81,7 +82,7 @@ export default function Index(props) {
         <View className='pg-order-info-wrap'>
           <View className='pg-order-num-wrap'>
             <View className='pg-order-num'>{`订单编号：${orderInfo.orderCode}`}</View>
-            <View className='pg-order-date'>{`下单时间：${Taro.UTIL.dateFormatter(orderInfo.createDate, 'YYYY-MM-DD HH:mm:ss')}`}</View>
+            <View className='pg-order-date'>{`下单时间：${Taro.UTIL.dateFormatter(orderInfo.createDate, 'YYYY年MM月DD日 HH:mm:ss')}`}</View>
           </View>          
           {
             orderInfo.orderStatus === 'COMPLETED' ? (
@@ -90,7 +91,7 @@ export default function Index(props) {
           }
           {
             orderInfo.orderStatus === 'CANCELED' ? (
-              <View className='pg-order-status'>已取消</View>
+              <View className='pg-order-status-cancel'>已取消</View>
             ) : null
           }
         </View>       

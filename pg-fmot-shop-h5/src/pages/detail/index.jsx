@@ -72,24 +72,23 @@ export default function Index() {
     configTracker(1)
     configTracker(2)
 
-    const actId = router.params.act || ''
-    const accId = router.params.acc || ''
-    setActivityId(actId)
-    setPointAccountId(accId)
-
-    const productId = router.params.id || '';
-    setProductId(productId);
+    const act = router.params.act || ''
+    const acc = router.params.acc || ''
+    const id = router.params.id || '';
+    setActId(act)
+    setAccId(acc)
+    setProductId(id);
     
     requestData({
-      activityId: actId,
-      pointAccountId: accId,
-      id: productId,
+      activityId: act,
+      pointAccountId: acc,
+      id: id,
     })
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
-  const [activityId, setActivityId] = useState('');
-  const [pointAccountId, setPointAccountId] = useState('');
+  const [actId, setActId] = useState('');
+  const [accId, setAccId] = useState('');
   const [productId, setProductId] = useState('');
 
   // 商品信息
@@ -179,8 +178,8 @@ export default function Index() {
   // 下拉刷新
   const refreshData = () => {
     return requestData({
-      activityId: activityId,
-      pointAccountId: pointAccountId,
+      activityId: actId,
+      pointAccountId: accId,
       id: productId
     })
   };
@@ -232,39 +231,36 @@ export default function Index() {
 
   // 客服
   const clickService = () => {
-    Taro.ROUTER.navigateTo('/pages/service/index');
+    Taro.ROUTER.navigateTo(`/pages/service/index?act=${actId}&acc=${accId}`);
   }
 
   // 购物车
   const clickCart = () => {
-    Taro.ROUTER.reLaunchTo('/pages/cart/index');
+    Taro.ROUTER.reLaunchTo(`/pages/cart/index?act=${actId}&acc=${accId}`);
   }
 
   // 加入购物车
   const [cartNum, setCartNum] = useState(0);
-  const clickCartAdd = () => {
-    const maxLimit = 10;
-    const newCartNum = cartNum + 1;
-    if (newCartNum >= maxLimit) {
-      Taro.HUD.showToastMessage('加购商品超过数量上限')
-      return;
-    }
-    requestAddCartData(newCartNum)
+  const clickCartAdd = () => {    
+    requestAddCartData()
   }
 
-  async function requestAddCartData(newCartNum) {
+  async function requestAddCartData() {
     const params = {
-      id: productId,
-      quantity: newCartNum,
+      activityId: actId,
+      pointAccountId: accId,
+      activityProductId: productId,
+      quantity: 1,
     }
 
-    // Taro.HUD.showLoading()
-    const res = await Taro.NETWORK.goodsAddCart(params) 
+    Taro.HUD.showLoading()
+    const res = await Taro.NETWORK.cartChange(params) 
     Taro.HUD.hideLoading()
 
     if (res.code === 0) {
       configTracker(8)
       const resData = res.data || {}
+      const newCartNum = cartNum + 1;
       setCartNum(newCartNum)
       Taro.HUD.showToastMessage('加入购物车成功')
     } else {
@@ -322,8 +318,24 @@ export default function Index() {
   }
 
   const clickConfirmBuy = () => {
-    setBuyAlertShow(false);
-    Taro.ROUTER.navigateTo(`/pages/orderConfirm/index?act=${activityId}&acc=${pointAccountId}&id=${productId}`);
+    setBuyAlertShow(false); 
+    const productData = goodsInfo.product || {}
+
+    let goodsList = [];
+    const goods = {
+      id: goodsInfo.id,
+      previewUrl: productData.previewUrl,
+      name: productData.name,
+      price: productData.price,
+      discountPrice: goodsInfo.discountPrice,
+      quantity: 1,
+    }
+    goodsList = [goods];
+    const orderConfirmInfo = {
+      goodsList: goodsList,
+    }
+    Taro.UTIL.setPGStorage('order_confirm_info', orderConfirmInfo)	
+    Taro.ROUTER.navigateTo(`/pages/orderConfirm/index?act=${actId}&acc=${accId}`);
   };
 
   const clickCancelBuy = () => {

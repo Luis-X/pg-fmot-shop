@@ -24,12 +24,16 @@ export default function Index(props) {
   
   const clickTabbar = (index) => {
     console.log('clickTabbar', sence)
+    const activityInfo = Taro.UTIL.getPGStorage('activity_info')
+    const act = activityInfo.act || ''
+    const acc = activityInfo.acc || ''
+    
     if (index === 0) {
-      Taro.ROUTER.redirectTo(`/pages/home/index`);   
+      Taro.ROUTER.redirectTo(`/pages/home/index?act=${act}&acc=${acc}`);   
     } else if (index === 1) {
-      Taro.ROUTER.redirectTo(`/pages/cart/index`);
+      Taro.ROUTER.redirectTo(`/pages/cart/index?act=${act}&acc=${acc}`);
     } else if (index === 2) {
-      Taro.ROUTER.redirectTo(`/pages/mine/index`);
+      Taro.ROUTER.redirectTo(`/pages/mine/index?act=${act}&acc=${acc}`);
     }
   }
 

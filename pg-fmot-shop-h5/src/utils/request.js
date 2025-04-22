@@ -23,19 +23,20 @@ function baseRequest(url, data, method) {
 
   // 所有接口带上token！！！
   // 所有接口带上activityId和pointAccountId，如果参数中包含则忽略，否则从本地缓存中获取！！！
-  const loginInfo = Taro.UTIL.getPGStorage('login_info') || {}
-  let token = loginInfo.token || ''
+  // const loginInfo = Taro.UTIL.getPGStorage('login_info') || {}
+  const tokenInfo = Taro.UTIL.getPGStorage('token_info') || {}
+  let token = tokenInfo.token || 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZC1mbW90LXNob3BwaW5nIiwiYXVkIjoicmQtZm1vdC1zaG9wcGluZyIsIm5iZiI6MTc0NTIyMDE0OSwicm9sZSI6Ind4LW1pbmktdXNlciIsImRhdGEiOiJ7fSIsImlzcyI6InJkLWZtb3Qtc2hvcHBpbmciLCJleHAiOjM2MzczODAxNDksImlhdCI6MTc0NTIyMDE0OSwidXNlcklkIjoiMiJ9.qr7CpMAJUXZzlvH1bq1Npw8ykd0E9SrHZugrkIaUa5Y'
 
   // const activityInfo = Taro.UTIL.getPGStorage('activity_info') || {}
-  // let activityId = activityInfo.activityId || ''
-  // let pointAccountId = activityInfo.pointAccountId || ''
+  // let act = activityInfo.act || ''
+  // let acc = activityInfo.acc || ''
 
   let newData = {...data}
   // if (!newData.activityId) {
-  //   newData.activityId = activityId
+  //   newData.activityId = act
   // }
   // if (!newData.pointAccountId) {
-  //   newData.pointAccountId = pointAccountId
+  //   newData.pointAccountId = acc
   // }
 
   console.debug(`接口: ${url} 入参：`)
@@ -130,7 +131,7 @@ function loginWithSSOUrl(message) {
   })
   const timeout = setTimeout(() => {
     // locationReplace()
-    Taro.UTIL.goToAclUrlPage()
+    // Taro.UTIL.goToAclUrlPage()
     clearTimeout(timeout)
   }, 2000)
 }

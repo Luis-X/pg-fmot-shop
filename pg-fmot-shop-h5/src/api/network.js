@@ -15,14 +15,11 @@ export default {
   bindActivityId,
 
   activityList,
-  activityAlert,
   searchList,
 
   goodsDetail,
-  goodsAddCart,
 
   orderActivityInfo,
-  orderConfirmInfo,
   orderConfirm,
 
   orderDetailInfo,
@@ -83,13 +80,13 @@ function login (params) {
   return clientMockData(res, params);
 }
 
-// 同意协议
+// 同意协议 [ok]
 function agreeAgreement (params) {
   // return REQUEST.post('/api/user/userAgreement', params)
   const res = {
-    code: 0,
-    data: {},
-    message: '同意失败'
+    "code":0,
+    "message":"成功",
+    "data":null
   }
   return clientMockData(res, params);
 }
@@ -97,7 +94,7 @@ function agreeAgreement (params) {
 // 邮箱绑定OpenId
 function bindOpenId (params) {
   const res = {
-    code: 0,
+    code: 1,
     data: {},
     message: '绑定失败'
   }
@@ -151,520 +148,225 @@ function activityList (params) {
   // }
   // return clientMockData(res, params);
 }
-// 活动弹框
-function activityAlert (params) {
-  // return REQUEST.get('/api/activity/detailForH5', params)
-  const res = {
-    "code": 0,
-    "message": "string",
-    "data": {
-      "activity": {
-        "contactCustomerServiceInfo": "联系客服",
-        "alertText": "1.文本文本文本文本文本文本文本文本文本\n2.文本文本文本文本文本文本文本文本文本\n3.文本文本文本文本文本文本文本文本文本文本\n4.文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本"
-      },
-    }
-  }
-  return clientMockData(res, params);
-}
 
-// 搜索列表
+// 搜索列表 (活动的下挂商品不会很多,前端筛选后端不提供商品查询接口) [ok]
 function searchList (params) {
-  const res = {
-    code: 0,
-    data: {
-      list: [
-        {
-          "id": "1",
-          "product": {
-            "id": "935ccebd9e134286957900f4fb02b747",
-            "previewUrl": "https://storage-qa.pg.com.cn/v2/files/d3fb4196d58d43e6952709d9469a284e",
-            "name": "海飞丝头皮护理洗发水控油蓬松男士女士670g去屑弱酸绿瓶洗头膏京东自营",
-            "price": 57.9,
-            "label": "自营,自营,官方正品"
-          },
-          "discountPrice": null
-        },
-        {
-          "id": "2",
-          "product": {
-            "id": "ba62ef8fa6614d1686d1daac85d96331",
-            "previewUrl": "https://storage-qa.pg.com.cn/v2/files/02d54b1e72244210a59c5c26b29f6bb8",
-            "name": "潘婷深水泡弹洗发水洗发露玫瑰香氛强韧防断型530g男女通用第三代",
-            "price": 79.8,
-            "label": "自营,京东超市,官方正品"
-          },
-          "discountPrice": null
-        },
-        {
-          "id": "3",
-          "product": {
-            "id": "935ccebd9e134286957900f4fb02b747",
-            "previewUrl": "https://storage-qa.pg.com.cn/v2/files/d3fb4196d58d43e6952709d9469a284e",
-            "name": "海飞丝头皮护理洗发水控油蓬松男士女士670g去屑弱酸绿瓶洗头膏京东自营",
-            "price": 57.9,
-            "label": "自营,自营,官方正品"
-          },
-          "discountPrice": 47.9
-        },
-        {
-          "id": "4",
-          "product": {
-            "id": "ba62ef8fa6614d1686d1daac85d96331",
-            "previewUrl": "https://storage-qa.pg.com.cn/v2/files/02d54b1e72244210a59c5c26b29f6bb8",
-            "name": "潘婷深水泡弹洗发水洗发露玫瑰香氛强韧防断型530g男女通用第三代",
-            "price": 79.8,
-            "label": "自营,京东超市,官方正品"
-          },
-          "discountPrice": 69.8
-        },
-        {
-          "id": "5",
-          "product": {
-            "id": "935ccebd9e134286957900f4fb02b747",
-            "previewUrl": "https://storage-qa.pg.com.cn/v2/files/d3fb4196d58d43e6952709d9469a284e",
-            "name": "海飞丝头皮护理洗发水控油蓬松男士女士670g去屑弱酸绿瓶洗头膏京东自营",
-            "price": 57.9,
-            "label": "自营,自营,官方正品"
-          },
-          "discountPrice": 47.9
-        },
-        {
-          "id": "6",
-          "product": {
-            "id": "ba62ef8fa6614d1686d1daac85d96331",
-            "previewUrl": "https://storage-qa.pg.com.cn/v2/files/02d54b1e72244210a59c5c26b29f6bb8",
-            "name": "潘婷深水泡弹洗发水洗发露玫瑰香氛强韧防断型530g男女通用第三代",
-            "price": 79.8,
-            "label": "自营,京东超市,官方正品"
-          },
-          "discountPrice": 69.8
-        },
-      ],
-      totalPages: 10,
-    }
-  }
-  return clientMockData(res, params);
+  return REQUEST.post('/api/activity/detailForH5', params)
 }
 
-// 商品详情
+// 商品详情 [ok]
 function goodsDetail (params) {
   return REQUEST.post('/api/activity/activityProductForH5', params)
   // const res = {
   //   "code": 0,
-  //   "message": "string",
+  //   "message": "成功",
   //   "data": {
-  //     "id": "ba62ef8fa6614d1686d1daac85d96331",
-  //     "product": {
-  //       "productCarouselImages": [
-  //         {
-  //           "videoUrl": "https://storage-qa.pg.com.cn/v2/files/79cabeed99224a2cb961c84e08162890",
-  //           "videoImgUrl": "https://storage-qa.pg.com.cn/v2/files/17fe0218cf864f799ece0fa958b0681a",
-  //         },
-  //         {
-  //           "imgUrl": "https://storage-qa.pg.com.cn/v2/files/d794218a09e9427c993acbb9e35526c1"
-  //         },
-  //         {
-  //           "imgUrl": "https://storage-qa.pg.com.cn/v2/files/c54b52f095a3418297d9f18d37b490cf"
-  //         },
-  //         {
-  //           "imgUrl": "https://storage-qa.pg.com.cn/v2/files/70bf0d0bf3e94f30a5b18199de807a96"
-  //         },
-  //         {
-  //           "imgUrl": "https://storage-qa.pg.com.cn/v2/files/4e6884fa592c4f5bbbb00c05c169dad3"
-  //         }
-  //       ],
-  //       "price": 79.8,
-  //       "name": "潘婷深水泡弹洗发水洗发露玫瑰香氛强韧防断型530g男女通用第三代",
-  //       "label": "自营,京东超市,官方正品",
-  //       "productVideo": "https://storage-qa.pg.com.cn/v2/files/79cabeed99224a2cb961c84e08162890",
-  //       "longImageUrl": "https://storage-qa.pg.com.cn/v2/files/3b7ddc5bf6294ecfa882f263c3a413c7"
-  //     },
-  //     "discountPrice": 69.8,
-  //     "activity": {
-  //       "contactCustomerServiceInfo": "联系客服"
-  //     },
-  //     "shopCartProductCount": 1
+  //       "id": "de123cb0106343cf9dbdb6a3540817c4",
+  //       "product": {
+  //           "productCarouselImages": [
+  //               {
+  //                   "videoUrl": "https://storage-qa.pg.com.cn/v2/files/79cabeed99224a2cb961c84e08162890",
+  //                   "videoImgUrl": "https://storage-qa.pg.com.cn/v2/files/17fe0218cf864f799ece0fa958b0681a",
+  //                   "imgUrl": null
+  //               },
+  //               {
+  //                   "videoUrl": null,
+  //                   "videoImgUrl": null,
+  //                   "imgUrl": "https://storage-qa.pg.com.cn/v2/files/d794218a09e9427c993acbb9e35526c1"
+  //               },
+  //               {
+  //                   "videoUrl": null,
+  //                   "videoImgUrl": null,
+  //                   "imgUrl": "https://storage-qa.pg.com.cn/v2/files/c54b52f095a3418297d9f18d37b490cf"
+  //               },
+  //               {
+  //                   "videoUrl": null,
+  //                   "videoImgUrl": null,
+  //                   "imgUrl": "https://storage-qa.pg.com.cn/v2/files/0a1a620595744a78af9354eef8d8f99a"
+  //               },
+  //               {
+  //                   "videoUrl": null,
+  //                   "videoImgUrl": null,
+  //                   "imgUrl": "https://storage-qa.pg.com.cn/v2/files/70bf0d0bf3e94f30a5b18199de807a96"
+  //               },
+  //               {
+  //                   "videoUrl": null,
+  //                   "videoImgUrl": null,
+  //                   "imgUrl": "https://storage-qa.pg.com.cn/v2/files/4e6884fa592c4f5bbbb00c05c169dad3"
+  //               }
+  //           ],
+  //           "price": 79.80,
+  //           "name": "潘婷深水泡弹洗发水洗发露玫瑰香氛强韧防断型530g男女通用第三代",
+  //           "label": "自营,京东超市,官方正品",
+  //           "productVideo": "https://storage-qa.pg.com.cn/v2/files/b8e548bc74d0467ea08681e5900516ea",
+  //           "longImageUrl": "https://storage-qa.pg.com.cn/v2/files/3b7ddc5bf6294ecfa882f263c3a413c7"
+  //       },
+  //       "discountPrice": 1.80,
+  //       "activity": {
+  //           "contactCustomerServiceInfo": "2"
+  //       },
+  //       "shopCartProductCount": 0
   //   }
   // }
   // return clientMockData(res, params);
 }
-// 加入购物车
-function goodsAddCart (params) {
-  // return REQUEST.post('/api/shopCart/changeShopCartProduct', params)
-  const res = {
-    code: 0,
-    data: {},
-    message: '加入购物车失败'
-  }
-  return clientMockData(res, params);
-}
 
-// 订单活动信息
+// 订单活动信息 [ok]
 function orderActivityInfo (params) {
-  // return REQUEST.post('/api/activity/activityForOrderForH5', params) 
-  const res = {
-    "code": 0,
-    "message": "string",
-    "data": {
-      "deliveryType": "SELF_PICKUP",
-      "collectionInstructions": "本奖励\n物品仅限会员领取。"
-    }
-  }
-  return clientMockData(res, params);
+  return REQUEST.post('/api/activity/activityForOrderForH5', params) 
+//   const res = {
+//     "code": 0,
+//     "message": "成功",
+//     "data": {
+//         "deliveryType": "BOTH",
+//         "collectionInstructions": "3",
+//         "maxQuantity": 1
+//     }
+// }
+//   return clientMockData(res, params);
 }
-// 订单确认信息
-// FIXME: 前一页面携带参数过来，这里需要做处理
-function orderConfirmInfo (params) {
-  const res = {
-    code: 0,
-    data: {
-      goodsList: [
-        {
-          "activityProductId": "2",
-          "previewUrl": "https://storage-qa.pg.com.cn/v2/files/d794218a09e9427c993acbb9e35526c1",
-          "name": "潘婷深水泡弹洗发水洗发露玫瑰香氛强韧防断型530g男女通用第三代",
-          "price": 79.8,
-          "discountPrice": 69.8,
-          "quantity": 1,
-          "maxQuantity": 10
-        }
-      ],
-    },
-    message: '订单确认失败'
-  }
-  return clientMockData(res, params);
-}
-// 订单确认
+// 订单确认 [ok]
 function orderConfirm (params) {
-  // return REQUEST.post('/api/shopCart/createOrder', params)
-  const res = {
-    code: 0,
-    data: {},
-    message: '兑换失败，不能超过活动商品最大订购量'
-  }
-  return clientMockData(res, params);
+  return REQUEST.post('/api/shopCart/createOrder', params)
+  // const res = {
+  //   code: 1,
+  //   data: {},
+  //   message: '兑换失败，不能超过活动商品最大订购量'
+  // }
+  // return clientMockData(res, params);
 }
 
-// 订单详情
+// 订单详情 [ok]
 function orderDetailInfo (params) {
-  // return REQUEST.post('/api/shopCart/getOrderDetail', params)
-  const res = {
-    "code": 0,
-    "message": "string",
-    "data": {
-      "activity": {
-        "collectionInstructions": "本奖励\n物品仅限会员领取。"
-      },
-      "order": {
-        "orderCode": "20220101xxxxx",
-        "createDate": "2025-04-15T06:03:25.283Z",
-        "orderStatus": "COMPLETED",
-        "totalCount": 1,
-        "totalAmount": 69.8,
-        "orderItems": [
-          {
-            "previewUrl": "https://storage-qa.pg.com.cn/v2/files/d794218a09e9427c993acbb9e35526c1",
-            "name": "潘婷深水泡弹洗发水洗发露玫瑰香氛强韧防断型530g男女通用第三代",
-            "price": 79.8,
-            "quantity": 1,
-            "discountPrice": 69.8,
-          }
-        ]
-      }
-    }
-  }
-  return clientMockData(res, params);
+  return REQUEST.post('/api/shopCart/getOrderDetail', params)
+  // const res = {
+  //   "code": 0,
+  //   "message": "成功",
+  //   "data": {
+  //       "activity": {
+  //           "collectionInstructions": "3"
+  //       },
+  //       "order": {
+  //           "orderCode": "202504220001",
+  //           "createDate": "2025-04-22T14:55:03.486+08:00",
+  //           "orderStatus": "COMPLETED",
+  //           "totalCount": 1,
+  //           "totalAmount": 1.80,
+  //           "orderItems": [
+  //               {
+  //                   "previewUrl": "https://storage-qa.pg.com.cn/v2/files/02d54b1e72244210a59c5c26b29f6bb8",
+  //                   "name": "潘婷深水泡弹洗发水洗发露玫瑰香氛强韧防断型530g男女通用第三代",
+  //                   "price": 1.80,
+  //                   "quantity": 1
+  //               }
+  //           ]
+  //       }
+  //   }
+  // }
+  // return clientMockData(res, params);
 }
-// 取消订单
+// 取消订单 [ok]
 function orderCancel (params) {
-  // return REQUEST.post('/api/shopCart/cancelOrder', params)
-  const res = {
-    code: 1,
-    data: {},
-    message: '取消订单失败'
-  }
-  return clientMockData(res, params);
+  return REQUEST.post('/api/shopCart/cancelOrder', params)
+  // const res = {
+  //   code: 1,
+  //   data: {},
+  //   message: '取消订单失败'
+  // }
+  // return clientMockData(res, params);
 }
 
-// 我的订单
+// 我的订单 [ok]
 function mineOrderList (params) {
-  // return REQUEST.post('/api/shopCart/getMyInfo', params)
-  const res = {
-    code: 0,
-    data: {
-      "availablePoint": 999.8,
-      "orders": [
-        {
-          "id": "20220101",
-          "orderCode": "20220101xxxxx",
-          "createDate": "2025-04-15T05:46:25.513Z",
-          "orderStatus": "COMPLETED",
-          "totalCount": 1,
-          "totalAmount": 69.8,
-          "orderItems": [
-            {
-              "previewUrl": "https://storage-qa.pg.com.cn/v2/files/d794218a09e9427c993acbb9e35526c1",
-              "name": "潘婷深水泡弹洗发水洗发露玫瑰香氛强韧防断型530g男女通用第三代",
-              "price": 79.8,
-              "quantity": 1,
-              "discountPrice": 69.8,
-            }
-          ]
-        },
-        {
-          "id": "20220101",
-          "orderCode": "20220101xxxxx",
-          "createDate": "2025-04-15T05:46:25.513Z",
-          "orderStatus": "COMPLETED",
-          "totalCount": 1,
-          "totalAmount": 69.8,
-          "orderItems": [
-            {
-              "previewUrl": "https://storage-qa.pg.com.cn/v2/files/d794218a09e9427c993acbb9e35526c1",
-              "name": "潘婷深水泡弹洗发水洗发露玫瑰香氛强韧防断型530g男女通用第三代",
-              "price": 79.8,
-              "quantity": 1,
-              "discountPrice": 69.8,
-            }
-          ]
-        },
-        {
-          "id": "20220101",
-          "orderCode": "20220101xxxxx",
-          "createDate": "2025-04-15T05:46:25.513Z",
-          "orderStatus": "COMPLETED",
-          "totalCount": 1,
-          "totalAmount": 69.8,
-          "orderItems": [
-            {
-              "previewUrl": "https://storage-qa.pg.com.cn/v2/files/d794218a09e9427c993acbb9e35526c1",
-              "name": "潘婷深水泡弹洗发水洗发露玫瑰香氛强韧防断型530g男女通用第三代",
-              "price": 79.8,
-              "quantity": 1,
-              "discountPrice": 69.8,
-            }
-          ]
-        },
-        {
-          "id": "20220101",
-          "orderCode": "20220101xxxxx",
-          "createDate": "2025-04-15T05:46:25.513Z",
-          "orderStatus": "COMPLETED",
-          "totalCount": 1,
-          "totalAmount": 69.8,
-          "orderItems": [
-            {
-              "previewUrl": "https://storage-qa.pg.com.cn/v2/files/d794218a09e9427c993acbb9e35526c1",
-              "name": "潘婷深水泡弹洗发水洗发露玫瑰香氛强韧防断型530g男女通用第三代",
-              "price": 79.8,
-              "quantity": 1,
-              "discountPrice": 69.8,
-            }
-          ]
-        },
-        {
-          "id": "20220101",
-          "orderCode": "20220101xxxxx",
-          "createDate": "2025-04-15T05:46:25.513Z",
-          "orderStatus": "COMPLETED",
-          "totalCount": 1,
-          "totalAmount": 69.8,
-          "orderItems": [
-            {
-              "previewUrl": "https://storage-qa.pg.com.cn/v2/files/d794218a09e9427c993acbb9e35526c1",
-              "name": "潘婷深水泡弹洗发水洗发露玫瑰香氛强韧防断型530g男女通用第三代",
-              "price": 79.8,
-              "quantity": 1,
-              "discountPrice": 69.8,
-            }
-          ]
-        },
-        {
-          "id": "20220101",
-          "orderCode": "20220101xxxxx",
-          "createDate": "2025-04-15T05:46:25.513Z",
-          "orderStatus": "COMPLETED",
-          "totalCount": 1,
-          "totalAmount": 69.8,
-          "orderItems": [
-            {
-              "previewUrl": "https://storage-qa.pg.com.cn/v2/files/d794218a09e9427c993acbb9e35526c1",
-              "name": "潘婷深水泡弹洗发水洗发露玫瑰香氛强韧防断型530g男女通用第三代",
-              "price": 79.8,
-              "quantity": 1,
-              "discountPrice": 69.8,
-            }
-          ]
-        }
-      ]
-    }
-  }
-  return clientMockData(res, params);
+  return REQUEST.post('/api/shopCart/getMyInfo', params)
+  // const res = {
+  //   "code": 0,
+  //   "message": "成功",
+  //   "data": {
+  //       "availablePoint": 998.20,
+  //       "orders": [
+  //           {
+  //               "id": "b27f7b8f428b4435a61dee8f54090dcf",
+  //               "orderCode": "202504220001",
+  //               "createDate": "2025-04-22T14:55:03.486+08:00",
+  //               "orderStatus": "COMPLETED",
+  //               "totalCount": 1,
+  //               "totalAmount": 1.80,
+  //               "orderItems": [
+  //                   {
+  //                       "previewUrl": "https://storage-qa.pg.com.cn/v2/files/02d54b1e72244210a59c5c26b29f6bb8",
+  //                       "name": "潘婷深水泡弹洗发水洗发露玫瑰香氛强韧防断型530g男女通用第三代",
+  //                       "price": 1.80,
+  //                       "quantity": 1
+  //                   }
+  //               ]
+  //           }
+  //       ]
+  //   }
+  // }
+  // return clientMockData(res, params);
 }
-// 我的兑换
+// 我的兑换 [ok]
 function mineExchangeList (params) {
-  // return REQUEST.get('/api/activity/getMyForH5', params)
-  const res = {
-    "code": 0,
-    "message": "string",
-    "data": [
-      {
-        "name": "1月活动",
-        "beginDate": "2025-01-01T06:24:50.387Z",
-        "endDate": "2025-01-01T06:24:50.387Z",
-        "activityId": "1",
-        "pointAccountId": "11"
-      },
-      {
-        "name": "2月活动",
-        "beginDate": "2025-02-01T06:24:50.387Z",
-        "endDate": "2025-02-01T06:24:50.387Z",
-        "activityId": "2",
-        "pointAccountId": "22"
-      },
-      {
-        "name": "3月活动",
-        "beginDate": "2025-03-01T06:24:50.387Z",
-        "endDate": "2025-03-01T06:24:50.387Z",
-        "activityId": "3",
-        "pointAccountId": "33"
-      },
-      {
-        "name": "4月活动",
-        "beginDate": "2025-03-01T06:24:50.387Z",
-        "endDate": "2025-03-01T06:24:50.387Z",
-        "activityId": "3",
-        "pointAccountId": "33"
-      },
-      {
-        "name": "5月活动",
-        "beginDate": "2025-03-01T06:24:50.387Z",
-        "endDate": "2025-03-01T06:24:50.387Z",
-        "activityId": "3",
-        "pointAccountId": "33"
-      },
-      {
-        "name": "6月活动",
-        "beginDate": "2025-03-01T06:24:50.387Z",
-        "endDate": "2025-03-01T06:24:50.387Z",
-        "activityId": "3",
-        "pointAccountId": "33"
-      },
-      {
-        "name": "7月活动",
-        "beginDate": "2025-03-01T06:24:50.387Z",
-        "endDate": "2025-03-01T06:24:50.387Z",
-        "activityId": "3",
-        "pointAccountId": "33"
-      },
-      {
-        "name": "8月活动",
-        "beginDate": "2025-03-01T06:24:50.387Z",
-        "endDate": "2025-03-01T06:24:50.387Z",
-        "activityId": "3",
-        "pointAccountId": "33"
-      },
-      {
-        "name": "9月活动",
-        "beginDate": "2025-03-01T06:24:50.387Z",
-        "endDate": "2025-03-01T06:24:50.387Z",
-        "activityId": "3",
-        "pointAccountId": "33"
-      },
-      {
-        "name": "10月活动",
-        "beginDate": "2025-03-01T06:24:50.387Z",
-        "endDate": "2025-03-01T06:24:50.387Z",
-        "activityId": "3",
-        "pointAccountId": "33"
-      }
-    ]
-  }
-  return clientMockData(res, params);
+  return REQUEST.get('/api/activity/getMyForH5', params)
+  // const res = {
+  //   "code": 0,
+  //   "message": "成功",
+  //   "data": [
+  //       {
+  //           "name": "4月活动",
+  //           "beginDate": "2025-04-01T00:00:00.537+08:00",
+  //           "endDate": "2025-04-30T23:59:59.929+08:00",
+  //           "activityId": "a725a5da3bf74e669918107fd711a8af",
+  //           "pointAccountId": "cb1ed71576134705b21033ee2bddd4ab"
+  //       }
+  //   ]
+  // }
+  // return clientMockData(res, params);
 }
 
-// 购物车
+// 购物车 [ok]
 function cartList (params) {
-  // return REQUEST.post('/api/shopCart/getMy', params)
-  const res = {
-    code: 0,
-    data: {
-      list: [
-        {
-          "activityProductId": "1",
-          "previewUrl": "https://storage-qa.pg.com.cn/v2/files/d794218a09e9427c993acbb9e35526c1",
-          "name": "潘婷深水泡弹洗发水洗发露玫瑰香氛强韧防断型530g男女通用第三代",
-          "price": 79.8,
-          "discountPrice": 69.8,
-          "quantity": 1
-        },
-        {
-          "activityProductId": "2",
-          "previewUrl": "https://storage-qa.pg.com.cn/v2/files/d794218a09e9427c993acbb9e35526c1",
-          "name": "潘婷深水泡弹洗发水洗发露玫瑰香氛强韧防断型530g男女通用第三代",
-          "price": 79.8,
-          "discountPrice": 69.8,
-          "quantity": 1
-        },
-        {
-          "activityProductId": "3",
-          "previewUrl": "https://storage-qa.pg.com.cn/v2/files/d794218a09e9427c993acbb9e35526c1",
-          "name": "潘婷深水泡弹洗发水洗发露玫瑰香氛强韧防断型530g男女通用第三代",
-          "price": 79.8,
-          "discountPrice": 69.8,
-          "quantity": 1
-        },
-        {
-          "activityProductId": "4",
-          "previewUrl": "https://storage-qa.pg.com.cn/v2/files/d794218a09e9427c993acbb9e35526c1",
-          "name": "潘婷深水泡弹洗发水洗发露玫瑰香氛强韧防断型530g男女通用第三代",
-          "price": 79.8,
-          "discountPrice": 69.8,
-          "quantity": 1
-        },
-        {
-          "activityProductId": "5",
-          "previewUrl": "https://storage-qa.pg.com.cn/v2/files/d794218a09e9427c993acbb9e35526c1",
-          "name": "潘婷深水泡弹洗发水洗发露玫瑰香氛强韧防断型530g男女通用第三代",
-          "price": 79.8,
-          "discountPrice": 69.8,
-          "quantity": 1
-        },
-        {
-          "activityProductId": "6",
-          "previewUrl": "https://storage-qa.pg.com.cn/v2/files/d794218a09e9427c993acbb9e35526c1",
-          "name": "潘婷深水泡弹洗发水洗发露玫瑰香氛强韧防断型530g男女通用第三代",
-          "price": 79.8,
-          "discountPrice": 69.8,
-          "quantity": 1
-        }
-      ]
-    }
-  }
-  return clientMockData(res, params);
+  return REQUEST.post('/api/shopCart/getMy', params)
+  // const res = {
+  //   "code": 0,
+  //   "message": "成功",
+  //   "data": [
+  //       {
+  //           "activityProductId": "13d075765297498fb5fe5fbfea3cd0c3",
+  //           "previewUrl": "https://storage-qa.pg.com.cn/v2/files/02d54b1e72244210a59c5c26b29f6bb8",
+  //           "name": "潘婷深水泡弹洗发水洗发露玫瑰香氛强韧防断型530g男女通用第三代",
+  //           "price": 79.80,
+  //           "discountPrice": 1.80,
+  //           "quantity": 2
+  //       }
+  //   ]
+  // }
+  // return clientMockData(res, params);
 }
-// 加入、删除、修改购物车
+// 加入、删除、修改购物车 [ok]
 function cartChange (params) {
-  // return REQUEST.post('/api/shopCart/changeShopCartProduct', params)
-  const res = {
-    code: 0,
-    data: {},
-    message: '加入购物车失败'
-  }
-  return clientMockData(res, params);
+  return REQUEST.post('/api/shopCart/changeShopCartProduct', params)
+  // const res = {
+  //   code: 0,
+  //   data: {},
+  //   message: '加入购物车失败'
+  // }
+  // return clientMockData(res, params);
 }
 
 // 联系客服
 function serviceInfo (params) {
-  const res = {
-    code: 0,
-    data: {
-      phone: '联系电话：13188998899',
-      address: '联系地址：辽宁省大连市高新园区万达广场一单元1901',
-    },
-    message: '联系客服失败'
-  }
-  return clientMockData(res, params);
+  return REQUEST.post('/api/activity/activityForOrderForH5', params)
+  // const res = {
+  //   code: 0,
+  //   data: {
+  //     phone: '联系电话：13188998899',
+  //     address: '联系地址：辽宁省大连市高新园区万达广场一单元1901',
+  //   },
+  //   message: '联系客服失败'
+  // }
+  // return clientMockData(res, params);
 }
 
 // 埋点上报

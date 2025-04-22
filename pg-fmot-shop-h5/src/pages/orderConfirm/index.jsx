@@ -7,7 +7,7 @@ import {
 } from "@nutui/nutui-react";
 import { CheckNormal, Checked } from '@nutui/icons-react'
 import { View } from "@tarojs/components";
-import Taro, { useLoad, useRouter, useDidShow } from "@tarojs/taro";
+import Taro, { useLoad, useRouter, useDidShow, useUnload } from "@tarojs/taro";
 import "./index.scss";
 
 import PGLoading from "../../components/pgLoading/index";
@@ -38,6 +38,10 @@ export default function Index() {
     }, 1000);
   });
 
+  useUnload(() => {
+    Taro.UTIL.clearPGStorage('order_confirm_info')
+  })
+
   useDidShow(() => {
     if (isShowPage) {
       Taro.TRACKER.pageViewTracker("确认订单");
@@ -54,15 +58,20 @@ export default function Index() {
     setIsShowPage(true);
     configTracker(1)
 
-    const activityId = router.params.activityId || '';
-    setQueryActivityId(activityId)
+    const act = router.params.act || ''
+    const acc = router.params.acc || ''
+    setActId(act)
+    setAccId(acc)
 
-    requestOrderActivityInfo(activityId)
-    requestData();
+    requestData({
+      activityId: act,
+      pointAccountId: acc
+    })
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
-  const [queryActivityId, setQueryActivityId] = useState('');
+  const [actId, setActId] = useState('');
+  const [accId, setAccId] = useState('');
 
   const [orderActivityInfo, setOrderActivityInfo] = useState({})
   const [cartList, setCartList] = useState([])
@@ -75,8 +84,14 @@ export default function Index() {
     let totalAmountVal = 0;
     let selectNumVal = 0;
     list.forEach((item) => {
+      const discountPrice = item.discountPrice 
+      const price = item.price 
       totalNumVal += item.quantity;
-      totalAmountVal += item.quantity * item.price;
+      if (discountPrice) {
+        totalAmountVal += item.quantity * discountPrice;
+      } else {
+        totalAmountVal += item.quantity * price;
+      }      
       selectNumVal += 1;
     });
     totalAmountVal = parseFloat(totalAmountVal.toFixed(1));
@@ -85,37 +100,23 @@ export default function Index() {
   }
 
   // 选择发货方式
-  const [deliveryType, setDeliveryType] = useState('SELF_PICKUP')
+  const [deliveryType, setDeliveryType] = useState('')
   const onDeliveryChange = (val) => {
     setDeliveryType(val)
   }
 
    // 下拉刷新
    const refreshData = () => {
-    return requestData();
+    return requestData({
+      activityId: actId,
+      pointAccountId: accId
+    });
   };
 
   // request
-  async function requestData() {
-    const params = {}
-
-    Taro.HUD.showLoading()
-    const res = await Taro.NETWORK.orderConfirmInfo(params) 
-    Taro.HUD.hideLoading()
-
-    if (res.code === 0) {
-      const resData = res.data || {}
-      const goodsList = resData.goodsList || []
-      setCartList(goodsList)
-      checkCartStatus(goodsList);
-    } else {
-      Taro.HUD.showToastMessage(res.message)
-    }   
-  }
-
-  async function requestOrderActivityInfo(activityId) {
+  async function requestData(query) {
     const params = {
-      activityId: activityId
+      ...query
     }
 
     Taro.HUD.showLoading()
@@ -125,9 +126,17 @@ export default function Index() {
     if (res.code === 0) {
       const resData = res.data || {}
       setOrderActivityInfo(resData)
+      configConfirmOrderData();
     } else {
       Taro.HUD.showToastMessage(res.message)
     }   
+  }
+
+  function configConfirmOrderData() {
+    const orderConfirmInfo = Taro.UTIL.getPGStorage('order_confirm_info')
+    const goodsList = orderConfirmInfo.goodsList || []
+    setCartList(goodsList)
+    checkCartStatus(goodsList);
   }
 
   async function requestCartChangeData(val, id) {
@@ -136,40 +145,27 @@ export default function Index() {
       setDelAlertQuery({})
       return;
     }
-    
-    const params = {
-      id: id,
-      quantity: val
-    }
 
-    Taro.HUD.showLoading()
-    const res = await Taro.NETWORK.cartChange(params) 
-    Taro.HUD.hideLoading()
-    setDelAlertQuery({})
-
-    if (res.code === 0) {
-      const newCartList = [...cartList];
-      for (let i = 0; i < newCartList.length; i++) {
-        const item = newCartList[i];
-        if (item.activityProductId === id) {
-          item.quantity = val;
-          if (val <= 0) {
-            newCartList.splice(i, 1);            
-          }
-          break;
+    const newCartList = [...cartList];
+    for (let i = 0; i < newCartList.length; i++) {
+      const item = newCartList[i];
+      const productId = item.id || ''
+      if (productId === id) {
+        item.quantity = val;
+        if (val <= 0) {
+          newCartList.splice(i, 1);            
         }
+        break;
       }
-      setCartList(newCartList);
-      checkCartStatus(newCartList);
-    } else {
-      Taro.HUD.showToastMessage(res.message)
-    }   
+    }
+    setCartList(newCartList);
+    checkCartStatus(newCartList); 
   }
 
   // 单个添加、减少
   const cartNumOnChange = (val, item) => {
     console.log('cartNumOnChange', val, item);
-    const productId = item.activityProductId || '';
+    const productId = item.id || '';
 
     if (val <= 0) {
       setDelAlertQuery({
@@ -178,6 +174,11 @@ export default function Index() {
       })
       setDelAlertShow(true);
     } else {
+      const maxLimit = orderActivityInfo.maxQuantity || 0;
+      if (val > maxLimit) {
+        Taro.HUD.showToastMessage('加购商品超过数量上限')
+        return;
+      }
       requestCartChangeData(val, productId)
     }    
   }
@@ -210,9 +211,8 @@ export default function Index() {
   // 商品详情
   const clickGoods = (item) => {
     console.log('clickGoods', item);
-    // const activityId = item.id || '';
-    // const productId = item.activityProductId || '';
-    // Taro.ROUTER.navigateTo(`/pages/detail/index?activityId=${activityId}&id=${productId}`);
+    // const productId = item.id || '';   
+    // Taro.ROUTER.navigateTo(`/pages/detail/index?act=${actId}&acc=${accId}&id=${productId}`);
   }
 
   // 商品列表
@@ -267,8 +267,24 @@ export default function Index() {
           <View className='delivery-title'>请选择发货方式：</View>
           <View className='delivery-option'>
           <Radio.Group defaultValue={deliveryType} direction='horizontal' onChange={onDeliveryChange}> 
-            <Radio className='delivery-option-item' icon={<CheckNormal />} activeIcon={<Checked style={{ color: 'red' }} />} value='SELF_PICKUP'>线下自提</Radio>
-            <Radio className='delivery-option-item' icon={<CheckNormal />} activeIcon={<Checked style={{ color: 'red' }} />} value='POST'>邮寄</Radio>
+            {
+              orderActivityInfo.deliveryType === 'BOTH' ? (
+                <>
+                  <Radio className='delivery-option-item' icon={<CheckNormal />} activeIcon={<Checked style={{ color: 'red' }} />} value='SELF_PICKUP'>线下自提</Radio>
+                  <Radio className='delivery-option-item' icon={<CheckNormal />} activeIcon={<Checked style={{ color: 'red' }} />} value='POST'>邮寄</Radio>
+                </>
+              ) : null
+            }     
+            {
+              orderActivityInfo.deliveryType === 'SELF_PICKUP' ? (
+                <Radio className='delivery-option-item' icon={<CheckNormal />} activeIcon={<Checked style={{ color: 'red' }} />} value='SELF_PICKUP'>线下自提</Radio>
+              ) : null
+            }    
+            {
+              orderActivityInfo.deliveryType === 'POST' ? (               
+                <Radio className='delivery-option-item' icon={<CheckNormal />} activeIcon={<Checked style={{ color: 'red' }} />} value='POST'>邮寄</Radio>
+              ) : null
+            }           
           </Radio.Group>                  
           </View>         
         </View>               
@@ -301,6 +317,12 @@ export default function Index() {
       return;
     }
 
+    // 是否选择发货方式
+    if (!deliveryType) {
+      Taro.HUD.showToastMessage('您还没有选择发货方式')
+      return;
+    }
+
     // 是否包含虚拟商品
     const newList = []
     cartList.forEach(item => {
@@ -329,14 +351,15 @@ export default function Index() {
     const orderItems = []
     cartList.forEach(item => {
       const obj = {
-        activityProductId: item.activityProductId,
+        activityProductId: item.id,
         quantity: item.quantity
       }
       orderItems.push(obj)
     })
 
     const params = {
-      activityId: queryActivityId,
+      activityId: actId,
+      pointAccountId: accId,
       deliveryType: deliveryType,
       orderItems: orderItems
     }
@@ -349,8 +372,9 @@ export default function Index() {
       configTracker(3)
       const resData = res.data || {}
       Taro.HUD.showToastMessage('兑换成功')
+      Taro.UTIL.clearPGStorage('order_confirm_info')
       setTimeout(() => {
-        Taro.ROUTER.navigateTo('/pages/mine/index');
+        Taro.ROUTER.navigateTo(`/pages/mine/index?act=${actId}&acc=${accId}`);
       }, 2000);
     } else {
       configTracker(4)
@@ -417,7 +441,7 @@ export default function Index() {
 
   const clickConfirmDel = () => {
     setDelAlertShow(false);
-    const val = delAlertQuery.val || '';
+    const val = delAlertQuery.val || 0;
     const productId = delAlertQuery.productId || '';
     requestCartChangeData(val, productId)
   };
@@ -437,7 +461,7 @@ export default function Index() {
               <View className='order-space-top'></View>             
               { cartList && cartList.length > 0 ? goodsListView() : null }
               { cartList && cartList.length > 0 ? totalView() : null  }
-              { deliveryView() }
+              { orderActivityInfo.deliveryType ? deliveryView() : null }
               { orderActivityInfo.collectionInstructions ? noteView() : null }
               { btnView() }
             </View>

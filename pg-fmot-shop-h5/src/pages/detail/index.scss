@@ -144,10 +144,12 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    flex-wrap: wrap;
     .detail-tag-text {
       --nutui-tag-padding: 0 10rpx;
       --nutui-tag-font-size: 20rpx;
       margin-right: 10rpx;
+      margin-bottom: 10rpx;
     }
   }  
 }

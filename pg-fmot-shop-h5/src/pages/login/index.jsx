@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { act, useState } from 'react'
 import { Input } from '@nutui/nutui-react'
 import { View, Image } from '@tarojs/components'
 import Taro, { useLoad, useRouter, useDidShow } from '@tarojs/taro'
@@ -38,12 +38,12 @@ export default function Index() {
     Taro.TRACKER.pageViewTracker("登录");
     setIsShowPage(true);
 
-    const id = router.params.id || ''
-    setActivityId(id)
+    const act = router.params.id || ''
+    setActId(act)
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
-  const [activityId, setActivityId] = useState('');
+  const [actId, setActId] = useState('');
 
   // 确认绑定
   const clickBindConfirm = () => {
@@ -58,7 +58,7 @@ export default function Index() {
   // 绑定账号
    async function requestBindActivityIdData() {
     const params = {
-      activityId: activityId,
+      activityId: actId,
       activityAccount: inputValue,
     }
 
@@ -68,10 +68,23 @@ export default function Index() {
 
     if (res.code === 0) {
       Taro.HUD.showToastMessage('绑定成功')
-      const respData = res.data || {}
-      const pointAccountId = respData.pointAccountId || ''
+      const resData = res.data || {}
+      const accId = resData.pointAccountId || ''
+
+      // 用户信息
+      const loginInfo = resData
+      Taro.UTIL.setPGStorage('login_info', loginInfo)	
+
+      // 活动信息
+      const activityInfo = {
+        act: actId,
+        acc: accId,
+      }
+      Taro.UTIL.setPGStorage('activity_info', activityInfo)	
+
+      // 检查用户状态，跳转首页
       setTimeout(() => {
-        Taro.UTIL.checkUserStatusGoHome(activityId, pointAccountId)
+        Taro.UTIL.checkUserStatusGoHome(actId, accId)
       }, 1500);      
     } else {
       Taro.HUD.showToastMessage(res.message)
@@ -98,7 +111,12 @@ export default function Index() {
           <Image className='login-bg-img' mode='aspectFill' src={imgBG}></Image>
           <View className='login-wrap'>
             <Image className='login-title-img' mode='aspectFit' src={imgTitle}></Image>
-            <Input className='login-input' placeholder='请输入您的账号登录' clearable onChange={inputOnChange} />
+            <Input 
+              className='login-input' 
+              placeholder='请输入您的账号登录' 
+              clearable 
+              onChange={inputOnChange} 
+            />
             <View className='login-desc'>（注意：同一活动内只能绑定1个账号，绑定后无法解绑，请使用本人微信进行绑定。）</View>
             <View className='login-btn-bind-wrap' onClick={clickBindConfirm}>
               <Image className='login-btn-bind-img' mode='aspectFit' src={imgBtnBind}></Image>

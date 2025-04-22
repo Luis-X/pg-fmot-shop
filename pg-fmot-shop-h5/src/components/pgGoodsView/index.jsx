@@ -19,7 +19,7 @@ export default function Index(props) {
    // 商品详情
    const clickGoods = () => {
     console.log('clickGoods', item);    
-    const productId = item.product.id || '';
+    const productId = item.id || '';
     const actId = act || ''
     const accId = acc || ''
 
@@ -27,14 +27,14 @@ export default function Index(props) {
   }
 
   // 积分展示
-  const priceView = (product) => {
-    const isDiscountPrice = product.discountPrice;
+  const priceView = (product, discountPrice) => {
+    const isDiscountPrice = discountPrice;
     let result = null;
     if (isDiscountPrice) {
       result = (
         <>
           <View className='goods-price-new-wrap'>
-            <View className='goods-price-new'>{product.discountPrice}</View>
+            <View className='goods-price-new'>{discountPrice}</View>
             <View className='goods-price-new-unit'>积分</View>
           </View>              
           <View className='goods-price-old'>{product.price}积分</View>
@@ -58,7 +58,7 @@ export default function Index(props) {
       <ImageNut className='goods-img' src={product.previewUrl} fit='cover' lazy loading={true}/>
       <Text className='goods-name'>{product.name}</Text>
       <View className='goods-price-wrap'>
-        {priceView(product)}            
+        {priceView(product, item.discountPrice)}            
       </View>          
       <View className='goods-tag-wrap'>
         {

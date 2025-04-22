@@ -34,35 +34,61 @@ export default function Index() {
     Taro.TRACKER.pageViewTracker("购物车");
     setIsShowPage(true);
 
-    const activityId = router.params.activityId || '';
-    setQueryActivityId(activityId)
-    requestData();
-  };
+    const act = router.params.act || ''
+    const acc = router.params.acc || ''
+    setActId(act)
+    setAccId(acc)
 
-  const [isShowPage, setIsShowPage] = useState(false);
-  const [queryActivityId, setQueryActivityId] = useState('');
-
-  // 下拉刷新
-  const refreshData = () => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve("done");
-      }, 1000);
+    requestData({
+      activityId: act,
+      pointAccountId: acc,
     });
   };
 
+  const [isShowPage, setIsShowPage] = useState(false);
+  const [actId, setActId] = useState('');
+  const [accId, setAccId] = useState('');
+  const [orderActivityInfo, setOrderActivityInfo] = useState({})
+
+  // 下拉刷新
+  const refreshData = () => {
+    return requestData({
+      activityId: actId,
+      pointAccountId: accId,
+    })
+  };
+
   // request
-  async function requestData(id) {
+  async function requestData(query) {
     const params = {
-      
+      ...query
     }
 
+    Taro.HUD.showLoading()
+    const res = await Taro.NETWORK.orderActivityInfo(params) 
+    Taro.HUD.hideLoading()
+
+    if (res.code === 0) {
+      const resData = res.data || {}
+      setOrderActivityInfo(resData)
+      requestCartData(query)
+    } else {
+      Taro.HUD.showToastMessage(res.message)
+    }   
+  }
+
+  async function requestCartData(query) {
+    const params = {
+      ...query
+    }
+
+     Taro.HUD.showLoading()
     const res = await Taro.NETWORK.cartList(params) 
     Taro.HUD.hideLoading()
 
     if (res.code === 0) {
       const resData = res.data || {}
-      const list = resData.list || []
+      const list = resData || []
 
       setCartList(list)
       checkCartStatus(list)
@@ -83,8 +109,14 @@ export default function Index() {
     let selectNumVal = 0;
     list.forEach((item) => {
       if (item.isSelect) {
+        const discountPrice = item.discountPrice 
+        const price = item.price 
         totalNumVal += item.quantity;
-        totalAmountVal += item.quantity * item.price;
+        if (discountPrice) {
+          totalAmountVal += item.quantity * discountPrice;
+        } else {
+          totalAmountVal += item.quantity * price;
+        }      
         selectNumVal += 1;
       }
     });
@@ -106,8 +138,10 @@ export default function Index() {
     }
     
     const params = {
-      id: id,
-      quantity: val
+      activityId: actId,
+      pointAccountId: accId,
+      activityProductId: id,
+      quantity: val,
     }
 
     Taro.HUD.showLoading()
@@ -146,6 +180,11 @@ export default function Index() {
       })
       setDelAlertShow(true);
     } else {
+      const maxLimit = orderActivityInfo.maxQuantity || 0;
+      if (val > maxLimit) {
+        Taro.HUD.showToastMessage('加购商品超过数量上限')
+        return;
+      }
       requestCartChangeData(val, productId)
     }    
   }
@@ -172,29 +211,64 @@ export default function Index() {
   const clickNextStep = () => {
 
     // 提取选中的商品ID
-    const ids = [];
+    let goodsList = [];
     cartList.forEach((item) => {
       if (item.isSelect) {
-        ids.push(item.id);
+        const goods = {
+          id: item.activityProductId,
+          previewUrl: item.previewUrl,
+          name: item.name,
+          price: item.price,
+          discountPrice: item.discountPrice,
+          quantity: item.quantity,
+        }
+        goodsList.push(goods);
       }
     });
 
     // 是否选择商品
-    if (ids.length <= 0) {
+    if (goodsList.length <= 0) {
       Taro.HUD.showToastMessage('您还没有选择商品')
       return;
     }
 
-    console.log(ids);
-    Taro.ROUTER.navigateTo('/pages/orderConfirm/index');
+    const orderConfirmInfo = {
+      goodsList: goodsList,
+    }
+    Taro.UTIL.setPGStorage('order_confirm_info', orderConfirmInfo)	
+    Taro.ROUTER.navigateTo(`/pages/orderConfirm/index?act=${actId}&acc=${accId}`);
   };
 
   // 商品详情
   const clickGoods = (item) => {
     console.log('clickGoods', item);
-    // const activityId = item.id || '';
-    // const productId = item.activityProductId || '';
-    // Taro.ROUTER.navigateTo(`/pages/detail/index?activityId=${activityId}&id=${productId}`);
+    // const productId = item.activityProductId || '';   
+    // Taro.ROUTER.navigateTo(`/pages/detail/index?act=${actId}&acc=${accId}&id=${productId}`);
+  }
+
+  // 积分展示
+  const priceView = (item) => {
+    const isDiscountPrice = item.discountPrice;
+    let result = null;
+    if (isDiscountPrice) {
+      result = (
+        <>
+          <View className='goods-price-old'>{item.price}积分</View>
+          <View className='goods-price-new-wrap'>
+            <View className='goods-price-new'>{item.discountPrice}</View>
+            <View className='goods-price-new-unit'>积分</View>
+          </View>
+        </>        
+      )
+    } else {
+      result = (
+        <View className='goods-price-new-wrap'>
+          <View className='goods-price-new'>{item.price}</View>
+          <View className='goods-price-new-unit'>积分</View>
+        </View>
+      )
+    }
+    return result
   }
 
   // 商品列表
@@ -220,11 +294,7 @@ export default function Index() {
                 <ImageNut className='goods-img' src={item.previewUrl} fit='cover' lazy loading={true} onClick={() => clickGoods(item)} />
                 <View className='goods-info' onClick={() => clickGoods(item)}>
                   <View className='goods-name'>{item.name}</View>
-                  <View className='goods-price-old'>{item.price}积分</View>
-                  <View className='goods-price-new-wrap'>
-                    <View className='goods-price-new'>{item.discountPrice}</View>
-                    <View className='goods-price-new-unit'>积分</View>
-                  </View>
+                  {priceView(item)}                 
                 </View>
                 <InputNumber className='goods-count' value={item.quantity} min={0} allowEmpty onChange={(val) => cartNumOnChange(val, item)} />
               </View>
@@ -292,7 +362,7 @@ export default function Index() {
 
   const clickConfirmDel = () => {
     setDelAlertShow(false);
-    const val = delAlertQuery.val || '';
+    const val = delAlertQuery.val || 0;
     const productId = delAlertQuery.productId || '';
     requestCartChangeData(val, productId)
   };

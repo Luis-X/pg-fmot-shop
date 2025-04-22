@@ -6,6 +6,7 @@ import {
 import { View } from "@tarojs/components";
 import Taro, { useLoad, useRouter, useDidShow } from "@tarojs/taro";
 import "./index.scss";
+import DayJS from 'dayjs';
 
 import PGOrderView from "../../components/pgOrderView/index";
 import PGLoading from "../../components/pgLoading/index";
@@ -44,30 +45,41 @@ export default function Index() {
     Taro.TRACKER.pageViewTracker("订单详情");
     setIsShowPage(true);
 
-    const activityId = router.params.activityId || '';
-    const orderId = router.params.id || '';
-    setQueryActivityId(activityId)
-    setQueryOrderId(orderId)
+    const act = router.params.act || ''
+    const acc = router.params.acc || ''
+    const id = router.params.id || '';
+    setActId(act)
+    setAccId(acc)
+    setOrderId(id);
 
-    requestData();
+    requestData({
+      activityId: act,
+      pointAccountId: acc,
+      id: id,
+    });
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
-  const [queryActivityId, setQueryActivityId] = useState('');
-  const [queryOrderId, setQueryOrderId] = useState('');
+  const [actId, setActId] = useState('');
+  const [accId, setAccId] = useState('');
+  const [orderId, setOrderId] = useState('');
 
   const [orderInfo, setOrderInfo] = useState({})
+  const [cancelTime, setCancelTime] = useState(0);
 
   // 下拉刷新
   const refreshData = () => {
-    return requestData();
+    return requestData({
+      activityId: actId,
+      pointAccountId: accId,
+      id: orderId,
+    });
   };
 
   // request
-  async function requestData() {
+  async function requestData(query) {
     const params = {
-      activityId: queryActivityId,
-      id: queryOrderId
+      ...query
     }
 
     Taro.HUD.showLoading()
@@ -75,8 +87,21 @@ export default function Index() {
     Taro.HUD.hideLoading()
 
     if (res.code === 0) {
-      const resData = res.data || {}      
+      const resData = res.data || {}
       setOrderInfo(resData)
+
+      // 交易成功的订单，可以在兑换后1小时内取消
+      const orderStatus = resData.order.orderStatus || ''
+      if (orderStatus === 'COMPLETED') {
+        const nowTime = DayJS();                                              // 当前时间
+        const createTime = DayJS(resData.order.createDate);                   // 订单创建时间
+        const diffSeconds = nowTime.diff(createTime, 'second');               // 时间差的秒数
+        const oneHourSeconds = 60 * 60;                                       // 1小时的秒数
+        const remainingSeconds = Math.max(0, oneHourSeconds - diffSeconds);   // 剩余可取消的秒数
+        console.log('cancelTime', remainingSeconds * 1000);
+        setCancelTime(remainingSeconds * 1000);                               // 转换为毫秒
+      }
+      
     } else {
       Taro.HUD.showToastMessage(res.message)
     }   
@@ -85,7 +110,7 @@ export default function Index() {
   // 订单详情
   const orderInfoView = () => {
     return (
-      <PGOrderView scenceType='order-detail' orderInfo={orderInfo.order}></PGOrderView>    
+      <PGOrderView scenceType='order-detail' orderInfo={orderInfo.order} act={actId} acc={accId}></PGOrderView>    
     )
   }
   
@@ -108,8 +133,9 @@ export default function Index() {
   
   const requestOrderCancelData = async () => {
     const params = {
-      activityId: queryActivityId,
-      id: queryOrderId
+      activityId: actId,
+      pointAccountId: accId,
+      id: orderId,
     }
 
     Taro.HUD.showLoading('取消中...')
@@ -134,7 +160,7 @@ export default function Index() {
         <View className='order-detail-cancel' onClick={() => clickCancel()}>取消订单</View>
         <View className='order-detail-count-down-wrap'>
           <View className='order-detail-count-down'>剩余可取消时间：</View>
-          <CountDown remainingTime={60 * 60 * 1000} />
+          <CountDown remainingTime={cancelTime} />
         </View>        
       </View> 
     )
@@ -176,7 +202,7 @@ export default function Index() {
             <View className='order-detail-list' id='scroll'>      
               { orderInfo.order ? orderInfoView() : null}
               { orderInfo.activity && orderInfo.activity.collectionInstructions ? noteView() : null }
-              { orderInfo.order && orderInfo.order.orderStatus !== 'CANCELED' ? btnView() : null}                              
+              { orderInfo.order && cancelTime > 0 ? btnView() : null}                              
             </View>
           </PullToRefresh>                 
           {cancelAlertView()}        

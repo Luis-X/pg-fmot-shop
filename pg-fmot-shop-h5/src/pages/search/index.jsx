@@ -35,18 +35,24 @@ export default function Index() {
     Taro.TRACKER.pageViewTracker("搜索列表");
     setIsShowPage(true);
 
-    const keyword = router.params.keyword || '';
-    setSearchValue(decodeURIComponent(keyword));
+    const act = router.params.act || ''
+    const acc = router.params.acc || ''
+    const q = decodeURIComponent(router.params.q || '');
+    setActId(act)
+    setAccId(acc)
+    setSearchValue(q);
 
     requestListData({
+      activityId: act,
+      pointAccountId: acc,
       pageIndex: 0,
-      keyword: searchValue,
+      keyword: q,
     }, false)
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
-
-  // 搜索
+  const [actId, setActId] = useState('');
+  const [accId, setAccId] = useState('');
   const [searchValue, setSearchValue] = useState('')
 
   const searchOnChange = (e) => {
@@ -59,6 +65,8 @@ export default function Index() {
     const value = searchValue || ''
     console.log('searchOnConfirm', value)
     requestListData({
+      activityId: actId,
+      pointAccountId: accId,
       pageIndex: 0,
       keyword: value,
     }, false)
@@ -90,6 +98,8 @@ export default function Index() {
   // 下拉刷新
   const refreshData = () => {
     return requestListData({
+      activityId: actId,
+      pointAccountId: accId,
       pageIndex: 0,
       keyword: searchValue,
     }, false)
@@ -102,6 +112,8 @@ export default function Index() {
 
   const loadMore = async () => {
     await requestListData({
+      activityId: actId,
+      pointAccountId: accId,
       pageIndex: pageCurrentIndex,
       keyword: searchValue,
     }, true)
@@ -111,10 +123,12 @@ export default function Index() {
   async function requestListData(query, isLoadMore) {
 
     const pageIndex = query.pageIndex || 0
+    const activityId = query.activityId || ''
+    const pointAccountId = query.pointAccountId || ''
     const keyword = query.keyword || ''    
 
     if (!isLoadMore) {
-      // Taro.HUD.showLoading()
+      Taro.HUD.showLoading()
       setDataList([])
     } else {
       if (pageIndex > 0 && !hasMore) {
@@ -124,6 +138,8 @@ export default function Index() {
     }
 
     const params = {
+      activityId: activityId,
+      pointAccountId: pointAccountId,
       page: pageIndex,
       size: 10,
       keyword: keyword,
@@ -135,8 +151,20 @@ export default function Index() {
     if (res.code === 0) {
       const resData = res.data || {}
 
-      const list = resData.list || []
-      const totalPages = resData.totalPages || 10
+      const activityProducts = resData.activityProducts || []
+      let list = []
+      const totalPages = resData.totalPages || 0
+
+      // 过滤
+      if (keyword) {
+        list = activityProducts.filter((item) => {
+          const productData = item.product || {}
+          const nameValue = productData.name || ''
+          return nameValue.indexOf(keyword) > -1
+        })
+      } else {
+        list = activityProducts
+      }
 
       let newList = []
       if (isLoadMore) {
@@ -169,7 +197,7 @@ export default function Index() {
           {
             dataList.map((item, index) => {
               return (
-                <PGGoodsView key={index} item={item}></PGGoodsView>
+                <PGGoodsView key={index} item={item} act={actId} acc={accId}></PGGoodsView>
               );
             })
           }

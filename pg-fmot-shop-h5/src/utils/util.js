@@ -41,8 +41,8 @@ function isH5() {
 
 function setPGStorage(key, data) {
   try {
-    const loginInfo = JSON.stringify(data)
-    sessionStorage.setItem(key, loginInfo)
+    const obj = JSON.stringify(data)
+    sessionStorage.setItem(key, obj)
   } catch (error) {
     
   }
@@ -51,9 +51,9 @@ function setPGStorage(key, data) {
 function getPGStorage(key) {
   let result = {}
   try {
-    const loginInfoJson = sessionStorage.getItem(key)
-    const loginInfo = JSON.parse(loginInfoJson)
-    result = loginInfo || {}
+    const objJson = sessionStorage.getItem(key)
+    const obj = JSON.parse(objJson)
+    result = obj || {}
   } catch (error) {
     
   }
@@ -73,7 +73,7 @@ async function goToSSOUrlPage() {
   // FIXME: test or debug should hide code
 
   clearPGStorage('login_info')
-  clearPGStorage('user_info')
+  clearPGStorage('token_info')
   
   // 后端拼接 acl
   /*
@@ -130,7 +130,7 @@ async function checkIsLogin() {
   
   let isLogin = false
 
-  const token = getPGStorage('login_info').token || ''
+  const token = getPGStorage('token_info').token || ''
   const code = Taro.getCurrentInstance().router.params.code || ''
   
   if (token) {
@@ -278,7 +278,7 @@ function decodeBaseStr(str) {
  // 检查用户状态，跳转活动首页
  function checkUserStatusGoHome(activityId, pointAccountId) {    
   const userData = Taro.UTIL.getPGStorage('login_info')
-  const isAvailableUser = userData.isAvailableUser;
+  const isAvailableUser = true;
   if (isAvailableUser) {
     console.log("用户正常");
     console.log("进入首页");
@@ -292,8 +292,8 @@ function decodeBaseStr(str) {
 
  // 检查协议状态
  function checkAgreementStatusShow() {    
-  const userData = Taro.UTIL.getPGStorage('login_info')
-  const isAgreeAgreement = userData.agreement;
+  const loginInfo = Taro.UTIL.getPGStorage('login_info')
+  const isAgreeAgreement = loginInfo.agreement;
   if (isAgreeAgreement) {
     console.log("已同意协议");
     return false

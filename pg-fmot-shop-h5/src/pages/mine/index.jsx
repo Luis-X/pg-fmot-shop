@@ -37,26 +37,34 @@ export default function Index() {
     Taro.TRACKER.pageViewTracker("我的");
     setIsShowPage(true);
 
-    const activityId = router.params.activityId || '';
-    setQueryActivityId(activityId);
+    const act = router.params.act || ''
+    const acc = router.params.acc || ''
+    setActId(act)
+    setAccId(acc)
+    setTabId(0)
 
     requestListData({
+      activityId: act,
+      pointAccountId: acc,
       pageIndex: 0,
       tabIndex: 0,
     }, false)
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
-  const [queryActivityId, setQueryActivityId] = useState('');
-  const [tabIndex, setTabIndex] = useState(0)
+  const [actId, setActId] = useState('');
+  const [accId, setAccId] = useState('');
+  const [tabId, setTabId] = useState(0)
 
   const [availablePoint, setAvailablePoint] = useState(-1)
 
   // 下拉刷新
   const refreshData = () => {
     return requestListData({
+      activityId: actId,
+      pointAccountId: accId,
       pageIndex: 0,
-      tabIndex: tabIndex,
+      tabIndex: tabId,
     }, false);
   };
 
@@ -67,8 +75,10 @@ export default function Index() {
 
   const loadMore = async () => {
     await requestListData({
+      activityId: actId,
+      pointAccountId: accId,
       pageIndex: pageCurrentIndex,
-      tabIndex: tabIndex,
+      tabIndex: tabId,
     }, true)
   };
 
@@ -76,9 +86,13 @@ export default function Index() {
   async function requestListData(query, isLoadMore) {
 
     const pageIndex = query.pageIndex || 0
-    const tabIndex = query.tabIndex || ''
+    const tabIndex = query.tabIndex || 0
+    const activityId = query.activityId || ''
+    const pointAccountId = query.pointAccountId || ''
 
     if (!isLoadMore) {
+      Taro.HUD.showLoading()
+      setAvailablePoint(-1)
       setDataList([])
     } else {
       if (pageIndex > 0 && !hasMore) {
@@ -88,9 +102,10 @@ export default function Index() {
     }
 
     const params = {
+      activityId: activityId,
+      pointAccountId: pointAccountId,
       page: pageIndex,
       size: 10,
-      type: tabIndex,
     }
 
     const res = await Taro.NETWORK.mineOrderList(params) 
@@ -99,10 +114,21 @@ export default function Index() {
     if (res.code === 0) {
       const resData = res.data || {}
 
-      const availablePoint = resData.availablePoint || 0      
-      const list = resData.orders || []
-      const totalPages = resData.totalPages || 10
+      const availablePoint = resData.availablePoint || 0   
+      const orders = resData.orders || []   
+      let list = []
+      const totalPages = resData.totalPages || 0
 
+      // 过滤
+      if (tabIndex === 1) {
+        list = orders.filter((item) => {
+          return item.orderStatus === 'CANCELED'
+        })
+      } else {
+        list = orders
+      }
+
+      // 分页
       let newList = []
       if (isLoadMore) {
         newList = dataList.concat(list)
@@ -128,13 +154,15 @@ export default function Index() {
 
   // 我的兑换
   const clickMyExchange = () => {
-    Taro.ROUTER.navigateTo('/pages/exchange/index');
+    Taro.ROUTER.navigateTo(`/pages/exchange/index?act=${actId}&acc=${accId}`);
   };
 
   // 标签
   const tabChange = (index) => {
-    setTabIndex(index);
+    setTabId(index);
     requestListData({
+      activityId: actId,
+      pointAccountId: accId,
       pageIndex: 0,
       tabIndex: index,
     }, false)
@@ -143,8 +171,7 @@ export default function Index() {
   // 订单详情
   const clickOrderDetail = (item) => {    
     const orderId = item.id || ''
-    console.log(orderId)
-    Taro.ROUTER.navigateTo(`/pages/orderDetail/index?id=${orderId}`);
+    Taro.ROUTER.navigateTo(`/pages/orderDetail/index?act=${actId}&acc=${accId}&id=${orderId}`);
   }
 
   // 我的积分
@@ -170,12 +197,12 @@ export default function Index() {
         </View>
         <View className='mine-tab-wrap'>
           <View className="tab-item" onClick={() => tabChange(0)}>
-            <View className={tabIndex === 0 ? 'tab-item-text-focus' : 'tab-item-text'}>全部</View>
-            <View className={tabIndex === 0 ? 'tab-item-line-focus' : 'tab-item-line'}></View>
+            <View className={tabId === 0 ? 'tab-item-text-focus' : 'tab-item-text'}>全部</View>
+            <View className={tabId === 0 ? 'tab-item-line-focus' : 'tab-item-line'}></View>
           </View>
           <View className="tab-item" onClick={() => tabChange(1)}>
-            <View className={tabIndex === 1 ? 'tab-item-text-focus' : 'tab-item-text'}>已取消</View>
-            <View className={tabIndex === 1 ? 'tab-item-line-focus' : 'tab-item-line'}></View>
+            <View className={tabId === 1 ? 'tab-item-text-focus' : 'tab-item-text'}>已取消</View>
+            <View className={tabId === 1 ? 'tab-item-line-focus' : 'tab-item-line'}></View>
           </View>
         </View> 
       </>
@@ -187,7 +214,7 @@ export default function Index() {
     return (
       dataList.map((item, index) => {
         return (
-          <PGOrderView key={index} orderInfo={item} onClick={() => clickOrderDetail(item)}></PGOrderView>
+          <PGOrderView key={index} orderInfo={item} act={actId} acc={accId} onClick={() => clickOrderDetail(item)}></PGOrderView>
         );
       })
     )

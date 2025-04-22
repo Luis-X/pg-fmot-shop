@@ -50,27 +50,27 @@ export default function Index() {
     setIsShowPage(true);
     configTracker(1)
 
-    const actId = router.params.act || ''
-    const accId = router.params.acc || ''
-    setActivityId(actId)
-    setPointAccountId(accId)
+    const act = router.params.act || ''
+    const acc = router.params.acc || ''
+    setActId(act)
+    setAccId(acc)
 
     requestListData({
-      activityId: actId,
-      pointAccountId: accId,
+      activityId: act,
+      pointAccountId: acc,
       pageIndex: 0,
     }, false)
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
-  const [activityId, setActivityId] = useState('');
-  const [pointAccountId, setPointAccountId] = useState('');
+  const [actId, setActId] = useState('');
+  const [accId, setAccId] = useState('');
 
   // 下拉刷新
   const refreshData = () => {
     return requestListData({
-      activityId: activityId,
-      pointAccountId: pointAccountId,
+      activityId: actId,
+      pointAccountId: accId,
       pageIndex: 0,
     }, false)
   };
@@ -82,8 +82,8 @@ export default function Index() {
 
   const loadMore = async () => {
     await requestListData({
-      activityId: activityId,
-      pointAccountId: pointAccountId,
+      activityId: actId,
+      pointAccountId: accId,
       pageIndex: pageCurrentIndex,
     }, true)
   };
@@ -92,9 +92,11 @@ export default function Index() {
   async function requestListData(query, isLoadMore) {
 
     const pageIndex = query.pageIndex || 0
+    const activityId = query.activityId || ''
+    const pointAccountId = query.pointAccountId || ''
 
     if (!isLoadMore) {
-      // Taro.HUD.showLoading()
+      Taro.HUD.showLoading()
       setBannerList([])
       setCurrentIndex(0)
       setDataList([])
@@ -106,8 +108,8 @@ export default function Index() {
     }
 
     const params = {
-      activityId: query.activityId || '',
-      pointAccountId: query.pointAccountId || '',
+      activityId: activityId,
+      pointAccountId: pointAccountId,
       page: pageIndex,
       size: 10,
     }
@@ -120,7 +122,7 @@ export default function Index() {
 
       const banner = resData.activityCarouselImages || []
       const list = resData.activityProducts || []
-      const totalPages = resData.totalPages || 10
+      const totalPages = resData.totalPages || 0
 
       let newList = []
       if (isLoadMore) {
@@ -155,7 +157,7 @@ export default function Index() {
           {
             dataList && dataList.length > 0 && dataList.map((item, index) => {
               return (
-                <PGGoodsView key={index} item={item} act={activityId} acc={pointAccountId}></PGGoodsView>
+                <PGGoodsView key={index} item={item} act={actId} acc={accId}></PGGoodsView>
               );
             })
           }
@@ -176,7 +178,7 @@ export default function Index() {
   const searchOnConfirm = () => {
     const value = searchValue || ''
     console.log('searchOnConfirm', value)
-    Taro.ROUTER.navigateTo(`/pages/search/index?keyword=${value}`);
+    Taro.ROUTER.navigateTo(`/pages/search/index?act=${actId}&acc=${accId}&q=${value}`);
   };
 
   const searchBarView = () => {
