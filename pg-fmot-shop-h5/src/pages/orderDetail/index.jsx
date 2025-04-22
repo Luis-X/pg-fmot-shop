@@ -91,12 +91,12 @@ export default function Index() {
       setOrderInfo(resData)
 
       // 交易成功的订单，可以在兑换后1小时内取消
-      const orderStatus = resData.order.orderStatus || ''
-      if (orderStatus === 'COMPLETED') {
-        const nowTime = DayJS();                                              // 当前时间
-        const createTime = DayJS(resData.order.createDate);                   // 订单创建时间
+      const orderData = resData.order || {}     
+      if (orderData.orderStatus === 'COMPLETED') {
+        const nowTime = DayJS(orderData.serverDate);                          // 当前时间
+        const createTime = DayJS(orderData.createDate);                       // 创建时间
         const diffSeconds = nowTime.diff(createTime, 'second');               // 时间差的秒数
-        const oneHourSeconds = 60 * 60;                                       // 1小时的秒数
+        const oneHourSeconds = 1 * 60 * 60;                                   // 1小时的秒数
         const remainingSeconds = Math.max(0, oneHourSeconds - diffSeconds);   // 剩余可取消的秒数
         console.log('cancelTime', remainingSeconds * 1000);
         setCancelTime(remainingSeconds * 1000);                               // 转换为毫秒

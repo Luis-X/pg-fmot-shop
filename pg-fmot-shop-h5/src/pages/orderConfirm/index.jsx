@@ -326,12 +326,14 @@ export default function Index() {
     // 是否包含虚拟商品
     const newList = []
     cartList.forEach(item => {
-      if (item.type === 1) {
+      if (item.productType === 'VIRTUAL_OBJECT') {
         newList.push(item)
       }
     })
-    const isShortage = newList.length > 0 // 是否包含虚拟商品
-    const isAllShortage = newList.length >= cartList.length; // 是否所有都为虚拟商品
+    const isShortage = newList.length > 0
+
+    // 是否所有都为虚拟商品                 
+    const isAllShortage = newList.length >= cartList.length
     setShortageList(newList)
 
     if (isShortage) {      

@@ -216,10 +216,11 @@ export default function Index() {
       if (item.isSelect) {
         const goods = {
           id: item.activityProductId,
+          productType: item.productType,
           previewUrl: item.previewUrl,
           name: item.name,
           price: item.price,
-          discountPrice: item.discountPrice,
+          discountPrice: item.discountPrice,         
           quantity: item.quantity,
         }
         goodsList.push(goods);

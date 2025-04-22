@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { View, Image } from '@tarojs/components'
-import Taro, { useLoad, useRouter, useDidShow } from '@tarojs/taro'
+import Taro, { useLoad, useUnload, useRouter, useDidShow } from '@tarojs/taro'
 import './index.scss'
 
 import PGLoading from "../../components/pgLoading/index";
@@ -20,6 +20,10 @@ export default function Index() {
     setTimeout(() => {
       createdPage();
     }, 1000);
+  })
+
+  useUnload(() => {
+    Taro.UTIL.clearPGStorage('service_info')
   })
 
   useDidShow(() => {
@@ -42,7 +46,7 @@ export default function Index() {
     setActId(act)
     setAccId(acc)
 
-    requestData({
+    configServiceInfo({
       activityId: act,
       pointAccountId: acc,
     })
@@ -54,20 +58,9 @@ export default function Index() {
   const [serviceInfo, setServiceInfo] = useState([])
 
   // request
-  async function requestData(query) {
-    const params = {
-      ...query,
-    }
-
-    const res = await Taro.NETWORK.serviceInfo(params) 
-    Taro.HUD.hideLoading()
-
-    if (res.code === 0) {
-      const resData = res.data || {}
-      setServiceInfo(resData)
-    } else {
-      Taro.HUD.showToastMessage(res.message)
-    }   
+  function configServiceInfo(query) {
+   const serviceInfo = Taro.UTIL.getPGStorage('service_info')
+   setServiceInfo(serviceInfo)
   }
 
   return (
@@ -81,11 +74,11 @@ export default function Index() {
                 <View className='service-content'>
                   <View className='service-content-item'>
                     <Image className='service-content-icon' mode='aspectFit' src={imgPhone}></Image>
-                    <View className='service-content-text'>{serviceInfo.phone}</View>
+                    <View className='service-content-text'>{serviceInfo.contactCustomerServiceInfo}</View>
                   </View>
                   <View className='service-content-item'>
                     <Image className='service-content-icon' mode='aspectFit' src={imgAddress}></Image>
-                    <View className='service-content-text'>{serviceInfo.address}</View>
+                    <View className='service-content-text'>{serviceInfo.contactCustomerServiceInfo}</View>
                   </View>
                 </View>
                 <Image className='service-img' mode='aspectFit' src={imgIcon}></Image> 

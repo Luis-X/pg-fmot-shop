@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   PullToRefresh,
   Badge,
   Swiper,
   Tag,  
   Indicator,
-  Image as ImageNut
+  Image as ImageNut,
+  Video as VideoNut,
 } from "@nutui/nutui-react";
 import { View, Video, Image, ScrollView } from "@tarojs/components";
 import Taro, { useLoad, useRouter, useDidShow } from "@tarojs/taro";
@@ -143,6 +144,12 @@ export default function Index() {
     if (sence === 'banner') {
       configTracker(4)
     } else if (sence === 'detail') {
+      if (elm) {
+        elm.addEventListener('timeupdate', () => {
+          const currentTime = Math.floor(elm.currentTime);
+          console.log('视频播放时长：', currentTime);
+        })
+      }      
       configTracker(7)
     }
   }
@@ -231,6 +238,8 @@ export default function Index() {
 
   // 客服
   const clickService = () => {
+    const serviceInfo = goodsInfo.activity || {}
+    Taro.UTIL.setPGStorage('service_info', serviceInfo)	
     Taro.ROUTER.navigateTo(`/pages/service/index?act=${actId}&acc=${accId}`);
   }
 
@@ -324,10 +333,11 @@ export default function Index() {
     let goodsList = [];
     const goods = {
       id: goodsInfo.id,
+      productType: productData.productType,
       previewUrl: productData.previewUrl,
       name: productData.name,
       price: productData.price,
-      discountPrice: goodsInfo.discountPrice,
+      discountPrice: goodsInfo.discountPrice,      
       quantity: 1,
     }
     goodsList = [goods];
@@ -465,6 +475,7 @@ export default function Index() {
   }
 
   // 商品视频、图片
+  const rootRef = useRef(null)
   const goodsVideoAndImgView = () => {
     return (
       <>
@@ -475,8 +486,8 @@ export default function Index() {
           detailVideoSource && detailVideoSource.src ? (
             <View className='detail-video-wrap'>
               <View className='detail-video-item'>
-              <Video 
-                className='detail-video'
+              {/* <Video
+                className='detail-video'  
                 id='video'
                 src={detailVideoSource.src}
                 poster={detailVideoSource.poster}
@@ -489,8 +500,17 @@ export default function Index() {
                 onPause={(elm) => onVideoPauseEvent(elm, 'detail')}
                 onPlayend={(elm) => onVideoPlayendEvent(elm, 'detail')}
                 onTimeUpdate={(elm) => onVideoTimeUpdate(elm, 'detail')}
+              /> */}
+              <VideoNut 
+                className='detail-video'  
+                ref={rootRef}              
+                source={detailVideoSource}
+                options={videoOptions}
+                onPlay={(elm) => onVideoPlayEvent(elm, 'detail')}
+                onPause={(elm) => onVideoPauseEvent(elm, 'detail')}
+                onPlayEnd={(elm) => onVideoPlayendEvent(elm, 'detail')}
               />
-              </View>          
+              </View>                        
             </View>
           ) : null
         }
