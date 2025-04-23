@@ -180,13 +180,21 @@ export default function Index() {
       })
       setDelAlertShow(true);
     } else {
-      const maxLimit = orderActivityInfo.maxQuantity || 0;
-      if (val > maxLimit) {
-        Taro.HUD.showToastMessage('加购商品超过数量上限')
-        return;
-      }
-      requestCartChangeData(val, productId)
+      if (checkLimitNum(val)) {
+        requestCartChangeData(val, productId)
+      }     
     }    
+  }
+
+  // 限购数量检测（每个商品）
+  const checkLimitNum = (val) => {
+    const maxLimit = orderActivityInfo.maxQuantity || 0;
+    console.log('maxLimit', maxLimit);
+    if (val > maxLimit) {
+      Taro.HUD.showToastMessage('加购商品超过数量上限')
+      return false;
+    }
+    return true;
   }
 
   // 单个勾选、取消
@@ -292,7 +300,7 @@ export default function Index() {
                     </View>
                   )
                 }
-                <ImageNut className='goods-img' src={item.previewUrl} fit='cover' lazy loading={true} onClick={() => clickGoods(item)} />
+                <ImageNut className='goods-img' src={item.previewUrl} fit='cover' lazy={false} loading={true} onClick={() => clickGoods(item)} />
                 <View className='goods-info' onClick={() => clickGoods(item)}>
                   <View className='goods-name'>{item.name}</View>
                   {priceView(item)}                 

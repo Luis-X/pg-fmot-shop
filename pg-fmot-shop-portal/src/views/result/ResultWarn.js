@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Result } from 'antd';
-import RoutePath from '../../config/RoutePath';
 import { LoginOutlined } from '@ant-design/icons';
 import Util from '../../utils/util';
 
@@ -35,7 +34,7 @@ class ResultWarn extends Component {
           extra={
             '2' === code ? (
               <button className="current-btn" onClick={() => {
-                Util.navigationToUrl(RoutePath.SSOLoginUrl);
+                Util.navigationToSSOLogin();
               }}>
                 <LoginOutlined />
                 <span>登录</span>

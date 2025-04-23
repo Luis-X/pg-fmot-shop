@@ -269,12 +269,31 @@ export default function Index() {
     if (res.code === 0) {
       configTracker(8)
       const resData = res.data || {}
-      const newCartNum = cartNum + 1;
-      setCartNum(newCartNum)
+      refreshCartNum({
+        activityId: actId,
+        pointAccountId: accId,
+        id: productId
+      })
       Taro.HUD.showToastMessage('加入购物车成功')
     } else {
       Taro.HUD.showToastMessage(res.message)
     }   
+  }
+
+  // 刷新购物车数量
+  async function refreshCartNum(query) {
+    const params = {
+      ...query
+    }
+    const res = await Taro.NETWORK.goodsDetail(params)
+    if (res.code === 0) {
+      const resData = res.data || {}
+      // 购物车信息
+      const shopCartProductCount = resData.shopCartProductCount || 0
+      setCartNum(shopCartProductCount)
+    } else {
+      Taro.HUD.showToastMessage(res.message)
+    } 
   }
 
   // 立即购买
@@ -438,23 +457,39 @@ export default function Index() {
     )
   }
 
+  // 积分展示
+  const priceView = (product, discountPrice) => {
+    const isDiscountPrice = discountPrice;
+    let result = null;
+    if (isDiscountPrice) {
+      result = (
+        <View className='detail-price-item'>
+          <View className='detail-price-new-wrap'>
+            <View className='detail-price-new'>{discountPrice}</View>
+            <View className='detail-price-new-unit'>积分</View>
+          </View>       
+          <View className='detail-price-old'>{product.price}积分</View>   
+        </View>    
+      )
+    } else {
+      result = (
+        <View className='detail-price-item'>
+          <View className='detail-price-new-wrap'>
+            <View className='detail-price-new'>{product.price}</View>
+            <View className='detail-price-new-unit'>积分</View>
+          </View>    
+        </View>
+      )
+    }
+    return result
+  }
   // 商品信息
   const goodsInfoView = () => {
     return (
       <>
         <View className='detail-price-wrap'>
           <Image className='detail-price-img' mode='aspectFill' src={imgPriceBar}></Image>
-          <View className='detail-price-item'>
-            <View className='detail-price-new-wrap'>
-              <View className='detail-price-new'>{goodsInfo.discountPrice}</View>
-              <View className='detail-price-new-unit'>积分</View>
-            </View>       
-            {
-              goodsInfo.product.price && (
-                <View className='detail-price-old'>{goodsInfo.product.price}积分</View>
-              )
-            }     
-          </View>           
+          { priceView(goodsInfo.product, goodsInfo.discountPrice) }                    
         </View>
         <View className='detail-name-wrap'>
           <View className='detail-name'>{goodsInfo.product.name}</View>

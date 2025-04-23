@@ -25,7 +25,7 @@ export default {
 
   checkUserStatusGoHome,
   checkAgreementStatusShow,
-  ssoLogin,
+  ssoLoginWithActId,
 
   configLabelTagList,
   showPreviewImg,
@@ -304,9 +304,13 @@ function decodeBaseStr(str) {
 }
 
 // SSO登录
-function ssoLogin() {
-  Taro.HUD.showToastMessage("内部-sso登录");
-  Taro.ROUTER.redirectTo("/pages/ssoCallBack/index?test=1");
+function ssoLoginWithActId(actId) {
+  clearPGStorage('login_info')
+  clearPGStorage('token_info')
+
+  const callbackUrl = `${CONFIG.ssoCallbackUrl}?act=${actId}`
+  const ssoLoginUrl = `${CONFIG.ssoLoginUrl}&subscription-key=${decodeBaseStr(CONFIG.skId)}&redirect_uri=${encodeURIComponent(callbackUrl)}`
+  window.location.replace(ssoLoginUrl)
 }
 
 // 配置标签列表

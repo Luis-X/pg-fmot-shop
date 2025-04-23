@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Tag, Image as ImageNut } from "@nutui/nutui-react";
+import { Image as ImageNut } from "@nutui/nutui-react";
 import { View, Text } from '@tarojs/components'
 import Taro, { useLoad } from '@tarojs/taro'
 import './index.scss'
@@ -64,7 +64,7 @@ export default function Index(props) {
         {
           Taro.UTIL.configLabelTagList(product.label).map((text, index) => {
             return (
-              <Tag key={index} className='goods-tag' plain background='#B46820'>{text}</Tag>
+              <View key={index} className='goods-tag' plain background='#B46820'>{text}</View>
             )
           })
         }      

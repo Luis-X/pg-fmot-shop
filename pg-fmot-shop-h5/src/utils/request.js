@@ -3,8 +3,7 @@ import CONFIG from '../api/config';
 
 export default {
   get,
-  post,
-  uploadFile
+  post
 };
 
 // GET
@@ -73,41 +72,6 @@ function baseRequest(url, data, method) {
             resolve(respData)
           }
 
-        } else {
-          const respData = res.data || {}
-          resolve(respData)
-        }
-      },
-      fail: (err) => {
-        resolve({})
-        reject(err)
-        console.error('request', `异常：${JSON.stringify(err)}`)
-      }
-    })
-  })
-}
-
-// 不指定 content-type，否则会缺少 boundary
-function uploadFile(formData) {
-  return new Promise(function (resolve, reject) {
-    Taro.request({
-      url: `${CONFIG.fileUrl}/v2/files`,
-      data: formData,
-      method: 'POST',
-      header: {
-        'Access-Control-Allow-Origin': '*',
-        // 'Content-Type': 'multipart/form-data',
-        'X-Content-Type-Options': 'nosniff',
-      },
-      success: (res) => {        
-        console.log(res)
-        if (res.statusCode === 200) {
-          const respData = res.data || {}
-
-          // console.debug(`上传响应：`)
-          // console.debug(respData)
-
-          resolve(respData)
         } else {
           const respData = res.data || {}
           resolve(respData)

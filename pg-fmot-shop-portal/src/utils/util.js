@@ -1,33 +1,10 @@
 import $ from 'jquery';
 import * as api from '../api/api';
 import moment from 'moment';
-import CryptoJS from 'crypto-js';
 import Tools from '../utils/tools';
+import RoutePath from '../config/RoutePath';
 
 const utils = {
-  
-  encodeBaseStr: (str) => {
-    let result = ''
-    try {
-      const utf8Bytes = CryptoJS.enc.Utf8.parse(str);
-      result = CryptoJS.enc.Base64.stringify(utf8Bytes);
-    } catch (error) {
-      console.log(error)
-    } 
-    console.log(result) 
-    return result
-  },
-  decodeBaseStr: (str) => {
-    let result = ''
-    try {
-      const words = CryptoJS.enc.Base64.parse(str);
-      result = CryptoJS.enc.Utf8.stringify(words);
-    } catch (error) {
-      console.log(error)
-    } 
-    return result
-  },
-
   // 页面跳转 path
   navigationToPath: (path, query) => {    
     let url = ''
@@ -43,6 +20,18 @@ const utils = {
   // 页面跳转 url
   navigationToUrl: (url) => {    
     console.log('navigationToUrl', url);
+    window.location.href = url;
+  },
+  // 页面跳转 sso 登录
+  navigationToSSOLogin: () => {    
+    const url = `${RoutePath.SSOLoginUrl}&subscription-key=${Tools.decodeBaseStr(RoutePath.skId)}&redirect_uri=${encodeURIComponent(RoutePath.SSOCallbackUrl)}`;
+    console.log('navigationToSSOLogin', url);
+    window.location.href = url;
+  },
+  // 页面跳转 sso 退出
+  navigationToSSOLogout: () => {    
+    const url = `${RoutePath.SSOLogoutUrl}&subscription-key=${Tools.decodeBaseStr(RoutePath.skId)}`;
+    console.log('navigationToSSOLogout', url);
     window.location.href = url;
   },
 

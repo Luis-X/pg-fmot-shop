@@ -19,7 +19,18 @@ export default function Index() {
     Taro.WXSDK.hideOptionMenu();
   });
 
+  const createdPage = async () => {
+
+    const act = router.params.id || ''
+    setActId(act)
+
+    requestData({
+      activityId: act
+    })
+  };
+
   const [isShowAlert, setIsShowAlert] = useState(false);
+  const [actId, setActId] = useState('');
   const [userData, setUserData] = useState({});
 
   useEffect(() => {
@@ -28,13 +39,9 @@ export default function Index() {
     }
   }, [userData]);
 
-  const createdPage = async () => {
-    requestData()
-  };
-
-  async function requestData() {
+  async function requestData(query) {
     const params = {
-      activityId: "20662ccb82914d1d87ea043e18146d3e",
+      activityId: query.activityId || '',
       pointAccountId: "test9",
       code: "789",
       timestamp: "string",

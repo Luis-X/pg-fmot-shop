@@ -20,7 +20,12 @@ export default function Index() {
   });
 
   const createdPage = async () => {
-    allHandler()
+    const code = router.params.code || ''
+    const act = router.params.act || ''
+    console.log("sso callback code", code);
+    console.log("sso callback act", act);
+
+    // allHandler()
   };
 
   // sso回调，处理

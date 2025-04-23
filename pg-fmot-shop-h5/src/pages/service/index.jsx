@@ -55,12 +55,14 @@ export default function Index() {
   const [isShowPage, setIsShowPage] = useState(false)
   const [actId, setActId] = useState('');
   const [accId, setAccId] = useState('');
-  const [serviceInfo, setServiceInfo] = useState([])
+  const [textList, setTextList] = useState([])
 
   // request
   function configServiceInfo(query) {
    const serviceInfo = Taro.UTIL.getPGStorage('service_info')
-   setServiceInfo(serviceInfo)
+   const contactCustomerServiceInfo = serviceInfo.contactCustomerServiceInfo || ''
+   const list = contactCustomerServiceInfo.split('\n') || []
+   setTextList(list)
   }
 
   return (
@@ -72,14 +74,16 @@ export default function Index() {
               <Image className='service-bg-img' mode='aspectFill' src={imgBG}></Image> 
               <View className='service-wrap'>                
                 <View className='service-content'>
-                  <View className='service-content-item'>
-                    <Image className='service-content-icon' mode='aspectFit' src={imgPhone}></Image>
-                    <View className='service-content-text'>{serviceInfo.contactCustomerServiceInfo}</View>
-                  </View>
-                  <View className='service-content-item'>
-                    <Image className='service-content-icon' mode='aspectFit' src={imgAddress}></Image>
-                    <View className='service-content-text'>{serviceInfo.contactCustomerServiceInfo}</View>
-                  </View>
+                  {
+                    textList.map((item, index) => {
+                      return (
+                        <View className='service-content-item' key={index}>
+                          {/* <Image className='service-content-icon' mode='aspectFit' src={imgPhone}></Image> */}
+                          <View className='service-content-text'>{item}</View>
+                        </View>
+                      )
+                    })
+                  }
                 </View>
                 <Image className='service-img' mode='aspectFit' src={imgIcon}></Image> 
               </View>

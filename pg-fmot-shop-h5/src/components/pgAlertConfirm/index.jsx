@@ -92,7 +92,7 @@ export default function Index(props) {
           {
             goodsListArray.map((item, index) => {
               return (
-                <View className='text-goods' key={index}>{item.title}</View>
+                <View className='text-goods' key={index}>{item.name}</View>
               )
             })
           }      

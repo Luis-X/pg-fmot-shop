@@ -45,15 +45,17 @@
     .text-goods-scroll { 
       margin-top: 10rpx;   
       width: 500rpx;
-      max-height: 500rpx;
+      max-height: 400rpx;
       font-size: 32rpx;
       color: #000000;
       overflow: hidden;
       overflow-y: scroll;
       .text-goods {    
+        margin-bottom: 10rpx;
         width: 100%;
         text-align: left;
         font-size: 32rpx;
+        line-height: 35rpx;
         color: #000000;
       }
     }    

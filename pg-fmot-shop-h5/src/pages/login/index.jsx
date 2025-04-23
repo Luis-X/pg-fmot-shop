@@ -47,11 +47,14 @@ export default function Index() {
 
   // 确认绑定
   const clickBindConfirm = () => {
+    if (!actId) {
+      Taro.HUD.showToastMessage('活动ID为空')
+      return
+    }
     if (!inputValue) {
       Taro.HUD.showToastMessage('请输入您的账号')
       return
     }
-
     requestBindActivityIdData()
   }
 
@@ -93,8 +96,11 @@ export default function Index() {
 
   // 内部登录
   const clickInternalLogin = () => {
-    console.log("内部-sso登录");
-    Taro.UTIL.ssoLogin()
+    if (!actId) {
+      Taro.HUD.showToastMessage('活动ID为空')
+      return
+    }
+    Taro.UTIL.ssoLoginWithActId(actId)
   }
 
   // 账号输入

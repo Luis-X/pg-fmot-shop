@@ -38,14 +38,14 @@ class TopBar extends Component {
   // 退出登录
   logout() {
     localStorage.clear();
-    Util.navigationToUrl(RoutePath.SSOLogoutUrl);
+    Util.navigationToSSOLogout();
     /*
     api.logout({}).then((res) => {
       if (res) {
         const respData = res.data || {};
         if (0 === respData.code) {
           localStorage.clear();
-          Util.navigationToUrl(RoutePath.SSOLogoutUrl);
+          Util.navigationToSSOLogout();
         } else {
           MyAlert({ errorMsg: respData.message });
         }

@@ -3,7 +3,7 @@ import { Spin, Result } from 'antd';
 import * as api from '../../api/api';
 import { setToken } from '../../api/api';
 import RoutePath from '../../config/RoutePath';
-import Util from '../../utils/util';
+import Tools from '../../utils/tools';
 
 class SsoCallback extends Component {
   constructor(props) {
@@ -28,7 +28,7 @@ class SsoCallback extends Component {
       } else if (queryCode.code) {
         localStorage.clear();
         try {
-          const url = Util.encodeBaseStr(RoutePath.SSOCallbackUrl)
+          const url = Tools.encodeBaseStr(RoutePath.SSOCallbackUrl)
           const res = await api.ssoLogin({ 
             code: queryCode.code,
             redirectUri: url

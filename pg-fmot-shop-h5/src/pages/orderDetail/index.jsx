@@ -100,6 +100,8 @@ export default function Index() {
         const remainingSeconds = Math.max(0, oneHourSeconds - diffSeconds);   // 剩余可取消的秒数
         console.log('cancelTime', remainingSeconds * 1000);
         setCancelTime(remainingSeconds * 1000);                               // 转换为毫秒
+      } else {
+        setCancelTime(0);
       }
       
     } else {

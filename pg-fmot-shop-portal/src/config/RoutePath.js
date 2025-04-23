@@ -1,5 +1,3 @@
-import Util from '../utils/util';
-
 const isRelease = window.location.origin === 'https://ministore.shenghuojia.com' ? true : false
 
 let RoutePath = {
@@ -18,17 +16,17 @@ let RoutePath = {
 
 if (isRelease) {
   console.log('生产环境');
-  const skId = 'NmZmOGY4NmVkZDU1NDFhNTk4M2ZmNzg2NWRlMzAxODM='
+  RoutePath.skId = 'NmZmOGY4NmVkZDU1NDFhNTk4M2ZmNzg2NWRlMzAxODM='
   RoutePath.SSOCallbackUrl = 'https://ministore.shenghuojia.com/portal/#/callback'
-  RoutePath.SSOLoginUrl = `https://api-shared-prd.cn-pgcloud.com/sso/v3/oauth/login?client_id=rdfmotshopping&app=rdfmotshopping&subscription-key=${Util.decodeBaseStr(skId)}&pfidpadapterid=ad..OAuth&redirect_uri=${encodeURIComponent(RoutePath.SSOCallbackUrl)}&scope=openid%20profile%20GDPR`
-  RoutePath.SSOLogoutUrl = `https://api-shared-prd.cn-pgcloud.com/sso/v3/logout?subscription-key=${Util.decodeBaseStr(skId)}&app=rdfmotshopping`
+  RoutePath.SSOLoginUrl = 'https://api-shared-prd.cn-pgcloud.com/sso/v3/oauth/login?client_id=rdfmotshopping&app=rdfmotshopping&pfidpadapterid=ad..OAuth&scope=openid%20profile%20GDPR'
+  RoutePath.SSOLogoutUrl = 'https://api-shared-prd.cn-pgcloud.com/sso/v3/logout?app=rdfmotshopping'
   RoutePath.H5ActivityUrl = 'https://ministore.shenghuojia.com/index'
 } else {
   console.log('测试环境');
-  const skId = 'MTIwNDdiNTQ1MThiNDI0NDhiMjBhZWIzOTRlZGNhMjQ='
+  RoutePath.skId = 'MTIwNDdiNTQ1MThiNDI0NDhiMjBhZWIzOTRlZGNhMjQ='
   RoutePath.SSOCallbackUrl = 'https://ministore-qa.shenghuojia.com/portal/#/callback'
-  RoutePath.SSOLoginUrl = `https://api-shared-qa.cn-pgcloud.com/sso/v3/oauth/login?client_id=rdfmotshopping&app=rdfmotshopping&subscription-key=${Util.decodeBaseStr(skId)}&pfidpadapterid=ad..OAuth&redirect_uri=${encodeURIComponent(RoutePath.SSOCallbackUrl)}&scope=openid%20profile%20GDPR`
-  RoutePath.SSOLogoutUrl = `https://api-shared-qa.cn-pgcloud.com/sso/v3/logout?subscription-key=${Util.decodeBaseStr(skId)}&app=rdfmotshopping`
+  RoutePath.SSOLoginUrl = 'https://api-shared-qa.cn-pgcloud.com/sso/v3/oauth/login?client_id=rdfmotshopping&app=rdfmotshopping&pfidpadapterid=ad..OAuth&scope=openid%20profile%20GDPR'
+  RoutePath.SSOLogoutUrl = 'https://api-shared-qa.cn-pgcloud.com/sso/v3/logout?app=rdfmotshopping'
   RoutePath.H5ActivityUrl = 'https://ministore-qa.shenghuojia.com/index'
 }
 

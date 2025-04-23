@@ -124,6 +124,9 @@ export function AddEventFun({
             let newGoodsList = [];
             goodsList.forEach((item) => {
               let goodsObj = item.product;
+              // 商品活动Id
+              goodsObj.act_product_id = item.id;
+              // 商品活动价
               if (item.discountPrice) {
                 goodsObj.discountPrice = item.discountPrice;
               }
@@ -201,6 +204,9 @@ export function AddEventFun({
       goodsList.forEach((item) => {
         const itemObj = {
           productId: item.id,
+        }
+        if (item.act_product_id) {
+          itemObj.id = item.act_product_id;
         }
         if (item.discountPrice) {
           itemObj.discountPrice = item.discountPrice;

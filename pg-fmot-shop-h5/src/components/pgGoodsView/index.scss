@@ -33,10 +33,12 @@
     display: flex;
     flex-direction: row;
     align-items: flex-end;
+    overflow: hidden;
     .goods-price-new-wrap {
       display: flex;
       flex-direction: row;
       align-items: flex-end;
+      white-space: nowrap;
       .goods-price-new {
         color: #EE3A43;
         font-size: 40rpx;
@@ -52,11 +54,16 @@
       }
     }    
     .goods-price-old {
-      margin-left: 8rpx;
+      margin-left: 4rpx;
+      margin-bottom: 5rpx;
       color: #8A8A8A;
-      font-size: 24rpx;
-      line-height: 24rpx;
+      font-size: 20rpx;
+      line-height: 20rpx;
       text-decoration: line-through;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 50%;
     }
   }
   .goods-tag-wrap {
@@ -65,8 +72,18 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    overflow-x: auto;
     .goods-tag {
       margin-right: 10rpx;
+      padding-left: 7rpx;
+      padding-right: 7rpx;
+      font-size: 18rpx;
+      color: #B46820;
+      line-height: 32rpx;
+      height: 32rpx;
+      border-radius: 8rpx;
+      border: 2rpx solid #B46820;
+      white-space: nowrap;
     }
   }
 }
