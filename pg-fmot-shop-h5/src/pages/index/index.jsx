@@ -162,7 +162,7 @@ export default function Index() {
 
   // 检查用户状态
   const checkUserStatus = () => {    
-    Taro.UTIL.checkUserStatusGoHome()
+    Taro.UTIL.goToActivityHomeWithActId()
   }
 
   return (

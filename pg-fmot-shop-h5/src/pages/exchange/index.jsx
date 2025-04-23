@@ -132,7 +132,7 @@ export default function Index() {
   const clickItem = (item) => {
     const actId = item.activityId || '';
     const accId = item.pointAccountId || '';
-    Taro.UTIL.checkUserStatusGoHome(actId, accId)
+    Taro.UTIL.goToActivityHomeWithActId(actId, accId)
   }
 
   // 兑换列表

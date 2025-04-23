@@ -87,7 +87,7 @@ export default function Index() {
 
       // 检查用户状态，跳转首页
       setTimeout(() => {
-        Taro.UTIL.checkUserStatusGoHome(actId, accId)
+        Taro.UTIL.goToActivityHomeWithActId(actId, accId)
       }, 1500);      
     } else {
       Taro.HUD.showToastMessage(res.message)
@@ -100,7 +100,7 @@ export default function Index() {
       Taro.HUD.showToastMessage('活动ID为空')
       return
     }
-    Taro.UTIL.ssoLoginWithActId(actId)
+    Taro.UTIL.goToSSOLoginWithActId(actId)
   }
 
   // 账号输入

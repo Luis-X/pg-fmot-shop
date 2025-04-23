@@ -13,19 +13,17 @@ export default {
   getPGStorage,
   clearPGStorage,
 
-  goToSSOUrlPage,
   checkIsLogin,
-
-  checkUserStatus,
   
   dateFormatter,
 
   encodeBaseStr,
   decodeBaseStr,
 
-  checkUserStatusGoHome,
   checkAgreementStatusShow,
-  ssoLoginWithActId,
+  
+  goToSSOLoginWithActId,
+  goToActivityHomeWithActId,
 
   configLabelTagList,
   showPreviewImg,
@@ -66,32 +64,6 @@ function clearPGStorage(key) {
   } catch (error) {
     
   }  
-}
-
-// 去授权，获取code
-async function goToSSOUrlPage() { 
-  // FIXME: test or debug should hide code
-
-  clearPGStorage('login_info')
-  clearPGStorage('token_info')
-  
-  // 后端拼接 acl
-  /*
-  const currentUrl = window.location.href
-  const res = await Taro.NETWORK.aclUrl({
-    url: currentUrl
-  })
-  if (res.code === 0) { 
-    const result = res.data || ''
-    window.location.replace(result)
-  }
-  */
-  
-  // 前端拼接 acl
-  const currentUrl = window.location.href 
-  const aclCallBackUrl = `${CONFIG.aclCallBack}${encodeURIComponent(currentUrl)}`
-  const result = `${ CONFIG.aclUrl}${encodeURIComponent(aclCallBackUrl)}`
-  window.location.replace(result)
 }
 
 function getUrlParamByName(name) {
@@ -178,63 +150,12 @@ async function checkIsLogin() {
 
       isLogin = true
     } else {
-      // 无code
-      goToSSOUrlPage()
+      // 无code，跳转acl
       isLogin = false
     }
   }
 
   return isLogin
-}
-
-// 用户是否注册、绑定AM
-async function checkUserStatus(callback) {
-
-  let memberId = ''
-  let auditStatus = ''
-
-  // 查询登录
-  memberId = Taro.UTIL.getPGStorage('login_info').memberId || ''
-  auditStatus = Taro.UTIL.getPGStorage('login_info').auditStatus || ''
-  // if (memberId && (auditStatus === 'INIT' || auditStatus === 'AUDIT_PASS')) {
-  if (memberId) {
-    if (callback) {
-      callback(true)
-    }
-    return
-  }
-  
-  // 查询用户
-  memberId = getPGStorage('user_info').memberId || ''
-  auditStatus = getPGStorage('user_info').auditStatus || ''
-  // if (memberId && (auditStatus === 'INIT' || auditStatus === 'AUDIT_PASS')) {
-  if (memberId) {
-    if (callback) {
-      callback(true)
-    }
-    return
-  }
-  
-  // 接口用户
-  const res = await Taro.NETWORK.userInfo()
-  if (res.code === 0) {
-    const resData = res.data || {}
-    setPGStorage('user_info', resData)	
-    memberId = resData.memberId || ''
-    auditStatus = resData.auditStatus || ''
-  }
-  // if (memberId && (auditStatus === 'INIT' || auditStatus === 'AUDIT_PASS')) {
-  if (memberId) {
-    if (callback) {
-      callback(true)
-    }
-    return
-  }
-  
-  // 默认
-  if (callback) {
-    callback(false)
-  }
 }
 
 function dateFormatter(dateValue, formatValue) {
@@ -275,21 +196,6 @@ function decodeBaseStr(str) {
   return result
 }
 
- // 检查用户状态，跳转活动首页
- function checkUserStatusGoHome(activityId, pointAccountId) {    
-  const userData = Taro.UTIL.getPGStorage('login_info')
-  const isAvailableUser = true;
-  if (isAvailableUser) {
-    console.log("用户正常");
-    console.log("进入首页");
-    Taro.ROUTER.redirectTo(`/pages/home/index?act=${activityId}&acc=${pointAccountId}`);
-  } else {
-    console.log("用户异常");
-    console.log("暂不符合活动资格");
-    Taro.ROUTER.redirectTo(`/pages/disable/index?act=${activityId}&acc=${pointAccountId}&status=2`);
-  }
-}
-
  // 检查协议状态
  function checkAgreementStatusShow() {    
   const loginInfo = Taro.UTIL.getPGStorage('login_info')
@@ -304,13 +210,30 @@ function decodeBaseStr(str) {
 }
 
 // SSO登录
-function ssoLoginWithActId(actId) {
+function goToSSOLoginWithActId(actId) {
   clearPGStorage('login_info')
   clearPGStorage('token_info')
 
   const callbackUrl = `${CONFIG.ssoCallbackUrl}?act=${actId}`
   const ssoLoginUrl = `${CONFIG.ssoLoginUrl}&subscription-key=${decodeBaseStr(CONFIG.skId)}&redirect_uri=${encodeURIComponent(callbackUrl)}`
+  
+  console.log(ssoLoginUrl)
   window.location.replace(ssoLoginUrl)
+}
+
+ // 检查用户状态，跳转活动首页
+function goToActivityHomeWithActId(activityId, pointAccountId) {    
+  const userData = Taro.UTIL.getPGStorage('login_info')
+  const isAvailableUser = true;
+  if (isAvailableUser) {
+    console.log("用户正常");
+    console.log("进入首页");
+    Taro.ROUTER.redirectTo(`/pages/home/index?act=${activityId}&acc=${pointAccountId}`);
+  } else {
+    console.log("用户异常");
+    console.log("暂不符合活动资格");
+    Taro.ROUTER.redirectTo(`/pages/disable/index?act=${activityId}&acc=${pointAccountId}&status=2`);
+  }
 }
 
 // 配置标签列表

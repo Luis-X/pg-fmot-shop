@@ -54,7 +54,7 @@ export default function Index() {
     if (res.code === 0) {
       Taro.HUD.showToastMessage('绑定成功')
       setTimeout(() => {
-        Taro.UTIL.checkUserStatusGoHome()
+        Taro.UTIL.goToActivityHomeWithActId()
       }, 1500);      
     } else {
       Taro.HUD.showToastMessage(res.message)
