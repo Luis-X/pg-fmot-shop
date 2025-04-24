@@ -36,10 +36,11 @@ export default function Index() {
     setIsShowPage(true);
 
     const act = router.params.act || ''
-    const acc = router.params.acc || ''
-    const q = decodeURIComponent(router.params.q || '');
+    const acc = router.params.acc || ''    
     setActId(act)
     setAccId(acc)
+
+    const q = decodeURIComponent(router.params.q || '');
     setSearchValue(q);
 
     requestListData({
@@ -128,7 +129,7 @@ export default function Index() {
     const keyword = query.keyword || ''    
 
     if (!isLoadMore) {
-      Taro.HUD.showLoading()
+      // Taro.HUD.showLoading()
       setDataList([])
     } else {
       if (pageIndex > 0 && !hasMore) {

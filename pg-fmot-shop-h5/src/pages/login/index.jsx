@@ -38,7 +38,7 @@ export default function Index() {
     Taro.TRACKER.pageViewTracker("登录");
     setIsShowPage(true);
 
-    const act = router.params.id || ''
+    const act = router.params.act || ''
     setActId(act)
   };
 
@@ -59,7 +59,7 @@ export default function Index() {
   }
 
   // 绑定账号
-   async function requestBindActivityIdData() {
+  async function requestBindActivityIdData() {
     const params = {
       activityId: actId,
       activityAccount: inputValue,
@@ -70,28 +70,49 @@ export default function Index() {
     Taro.HUD.hideLoading()
 
     if (res.code === 0) {
-      Taro.HUD.showToastMessage('绑定成功')
       const resData = res.data || {}
-      const accId = resData.pointAccountId || ''
-
-      // 用户信息
-      const loginInfo = resData
-      Taro.UTIL.setPGStorage('login_info', loginInfo)	
-
-      // 活动信息
-      const activityInfo = {
-        act: actId,
-        acc: accId,
-      }
-      Taro.UTIL.setPGStorage('activity_info', activityInfo)	
-
-      // 检查用户状态，跳转首页
-      setTimeout(() => {
-        Taro.UTIL.goToActivityHomeWithActId(actId, accId)
-      }, 1500);      
+      userDataHandler(params, resData)
+    } else if (res.code === -20004)  {
+      // SSO账号不存在
+      Taro.HUD.showToastMessage(res.message)
+    } else if (res.code === -20005)  {
+      // 该积分账号已绑定
+      Taro.HUD.showToastMessage(res.message)
+    } else if (res.code === -20006)  {
+      // 用户账号状态异常
+      console.log("用户账号状态异常");
+      Taro.ROUTER.redirectTo(`/pages/disable/index?act=${actId}&status=2`);
+    } else if (res.code === -20007)  {
+      // 当前不在活动时间
+      console.log("当前不在活动时间");
+      Taro.ROUTER.redirectTo(`/pages/disable/index?act=${actId}&status=1`);
     } else {
       Taro.HUD.showToastMessage(res.message)
     }
+  }
+
+  // 活动处理
+  const userDataHandler = (params, resData) => {
+    Taro.HUD.showToastMessage('绑定成功')
+      
+    const activityId = params.activityId || ''
+    const pointAccountId = resData.pointAccountId || ''
+
+    // 用户信息
+    const loginInfo = resData
+    Taro.UTIL.setPGStorage('login_info', loginInfo)	
+
+    // 活动信息
+    const activityInfo = {
+      act: activityId,
+      acc: pointAccountId,
+    }
+    Taro.UTIL.setPGStorage('activity_info', activityInfo)	
+
+    // 检查用户状态，跳转首页
+    setTimeout(() => {
+      Taro.UTIL.goToActivityHomeWithActId(activityId, pointAccountId)
+    }, 1500);
   }
 
   // 内部登录

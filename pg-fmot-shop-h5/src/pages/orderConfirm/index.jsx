@@ -119,7 +119,7 @@ export default function Index() {
       ...query
     }
 
-    Taro.HUD.showLoading()
+    // Taro.HUD.showLoading()
     const res = await Taro.NETWORK.orderActivityInfo(params) 
     Taro.HUD.hideLoading()
 
@@ -464,7 +464,6 @@ export default function Index() {
     setDelAlertShow(false);
   };
 
-  // FIXME: 缺少积分计算
   return (
     <>
       {isShowPage ? (

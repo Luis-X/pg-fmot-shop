@@ -75,9 +75,10 @@ export default function Index() {
 
     const act = router.params.act || ''
     const acc = router.params.acc || ''
-    const id = router.params.id || '';
     setActId(act)
     setAccId(acc)
+
+    const id = router.params.id || '';
     setProductId(id);
     
     requestData({
@@ -262,7 +263,7 @@ export default function Index() {
       quantity: 1,
     }
 
-    Taro.HUD.showLoading()
+    // Taro.HUD.showLoading()
     const res = await Taro.NETWORK.cartChange(params) 
     Taro.HUD.hideLoading()
 

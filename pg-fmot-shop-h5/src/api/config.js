@@ -1,36 +1,39 @@
 
 let config = {
-  appId: 'wx827f7dbb8b3964c5',
+  appId: 'wx66f76f4c6ea64910',
 }
 
-const flag = window.location.origin === 'https://ministore.shenghuojia.com' ? 'qa' : 'release'
+const flag = window.location.origin === 'https://ministore-qa.shenghuojia.com' ? 'qa' : 'release'
 console.log(flag)
 
 if (process.env.NODE_ENV === 'development') {
   console.log('dev')
   console.log('本地环境');  
-  config.host = ''  
-  config.aclCallBack = 'https://ministore-qa.shenghuojia.com/aclCallback?callback='
-  config.aclUrl = 'https://acl.shenghuojia.com/acl/wx/oauth2/authorize?brandId=d22bfea181bf85c9cf5d96514b9b3ccc&scope=snsapi_userinfo&access_token=true&url='
+  const devHost = 'https://ministore-qa.shenghuojia.com'
+  config.host = ''
+  config.aclPage = `${devHost}/#/pages/index/index`
+  config.aclAuthUrl = 'https://acl.shenghuojia.com/acl/wx/oauth2/authorize?brandId=479d42cf7bfb823dba1238921a4b9e4c&scope=snsapi_userinfo&access_token=true&url='
   config.skId = 'MTIwNDdiNTQ1MThiNDI0NDhiMjBhZWIzOTRlZGNhMjQ='
-  config.ssoCallbackUrl = 'https://ministore-qa.shenghuojia.com/#/pages/ssoCallBack/index'
+  config.ssoCallbackUrl = `${devHost}/#/pages/ssoCallBack/index`
   config.ssoLoginUrl = 'https://api-shared-qa.cn-pgcloud.com/sso/v3/oauth/login?client_id=rdfmotshopping&app=rdfmotshopping&pfidpadapterid=ad..OAuth&scope=openid%20profile%20GDPR'
 } else {
   if (flag === 'qa') {
     console.log('测试环境');
-    config.host = 'https://ministore-qa.shenghuojia.com'    
-    config.aclCallBack = 'https://ministore-qa.shenghuojia.com/aclCallback?callback='
-    config.aclUrl = 'https://acl.shenghuojia.com/acl/wx/oauth2/authorize?brandId=d22bfea181bf85c9cf5d96514b9b3ccc&scope=snsapi_userinfo&access_token=true&url='
+    const qaHost = 'https://ministore-qa.shenghuojia.com'
+    config.host = qaHost   
+    config.aclPage = `${qaHost}#/pages/index/index`
+    config.aclAuthUrl = 'https://acl.shenghuojia.com/acl/wx/oauth2/authorize?brandId=479d42cf7bfb823dba1238921a4b9e4c&scope=snsapi_userinfo&access_token=true&url='
     config.skId = 'MTIwNDdiNTQ1MThiNDI0NDhiMjBhZWIzOTRlZGNhMjQ='
-    config.ssoCallbackUrl = 'https://ministore-qa.shenghuojia.com/#/pages/ssoCallBack/index'
+    config.ssoCallbackUrl = `${qaHost}/#/pages/ssoCallBack/index`
     config.ssoLoginUrl = 'https://api-shared-qa.cn-pgcloud.com/sso/v3/oauth/login?client_id=rdfmotshopping&app=rdfmotshopping&pfidpadapterid=ad..OAuth&scope=openid%20profile%20GDPR'
   } else {
     console.log('生产环境');
-    config.host = 'https://ministore.shenghuojia.com'    
-    config.aclCallBack = 'https://ministore.shenghuojia.com/aclCallback?callback='
-    config.aclUrl = 'https://acl.shenghuojia.com/acl/wx/oauth2/authorize?brandId=d22bfea181bf85c9cf5d96514b9b3ccc&scope=snsapi_userinfo&access_token=true&url='
+    const prodHost = 'https://ministore.shenghuojia.com'
+    config.host = prodHost
+    config.aclPage = `${prodHost}/#/pages/index/index`
+    config.aclAuthUrl = 'https://acl.shenghuojia.com/acl/wx/oauth2/authorize?brandId=479d42cf7bfb823dba1238921a4b9e4c&scope=snsapi_userinfo&access_token=true&url='
     config.skId = 'NmZmOGY4NmVkZDU1NDFhNTk4M2ZmNzg2NWRlMzAxODM='
-    config.ssoCallbackUrl = 'https://ministore.shenghuojia.com/#/pages/ssoCallBack/index'
+    config.ssoCallbackUrl = `${prodHost}/#/pages/ssoCallBack/index`
     config.ssoLoginUrl = 'https://api-shared-prd.cn-pgcloud.com/sso/v3/oauth/login?client_id=rdfmotshopping&app=rdfmotshopping&pfidpadapterid=ad..OAuth&scope=openid%20profile%20GDPR'
   }
 }

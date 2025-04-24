@@ -20,45 +20,83 @@ export default function Index() {
   });
 
   const createdPage = async () => {
-    const code = router.params.code || ''
     const act = router.params.act || ''
-    console.log("sso callback code", code);
-    console.log("sso callback act", act);
+    const code = router.params.code || ''    
 
-    // allHandler()
+    console.log('sso act:', act)
+    console.log('sso code:', code)
+
+    if (!act) {
+      Taro.HUD.showToastMessage('活动ID为空')
+      return
+    }
+    if (!code) {
+      Taro.HUD.showToastMessage('code为空')
+      return
+    }
+    
+    requestBindActivityIdData(act, code)
   };
 
-  // sso回调，处理
-  const allHandler = () => {
-    const isAvailableEmail = true;
-    if (isAvailableEmail) {
-      console.log("内部-邮箱可用");
-      requestBindOpenIdData();
-    } else {
-      console.log("内部-邮箱不可用");
-      console.log("暂不符合活动资格");
-      Taro.ROUTER.navigateTo("/pages/disable/index?status=2");
-    }
-  }
-
-  async function requestBindOpenIdData() {
+  // 绑定账号
+  async function requestBindActivityIdData(actId, code) {
+    const ssoCallbackUrl = Taro.UTIL.pgConfig().ssoCallbackUrl || ''
+    const callbackUrl = `${ssoCallbackUrl}?act=${actId}`
+    const url = Taro.UTIL.encodeBaseStr(callbackUrl)
     const params = {
-      email: "test@163.com",
-      openId: "1234567890",
+      activityId: actId,
+      code: code,
+      redirectUri: url
     }
 
     Taro.HUD.showLoading('绑定中...')
-    const res = await Taro.NETWORK.bindOpenId(params) 
+    const res = await Taro.NETWORK.bindActivityId(params) 
     Taro.HUD.hideLoading()
 
     if (res.code === 0) {
-      Taro.HUD.showToastMessage('绑定成功')
-      setTimeout(() => {
-        Taro.UTIL.goToActivityHomeWithActId()
-      }, 1500);      
+      const resData = res.data || {}
+      userDataHandler(params, resData)
+    } else if (res.code === -20004)  {
+      // SSO账号不存在
+      Taro.HUD.showToastMessage(res.message)
+    } else if (res.code === -20005)  {
+      // 该积分账号已绑定
+      Taro.HUD.showToastMessage(res.message)
+    } else if (res.code === -20006)  {
+      // 用户账号状态异常
+      console.log("用户账号状态异常");
+      Taro.ROUTER.redirectTo(`/pages/disable/index?act=${actId}&status=2`);
+    } else if (res.code === -20007)  {
+      // 当前不在活动时间
+      console.log("当前不在活动时间");
+      Taro.ROUTER.redirectTo(`/pages/disable/index?act=${actId}&status=1`);
     } else {
       Taro.HUD.showToastMessage(res.message)
     }
+  }
+
+  // 活动处理
+  const userDataHandler = (params, resData) => {
+    Taro.HUD.showToastMessage('绑定成功')
+      
+    const activityId = params.activityId || ''
+    const pointAccountId = resData.pointAccountId || ''
+
+    // 用户信息
+    const loginInfo = resData
+    Taro.UTIL.setPGStorage('login_info', loginInfo)	
+
+    // 活动信息
+    const activityInfo = {
+      act: activityId,
+      acc: pointAccountId,
+    }
+    Taro.UTIL.setPGStorage('activity_info', activityInfo)	
+
+    // 检查用户状态，跳转首页
+    setTimeout(() => {
+      Taro.UTIL.goToActivityHomeWithActId(activityId, pointAccountId)
+    }, 1500);
   }
 
   return (

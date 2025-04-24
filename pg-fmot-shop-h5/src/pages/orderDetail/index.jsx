@@ -46,10 +46,11 @@ export default function Index() {
     setIsShowPage(true);
 
     const act = router.params.act || ''
-    const acc = router.params.acc || ''
-    const id = router.params.id || '';
+    const acc = router.params.acc || ''    
     setActId(act)
     setAccId(acc)
+    
+    const id = router.params.id || '';
     setOrderId(id);
 
     requestData({
@@ -82,7 +83,7 @@ export default function Index() {
       ...query
     }
 
-    Taro.HUD.showLoading()
+    // Taro.HUD.showLoading()
     const res = await Taro.NETWORK.orderDetailInfo(params) 
     Taro.HUD.hideLoading()
 

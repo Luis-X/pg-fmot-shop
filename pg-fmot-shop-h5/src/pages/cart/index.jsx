@@ -64,7 +64,7 @@ export default function Index() {
       ...query
     }
 
-    Taro.HUD.showLoading()
+    // Taro.HUD.showLoading()
     const res = await Taro.NETWORK.orderActivityInfo(params) 
     Taro.HUD.hideLoading()
 
@@ -82,7 +82,7 @@ export default function Index() {
       ...query
     }
 
-     Taro.HUD.showLoading()
+    // Taro.HUD.showLoading()
     const res = await Taro.NETWORK.cartList(params) 
     Taro.HUD.hideLoading()
 
@@ -144,7 +144,7 @@ export default function Index() {
       quantity: val,
     }
 
-    Taro.HUD.showLoading()
+    // Taro.HUD.showLoading()
     const res = await Taro.NETWORK.cartChange(params) 
     Taro.HUD.hideLoading()
     setDelAlertQuery({})

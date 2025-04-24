@@ -41,6 +41,7 @@ export default function Index() {
     const acc = router.params.acc || ''
     setActId(act)
     setAccId(acc)
+    
     setTabId(0)
 
     requestListData({
@@ -91,7 +92,7 @@ export default function Index() {
     const pointAccountId = query.pointAccountId || ''
 
     if (!isLoadMore) {
-      Taro.HUD.showLoading()
+      // Taro.HUD.showLoading()
       setAvailablePoint(-1)
       setDataList([])
     } else {

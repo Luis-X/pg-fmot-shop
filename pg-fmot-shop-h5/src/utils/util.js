@@ -7,8 +7,6 @@ import CONFIG from '../api/config';
 export default {
   pgConfig,
 
-  isH5,
-
   setPGStorage,
   getPGStorage,
   clearPGStorage,
@@ -19,9 +17,8 @@ export default {
 
   encodeBaseStr,
   decodeBaseStr,
-
-  checkAgreementStatusShow,
   
+  goToACLAuthWithActId,
   goToSSOLoginWithActId,
   goToActivityHomeWithActId,
 
@@ -31,10 +28,6 @@ export default {
 
 function pgConfig() {
   return CONFIG
-}
-
-function isH5() {
-  return process.env.TARO_ENV === 'h5';
 }
 
 function setPGStorage(key, data) {
@@ -196,23 +189,45 @@ function decodeBaseStr(str) {
   return result
 }
 
- // 检查协议状态
- function checkAgreementStatusShow() {    
-  const loginInfo = Taro.UTIL.getPGStorage('login_info')
-  const isAgreeAgreement = loginInfo.agreement;
-  if (isAgreeAgreement) {
-    console.log("已同意协议");
-    return false
-  } else {
-    console.log("未同意协议");
-    return true
+// ACL授权，获取code
+async function goToACLAuthWithActId(actId, pageName) { 
+  if (!actId) {
+    console.log('缺少 actId')
+    return
   }
+
+  clearPGStorage('token_info')
+  clearPGStorage('login_info')  
+  clearPGStorage('activity_info')
+  clearPGStorage('service_info')
+  clearPGStorage('order_confirm_info')
+  
+  let pageUrl = ''
+  if (pageName) {
+    // 指定页面
+    pageUrl = `${CONFIG.aclPage}?id=${actId}&page=${pageName}`
+  } else {
+    // 默认页面
+    pageUrl = `${CONFIG.aclPage}?id=${actId}`
+  }
+  const aclAuthUrl = `${CONFIG.aclAuthUrl}${encodeURIComponent(pageUrl)}`
+  
+  console.log(aclAuthUrl)
+  window.location.replace(aclAuthUrl)
 }
 
-// SSO登录
+// SSO登录，获取code
 function goToSSOLoginWithActId(actId) {
-  clearPGStorage('login_info')
+  if (!actId) {
+    console.log('缺少 actId')
+    return
+  }
+
   clearPGStorage('token_info')
+  clearPGStorage('login_info')  
+  clearPGStorage('activity_info')
+  clearPGStorage('service_info')
+  clearPGStorage('order_confirm_info')
 
   const callbackUrl = `${CONFIG.ssoCallbackUrl}?act=${actId}`
   const ssoLoginUrl = `${CONFIG.ssoLoginUrl}&subscription-key=${decodeBaseStr(CONFIG.skId)}&redirect_uri=${encodeURIComponent(callbackUrl)}`
@@ -221,19 +236,19 @@ function goToSSOLoginWithActId(actId) {
   window.location.replace(ssoLoginUrl)
 }
 
- // 检查用户状态，跳转活动首页
-function goToActivityHomeWithActId(activityId, pointAccountId) {    
-  const userData = Taro.UTIL.getPGStorage('login_info')
-  const isAvailableUser = true;
-  if (isAvailableUser) {
-    console.log("用户正常");
-    console.log("进入首页");
-    Taro.ROUTER.redirectTo(`/pages/home/index?act=${activityId}&acc=${pointAccountId}`);
-  } else {
-    console.log("用户异常");
-    console.log("暂不符合活动资格");
-    Taro.ROUTER.redirectTo(`/pages/disable/index?act=${activityId}&acc=${pointAccountId}&status=2`);
+// 检查用户状态，跳转活动首页
+function goToActivityHomeWithActId(actId, accId) {   
+  if (!actId) {
+    console.log('缺少 actId')
+    return
   }
+  if (!accId) {
+    console.log('缺少 accId')
+    return
+  } 
+  
+  console.log("进入首页");
+  Taro.ROUTER.redirectTo(`/pages/home/index?act=${actId}&acc=${accId}`);
 }
 
 // 配置标签列表

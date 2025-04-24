@@ -1,4 +1,4 @@
 export default definePageConfig({
-  navigationBarTitleText: 'FMOT SHOP',
+  navigationBarTitleText: '',
   disableScroll: true
 })

@@ -32,8 +32,14 @@ export default function Index() {
     
     setIsShowPage(true);
 
-    const type = router.params.status;
-    if (type === '1') {
+    const act = router.params.act || ''
+    const acc = router.params.acc || ''
+    setActId(act)
+    setAccId(acc)
+    
+    const status = router.params.status || '';
+
+    if (status === '1') {
       // 不在活动时间内
       Taro.TRACKER.pageViewTracker('不在活动时间内');
       setStatusType(1);   
@@ -45,6 +51,8 @@ export default function Index() {
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
+  const [actId, setActId] = useState('');
+  const [accId, setAccId] = useState('');
   const [statusType, setStatusType] = useState(''); // 1: 不在活动时间内 2: 不符合活动资格
 
   return (

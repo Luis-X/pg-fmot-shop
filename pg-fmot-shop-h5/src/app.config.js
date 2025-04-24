@@ -17,7 +17,7 @@ export default defineAppConfig({
   window: {
     backgroundTextStyle: 'light',
     navigationBarBackgroundColor: '#fff',
-    navigationBarTitleText: 'FMOT SHOP',
+    navigationBarTitleText: '商城',
     navigationBarTextStyle: 'black'
   }
 })

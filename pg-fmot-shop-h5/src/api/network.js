@@ -6,11 +6,8 @@ import CONFIG from '../api/config';
 
 
 export default {
-  aclUrl,
-
   login, 
 
-  bindOpenId,
   bindActivityId,
 
   agreeAgreement,
@@ -38,71 +35,25 @@ export default {
   wxConfigShareData,
 };
 
-// acl 授权
-function aclUrl (params) {
-  return REQUEST.post('/aclUrl', params)
-}
-
-// code 登录
+// code 登录 [ok]
 function login (params) {
-  // return REQUEST.post('/user/login', params)
-  const res = {
-    code: 0,
-    data: {
-      // token
-      token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZC1mbW90LXNob3BwaW5nIiwiYXVkIjoicmQtZm1vdC1zaG9wcGluZyIsIm5iZiI6MTc0NTIyMDE0OSwicm9sZSI6Ind4LW1pbmktdXNlciIsImRhdGEiOiJ7fSIsImlzcyI6InJkLWZtb3Qtc2hvcHBpbmciLCJleHAiOjM2MzczODAxNDksImlhdCI6MTc0NTIyMDE0OSwidXNlcklkIjoiMiJ9.qr7CpMAJUXZzlvH1bq1Npw8ykd0E9SrHZugrkIaUa5Y',
-      // 是否在活动时间内
-      isActivityTime: true,
-      // 活动类型 1: 内部活动 2: 外部活动
-      activityType: 2,
-      // 是否绑定OpenId
-      isBindOpenId: true,
-      // 账号是否正常
-      isAvailableUser: true,
-      // 是否同意协议
-      agreement: false,
-      // 邮箱是否白名单且未绑定过 (内部)
-      isAvailableEmail: true,
-      // 是否绑定openId为内部用户
-      isInternalUser: false,
-      // 是否绑定活动为外部用户
-      isExternalUser: false,
-    },
-    // data: {
-    //   "token": "string",
-    //   "pointAccountId": "string",
-    //   "agreement": true,
-    //   "informedConsentForm": "string"
-    // },
-    message: '登录失败'
-  }
-  return clientMockData(res, params);
-}
-// 邮箱绑定OpenId
-function bindOpenId (params) {
-  const res = {
-    code: 1,
-    data: {},
-    message: '绑定失败'
-  }
-  return clientMockData(res, params);
+  return REQUEST.post('/user/login', params)
 }
 
 // 账号绑定 [ok]
 function bindActivityId (params) {
-  // return REQUEST.post('/api/user/bindPointAccount', params)
-  const res = {
-    "code": 0,
-    "message": "成功",
-    "data": {
-        "pointAccountId": "cb1ed71576134705b21033ee2bddd4ab",
-        "agreement": false,
-        "informedConsentForm": "1"
-    }
-  }
-  return clientMockData(res, params);
+  return REQUEST.post('/api/user/bindPointAccount', params)
+  // const res = {
+  //   "code": 0,
+  //   "message": "成功",
+  //   "data": {
+  //       "pointAccountId": "cb1ed71576134705b21033ee2bddd4ab",
+  //       "agreement": false,
+  //       "informedConsentForm": "1"
+  //   }
+  // }
+  // return clientMockData(res, params);
 }
-
 // 同意协议 [ok]
 function agreeAgreement (params) {
   return REQUEST.post('/api/user/userAgreement', params)

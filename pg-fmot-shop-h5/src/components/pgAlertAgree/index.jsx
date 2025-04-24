@@ -26,7 +26,15 @@ export default function Index(props) {
   const checkAgreementStatus = () => {
     const loginInfo = Taro.UTIL.getPGStorage('login_info')
     const isAgree = loginInfo.agreement;
-    const contentText = loginInfo.informedConsentForm || '';
+    const activity = loginInfo.activity || {};
+    let contentText = '';
+    if (activity.informedConsentForm) {
+      // 有账号，直接进入
+      contentText = activity.informedConsentForm || ''
+    } else {
+      // 无账号，绑定后，进入
+      contentText = loginInfo.informedConsentForm || ''
+    }
     if (isAgree) {
       console.log("已同意协议");
       setIsAlertShow(false)
@@ -52,7 +60,7 @@ export default function Index(props) {
       pointAccountId: acc,
     }
 
-    Taro.HUD.showLoading()
+    // Taro.HUD.showLoading()
     const res = await Taro.NETWORK.agreeAgreement(params) 
     Taro.HUD.hideLoading()
 

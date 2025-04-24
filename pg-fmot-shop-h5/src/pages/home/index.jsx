@@ -96,7 +96,7 @@ export default function Index() {
     const pointAccountId = query.pointAccountId || ''
 
     if (!isLoadMore) {
-      Taro.HUD.showLoading()
+      // Taro.HUD.showLoading()
       setBannerList([])
       setCurrentIndex(0)
       setDataList([])

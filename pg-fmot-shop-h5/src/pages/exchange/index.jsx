@@ -81,7 +81,7 @@ export default function Index() {
     const pointAccountId = query.pointAccountId || ''
 
     if (!isLoadMore) {
-      Taro.HUD.showLoading()
+      // Taro.HUD.showLoading()
       setDataList([])
     } else {
       if (pageIndex > 0 && !hasMore) {
@@ -132,7 +132,104 @@ export default function Index() {
   const clickItem = (item) => {
     const actId = item.activityId || '';
     const accId = item.pointAccountId || '';
-    Taro.UTIL.goToActivityHomeWithActId(actId, accId)
+    Taro.UTIL.goToActivityHomeWithActId(activityId, pointAccountId)
+
+    // requestLoginData({
+    //   activityId: actId,
+    //   pointAccountId: accId,
+    // })
+  }
+  // FIXME: 活动对应账号和token
+  async function requestLoginData(query) {
+    
+    const params = {
+      ...query 
+    }
+
+    const res = await Taro.NETWORK.login(params) 
+
+    const activityId = params.activityId || ''
+
+    if (res.code === 0) {
+      const resData = res.data || {}
+      userDataHandler(params, resData)
+    } else if (res.code === -20004)  {
+      // SSO账号不存在
+      Taro.HUD.showToastMessage(res.message)
+    } else if (res.code === -20005)  {
+      // 该积分账号已绑定
+      Taro.HUD.showToastMessage(res.message)
+    } else if (res.code === -20006)  {
+      // 用户账号状态异常
+      console.log("用户账号状态异常");
+      Taro.ROUTER.redirectTo(`/pages/disable/index?act=${activityId}&status=2`);
+    } else if (res.code === -20007)  {
+      // 当前不在活动时间
+      console.log("当前不在活动时间");
+      Taro.ROUTER.redirectTo(`/pages/disable/index?act=${activityId}&status=1`);
+    } else {
+      Taro.HUD.showToastMessage(res.message)
+    }
+  }
+
+  // 活动处理
+  const userDataHandler = (params, resData) => {
+    const activityId = params.activityId || ''
+    const pointAccountId = resData.pointAccountId || ''
+    console.log('活动时间内，账号正常')
+
+    // 登录信息      
+    const token = resData.token || ''
+    const tokenInfo = {
+      token: token
+    }
+    Taro.UTIL.setPGStorage('token_info', tokenInfo)
+      
+    // 用户信息
+    const loginInfo = resData
+    Taro.UTIL.setPGStorage('login_info', loginInfo)
+      
+    // 活动信息
+    const activityInfo = {
+      act: activityId,
+      acc: pointAccountId,
+    }
+    Taro.UTIL.setPGStorage('activity_info', activityInfo)
+
+    // 活动类型、绑定状态
+    const activityData = resData.activity || {}
+    const activityType = activityData.activityType || '';
+    const isBind = pointAccountId ? true : false;
+
+    // 内部活动
+    if (activityType === 'EMPLOYEE') {
+      console.log("内部活动")
+      if (isBind) {
+        console.log("内部-已绑定");
+        Taro.UTIL.goToActivityHomeWithActId(activityId, pointAccountId)
+      } else {
+        console.log("内部-未绑定");
+        console.log("内部-sso登录");
+        Taro.UTIL.goToSSOLoginWithActId(activityId)           
+      }
+      return
+    }      
+    // 外部活动
+    if (activityType === 'CUSTOMER') {
+      console.log("外部活动")
+      if (isBind) {
+        console.log("外部-已绑定");
+        Taro.UTIL.goToActivityHomeWithActId(activityId, pointAccountId)
+      } else {
+        console.log("外部-未绑定");
+        console.log("进入登录页");
+        Taro.ROUTER.redirectTo(`/pages/login/index?act=${activityId}`);
+      }
+      return
+    }
+    // 未知活动
+    console.log("未知活动")
+    Taro.HUD.showToastMessage('未知活动')
   }
 
   // 兑换列表

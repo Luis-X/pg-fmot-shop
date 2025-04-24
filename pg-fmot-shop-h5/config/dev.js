@@ -13,6 +13,10 @@ export default {
           target: 'https://ministore-qa.shenghuojia.com',
           changeOrigin: true,
         },
+        '/user': {
+          target: 'https://ministore-qa.shenghuojia.com',
+          changeOrigin: true,
+        },
       }
     },
   }
