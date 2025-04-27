@@ -9,6 +9,8 @@ export default {
 
   setPGStorage,
   getPGStorage,
+  setPGLocalStorage,
+  getPGLocalStorage,
   clearPGStorage,
 
   checkIsLogin,
@@ -18,9 +20,9 @@ export default {
   encodeBaseStr,
   decodeBaseStr,
   
-  goToACLAuthWithActId,
-  goToSSOLoginWithActId,
-  goToActivityHomeWithActId,
+  goToACLAuthPage,
+  goToSSOLoginPage,
+  goToActivityPage,
 
   configLabelTagList,
   showPreviewImg,
@@ -51,9 +53,31 @@ function getPGStorage(key) {
   return result
 }
 
+function setPGLocalStorage(key, data) {
+  try {
+    const obj = JSON.stringify(data)
+    localStorage.setItem(key, obj)
+  } catch (error) {
+    
+  }
+}
+
+function getPGLocalStorage(key) {
+  let result = {}
+  try {
+    const objJson = localStorage.getItem(key)
+    const obj = JSON.parse(objJson)
+    result = obj || {}
+  } catch (error) {
+    
+  }
+  return result
+}
+
 function clearPGStorage(key) {
   try {
     sessionStorage.removeItem(key)
+    localStorage.removeItem(key)
   } catch (error) {
     
   }  
@@ -190,54 +214,92 @@ function decodeBaseStr(str) {
 }
 
 // ACL授权，获取code
-async function goToACLAuthWithActId(actId, pageName) { 
+async function goToACLAuthPage(data) {
+  const { actId } = data || {}
+
+  const pageInfo = getPGStorage('enter_page')
+  const actPage = pageInfo.actPage || ''
+
   if (!actId) {
     console.log('缺少 actId')
     return
   }
 
   clearPGStorage('token_info')
-  clearPGStorage('login_info')  
+  clearPGStorage('token_sso')
+  clearPGStorage('agree_info')  
   clearPGStorage('activity_info')
   clearPGStorage('service_info')
   clearPGStorage('order_confirm_info')
-  
+  /*
+  // 前端拼接acl
   let pageUrl = ''
-  if (pageName) {
+  if (actPage) {
     // 指定页面
-    pageUrl = `${CONFIG.aclPage}?id=${actId}&page=${pageName}`
+    console.log('acl 指定页面', actPage)
+    pageUrl = `${CONFIG.aclPage}?id=${actId}&page=${actPage}`
   } else {
     // 默认页面
     pageUrl = `${CONFIG.aclPage}?id=${actId}`
   }
   const aclAuthUrl = `${CONFIG.aclAuthUrl}${encodeURIComponent(pageUrl)}`
+  console.log(aclAuthUrl)
+  window.location.replace(aclAuthUrl)
+  */
+
+  let aclAuthUrl = ''
+  if (actPage) {
+    // 指定页面
+    console.log('acl 指定页面', actPage)
+    aclAuthUrl = `${CONFIG.aclRedirectUrl}?id=${actId}&page=${actPage}`
+  } else {
+    // 默认页面
+    aclAuthUrl = `${CONFIG.aclRedirectUrl}?id=${actId}`
+  }
   
   console.log(aclAuthUrl)
   window.location.replace(aclAuthUrl)
 }
 
 // SSO登录，获取code
-function goToSSOLoginWithActId(actId) {
+function ssoLoginRedirectUri(actId, actPage) {
+  let url = ''
+  if (actPage) {
+    // 指定页面
+    console.log('sso 指定页面', actPage)
+    url = `${CONFIG.ssoCallbackUrl}?id=${actId}&page=${actPage}`
+  } else {
+    // 默认页面
+    url = `${CONFIG.ssoCallbackUrl}?id=${actId}`
+  }
+  return url
+}
+
+function goToSSOLoginPage(data) {
+  const { actId, actPage } = data || {}
+
   if (!actId) {
     console.log('缺少 actId')
     return
   }
 
   clearPGStorage('token_info')
-  clearPGStorage('login_info')  
+  clearPGStorage('agree_info')  
   clearPGStorage('activity_info')
   clearPGStorage('service_info')
   clearPGStorage('order_confirm_info')
 
-  const callbackUrl = `${CONFIG.ssoCallbackUrl}?act=${actId}`
-  const ssoLoginUrl = `${CONFIG.ssoLoginUrl}&subscription-key=${decodeBaseStr(CONFIG.skId)}&redirect_uri=${encodeURIComponent(callbackUrl)}`
+  const pageUrl = ssoLoginRedirectUri(actId, actPage)
+  const ssoLoginUrl = `${CONFIG.ssoLoginUrl}&subscription-key=${decodeBaseStr(CONFIG.skId)}&redirect_uri=${encodeURIComponent(pageUrl)}`
   
   console.log(ssoLoginUrl)
   window.location.replace(ssoLoginUrl)
 }
 
 // 检查用户状态，跳转活动首页
-function goToActivityHomeWithActId(actId, accId) {   
+function goToActivityPage(data) {   
+  const { actId, accId, actPage } = data || {}
+
   if (!actId) {
     console.log('缺少 actId')
     return
@@ -246,9 +308,18 @@ function goToActivityHomeWithActId(actId, accId) {
     console.log('缺少 accId')
     return
   } 
-  
-  console.log("进入首页");
-  Taro.ROUTER.redirectTo(`/pages/home/index?act=${actId}&acc=${accId}`);
+  let url = ''
+  if (actPage) {
+    // 指定页面
+    console.log("进入指定页");
+    url = `/pages/${actPage}/index?act=${actId}&acc=${accId}`
+  } else {
+    // 默认页面
+    console.log("进入首页");
+    url = `/pages/home/index?act=${actId}&acc=${accId}`
+  }  
+  console.log(url)
+  Taro.ROUTER.redirectTo(url);
 }
 
 // 配置标签列表

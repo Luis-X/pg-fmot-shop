@@ -24,17 +24,9 @@ export default function Index(props) {
   const [contentText, setContentText] = useState('')
 
   const checkAgreementStatus = () => {
-    const loginInfo = Taro.UTIL.getPGStorage('login_info')
-    const isAgree = loginInfo.agreement;
-    const activity = loginInfo.activity || {};
-    let contentText = '';
-    if (activity.informedConsentForm) {
-      // 有账号，直接进入
-      contentText = activity.informedConsentForm || ''
-    } else {
-      // 无账号，绑定后，进入
-      contentText = loginInfo.informedConsentForm || ''
-    }
+    const agreeInfo = Taro.UTIL.getPGStorage('agree_info')
+    const isAgree = agreeInfo.agreement;
+    const contentText = agreeInfo.informedConsentForm || '';
     if (isAgree) {
       console.log("已同意协议");
       setIsAlertShow(false)
@@ -67,9 +59,9 @@ export default function Index(props) {
     if (res.code === 0) { 
       setIsAlertShow(false)
 
-      let loginInfo = Taro.UTIL.getPGStorage('login_info') || {}
-      loginInfo.agreement = true
-      Taro.UTIL.setPGStorage('login_info', loginInfo)	
+      let agreeInfo = Taro.UTIL.getPGStorage('agree_info') || {}
+      agreeInfo.agreement = true
+      Taro.UTIL.setPGStorage('agree_info', agreeInfo)	
 
       if (props.onConfirm) {
         props.onConfirm()

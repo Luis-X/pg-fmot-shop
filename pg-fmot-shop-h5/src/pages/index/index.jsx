@@ -10,16 +10,14 @@ export default function Index() {
 
   useLoad(() => {
     Taro.WXSDK.hideOptionMenu();
-    setTimeout(() => {
-      createdPage();
-    }, 1000);
+    createdPage();
   });
 
   useDidShow(() => {
     Taro.WXSDK.hideOptionMenu();
   });
 
-  // FIXME: 服务端提供接口，重定向acl，回调携带act、page、code参数到此页面
+  // FIXME: 服务端提供接口，重定向acl，回调携带id、page、code参数到此页面
   const createdPage = async () => {
 
     Taro.TRACKER.pageViewTracker("授权页");    
@@ -27,7 +25,6 @@ export default function Index() {
     const act = router.params.id || ''
     const page = router.params.page || ''
     setIsNoActId(act ? false : true)
-    setActPage(page)
 
     const code = router.params.code || ''
     const openid = router.params.openid || ''
@@ -41,8 +38,17 @@ export default function Index() {
     console.log('acl page:', page)
     console.log('acl code:', code)
 
+    // 入口信息
+    if (page) {
+      const pageInfo = {
+        actPage: page
+      }
+      Taro.UTIL.setPGStorage('enter_page', pageInfo)
+    }
+
+    // 活动、code
     if (act) {            
-      if (code) {
+      if (code) {        
         requestLoginData({
           activityId: act,
           code: code,
@@ -51,68 +57,61 @@ export default function Index() {
           openid: openid,
           unionid: unionid,
           access_token: access_token,
-        })
+        }, page)
       } else {
-        Taro.UTIL.goToACLAuthWithActId(act)
+        Taro.UTIL.goToACLAuthPage({
+          actId: act
+        })
       }    
     } else {
+      // 跳转指定页面
       console.log('未获取到活动ID')
-      setIsShowPage(true);
+      setIsShowPage(true);     
     }
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
   const [isNoActId, setIsNoActId] = useState(false);
-  const [actPage, setActPage] = useState('');
 
-  async function requestLoginData(query) {
+  async function requestLoginData(query, page) {
     
     const params = {
       ...query 
     }
 
-    const res = await Taro.NETWORK.login(params) 
-
-    const activityId = params.activityId || ''
+    const res = await Taro.NETWORK.login(params)
+    Taro.HUD.hideLoading()
 
     if (res.code === 0) {
       const resData = res.data || {}
-      userDataHandler(params, resData)
-    } else if (res.code === -20004)  {
-      // SSO账号不存在
-      Taro.HUD.showToastMessage(res.message)
-    } else if (res.code === -20005)  {
-      // 该积分账号已绑定
-      Taro.HUD.showToastMessage(res.message)
-    } else if (res.code === -20006)  {
-      // 用户账号状态异常
-      console.log("用户账号状态异常");
-      Taro.ROUTER.redirectTo(`/pages/disable/index?act=${activityId}&status=2`);
-    } else if (res.code === -20007)  {
-      // 当前不在活动时间
-      console.log("当前不在活动时间");
-      Taro.ROUTER.redirectTo(`/pages/disable/index?act=${activityId}&status=1`);
+      userDataHandler(params, resData, page)
     } else {
       Taro.HUD.showToastMessage(res.message)
     }
   }
 
   // 活动处理
-  const userDataHandler = (params, resData) => {
+  const userDataHandler = (params, resData, page) => {
+
     const activityId = params.activityId || ''
     const pointAccountId = resData.pointAccountId || ''
     console.log('活动时间内，账号正常')
+
+    const activityData = resData.activity || {}
 
     // 登录信息      
     const token = resData.token || ''
     const tokenInfo = {
       token: token
     }
-    Taro.UTIL.setPGStorage('token_info', tokenInfo)
+    Taro.UTIL.setPGStorage('token_info', tokenInfo)    
       
     // 用户信息
-    const loginInfo = resData
-    Taro.UTIL.setPGStorage('login_info', loginInfo)
+    const agreeInfo = {
+      agreement: resData.agreement,
+      informedConsentForm: activityData.informedConsentForm,
+    }
+    Taro.UTIL.setPGStorage('agree_info', agreeInfo)
       
     // 活动信息
     const activityInfo = {
@@ -121,8 +120,7 @@ export default function Index() {
     }
     Taro.UTIL.setPGStorage('activity_info', activityInfo)
 
-    // 活动类型、绑定状态
-    const activityData = resData.activity || {}
+    // 活动类型、绑定状态    
     const activityType = activityData.activityType || '';
     const isBind = pointAccountId ? true : false;
 
@@ -131,11 +129,20 @@ export default function Index() {
       console.log("内部活动")
       if (isBind) {
         console.log("内部-已绑定");
-        Taro.UTIL.goToActivityHomeWithActId(activityId, pointAccountId)
+        Taro.UTIL.goToActivityPage({
+          actId: activityId,
+          accId: pointAccountId,
+          actPage: page
+        })
       } else {
         console.log("内部-未绑定");
         console.log("内部-sso登录");
-        Taro.UTIL.goToSSOLoginWithActId(activityId)           
+        // 防止sso回跳绑定，session storage token丢失
+        Taro.UTIL.setPGLocalStorage('token_sso', tokenInfo)
+        Taro.UTIL.goToSSOLoginPage({
+          actId: activityId,
+          actPage: page
+        })           
       }
       return
     }      
@@ -144,11 +151,15 @@ export default function Index() {
       console.log("外部活动")
       if (isBind) {
         console.log("外部-已绑定");
-        Taro.UTIL.goToActivityHomeWithActId(activityId, pointAccountId)
+        Taro.UTIL.goToActivityPage({
+          actId: activityId,
+          accId: pointAccountId,
+          actPage: page
+        })
       } else {
         console.log("外部-未绑定");
         console.log("进入登录页");
-        Taro.ROUTER.redirectTo(`/pages/login/index?act=${activityId}`);
+        Taro.ROUTER.redirectTo(`/pages/login/index?id=${activityId}&page=${page}`);
       }
       return
     }

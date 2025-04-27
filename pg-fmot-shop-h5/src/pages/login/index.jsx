@@ -11,7 +11,7 @@ import PGLoading from "../../components/pgLoading/index";
 // const imgBG = ASSET_IMG.assetImgWithName('login-bg.png')
 import imgBG from '../../images/login-bg.png';
 import imgTitle from '../../images/login-title.png';
-import imgBtnBind from '../../images/login-btn-bind.png';
+import imgBtnBind from '../../images/login-btn.png';
 import imgBtnLogin from '../../images/login-btn-login.png';
 
 export default function Index() {
@@ -38,12 +38,19 @@ export default function Index() {
     Taro.TRACKER.pageViewTracker("登录");
     setIsShowPage(true);
 
-    const act = router.params.act || ''
+    const act = router.params.id || ''
+    const page = router.params.page || ''  
+
+    console.log('login act:', act)
+    console.log('login page:', page)
+
     setActId(act)
+    setActPage(page)
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
   const [actId, setActId] = useState('');
+  const [actPage, setActPage] = useState('');
 
   // 确认绑定
   const clickBindConfirm = () => {
@@ -71,36 +78,25 @@ export default function Index() {
 
     if (res.code === 0) {
       const resData = res.data || {}
-      userDataHandler(params, resData)
-    } else if (res.code === -20004)  {
-      // SSO账号不存在
-      Taro.HUD.showToastMessage(res.message)
-    } else if (res.code === -20005)  {
-      // 该积分账号已绑定
-      Taro.HUD.showToastMessage(res.message)
-    } else if (res.code === -20006)  {
-      // 用户账号状态异常
-      console.log("用户账号状态异常");
-      Taro.ROUTER.redirectTo(`/pages/disable/index?act=${actId}&status=2`);
-    } else if (res.code === -20007)  {
-      // 当前不在活动时间
-      console.log("当前不在活动时间");
-      Taro.ROUTER.redirectTo(`/pages/disable/index?act=${actId}&status=1`);
+      userDataHandler(resData)
     } else {
       Taro.HUD.showToastMessage(res.message)
     }
   }
 
   // 活动处理
-  const userDataHandler = (params, resData) => {
+  const userDataHandler = (resData) => {
     Taro.HUD.showToastMessage('绑定成功')
       
-    const activityId = params.activityId || ''
+    const activityId = actId || ''
     const pointAccountId = resData.pointAccountId || ''
 
     // 用户信息
-    const loginInfo = resData
-    Taro.UTIL.setPGStorage('login_info', loginInfo)	
+    const agreeInfo = {
+      agreement: resData.agreement,
+      informedConsentForm: resData.informedConsentForm,
+    }
+    Taro.UTIL.setPGStorage('agree_info', agreeInfo)
 
     // 活动信息
     const activityInfo = {
@@ -111,7 +107,11 @@ export default function Index() {
 
     // 检查用户状态，跳转首页
     setTimeout(() => {
-      Taro.UTIL.goToActivityHomeWithActId(activityId, pointAccountId)
+      Taro.UTIL.goToActivityPage({
+        actId: activityId,
+        accId: pointAccountId,
+        actPage: actPage
+      })
     }, 1500);
   }
 
@@ -121,7 +121,10 @@ export default function Index() {
       Taro.HUD.showToastMessage('活动ID为空')
       return
     }
-    Taro.UTIL.goToSSOLoginWithActId(actId)
+    Taro.UTIL.goToSSOLoginPage({
+      actId: actId,
+      actPage: actPage
+    })
   }
 
   // 账号输入

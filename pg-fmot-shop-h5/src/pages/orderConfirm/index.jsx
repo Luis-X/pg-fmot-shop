@@ -33,9 +33,7 @@ export default function Index() {
 
   useLoad(() => {
     Taro.WXSDK.hideOptionMenu();
-    setTimeout(() => {
-      createdPage();
-    }, 1000);
+    createdPage();
   });
 
   useUnload(() => {

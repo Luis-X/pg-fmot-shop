@@ -1,8 +1,5 @@
-import wx from 'weixin-js-sdk';
 
-import Taro from '@tarojs/taro';
 import REQUEST from '../utils/request';
-import CONFIG from '../api/config';
 
 
 export default {
@@ -30,9 +27,6 @@ export default {
   cartChange,
 
   trackerSubmit,
-
-  wxSignShare,
-  wxConfigShareData,
 };
 
 // code 登录 [ok]
@@ -254,8 +248,8 @@ function mineOrderList (params) {
   // return clientMockData(res, params);
 }
 // 我的兑换 [ok]
-function mineExchangeList (params) {
-  return REQUEST.get('/api/activity/getMyForH5', params)
+function mineExchangeList () {
+  return REQUEST.get('/api/activity/getMyForH5', {})
   // const res = {
   //   "code": 0,
   //   "message": "成功",
@@ -320,109 +314,6 @@ function trackerSubmit (params) {
     message: '埋点上报失败'
   }
   return clientMockData(res, params);
-}
-
-
-// 微信签名
-function wxSignShare (params) {
-  return REQUEST.post('/api/wxJsSdk/getSharingSign', params)
-}
-// 微信js-sdk
-async function wxConfigShareData (shareData, senceType) {
-  console.log(`wx-share-----${JSON.stringify(shareData)}`)
-
-  const params = {
-    url: window.location.href.split('#')[0]
-  }
-  const res = await Taro.NETWORK.wxSignShare(params) 
-
-  if (res.code === 0) {
-    const data = res.data || {}
-    const appId = data.appid
-    const timestamp = data.timestamp
-    const nonceStr = data.nonceStr
-    const signature = data.signature
-    const jsApiList = [
-      'updateAppMessageShareData',
-      'updateTimelineShareData',
-      'hideMenuItems',
-      'hideOptionMenu',
-      'showOptionMenu',
-      'onMenuShareTimeline',
-      'onMenuShareAppMessage',
-    ]
-
-    // FIXME: wx share debug
-    wx.config({
-      debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-      appId: appId, // 必填，公众号的唯一标识
-      timestamp: timestamp, // 必填，生成签名的时间戳
-      nonceStr: nonceStr, // 必填，生成签名的随机串
-      signature: signature, // 必填，签名
-      jsApiList: jsApiList // 必填，需要使用的JS接口列表
-    })
-
-    wx.ready(function () {
-      // wx.updateAppMessageShareData({
-      //   title: shareData.title || '',
-      //   desc: shareData.desc || '',
-      //   link: shareData.link,
-      //   imgUrl: shareData.imgUrl || '',
-      //   success: function () {
-      //     // 设置成功
-      //     console.log('share - 好友')
-      //   }
-      // })
-      //
-      // wx.updateTimelineShareData({
-      //   title: shareData.title || '',
-      //   desc: shareData.desc || '',
-      //   link: shareData.link,
-      //   imgUrl: shareData.imgUrl || '',
-      //   success: function () {
-      //     // 设置成功
-      //     console.log('share - 朋友圈')
-      //   }
-      // })
-
-      wx.onMenuShareAppMessage({
-        title: shareData.title || '',
-        desc: shareData.desc || '',
-        link: shareData.link,
-        imgUrl: shareData.imgUrl || '',
-        success: function () {
-          // 用户点击了分享后执行的回调函数 (即将废弃)
-          console.log('share - - 好友')        
-        }
-      })
-
-      wx.onMenuShareTimeline({
-        title: shareData.title || '',
-        desc: shareData.desc || '',
-        link: shareData.link,
-        imgUrl: shareData.imgUrl || '',
-        success: function () {
-          // 用户点击了分享后执行的回调函数 (即将废弃)
-          console.log('share - - 朋友圈')
-        }
-      })
-      
-      wx.hideMenuItems({
-        menuList: [
-          'menuItem:copyUrl',
-          'menuItem:originPage',
-          'menuItem:share:email'
-        ]
-      })
-      /*
-      wx.showMenuItems({
-        menuList: ['menuItem:share:appMessage', 'menuItem:share:timeline']
-      })
-      */
-    })
-  } else {
-    console.log('wxconfig data error')
-  }
 }
 
 
