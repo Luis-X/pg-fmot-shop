@@ -39,18 +39,18 @@ export default function Index() {
     setIsShowPage(true);
 
     const act = router.params.id || ''
-    const page = router.params.page || ''  
+    const actPage = router.params.page || ''  
 
     console.log('login act:', act)
-    console.log('login page:', page)
+    console.log('login page:', actPage)
 
     setActId(act)
-    setActPage(page)
+    actPageId(actPage)
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
   const [actId, setActId] = useState('');
-  const [actPage, setActPage] = useState('');
+  const [actPageId, setActPageId] = useState('');
 
   // 确认绑定
   const clickBindConfirm = () => {
@@ -110,7 +110,7 @@ export default function Index() {
       Taro.UTIL.goToActivityPage({
         actId: activityId,
         accId: pointAccountId,
-        actPage: actPage
+        actPage: actPageId
       })
     }, 1500);
   }
@@ -123,7 +123,7 @@ export default function Index() {
     }
     Taro.UTIL.goToSSOLoginPage({
       actId: actId,
-      actPage: actPage
+      actPage: actPageId
     })
   }
 

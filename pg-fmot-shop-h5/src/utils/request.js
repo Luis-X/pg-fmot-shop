@@ -104,9 +104,14 @@ function needLoginWithActId(act) {
     icon: 'none',
     duration: 2000
   })
+
+  const enterPage = getPGStorage('enter_page')
+  const actPage = enterPage.actPage || ''
+
   const timeout = setTimeout(() => {
     Taro.UTIL.goToACLAuthPage({
-      actId: act
+      actId: act,
+      actPage: actPage
     })
     clearTimeout(timeout)
   }, 2000)

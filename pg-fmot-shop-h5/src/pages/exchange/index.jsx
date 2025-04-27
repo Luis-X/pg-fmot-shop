@@ -137,15 +137,6 @@ export default function Index() {
     }
 
     console.log('切换活动，进入首页')
-
-    // 登录信息（无需切换）  
-    /*
-    const token = resData.token || ''
-    const tokenInfo = {
-      token: token
-    }
-    Taro.UTIL.setPGStorage('token_info', tokenInfo)
-    */
       
     // FIXME: 用户信息（缺失）
     /*

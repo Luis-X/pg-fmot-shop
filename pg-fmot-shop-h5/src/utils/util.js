@@ -12,6 +12,7 @@ export default {
   setPGLocalStorage,
   getPGLocalStorage,
   clearPGStorage,
+  clearAllPGStorage,
 
   checkIsLogin,
   
@@ -83,6 +84,17 @@ function clearPGStorage(key) {
   }  
 }
 
+function clearAllPGStorage() {
+  clearPGStorage('enter_page')
+  clearPGStorage('token_info')
+  clearPGStorage('token_sso')
+  clearPGStorage('agree_info')  
+  clearPGStorage('activity_info')
+  clearPGStorage('service_info')
+  clearPGStorage('order_confirm_info')
+}
+
+
 function getUrlParamByName(name) {
   const url = window.location.href;
   const hashIndex = url.indexOf('#');
@@ -113,65 +125,17 @@ function getUrlParamByName(name) {
 }
 
 // 检查登录状态
-// 已登录：使用缓存 token
-// 未登录：code 换取 token
 async function checkIsLogin() {
-  
   let isLogin = false
-
-  const token = getPGStorage('token_info').token || ''
-  const code = Taro.getCurrentInstance().router.params.code || ''
-  
+  const tokenInfo = getPGStorage('token_info') || {}
+  const token = tokenInfo.token || ''
   if (token) {
     // 已登录
     isLogin = true
   } else {
-
-    let wxCode = code
-
-    // 防止 code 多个
-    try {
-      if (Array.isArray(wxCode)) {
-        wxCode = getUrlParamByName('code')
-      }
-    } catch (error) {
-      
-    }
-    
-    // 防止 code 在#前面
-    try {
-      if (!wxCode) {
-        wxCode = getUrlParamByName('code')
-      }
-    } catch (error) {
-      
-    }
-
-    // 未登录
-    if (wxCode) {
-      // 有code
-      const res = await Taro.NETWORK.login({
-        code: wxCode
-      })
-
-      if (res.code === 0) {
-        const resData = res.data || {}
-        setPGStorage('login_info', resData)		
-        if (resData.memberId) {
-          await cacheUserDetail()	
-        }        
-        Taro.TRACKER.configUserTracker()
-      } else {
-        Taro.HUD.showToastMessage(res.message)
-      }  
-
-      isLogin = true
-    } else {
-      // 无code，跳转acl
-      isLogin = false
-    }
+    // 无code，需跳转acl
+    isLogin = false
   }
-
   return isLogin
 }
 
@@ -215,22 +179,12 @@ function decodeBaseStr(str) {
 
 // ACL授权，获取code
 async function goToACLAuthPage(data) {
-  const { actId } = data || {}
-
-  const pageInfo = getPGStorage('enter_page')
-  const actPage = pageInfo.actPage || ''
+  const { actId, actPage } = data || {}
 
   if (!actId) {
     console.log('缺少 actId')
-    return
   }
 
-  clearPGStorage('token_info')
-  clearPGStorage('token_sso')
-  clearPGStorage('agree_info')  
-  clearPGStorage('activity_info')
-  clearPGStorage('service_info')
-  clearPGStorage('order_confirm_info')
   /*
   // 前端拼接acl
   let pageUrl = ''
@@ -247,16 +201,7 @@ async function goToACLAuthPage(data) {
   window.location.replace(aclAuthUrl)
   */
 
-  let aclAuthUrl = ''
-  if (actPage) {
-    // 指定页面
-    console.log('acl 指定页面', actPage)
-    aclAuthUrl = `${CONFIG.aclRedirectUrl}?id=${actId}&page=${actPage}`
-  } else {
-    // 默认页面
-    aclAuthUrl = `${CONFIG.aclRedirectUrl}?id=${actId}`
-  }
-  
+  const aclAuthUrl = `${CONFIG.aclRedirectUrl}?id=${actId}&page=${actPage}`  
   console.log(aclAuthUrl)
   window.location.replace(aclAuthUrl)
 }
@@ -280,14 +225,7 @@ function goToSSOLoginPage(data) {
 
   if (!actId) {
     console.log('缺少 actId')
-    return
   }
-
-  clearPGStorage('token_info')
-  clearPGStorage('agree_info')  
-  clearPGStorage('activity_info')
-  clearPGStorage('service_info')
-  clearPGStorage('order_confirm_info')
 
   const pageUrl = ssoLoginRedirectUri(actId, actPage)
   const ssoLoginUrl = `${CONFIG.ssoLoginUrl}&subscription-key=${decodeBaseStr(CONFIG.skId)}&redirect_uri=${encodeURIComponent(pageUrl)}`
@@ -302,22 +240,22 @@ function goToActivityPage(data) {
 
   if (!actId) {
     console.log('缺少 actId')
-    return
   }
   if (!accId) {
     console.log('缺少 accId')
-    return
   } 
+
   let url = ''
   if (actPage) {
     // 指定页面
-    console.log("进入指定页");
+    console.log('进入指定页面');
     url = `/pages/${actPage}/index?act=${actId}&acc=${accId}`
   } else {
     // 默认页面
-    console.log("进入首页");
+    console.log('进入默认首页');
     url = `/pages/home/index?act=${actId}&acc=${accId}`
   }  
+
   console.log(url)
   Taro.ROUTER.redirectTo(url);
 }

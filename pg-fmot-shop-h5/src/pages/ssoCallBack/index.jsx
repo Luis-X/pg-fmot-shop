@@ -19,47 +19,51 @@ export default function Index() {
 
   const createdPage = async () => {
     const act = router.params.id || ''
-    const page = router.params.page || ''
+    const actPage = router.params.page || ''
 
     const code = router.params.code || ''    
 
     console.log('sso act:', act)
-    console.log('sso page:', page)
+    console.log('sso page:', actPage)
     console.log('sso code:', code)
 
     // 入口信息
-    if (page) {
-      const pageInfo = {
-        actPage: page
+    if (actPage) {
+      const enterPage = {
+        actPage: actPage
       }
-      Taro.UTIL.setPGStorage('enter_page', pageInfo)
+      Taro.UTIL.setPGStorage('enter_page', enterPage)
     }
 
-    // 活动、code
-    if (act) {            
-      if (code) {        
-        const pageUrl = Taro.UTIL.ssoLoginRedirectUri(act, page)
-        requestBindActivityIdData({
-          activityId: act,
-          code: code,
-          redirectUri: pageUrl
-        }, page)
-      } else {
-        Taro.HUD.showToastMessage('code为空')
-      }    
-    } else {
-      Taro.HUD.showToastMessage('活动ID为空')
+    // 无code
+    if (!code) {    
+      Taro.HUD.showToastMessage('code为空')    
+      return
     }
+
+    // 无活动
+    if (!act) {
+      Taro.HUD.showToastMessage('活动ID为空')
+      return
+    }
+    
+    // 绑定账号
+    const pageUrl = Taro.UTIL.ssoLoginRedirectUri(act, actPage)
+    requestBindActivityIdData({
+      activityId: act,
+      code: code,
+      redirectUri: pageUrl
+    }, actPage)
   };
 
   // 绑定账号
-  async function requestBindActivityIdData(query, page) {
+  async function requestBindActivityIdData(query, actPage) {
 
     const params = {
       ...query,
     }
 
-    Taro.HUD.showLoading('绑定中...')
+    // Taro.HUD.showLoading('绑定中...')
     const res = await Taro.NETWORK.bindActivityId(params) 
     Taro.HUD.hideLoading()
 
@@ -74,15 +78,15 @@ export default function Index() {
 
     if (res.code === 0) {
       const resData = res.data || {}
-      userDataHandler(params, resData, page)
+      userDataHandler(params, resData, actPage)
     } else {
       Taro.HUD.showToastMessage(res.message)
     }
   }
 
   // 活动处理
-  const userDataHandler = (params, resData, page) => {
-    Taro.HUD.showToastMessage('绑定成功')
+  const userDataHandler = (params, resData, actPage) => {
+    // Taro.HUD.showToastMessage('绑定成功')
       
     const activityId = params.activityId || ''
     const pointAccountId = resData.pointAccountId || ''
@@ -106,7 +110,7 @@ export default function Index() {
       Taro.UTIL.goToActivityPage({
         actId: activityId,
         accId: pointAccountId,
-        actPage: page
+        actPage: actPage
       })
     }, 1500);
   }
