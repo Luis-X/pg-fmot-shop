@@ -12,4 +12,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  .pg-load-err-msg {
+    width: 600rpx;
+    font-size: 30rpx;
+    color: #000000;
+  }
 }

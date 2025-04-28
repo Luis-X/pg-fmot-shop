@@ -31,6 +31,9 @@ function baseRequest(url, data, method) {
     token = tokenSSO.token || ''
   }
 
+  // FIXME: 测试用，临时token
+  // token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZC1mbW90LXNob3BwaW5nIiwiYXVkIjoicmQtZm1vdC1zaG9wcGluZyIsIm5iZiI6MTc0NTgyNjMwNywicm9sZSI6Ind4LW1pbmktdXNlciIsImRhdGEiOiJ7fSIsImlzcyI6InJkLWZtb3Qtc2hvcHBpbmciLCJleHAiOjE3NDU4MzE3MDcsImlhdCI6MTc0NTgyNjMwNywidXNlcklkIjoiNiJ9.3FTWF3TedT-HeMTO0EozGnpTa5Dpj8sXEJufHsED4-w'
+
   const actId = data.activityId || ''
   const accId = data.pointAccountId || ''
 
@@ -66,8 +69,8 @@ function baseRequest(url, data, method) {
             // resolve({})
           } else if (respData.code === -20004)  {
             // SSO账号不存在
-            // Taro.HUD.showToastMessage(respData.message)
-            resolve(respData)
+            console.log("SSO账号不存在");
+            Taro.ROUTER.redirectTo(`/pages/disable/index?act=${actId}&status=2`);
           } else if (respData.code === -20005)  {
             // 该积分账号已绑定
             // Taro.HUD.showToastMessage(respData.message)
@@ -105,7 +108,7 @@ function needLoginWithActId(act) {
     duration: 2000
   })
 
-  const enterPage = getPGStorage('enter_page')
+  const enterPage = Taro.UTIL.getPGStorage('enter_page')
   const actPage = enterPage.actPage || ''
 
   const timeout = setTimeout(() => {

@@ -4,7 +4,9 @@ import { View } from '@tarojs/components'
 import Taro, { useLoad } from '@tarojs/taro'
 import './index.scss'
 
-export default function Index() {
+export default function Index(props) {
+
+  const { errMsg } = props
 
   useLoad(() => {
     console.log('loading loaded.')
@@ -16,7 +18,13 @@ export default function Index() {
 
   return (
     <View className='pg-load'>
-      <Loading direction='vertical'>加载中</Loading>
+      {
+        errMsg ? (
+          <View className='pg-load-err-msg'>{errMsg}</View>
+        ) : (
+          <Loading direction='vertical'>加载中</Loading>
+        )
+      }     
     </View>
   )
 }

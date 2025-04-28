@@ -6,8 +6,7 @@ import './index.scss'
 
 import ASSET_IMG from '../../utils/assetImg.js'
 
-const imgBG = ASSET_IMG.assetImgWithName('alert-bg.png')
-import imgStar from "../../images/alert-star.png";
+const imgStar = ASSET_IMG.assetImgWithName('alert-star.png')
 
 export default function Index(props) {
   useLoad(() => {
@@ -23,8 +22,18 @@ export default function Index(props) {
   const [isAlertShow, setIsAlertShow] = useState(false)
   const [contentText, setContentText] = useState('')
 
+  const isEmpty = (value) => {
+    if (value === null || value === undefined) return true;
+    if (typeof value === 'object' && Object.keys(value).length === 0) return true;
+    return false;
+  };
+
   const checkAgreementStatus = () => {
     const agreeInfo = Taro.UTIL.getPGStorage('agree_info')
+    if (isEmpty(agreeInfo)) {
+      console.log("无协议信息");
+      return;
+    }
     const isAgree = agreeInfo.agreement;
     const contentText = agreeInfo.informedConsentForm || '';
     if (isAgree) {
@@ -43,9 +52,9 @@ export default function Index(props) {
   }
 
   async function requestAgreeData() {
-    const activityInfo = Taro.UTIL.getPGStorage('activity_info')
-    const act = activityInfo.act || ''
-    const acc = activityInfo.acc || ''
+    const agreeInfo = Taro.UTIL.getPGStorage('agree_info')
+    const act = agreeInfo.act || ''
+    const acc = agreeInfo.acc || ''
 
     const params = {
       activityId: act,
@@ -58,10 +67,8 @@ export default function Index(props) {
 
     if (res.code === 0) { 
       setIsAlertShow(false)
-
-      let agreeInfo = Taro.UTIL.getPGStorage('agree_info') || {}
-      agreeInfo.agreement = true
-      Taro.UTIL.setPGStorage('agree_info', agreeInfo)	
+      
+      Taro.UTIL.clearPGStorage('agree_info')	
 
       if (props.onConfirm) {
         props.onConfirm()

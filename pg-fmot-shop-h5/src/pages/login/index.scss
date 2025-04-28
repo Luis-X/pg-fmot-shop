@@ -47,24 +47,6 @@
       width: 100%;    
       height: 100%;
     }
-    .login-btn-bind-text-wrap {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;    
-      position: absolute;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      .login-btn-bind-text {
-        margin-top: 38rpx;
-        font-size: 32rpx;
-        line-height: 32rpx;
-        font-weight: 600;
-        color: #3B070A;
-      }
-    }
   }
 }
 

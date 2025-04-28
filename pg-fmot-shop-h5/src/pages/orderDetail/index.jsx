@@ -147,9 +147,14 @@ export default function Index() {
       configTracker(1)
       const resData = res.data || {}
       Taro.HUD.showToastMessage('取消成功')
-      setTimeout(() => {
-        Taro.ROUTER.navigateBack()
-      }, 2000);
+      refreshData()
+
+      // 返回刷新
+      const orderCancelInfo = {
+        needRefresh: true,
+        orderId: orderId,
+      }
+      Taro.UTIL.setPGStorage('order_cancel_info', orderCancelInfo)	
     } else {
       Taro.HUD.showToastMessage(res.message)
     }       

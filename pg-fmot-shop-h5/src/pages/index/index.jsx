@@ -11,12 +11,19 @@ export default function Index() {
   useLoad(() => {
     Taro.WXSDK.hideOptionMenu();
     Taro.UTIL.clearAllPGStorage();
+    Taro.UTIL.clearPGStorage('token_sso');
     createdPage();
   });
 
   useDidShow(() => {
     Taro.WXSDK.hideOptionMenu();
   });
+
+  const [errMsg, setErrMsg] = useState('')
+  const showErrMsg = (msg) => {
+    Taro.HUD.showToastMessage(msg)
+    setErrMsg(msg)
+  }
 
   // 服务端提供接口，重定向acl，回调携带id、page、code参数到此页面
   const createdPage = async () => {
@@ -58,7 +65,8 @@ export default function Index() {
     // 我参与的活动
     if (actPage === 'exchange') {
       requestLoginTokenData({
-        loginFrom: 'ACTIVITY',
+        loginFrom: 'MY',
+        activityId: act,
         code: code,
         timestamp: timestamp,
         signature: signature,
@@ -71,12 +79,13 @@ export default function Index() {
 
     // 无活动
     if (!act) {
-      Taro.HUD.showToastMessage('活动ID为空')
+      showErrMsg('活动ID为空')
       return
     }
 
     // 登录
     requestLoginData({
+      loginFrom: 'ACTIVITY',
       activityId: act,
       code: code,
       timestamp: timestamp,
@@ -113,7 +122,7 @@ export default function Index() {
         actPage: actPage
       })
     } else {
-      Taro.HUD.showToastMessage(res.message)
+      showErrMsg(res.message)
     }
   }
 
@@ -131,7 +140,7 @@ export default function Index() {
       console.log('活动时间内，账号正常')
       userDataHandler(params, resData, actPage)
     } else {
-      Taro.HUD.showToastMessage(res.message)
+      showErrMsg(res.message)
     }
   }
 
@@ -152,6 +161,8 @@ export default function Index() {
       
     // 用户信息
     const agreeInfo = {
+      act: activityId,
+      acc: pointAccountId,
       agreement: resData.agreement,
       informedConsentForm: activityData.informedConsentForm,
     }
@@ -209,10 +220,10 @@ export default function Index() {
     }
     // 未知活动
     console.log("未知活动")
-    Taro.HUD.showToastMessage('未知活动')
+    showErrMsg('未知活动')
   }
 
   return (
-    <PGLoading></PGLoading>
+    <PGLoading errMsg={errMsg}></PGLoading>
   );
 }

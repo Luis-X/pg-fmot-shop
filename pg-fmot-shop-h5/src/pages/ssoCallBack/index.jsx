@@ -17,6 +17,12 @@ export default function Index() {
     Taro.WXSDK.hideOptionMenu();
   });
 
+  const [errMsg, setErrMsg] = useState('')
+  const showErrMsg = (msg) => {
+    Taro.HUD.showToastMessage(msg)
+    setErrMsg(msg)
+  }
+
   const createdPage = async () => {
     const act = router.params.id || ''
     const actPage = router.params.page || ''
@@ -37,22 +43,23 @@ export default function Index() {
 
     // 无code
     if (!code) {    
-      Taro.HUD.showToastMessage('code为空')    
+      showErrMsg('code为空')    
       return
     }
 
     // 无活动
     if (!act) {
-      Taro.HUD.showToastMessage('活动ID为空')
+      showErrMsg('活动ID为空')
       return
     }
-    
+
     // 绑定账号
     const pageUrl = Taro.UTIL.ssoLoginRedirectUri(act, actPage)
+    const redirectUri = Taro.UTIL.encodeBaseStr(pageUrl)
     requestBindActivityIdData({
       activityId: act,
       code: code,
-      redirectUri: pageUrl
+      redirectUri: redirectUri
     }, actPage)
   };
 
@@ -80,19 +87,21 @@ export default function Index() {
       const resData = res.data || {}
       userDataHandler(params, resData, actPage)
     } else {
-      Taro.HUD.showToastMessage(res.message)
+      showErrMsg(res.message)
     }
   }
 
   // 活动处理
   const userDataHandler = (params, resData, actPage) => {
-    // Taro.HUD.showToastMessage('绑定成功')
+    Taro.HUD.showToastMessage('绑定成功')
       
     const activityId = params.activityId || ''
     const pointAccountId = resData.pointAccountId || ''
 
     // 用户信息
     const agreeInfo = {
+      act: activityId,
+      acc: pointAccountId,
       agreement: resData.agreement,
       informedConsentForm: resData.informedConsentForm,
     }
@@ -116,6 +125,6 @@ export default function Index() {
   }
 
   return (
-    <PGLoading></PGLoading>    
+    <PGLoading errMsg={errMsg}></PGLoading>    
   );
 }

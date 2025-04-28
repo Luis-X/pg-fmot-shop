@@ -7,9 +7,10 @@ import "./index.scss";
 import PGGoodsView from "../../components/pgGoodsView/index";
 import PGLoading from "../../components/pgLoading/index";
 
-import imgSearchBar from "../../images/home-search-bar.png";
-import imgSearchBarIcon from "../../images/home-search-bar-icon.png";
+import ASSET_IMG from '../../utils/assetImg.js'
 
+const imgSearchBar = ASSET_IMG.assetImgWithName('home-search-bar.png')
+const imgSearchBarIcon = ASSET_IMG.assetImgWithName('home-search-bar-icon.png')
 
 export default function Index() {
 

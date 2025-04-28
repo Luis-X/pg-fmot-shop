@@ -165,15 +165,18 @@ export default function Index() {
     console.log('cartNumOnChange', val, item);
     const productId = item.id || '';
 
-    if (val <= 0) {
+    const newValue = parseInt(val || 0);
+    console.log('newValue', newValue);
+
+    if (newValue <= 0) {
       setDelAlertQuery({
-        val: val,
+        val: newValue,
         productId: productId
       })
       setDelAlertShow(true);
     } else {
-      if (checkLimitNum(val)) {
-        requestCartChangeData(val, productId)
+      if (checkLimitNum(newValue)) {
+        requestCartChangeData(newValue, productId)
       }
     }    
   }
@@ -235,7 +238,7 @@ export default function Index() {
                     <View className='goods-name'>{item.name}</View>
                     {priceView(item)}
                   </View>
-                  <InputNumber className='goods-count' value={item.quantity} min={0} allowEmpty onChange={(val) => cartNumOnChange(val, item)} />
+                  <InputNumber className='goods-count' value={item.quantity} min={0} allowEmpty={false} readOnly onChange={(val) => cartNumOnChange(val, item)} />
                 </View>
                 <View className="goods-line"></View>
               </View>

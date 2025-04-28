@@ -4,15 +4,14 @@ import { View, Image } from '@tarojs/components'
 import Taro, { useLoad, useRouter, useDidShow } from '@tarojs/taro'
 import './index.scss'
 
-import ASSET_IMG from '../../utils/assetImg.js'
-
 import PGLoading from "../../components/pgLoading/index";
 
-// const imgBG = ASSET_IMG.assetImgWithName('login-bg.png')
-import imgBG from '../../images/login-bg.png';
-import imgTitle from '../../images/login-title.png';
-import imgBtnBind from '../../images/login-btn.png';
-import imgBtnLogin from '../../images/login-btn-login.png';
+import ASSET_IMG from '../../utils/assetImg.js'
+
+const imgBG = ASSET_IMG.assetImgWithName('login-bg.png')
+const imgTitle = ASSET_IMG.assetImgWithName('login-title.png')
+const imgBtnBind = ASSET_IMG.assetImgWithName('login-btn-bind.png')
+const imgBtnLogin = ASSET_IMG.assetImgWithName('login-btn-login.png')
 
 export default function Index() {
 
@@ -45,7 +44,7 @@ export default function Index() {
     console.log('login page:', actPage)
 
     setActId(act)
-    actPageId(actPage)
+    setActPageId(actPage)
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
@@ -93,6 +92,8 @@ export default function Index() {
 
     // 用户信息
     const agreeInfo = {
+      act: activityId,
+      acc: pointAccountId,
       agreement: resData.agreement,
       informedConsentForm: resData.informedConsentForm,
     }
@@ -150,9 +151,6 @@ export default function Index() {
             <View className='login-desc'>（注意：同一活动内只能绑定1个账号，绑定后无法解绑，请使用本人微信进行绑定。）</View>
             <View className='login-btn-bind-wrap' onClick={clickBindConfirm}>
               <Image className='login-btn-bind-img' mode='aspectFit' src={imgBtnBind}></Image>
-              <View className='login-btn-bind-text-wrap'>
-                <View className='login-btn-bind-text'>确认绑定并查看活动</View>
-              </View>              
             </View>                                 
           </View>     
           <Image className='login-btn-login' mode='aspectFill' src={imgBtnLogin} onClick={clickInternalLogin}></Image>

@@ -21,7 +21,9 @@ export default {
   encodeBaseStr,
   decodeBaseStr,
   
-  goToACLAuthPage,
+  ssoLoginRedirectUri,
+  
+  goToACLAuthPage,  
   goToSSOLoginPage,
   goToActivityPage,
 
@@ -87,11 +89,11 @@ function clearPGStorage(key) {
 function clearAllPGStorage() {
   clearPGStorage('enter_page')
   clearPGStorage('token_info')
-  clearPGStorage('token_sso')
   clearPGStorage('agree_info')  
   clearPGStorage('activity_info')
   clearPGStorage('service_info')
   clearPGStorage('order_confirm_info')
+  clearPGStorage('order_cancel_info')
 }
 
 
@@ -203,6 +205,8 @@ async function goToACLAuthPage(data) {
 
   const aclAuthUrl = `${CONFIG.aclRedirectUrl}?id=${actId}&page=${actPage}`  
   console.log(aclAuthUrl)
+  clearAllPGStorage()
+  clearPGStorage('token_sso')
   window.location.replace(aclAuthUrl)
 }
 
@@ -231,6 +235,7 @@ function goToSSOLoginPage(data) {
   const ssoLoginUrl = `${CONFIG.ssoLoginUrl}&subscription-key=${decodeBaseStr(CONFIG.skId)}&redirect_uri=${encodeURIComponent(pageUrl)}`
   
   console.log(ssoLoginUrl)
+  clearAllPGStorage()
   window.location.replace(ssoLoginUrl)
 }
 

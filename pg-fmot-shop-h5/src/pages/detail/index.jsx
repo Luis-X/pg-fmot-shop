@@ -15,12 +15,14 @@ import "./index.scss";
 import PGLoading from "../../components/pgLoading/index";
 import PGAlertConfirm from "../../components/pgAlertConfirm/index";
 
-import imgPriceBar from "../../images/detail-price-bar.png";
-import imgService from "../../images/detail-service.png";
-import imgCart from "../../images/detail-cart.png";
-import imgLine from "../../images/detail-line.png";
-import imgCartAdd from "../../images/detail-cart-add.png";
-import imgVideoPlay from "../../images/detail-video-play.png";
+import ASSET_IMG from '../../utils/assetImg.js'
+
+const imgPriceBar = ASSET_IMG.assetImgWithName('detail-price-bar.png')
+const imgService = ASSET_IMG.assetImgWithName('detail-service.png')
+const imgCart = ASSET_IMG.assetImgWithName('detail-cart.png')
+const imgLine = ASSET_IMG.assetImgWithName('detail-line.png')
+const imgCartAdd = ASSET_IMG.assetImgWithName('detail-cart-add.png')
+const imgVideoPlay = ASSET_IMG.assetImgWithName('detail-video-play.png')
 
 export default function Index() {
 
@@ -201,6 +203,13 @@ export default function Index() {
     Taro.HUD.hideLoading()
 
     if (res.code === 0) {
+
+      // 获取限购信息、购物车信息
+      requestActivityData({
+        activityId: query.activityId,
+        pointAccountId: query.pointAccountId,
+      })
+
       const resData = res.data || {}
       const productData = resData.product || {}
       const banner = productData.productCarouselImages || []
@@ -235,6 +244,45 @@ export default function Index() {
     }   
   }
 
+  const [orderActivityInfo, setOrderActivityInfo] = useState({})
+  const [cartList, setCartList] = useState([])
+  async function requestActivityData(query) {
+    const params = {
+      ...query
+    }
+
+    // Taro.HUD.showLoading()
+    const res = await Taro.NETWORK.orderActivityInfo(params) 
+    Taro.HUD.hideLoading()
+
+    if (res.code === 0) {
+      const resData = res.data || {}
+      setOrderActivityInfo(resData)
+      requestCartData(query)
+    } else {
+      Taro.HUD.showToastMessage(res.message)
+    }   
+  }
+
+  async function requestCartData(query) {
+    const params = {
+      ...query
+    }
+
+    // Taro.HUD.showLoading()
+    const res = await Taro.NETWORK.cartList(params) 
+    Taro.HUD.hideLoading()
+
+    if (res.code === 0) {
+      const resData = res.data || {}
+      const list = resData || []
+
+      setCartList(list)
+    } else {
+      Taro.HUD.showToastMessage(res.message)
+    }   
+  }
+
   // 客服
   const clickService = () => {
     const serviceInfo = goodsInfo.activity || {}
@@ -249,16 +297,39 @@ export default function Index() {
 
   // 加入购物车
   const [cartNum, setCartNum] = useState(0);
-  const clickCartAdd = () => {    
-    requestAddCartData()
+  const clickCartAdd = () => {  
+    let newValue = 1
+    // 购物车中是否有该商品
+    const goodsItem = cartList.find(item => item.activityProductId === productId) || {}   
+    if (goodsItem.activityProductId) {
+      newValue = goodsItem.quantity + 1
+    } else {
+      newValue = 1
+    }
+    console.log('newValue', newValue);
+
+    if (checkLimitNum(newValue)) {  
+      requestAddCartData(newValue)
+    }
   }
 
-  async function requestAddCartData() {
+  // 限购数量检测（每个商品）
+  const checkLimitNum = (val) => {
+    const maxLimit = orderActivityInfo.maxQuantity || 0;
+    console.log('maxLimit', maxLimit);
+    if (val > maxLimit) {
+      Taro.HUD.showToastMessage('加购商品超过数量上限')
+      return false;
+    }
+    return true;
+  }
+
+  async function requestAddCartData(val) {
     const params = {
       activityId: actId,
       pointAccountId: accId,
       activityProductId: productId,
-      quantity: 1,
+      quantity: val,
     }
 
     // Taro.HUD.showLoading()
@@ -286,6 +357,11 @@ export default function Index() {
     }
     const res = await Taro.NETWORK.goodsDetail(params)
     if (res.code === 0) {
+      // 获取限购信息、购物车信息
+      requestActivityData({
+        activityId: query.activityId,
+        pointAccountId: query.pointAccountId,
+      })
       const resData = res.data || {}
       // 购物车信息
       const shopCartProductCount = resData.shopCartProductCount || 0
@@ -428,7 +504,7 @@ export default function Index() {
                             />
                           ) : (
                             <>
-                              <ImageNut className='swiper-img' src={item.videoImgUrl} fit='contain' loading={true} />
+                              <ImageNut className='swiper-img' src={item.videoImgUrl} fit='contain' loading={false} />
                               <Image className='swiper-video-play' mode='aspectFit' src={imgVideoPlay} onClick={() => clickPreviewVideo()}></Image>
                             </>
                           )
@@ -509,6 +585,7 @@ export default function Index() {
   }
 
   // 商品视频、图片
+  // FIXME: 视频缺少封面
   const rootRef = useRef(null)
   const goodsVideoAndImgView = () => {
     return (

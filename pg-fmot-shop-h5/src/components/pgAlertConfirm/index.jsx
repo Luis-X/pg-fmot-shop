@@ -6,9 +6,8 @@ import './index.scss'
 
 import ASSET_IMG from '../../utils/assetImg.js'
 
-const imgBG = ASSET_IMG.assetImgWithName('alert-bg.png')
-import imgCart from "../../images/alert-cart.png";
-import imgLight from "../../images/alert-light.png";
+const imgCart = ASSET_IMG.assetImgWithName('alert-cart.png')
+const imgLight = ASSET_IMG.assetImgWithName('alert-light.png')
 
 export default function Index(props) {
 

@@ -5,10 +5,12 @@ import './index.scss'
 
 import PGLoading from "../../components/pgLoading/index";
 
-import imgBG from '../../images/service-bg.png';
-import imgIcon from '../../images/service-icon.png';
-import imgPhone from '../../images/service-phone.png';
-import imgAddress from '../../images/service-address.png';
+import ASSET_IMG from '../../utils/assetImg.js'
+
+const imgBG = ASSET_IMG.assetImgWithName('service-bg.png')
+const imgIcon = ASSET_IMG.assetImgWithName('service-icon.png')
+const imgPhone = ASSET_IMG.assetImgWithName('service-phone.png')
+const imgAddress = ASSET_IMG.assetImgWithName('service-address.png')
 
 
 export default function Index() {

@@ -6,8 +6,10 @@ import "./index.scss";
 
 import PGLoading from "../../components/pgLoading/index";
 
-import imgIcon from '../../images/exchange-icon.png';
-import imgArrow from '../../images/exchange-arrow.png';
+import ASSET_IMG from '../../utils/assetImg.js'
+
+const imgIcon = ASSET_IMG.assetImgWithName('exchange-icon.png')
+const imgArrow = ASSET_IMG.assetImgWithName('exchange-arrow.png')
 
 export default function Index() {
 
@@ -138,14 +140,14 @@ export default function Index() {
 
     console.log('切换活动，进入首页')
       
-    // FIXME: 用户信息（缺失）
-    /*
+    // 用户信息
     const agreeInfo = {
+      act: activityId,
+      acc: pointAccountId,
       agreement: item.agreement,
       informedConsentForm: item.informedConsentForm,
     }
     Taro.UTIL.setPGStorage('agree_info', agreeInfo)
-    */
       
     // 活动信息
     const activityInfo = {

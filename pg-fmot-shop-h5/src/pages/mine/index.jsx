@@ -9,8 +9,10 @@ import PGOrderView from "../../components/pgOrderView/index";
 import PGLoading from "../../components/pgLoading/index";
 import PGTabBar from "../../components/pgTabbar/index";
 
-import imgTopBar from '../../images/mine-top-bar.png';
-import imgOrder from '../../images/mine-order.png';
+import ASSET_IMG from '../../utils/assetImg.js'
+
+const imgTopBar = ASSET_IMG.assetImgWithName('mine-top-bar.png')
+const imgOrder = ASSET_IMG.assetImgWithName('mine-order.png')
 
 export default function Index() {
 
@@ -27,6 +29,13 @@ export default function Index() {
       Taro.TRACKER.pageViewTracker("我的");
     }
     Taro.WXSDK.hideOptionMenu();
+
+    // 取消后，刷新
+    const orderCancelInfo = Taro.UTIL.getPGStorage('order_cancel_info') || {}
+    if (orderCancelInfo.needRefresh) {
+      Taro.UTIL.clearPGStorage('order_cancel_info')
+      refreshData()
+    }
   });
 
   const createdPage = async () => {

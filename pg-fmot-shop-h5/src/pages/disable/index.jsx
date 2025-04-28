@@ -5,8 +5,10 @@ import "./index.scss";
 
 import PGLoading from "../../components/pgLoading/index";
 
-import imgBG from '../../images/disable-bg.png';
-import imgIcon from '../../images/disable-icon.png';
+import ASSET_IMG from '../../utils/assetImg.js'
+
+const imgBG = ASSET_IMG.assetImgWithName('disable-bg.png')
+const imgIcon = ASSET_IMG.assetImgWithName('disable-icon.png')
 
 export default function Index() {
 
@@ -19,7 +21,7 @@ export default function Index() {
 
   useDidShow(() => {
     if (isShowPage) {
-      Taro.TRACKER.pageViewTracker("活动过期");
+      Taro.TRACKER.pageViewTracker("活动异常页");
     }
     Taro.WXSDK.hideOptionMenu();
   });

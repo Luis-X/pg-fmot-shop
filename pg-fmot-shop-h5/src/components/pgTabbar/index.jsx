@@ -3,12 +3,14 @@ import { View, Image } from '@tarojs/components'
 import Taro, { useLoad } from '@tarojs/taro'
 import './index.scss'
 
-import imgHome from "../../images/home.png";
-import imgHomeOn from "../../images/home_on.png";
-import imgCart from "../../images/cart.png";
-import imgCartOn from "../../images/cart_on.png";
-import imgMine from "../../images/mine.png";
-import imgMineOn from "../../images/mine_on.png";
+import ASSET_IMG from '../../utils/assetImg.js'
+
+const imgHome = ASSET_IMG.assetImgWithName('home.png')
+const imgHomeOn = ASSET_IMG.assetImgWithName('home_on.png')
+const imgCart = ASSET_IMG.assetImgWithName('cart.png')
+const imgCartOn = ASSET_IMG.assetImgWithName('cart_on.png')
+const imgMine = ASSET_IMG.assetImgWithName('mine.png')
+const imgMineOn = ASSET_IMG.assetImgWithName('mine_on.png')
 
 export default function Index(props) {
 
