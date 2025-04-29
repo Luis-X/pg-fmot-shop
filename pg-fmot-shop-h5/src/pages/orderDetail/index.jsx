@@ -129,7 +129,8 @@ export default function Index() {
 
   // 取消订单
   const clickCancel = () => {
-    setCancelAlertShow(true)
+    // setCancelAlertShow(true)
+    requestOrderCancelData()
   };  
   
   const requestOrderCancelData = async () => {

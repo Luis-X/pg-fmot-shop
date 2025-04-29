@@ -451,7 +451,7 @@ export default function Index() {
   const [currentIndex, setCurrentIndex] = useState(0)
 
   const clickPreviewImg = (url) => {
-    Taro.UTIL.showPreviewImg(url)
+    // Taro.UTIL.showPreviewImg(url)
   }
   
   const onChangeSwiperItem = (index) => {
@@ -504,7 +504,7 @@ export default function Index() {
                             />
                           ) : (
                             <>
-                              <ImageNut className='swiper-img' src={item.videoImgUrl} fit='contain' loading={false} />
+                              <ImageNut className='swiper-img' src={item.videoImgUrl} fit='contain' lazy={false} loading={false} />
                               <Image className='swiper-video-play' mode='aspectFit' src={imgVideoPlay} onClick={() => clickPreviewVideo()}></Image>
                             </>
                           )
@@ -512,7 +512,7 @@ export default function Index() {
                       </View>                    
                     ) : (
                       <View className='swiper-item-content'>
-                        <ImageNut className='swiper-img' src={item.imgUrl} fit='contain' loading={true} onClick={() => clickPreviewImg(item.imgUrl)} />
+                        <ImageNut className='swiper-img' src={item.imgUrl} fit='contain' lazy={true} loading={true} onClick={() => clickPreviewImg(item.imgUrl)} />
                       </View>                   
                     )
                   }                
@@ -628,7 +628,7 @@ export default function Index() {
         {
           goodsInfo.product.longImageUrl ? (
             <View className='detail-img-wrap'>
-              <ImageNut className='detail-img' src={goodsInfo.product.longImageUrl} fit='contain' loading={true} />
+              <ImageNut className='detail-img' src={goodsInfo.product.longImageUrl} fit='contain' lazy={false} loading={false} />
             </View>
           ) : null
         }                     

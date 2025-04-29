@@ -233,7 +233,7 @@ export default function Index() {
             return (
               <View className={index === 0 ? 'goods-bg-wrap-radius' : 'goods-bg-wrap'} key={index}>           
                 <View className='goods-wrap'>
-                  <ImageNut className='goods-img' src={item.previewUrl} fit='cover' lazy={false} loading={true} onClick={() => clickGoods(item)} />
+                  <ImageNut className='goods-img' src={item.previewUrl} fit='cover' lazy={false} loading={false} onClick={() => clickGoods(item)} />
                   <View className='goods-info' onClick={() => clickGoods(item)}>
                     <View className='goods-name'>{item.name}</View>
                     {priceView(item)}
@@ -476,7 +476,7 @@ export default function Index() {
               { cartList && cartList.length > 0 ? totalView() : null  }
               { orderActivityInfo.deliveryType ? deliveryView() : null }
               { orderActivityInfo.collectionInstructions ? noteView() : null }
-              { btnView() }
+              { orderActivityInfo.deliveryType ? btnView() : null }
             </View>
           </PullToRefresh>                
           {shortageAlertView()}

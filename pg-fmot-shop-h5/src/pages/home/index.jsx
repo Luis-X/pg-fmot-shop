@@ -228,7 +228,7 @@ export default function Index() {
             bannerList && bannerList.length > 0 && bannerList.map((item, index) => {
               return (
                 <Swiper.Item key={index} className='swiper-item' onClick={() => clickBanner(item)}>
-                  <ImageNut className='swiper-item-img' src={item.imageUrl} fit="cover" loading={true} />
+                  <ImageNut className='swiper-item-img' src={item.imageUrl} fit="cover" lazy={true} loading={true} />
                 </Swiper.Item>
               );
             })

@@ -2,6 +2,8 @@
   width: 100vw;
   // height: calc(100vh - 168rpx);
   height: calc(100vh - 120rpx);
+  padding: 0;
+  overflow-x: hidden;
   overflow-y: auto;
 }
 

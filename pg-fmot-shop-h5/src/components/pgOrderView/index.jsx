@@ -61,7 +61,7 @@ export default function Index(props) {
           cartList.map((item, index) => {
             return (
               <View className='pg-order-goods-wrap' key={index}>
-                <ImageNut className='pg-order-goods-img' src={item.previewUrl} fit='cover' lazy loading={true} onClick={() => clickGoods(item)}/>
+                <ImageNut className='pg-order-goods-img' src={item.previewUrl} fit='cover' lazy={true} loading={true} onClick={() => clickGoods(item)}/>
                 <View className='pg-order-goods-info' onClick={() => clickGoods(item)}>
                   <View className='pg-order-goods-name'>{item.name}</View>
                   {priceView(item)}

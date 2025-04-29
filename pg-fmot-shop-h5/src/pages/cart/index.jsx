@@ -303,7 +303,7 @@ export default function Index() {
                     </View>
                   )
                 }
-                <ImageNut className='goods-img' src={item.previewUrl} fit='cover' lazy={false} loading={true} onClick={() => clickGoods(item)} />
+                <ImageNut className='goods-img' src={item.previewUrl} fit='cover' lazy={false} loading={false} onClick={() => clickGoods(item)} />
                 <View className='goods-info' onClick={() => clickGoods(item)}>
                   <View className='goods-name'>{item.name}</View>
                   {priceView(item)}                 
