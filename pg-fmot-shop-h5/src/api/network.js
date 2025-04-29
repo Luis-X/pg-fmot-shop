@@ -304,23 +304,23 @@ function cartChange (params) {
   // }
   // return clientMockData(res, params);
 }
-
-// 埋点上报
+// 埋点上报 [ok]
 function trackerSubmit (params) {
-  // return REQUEST.post('/api/userActionLog/addUserActionLog', params)
-  const res = {
-    code: 0,
-    data: {},
-    message: '埋点上报失败'
-  }
-  return clientMockData(res, params);
+  return REQUEST.post('/api/userActionLog/addUserActionLog', params)
+  // const res = {
+  //   code: 0,
+  //   data: {
+  //     id: 'xxx'
+  //   },
+  //   message: '埋点上报失败'
+  // }
+  // return clientMockData(res, params);
 }
 
 
 // 模拟请求
-const clientMockData = (res, param) => new Promise((resolve, reject) => {
-  console.log('param', param);
-  setTimeout(() => {
-    resolve(res);
-  }, 500);
-})
+// const clientMockData = (res, param) => new Promise((resolve, reject) => {
+//   setTimeout(() => {
+//     resolve(res);
+//   }, 500);
+// })

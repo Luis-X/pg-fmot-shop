@@ -23,9 +23,6 @@ export default function Index() {
   });
   
   useDidShow(() => {
-    if (isShowPage) {
-      Taro.TRACKER.pageViewTracker("登录");
-    }
     Taro.WXSDK.hideOptionMenu();
   });
 
@@ -34,7 +31,7 @@ export default function Index() {
     // if (!isLogin) {
     //   return
     // }
-    Taro.TRACKER.pageViewTracker("登录");
+
     setIsShowPage(true);
 
     const act = router.params.id || ''
@@ -131,7 +128,6 @@ export default function Index() {
   // 账号输入
   const [inputValue, setInputValue] = useState('')
   const inputOnChange = (val) => {
-    console.log(val)
     setInputValue(val)
   }
 

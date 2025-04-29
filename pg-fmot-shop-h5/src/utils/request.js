@@ -32,7 +32,7 @@ function baseRequest(url, data, method) {
   }
 
   // FIXME: 测试用，临时token
-  // token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZC1mbW90LXNob3BwaW5nIiwiYXVkIjoicmQtZm1vdC1zaG9wcGluZyIsIm5iZiI6MTc0NTgyNjMwNywicm9sZSI6Ind4LW1pbmktdXNlciIsImRhdGEiOiJ7fSIsImlzcyI6InJkLWZtb3Qtc2hvcHBpbmciLCJleHAiOjE3NDU4MzE3MDcsImlhdCI6MTc0NTgyNjMwNywidXNlcklkIjoiNiJ9.3FTWF3TedT-HeMTO0EozGnpTa5Dpj8sXEJufHsED4-w'
+  token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZC1mbW90LXNob3BwaW5nIiwiYXVkIjoicmQtZm1vdC1zaG9wcGluZyIsIm5iZiI6MTc0NTkwNDY0OSwicm9sZSI6Ind4LW1pbmktdXNlciIsImRhdGEiOiJ7fSIsImlzcyI6InJkLWZtb3Qtc2hvcHBpbmciLCJleHAiOjE3NDU5MTAwNDksImlhdCI6MTc0NTkwNDY0OSwidXNlcklkIjoiNiJ9.U06otF6SjoLoZHCqfg6buB5ROnfaV7CHlN9kh9QnG5Y'
 
   const actId = data.activityId || ''
   const accId = data.pointAccountId || ''

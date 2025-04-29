@@ -26,9 +26,7 @@ export default function Index() {
   }
 
   // 服务端提供接口，重定向acl，回调携带id、page、code参数到此页面
-  const createdPage = async () => {
-
-    Taro.TRACKER.pageViewTracker("授权页");    
+  const createdPage = async () => {  
 
     const act = router.params.id || ''
     const actPage = router.params.page || ''

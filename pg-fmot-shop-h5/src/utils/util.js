@@ -160,7 +160,6 @@ function encodeBaseStr(str) {
   } catch (error) {
     console.log(error)
   } 
-  console.log(result) 
   return result
 }
 
@@ -241,7 +240,7 @@ function goToSSOLoginPage(data) {
 
 // 检查用户状态，跳转活动首页
 function goToActivityPage(data) {   
-  const { actId, accId, actPage } = data || {}
+  const { actId, accId, actPage, fromPage } = data || {}
 
   if (!actId) {
     console.log('缺少 actId')
@@ -261,8 +260,11 @@ function goToActivityPage(data) {
     url = `/pages/home/index?act=${actId}&acc=${accId}`
   }  
 
-  console.log(url)
-  Taro.ROUTER.redirectTo(url);
+  if (fromPage === 'exchange') {
+    Taro.ROUTER.navigateTo(url);
+  } else {
+    Taro.ROUTER.redirectTo(url);
+  }
 }
 
 // 配置标签列表

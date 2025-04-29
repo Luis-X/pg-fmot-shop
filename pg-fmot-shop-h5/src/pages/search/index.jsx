@@ -22,9 +22,6 @@ export default function Index() {
   });
 
   useDidShow(() => {
-    if (isShowPage) {
-      Taro.TRACKER.pageViewTracker("搜索列表");
-    }
     Taro.WXSDK.hideOptionMenu();
   });
 
@@ -33,7 +30,7 @@ export default function Index() {
     // if (!isLogin) {
     //   return
     // }
-    Taro.TRACKER.pageViewTracker("搜索列表");
+
     setIsShowPage(true);
 
     const act = router.params.act || ''
@@ -59,13 +56,11 @@ export default function Index() {
 
   const searchOnChange = (e) => {
     const value = e.detail.value || ''
-    console.log('searchOnChange', value)
     setSearchValue(value)
   };
 
   const searchOnConfirm = () => {
     const value = searchValue || ''
-    console.log('searchOnConfirm', value)
     requestListData({
       activityId: actId,
       pointAccountId: accId,

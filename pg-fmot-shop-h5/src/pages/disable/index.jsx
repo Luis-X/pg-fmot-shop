@@ -20,9 +20,6 @@ export default function Index() {
   });
 
   useDidShow(() => {
-    if (isShowPage) {
-      Taro.TRACKER.pageViewTracker("活动异常页");
-    }
     Taro.WXSDK.hideOptionMenu();
   });
 
@@ -43,11 +40,9 @@ export default function Index() {
 
     if (status === '1') {
       // 不在活动时间内
-      Taro.TRACKER.pageViewTracker('不在活动时间内');
       setStatusType(1);   
     } else {
       // 暂不符合活动资格
-      Taro.TRACKER.pageViewTracker('暂不符合活动资格');
       setStatusType(2);
     }
   };

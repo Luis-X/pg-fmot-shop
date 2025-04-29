@@ -6,10 +6,9 @@ import {
   Tag,  
   Indicator,
   Image as ImageNut,
-  Video as VideoNut,
 } from "@nutui/nutui-react";
 import { View, Video, Image, ScrollView } from "@tarojs/components";
-import Taro, { useLoad, useRouter, useDidShow } from "@tarojs/taro";
+import Taro, { useLoad, useRouter, useDidShow, useDidHide } from "@tarojs/taro";
 import "./index.scss";
 
 import PGLoading from "../../components/pgLoading/index";
@@ -28,26 +27,28 @@ export default function Index() {
 
   const router = useRouter()
 
-  const configTracker = (type) => {
-    const trackData = {}
+  const [trackId, setTrackId] = useState('')
+  const [trackBannerVideoId, setTrackBannerVideoId] = useState('')
+  const [trackDetailVideoId, setTrackDetailVideoId] = useState('')
+  const configTracker = (type, trackData) => {
     if (type === 1) {
-      Taro.TRACKER.eventTracker('PRODUCT_DETAIL_PAGE', trackData, "商品详情页-浏览人数/次数")
+      // 商品详情页浏览
+      Taro.TRACKER.eventTracker('PRODUCT_DETAIL_PAGE', trackData, eventId => {
+        setTrackId(eventId)
+      })
     } else if (type === 2) {
-      Taro.TRACKER.eventTracker('PRODUCT_DETAIL_PAGE', trackData, "商品详情页-页面停留时长")
+      // 商品轮播图视频
+      Taro.TRACKER.eventTracker('PRODUCT_CAROUSEL_VIDEO', trackData, eventId => {
+        setTrackBannerVideoId(eventId)
+      })
     } else if (type === 3) {
-      Taro.TRACKER.eventTracker('PRODUCT_CAROUSEL_VIDEO', trackData, "商品详情页-轮播图视频播放时长")
+      // 商品详情视频
+      Taro.TRACKER.eventTracker('PRODUCT_DETAIL_VIDEO', trackData, eventId => {
+        setTrackDetailVideoId(eventId)
+      })
     } else if (type === 4) {
-      Taro.TRACKER.eventTracker('PRODUCT_CAROUSEL_VIDEO', trackData, "商品详情页-轮播图视频播放人数/次数")
-    } else if (type === 5) {
-      Taro.TRACKER.eventTracker('PRODUCT_CAROUSEL_VIDEO', trackData, "商品详情页-轮播图视频完播人数/次数")
-    } else if (type === 6) {
-      Taro.TRACKER.eventTracker('PRODUCT_DETAIL_VIDEO', trackData, "商品详情页-商品详情视频播放时长")
-    } else if (type === 7) {
-      Taro.TRACKER.eventTracker('PRODUCT_DETAIL_VIDEO', trackData, "商品详情页-商品详情视频播放人数/次数")
-    } else if (type === 8) {
-      Taro.TRACKER.eventTracker('PRODUCT_DETAIL_VIDEO', trackData, "商品详情页-商品详情视频完播人数/次数")
-    } else if (type === 9) {
-      Taro.TRACKER.eventTracker('PRODUCT_ADD_CART', trackData, "商品详情页-加购物车人数/次数")
+      // 商品详情加购物车
+      Taro.TRACKER.eventTracker('PRODUCT_ADD_CART', trackData)
     }
   }
 
@@ -57,10 +58,22 @@ export default function Index() {
   });
 
   useDidShow(() => {
-    if (isShowPage) {
-      Taro.TRACKER.pageViewTracker("商品详情");
-    }
     Taro.WXSDK.hideOptionMenu();
+    configTracker(1, {
+      activityId: actId,
+      pointAccountId: accId,
+      productId: productId,
+    })  
+  });
+
+  useDidHide(() => {
+    configTracker(1, {
+      activityId: actId,
+      pointAccountId: accId,
+      productId: productId,
+      id: trackId,
+      finished: true,
+    })
   });
 
   const createdPage = async () => {
@@ -68,18 +81,15 @@ export default function Index() {
     // if (!isLogin) {
     //   return
     // }
-    Taro.TRACKER.pageViewTracker("商品详情");
+
     setIsShowPage(true);
-    configTracker(1)
-    configTracker(2)
 
     const act = router.params.act || ''
     const acc = router.params.acc || ''
+    const id = router.params.id || ''
     setActId(act)
-    setAccId(acc)
-
-    const id = router.params.id || '';
-    setProductId(id);
+    setAccId(acc)    
+    setProductId(id)
     
     requestData({
       activityId: act,
@@ -109,10 +119,8 @@ export default function Index() {
     showProgress: false,
   }
 
-  const [currentTime, setCurrentTime] = useState(0);
   // 视频播放
   const clickPreviewVideo = () => {
-    console.log('clickPreviewVideo', videoSource)
     videoPlay()   
   }
 
@@ -141,18 +149,7 @@ export default function Index() {
   // 视频播放开始~
   const onVideoPlayEvent = (elm, sence) => {
     console.log('video 播放开始', elm)
-    
-    if (sence === 'banner') {
-      configTracker(4)
-    } else if (sence === 'detail') {
-      if (elm) {
-        elm.addEventListener('timeupdate', () => {
-          const currentTime = Math.floor(elm.currentTime);
-          console.log('视频播放时长：', currentTime);
-        })
-      }      
-      configTracker(7)
-    }
+    startVideoTracker(sence, elm)          
   }
 
   // 视频播放暂停~
@@ -163,25 +160,134 @@ export default function Index() {
   // 视频播放结束~
   const onVideoPlayendEvent = (elm, sence) => {
     console.log('video 播放结束', elm)
-
-    if (sence === 'banner') {
-      configTracker(5)
-    } else if (sence === 'detail') {
-      configTracker(8)
-    }
+    endVideoTracker(sence)   
   }
   
   const onVideoTimeUpdate = (elm, sence) => {   
     const time = elm.detail.currentTime;
-    console.log('当前播放时长: ', time);
-    setCurrentTime(time);
-    
-    if (sence === 'banner') {
-      configTracker(3)
-    } else if (sence === 'detail') {
-      configTracker(6)
-    }
+    // const time = Math.floor(timeValue);
+    console.log('视频播放时长: ', time);
+    playingVideoTracker(sence, time)       
   };
+
+
+  const [playBannerVideoTime, setPlayBannerVideoTime] = useState(0);
+  const [playDetailVideoTime, setPlayDetailVideoTime] = useState(0);
+  // 播放开始，上报
+  const startVideoTracker = (sence, elm) => {
+    // 轮播视频
+    if (sence === 'banner') {   
+      if (playBannerVideoTime === 0) {
+        // 首次播放
+        console.log('首次播放-轮播')
+        setPlayBannerVideoTime(3)
+        configTracker(2, {
+          activityId: actId,
+          pointAccountId: accId,
+          productId: productId,
+        }) 
+      } else if (playBannerVideoTime === -1) {        
+        // 完播后，播放
+        console.log('完播后，播放-轮播')
+        setPlayBannerVideoTime(3)
+        configTracker(2, {
+          activityId: actId,
+          pointAccountId: accId,
+          productId: productId,
+        }) 
+      } else {
+        // 暂停后，重新播放
+        console.log('暂停后，重新播放-轮播')
+        configTracker(2, {
+          activityId: actId,
+          pointAccountId: accId,
+          productId: productId,
+          id: trackBannerVideoId,
+        }) 
+      }            
+    }
+    // 详情视频
+    if (sence === 'detail') {
+      if (playDetailVideoTime === 0) {
+        // 首次播放
+        console.log('首次播放-详情')
+        setPlayDetailVideoTime(3)
+        configTracker(3, {
+          activityId: actId,
+          pointAccountId: accId,
+          productId: productId,
+        }) 
+      } else if (playDetailVideoTime === -1) {        
+        // 完播后，播放
+        console.log('完播后，播放-详情')
+        setPlayDetailVideoTime(3)
+        configTracker(3, {
+          activityId: actId,
+          pointAccountId: accId,
+          productId: productId,
+        }) 
+      } else {
+        // 暂停后，重新播放
+        console.log('暂停后，重新播放-详情')
+        configTracker(3, {
+          activityId: actId,
+          pointAccountId: accId,
+          productId: productId,
+          id: trackDetailVideoId,
+        }) 
+      }     
+    }
+  }
+
+  // 播放播放中，上报（3秒1次）  
+  const playingVideoTracker = (sence, time) => {
+    // 轮播视频
+    if (sence === 'banner' && time > playBannerVideoTime && playBannerVideoTime >= 0) {
+      setPlayBannerVideoTime(time + 3)       
+      configTracker(2, {
+        activityId: actId,
+        pointAccountId: accId,
+        productId: productId,
+        id: trackBannerVideoId,
+      }) 
+    }
+    // 详情视频
+    if (sence === 'detail' && time > playDetailVideoTime && playDetailVideoTime >= 0) {
+      setPlayDetailVideoTime(time + 3)       
+      configTracker(3, {
+        activityId: actId,
+        pointAccountId: accId,
+        productId: productId,
+        id: trackDetailVideoId,
+      })
+    }
+  }
+
+  // 播放结束，上报
+  const endVideoTracker = (sence) => {
+    // 轮播视频
+    if (sence === 'banner') {    
+      setPlayBannerVideoTime(-1) 
+      configTracker(2, {
+        activityId: actId,
+        pointAccountId: accId,
+        productId: productId,
+        id: trackBannerVideoId,
+        finished: true,
+      }) 
+    } 
+    // 详情视频
+    if (sence === 'detail') { 
+      setPlayDetailVideoTime(-1)   
+      configTracker(3, {
+        activityId: actId,
+        pointAccountId: accId,
+        productId: productId,
+        id: trackDetailVideoId,
+        finished: true,
+      })
+    }
+  }
 
   // 下拉刷新
   const refreshData = () => {
@@ -253,7 +359,7 @@ export default function Index() {
 
     // Taro.HUD.showLoading()
     const res = await Taro.NETWORK.orderActivityInfo(params) 
-    Taro.HUD.hideLoading()
+    // Taro.HUD.hideLoading()
 
     if (res.code === 0) {
       const resData = res.data || {}
@@ -271,7 +377,7 @@ export default function Index() {
 
     // Taro.HUD.showLoading()
     const res = await Taro.NETWORK.cartList(params) 
-    Taro.HUD.hideLoading()
+    // Taro.HUD.hideLoading()
 
     if (res.code === 0) {
       const resData = res.data || {}
@@ -297,7 +403,14 @@ export default function Index() {
 
   // 加入购物车
   const [cartNum, setCartNum] = useState(0);
-  const clickCartAdd = () => {  
+  const clickCartAdd = () => {
+    configTracker(4, {
+      activityId: actId,
+      pointAccountId: accId,
+      productId: productId,
+      finished: true,
+    })  
+
     let newValue = 1
     // 购物车中是否有该商品
     const goodsItem = cartList.find(item => item.activityProductId === productId) || {}   
@@ -337,7 +450,6 @@ export default function Index() {
     Taro.HUD.hideLoading()
 
     if (res.code === 0) {
-      configTracker(8)
       const resData = res.data || {}
       refreshCartNum({
         activityId: actId,
@@ -455,8 +567,6 @@ export default function Index() {
   }
   
   const onChangeSwiperItem = (index) => {
-    console.log('onChangeSwiperItem', index)
-
     if (currentIndex != index) {      
       if (index === 0) {
         console.log('banner 0')
@@ -499,7 +609,7 @@ export default function Index() {
                               muted={videoOptions.muted}
                               onPlay={(elm) => onVideoPlayEvent(elm, 'banner')}
                               onPause={(elm) => onVideoPauseEvent(elm, 'banner')}
-                              onPlayend={(elm) => onVideoPlayendEvent(elm, 'banner')}
+                              onEnded={(elm) => onVideoPlayendEvent(elm, 'banner')}
                               onTimeUpdate={(elm) => onVideoTimeUpdate(elm, 'banner')}
                             />
                           ) : (
@@ -597,9 +707,9 @@ export default function Index() {
           detailVideoSource && detailVideoSource.src ? (
             <View className='detail-video-wrap'>
               <View className='detail-video-item'>
-              {/* <Video
+              <Video
                 className='detail-video'  
-                id='video'
+                id='detail-video-ref'
                 src={detailVideoSource.src}
                 poster={detailVideoSource.poster}
                 initialTime={videoOptions.initialTime}
@@ -609,17 +719,8 @@ export default function Index() {
                 muted={videoOptions.muted}
                 onPlay={(elm) => onVideoPlayEvent(elm, 'detail')}
                 onPause={(elm) => onVideoPauseEvent(elm, 'detail')}
-                onPlayend={(elm) => onVideoPlayendEvent(elm, 'detail')}
+                onEnded={(elm) => onVideoPlayendEvent(elm, 'detail')}
                 onTimeUpdate={(elm) => onVideoTimeUpdate(elm, 'detail')}
-              /> */}
-              <VideoNut 
-                className='detail-video'  
-                ref={rootRef}              
-                source={detailVideoSource}
-                options={videoOptions}
-                onPlay={(elm) => onVideoPlayEvent(elm, 'detail')}
-                onPause={(elm) => onVideoPauseEvent(elm, 'detail')}
-                onPlayEnd={(elm) => onVideoPlayendEvent(elm, 'detail')}
               />
               </View>                        
             </View>

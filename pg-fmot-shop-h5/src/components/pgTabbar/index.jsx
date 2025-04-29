@@ -25,7 +25,6 @@ export default function Index(props) {
   }, []);
   
   const clickTabbar = (index) => {
-    console.log('clickTabbar', sence)
     const activityInfo = Taro.UTIL.getPGStorage('activity_info')
     const act = activityInfo.act || ''
     const acc = activityInfo.acc || ''

@@ -25,9 +25,6 @@ export default function Index() {
   });
 
   useDidShow(() => {
-    if (isShowPage) {
-      Taro.TRACKER.pageViewTracker("我的");
-    }
     Taro.WXSDK.hideOptionMenu();
 
     // 取消后，刷新
@@ -43,7 +40,7 @@ export default function Index() {
     // if (!isLogin) {
     //   return
     // }
-    Taro.TRACKER.pageViewTracker("我的");
+
     setIsShowPage(true);
 
     const act = router.params.act || ''

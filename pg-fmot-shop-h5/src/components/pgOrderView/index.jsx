@@ -18,7 +18,6 @@ export default function Index(props) {
 
   // 商品详情
   const clickGoods = (item) => {
-    console.log('clickGoods', item);
     if (scenceType === 'order-detail') {
       // const productId = item.id || '';
       // const actId = act || ''

@@ -17,8 +17,7 @@ export default function Index(props) {
   }, []);
 
    // 商品详情
-   const clickGoods = () => {
-    console.log('clickGoods', item);    
+   const clickGoods = () => {   
     const productId = item.id || '';
     const actId = act || ''
     const accId = acc || ''

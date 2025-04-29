@@ -20,9 +20,6 @@ export default function Index() {
   });
 
   useDidShow(() => {
-    if (isShowPage) {
-      Taro.TRACKER.pageViewTracker("购物车");
-    }
     Taro.WXSDK.hideOptionMenu();
   });
 
@@ -31,7 +28,7 @@ export default function Index() {
     // if (!isLogin) {
     //   return
     // }
-    Taro.TRACKER.pageViewTracker("购物车");
+    
     setIsShowPage(true);
 
     const act = router.params.act || ''
@@ -170,7 +167,6 @@ export default function Index() {
 
   // 单个添加、减少
   const cartNumOnChange = (val, item) => {
-    console.log('cartNumOnChange', val, item);
     const productId = item.activityProductId || '';
 
     const newValue = parseInt(val || 0);
@@ -253,7 +249,6 @@ export default function Index() {
 
   // 商品详情
   const clickGoods = (item) => {
-    console.log('clickGoods', item);
     // const productId = item.activityProductId || '';   
     // Taro.ROUTER.navigateTo(`/pages/detail/index?act=${actId}&acc=${accId}&id=${productId}`);
   }

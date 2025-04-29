@@ -30,7 +30,6 @@ function App({ children }) {
 
   useLaunch(() => {
     console.log('App launch')
-    Taro.TRACKER.startTracker('')
   })
 
   useUnload(() => {

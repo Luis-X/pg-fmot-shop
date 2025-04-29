@@ -1,41 +1,64 @@
 import Taro from '@tarojs/taro';
-import CONFIG from '../api/config';
 
 export default {
-  startTracker,
-  configUserTracker,
-  pageViewTracker,
   eventTracker,
 };
 
-function startTracker(openId) {  
-
-}
-
-function configUserTracker() {
+async function eventTracker(userActionType, query, callback) {
   
-}
+  const activityId = query.activityId || ''
+  const pointAccountId = query.pointAccountId || ''
+  const finished = query.finished || false          // 开始不传，结束传 true
+  const id = query.id || ''                         // 埋点id  
+  const productId = query.productId || ''           // 商品id
+  const orderId = query.orderId || ''               // 订单id
 
-function pageViewTracker(pageName) {
-  console.log('pageViewTracker', pageName)
-}
-
-function eventTracker(action, query, label) {
-  console.log('eventTracker', action, query, label)
-
-  const params = {
-    id: '',
-    userActionType: action,
-    finished: true,
-    productId: '',
-    orderId: ''
+  if (!activityId) {
+    console.log('缺少 activityId')
+    return
   }
-  
-  // const res = Taro.NETWORK.trackerSubmit(params) 
 
-  // if (res.code === 0) {
-  //   console.log('eventTracker success', res.data)
-  // } else {
-  //   console.log('eventTracker error', res.message)
-  // }
+  if (!pointAccountId) {
+    console.log('缺少 pointAccountId')
+    return
+  }
+
+  let params = {
+    activityId: activityId,
+    pointAccountId: pointAccountId,    
+    userActionType: userActionType,                                                            
+  }
+
+  if (finished) {
+    params.finished = finished    
+  }
+
+  if (id) {
+    params.id = id
+  }
+
+  if (productId) {  
+    params.productId = productId
+  }
+
+  if (orderId) {
+    params.orderId = orderId
+  } 
+
+  console.log(`eventTracker ${userActionType}`, params)
+
+  const res = await Taro.NETWORK.trackerSubmit(params)
+  if (res.code === 0) {
+    const resData = res.data || {} 
+    const eventId = resData.id || ''
+    // console.log(`eventTracker ${userActionType} success`)
+    if (callback) {
+      callback(eventId)
+    }
+  } else {
+    // console.log(`eventTracker ${userActionType} error`, res.message)
+    if (callback) {
+      callback('')
+    }
+  }
 }

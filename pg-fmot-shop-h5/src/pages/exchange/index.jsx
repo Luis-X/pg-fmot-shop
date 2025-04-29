@@ -21,9 +21,6 @@ export default function Index() {
   });
 
   useDidShow(() => {
-    if (isShowPage) {
-      Taro.TRACKER.pageViewTracker("我的兑换");
-    }
     Taro.WXSDK.hideOptionMenu();
   });
 
@@ -32,7 +29,7 @@ export default function Index() {
     // if (!isLogin) {
     //   return
     // }
-    Taro.TRACKER.pageViewTracker("我的兑换");
+
     setIsShowPage(true);
 
     const act = router.params.act || ''
@@ -159,7 +156,8 @@ export default function Index() {
     Taro.UTIL.goToActivityPage({
       actId: activityId,
       accId: pointAccountId,
-      actPage: ''
+      actPage: '',
+      fromPage: 'exchange',
     })
   }
 

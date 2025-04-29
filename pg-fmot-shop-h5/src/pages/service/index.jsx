@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { View, Image } from '@tarojs/components'
-import Taro, { useLoad, useUnload, useRouter, useDidShow } from '@tarojs/taro'
+import Taro, { useLoad, useRouter, useDidShow, useUnload } from '@tarojs/taro'
 import './index.scss'
 
 import PGLoading from "../../components/pgLoading/index";
@@ -17,19 +17,16 @@ export default function Index() {
 
   const router = useRouter()
 
+  useUnload(() => {
+    Taro.UTIL.clearPGStorage('service_info')
+  })
+  
   useLoad(() => {   
     Taro.WXSDK.hideOptionMenu()    
     createdPage();
   })
 
-  useUnload(() => {
-    Taro.UTIL.clearPGStorage('service_info')
-  })
-
   useDidShow(() => {
-    if (isShowPage) {
-      Taro.TRACKER.pageViewTracker('客服')
-    }
     Taro.WXSDK.hideOptionMenu()
   })
 
@@ -38,7 +35,7 @@ export default function Index() {
     // if (!isLogin) {
     //   return
     // }
-    Taro.TRACKER.pageViewTracker('客服')
+    
     setIsShowPage(true)
 
     const act = router.params.act || ''

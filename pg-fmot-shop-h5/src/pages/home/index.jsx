@@ -7,7 +7,7 @@ import {
   Image as ImageNut
 } from "@nutui/nutui-react";
 import { View, Input, Image, ScrollView } from "@tarojs/components";
-import Taro, { useLoad, useRouter, useDidShow } from "@tarojs/taro";
+import Taro, { useLoad, useRouter, useDidShow, useDidHide } from "@tarojs/taro";
 import "./index.scss";
 
 import PGAlertAgree from "../../components/pgAlertAgree/index";
@@ -24,10 +24,13 @@ export default function Index() {
 
   const router = useRouter()
 
-  const configTracker = (type) => {
-    const trackData = {}
+  const [trackId, setTrackId] = useState('')
+  const configTracker = (type, trackData) => {
     if (type === 1) {
-      Taro.TRACKER.eventTracker('ACTIVITY_HOME_PAGE', trackData, "首页-浏览人数/次数")
+      // 活动首页浏览
+      Taro.TRACKER.eventTracker('ACTIVITY_HOME_PAGE', trackData, eventId => {
+        setTrackId(eventId)
+      })
     }
   }
 
@@ -37,10 +40,20 @@ export default function Index() {
   });
 
   useDidShow(() => {
-    if (isShowPage) {
-      Taro.TRACKER.pageViewTracker("首页");
-    }
     Taro.WXSDK.hideOptionMenu();
+    configTracker(1, {
+      activityId: actId,
+      pointAccountId: accId,
+    })  
+  });
+
+  useDidHide(() => {
+    configTracker(1, {
+      activityId: actId,
+      pointAccountId: accId,
+      id: trackId,
+      finished: true,
+    })
   });
 
   const createdPage = async () => {
@@ -48,10 +61,9 @@ export default function Index() {
     // if (!isLogin) {
     //   return
     // }
-    Taro.TRACKER.pageViewTracker("首页");
-    setIsShowPage(true);
-    configTracker(1)
 
+    setIsShowPage(true);
+    
     const act = router.params.act || ''
     const acc = router.params.acc || ''
     setActId(act)
@@ -173,13 +185,11 @@ export default function Index() {
 
   const searchOnChange = (e) => {
     const value = e.detail.value || ''
-    console.log('searchOnChange', value)
     setSearchValue(value)
   };
 
   const searchOnConfirm = () => {
     const value = searchValue || ''
-    console.log('searchOnConfirm', value)
     Taro.ROUTER.navigateTo(`/pages/search/index?act=${actId}&acc=${accId}&q=${value}`);
   };
 
@@ -210,9 +220,8 @@ export default function Index() {
   const [bannerList, setBannerList] = useState([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const onChangeSwiperItem = (index) => {
-      console.log('onChangeSwiperItem', index)
-      setCurrentIndex(index)
-    }
+    setCurrentIndex(index)
+  }
   
   const swiperView = () => {
     return (
@@ -246,7 +255,6 @@ export default function Index() {
   };
 
   const clickBanner = (item) => {
-    console.log("clickBanner", item);
     const url = item.url;
     Taro.ROUTER.navigateToWeb(url);
   };

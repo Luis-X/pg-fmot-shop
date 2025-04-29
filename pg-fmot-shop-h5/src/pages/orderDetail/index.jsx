@@ -16,10 +16,10 @@ export default function Index() {
 
   const router = useRouter()
 
-  const configTracker = (type) => {
-    const trackData = {}
+  const configTracker = (type, trackData) => {
     if (type === 1) {
-      Taro.TRACKER.eventTracker('ORDER_CANCEL', trackData, "订单详情页-取消人数/次数")
+      // 订单取消
+      Taro.TRACKER.eventTracker('ORDER_CANCEL', trackData)
     }
   }
 
@@ -29,9 +29,6 @@ export default function Index() {
   });
 
   useDidShow(() => {
-    if (isShowPage) {
-      Taro.TRACKER.pageViewTracker("订单详情");
-    }
     Taro.WXSDK.hideOptionMenu();
   });
 
@@ -40,7 +37,7 @@ export default function Index() {
     // if (!isLogin) {
     //   return
     // }
-    Taro.TRACKER.pageViewTracker("订单详情");
+
     setIsShowPage(true);
 
     const act = router.params.act || ''
@@ -76,14 +73,19 @@ export default function Index() {
   };
 
   // request
-  async function requestData(query) {
+  async function requestData(query, onlyRefresh) {
     const params = {
       ...query
     }
 
     // Taro.HUD.showLoading()
     const res = await Taro.NETWORK.orderDetailInfo(params) 
-    Taro.HUD.hideLoading()
+    if (onlyRefresh) {
+      console.log('仅刷新')
+    } else {
+      Taro.HUD.hideLoading()
+    }
+    
 
     if (res.code === 0) {
       const resData = res.data || {}
@@ -145,10 +147,15 @@ export default function Index() {
     Taro.HUD.hideLoading()
 
     if (res.code === 0) {
-      configTracker(1)
+      configTracker(1, {
+        activityId: actId,
+        pointAccountId: accId,
+        orderId: orderId,
+        finished: true,
+      })
+
       const resData = res.data || {}
-      Taro.HUD.showToastMessage('取消成功')
-      refreshData()
+      Taro.HUD.showToastMessage('取消成功')      
 
       // 返回刷新
       const orderCancelInfo = {
@@ -156,6 +163,13 @@ export default function Index() {
         orderId: orderId,
       }
       Taro.UTIL.setPGStorage('order_cancel_info', orderCancelInfo)	
+
+      // 刷新数据
+      requestData({
+        activityId: actId,
+        pointAccountId: accId,
+        id: orderId,
+      }, true);
     } else {
       Taro.HUD.showToastMessage(res.message)
     }       
