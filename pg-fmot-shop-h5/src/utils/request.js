@@ -31,16 +31,19 @@ function baseRequest(url, data, method) {
     token = tokenSSO.token || ''
   }
 
-  // FIXME: 测试用，临时token
-  // token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZC1mbW90LXNob3BwaW5nIiwiYXVkIjoicmQtZm1vdC1zaG9wcGluZyIsIm5iZiI6MTc0NTkwNDY0OSwicm9sZSI6Ind4LW1pbmktdXNlciIsImRhdGEiOiJ7fSIsImlzcyI6InJkLWZtb3Qtc2hvcHBpbmciLCJleHAiOjE3NDU5MTAwNDksImlhdCI6MTc0NTkwNDY0OSwidXNlcklkIjoiNiJ9.U06otF6SjoLoZHCqfg6buB5ROnfaV7CHlN9kh9QnG5Y'
+  // FIXME: 调试
+  // 1.从QA环境，获取token后，复制到本地
+  // 2.注释掉goToACLAuthPage的跳转
+  // 3.微信开发工具复制链接，将域名修改为：http://localhost:10086
+  // token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZC1mbW90LXNob3BwaW5nIiwiYXVkIjoicmQtZm1vdC1zaG9wcGluZyIsIm5iZiI6MTc0NTk5NzEyNSwicm9sZSI6Ind4LW1pbmktdXNlciIsImRhdGEiOiJ7fSIsImlzcyI6InJkLWZtb3Qtc2hvcHBpbmciLCJleHAiOjE3NDYwMDI1MjUsImlhdCI6MTc0NTk5NzEyNSwidXNlcklkIjoiNiJ9.UvQDdUKU7SakTUR_ejkrYE1yjNVfbTweE8jgY1bBYp4'
 
   const actId = data.activityId || ''
   const accId = data.pointAccountId || ''
 
-  console.debug(`actId: ${actId}`)
-  console.debug(`accId: ${accId}`)
-  console.debug(`接口: ${url} 入参：`)
-  console.debug(data)
+  // console.debug(`actId: ${actId}`)
+  // console.debug(`accId: ${accId}`)
+  // console.debug(`接口: ${url} 入参：`)
+  // console.debug(data)
 
 
   return new Promise(function (resolve, reject) {
@@ -61,8 +64,8 @@ function baseRequest(url, data, method) {
         if (res.statusCode === 200) {
           const respData = res.data || {}
 
-          console.debug(`接口: ${url} 响应：`)
-          console.debug(respData)
+          // console.debug(`接口: ${url} 响应：`)
+          // console.debug(respData)
 
           if (respData.code === -2) {
             needLoginWithActId(actId)
@@ -70,7 +73,7 @@ function baseRequest(url, data, method) {
           } else if (respData.code === -20004)  {
             // SSO账号不存在
             console.log("SSO账号不存在");
-            Taro.ROUTER.redirectTo(`/pages/disable/index?act=${actId}&status=2`);
+            Taro.ROUTER.reLaunchTo(`/pages/disable/index?act=${actId}&status=2`);
           } else if (respData.code === -20005)  {
             // 该积分账号已绑定
             // Taro.HUD.showToastMessage(respData.message)
@@ -78,11 +81,11 @@ function baseRequest(url, data, method) {
           } else if (respData.code === -20006)  {
             // 用户账号状态异常
             console.log("用户账号状态异常");
-            Taro.ROUTER.redirectTo(`/pages/disable/index?act=${actId}&status=2`);
+            Taro.ROUTER.reLaunchTo(`/pages/disable/index?act=${actId}&status=2`);
           } else if (respData.code === -20007)  {
             // 当前不在活动时间
             console.log("当前不在活动时间");
-            Taro.ROUTER.redirectTo(`/pages/disable/index?act=${actId}&status=1`);
+            Taro.ROUTER.reLaunchTo(`/pages/disable/index?act=${actId}&status=1`);
           } else {
             resolve(respData)
           }

@@ -131,7 +131,7 @@ export default function Index() {
     const pointAccountId = item.pointAccountId || '';
 
     if (item.pointAccountStatus === 'LOCK') {
-      Taro.ROUTER.redirectTo(`/pages/disable/index?act=${activityId}&status=2`);
+      Taro.ROUTER.reLaunchTo(`/pages/disable/index?act=${activityId}&status=2`);
       return
     }
 
@@ -145,13 +145,6 @@ export default function Index() {
       informedConsentForm: item.informedConsentForm,
     }
     Taro.UTIL.setPGStorage('agree_info', agreeInfo)
-      
-    // 活动信息
-    const activityInfo = {
-      act: activityId,
-      acc: pointAccountId,
-    }
-    Taro.UTIL.setPGStorage('activity_info', activityInfo)
 
     Taro.UTIL.goToActivityPage({
       actId: activityId,

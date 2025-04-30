@@ -90,7 +90,6 @@ function clearAllPGStorage() {
   clearPGStorage('enter_page')
   clearPGStorage('token_info')
   clearPGStorage('agree_info')  
-  clearPGStorage('activity_info')
   clearPGStorage('service_info')
   clearPGStorage('order_confirm_info')
   clearPGStorage('order_cancel_info')
@@ -263,13 +262,13 @@ function goToActivityPage(data) {
   if (fromPage === 'exchange') {
     Taro.ROUTER.navigateTo(url);
   } else {
-    Taro.ROUTER.redirectTo(url);
+    Taro.ROUTER.reLaunchTo(url);
   }
 }
 
 // 配置标签列表
 function configLabelTagList(label) {
-  const tagList = []
+  let tagList = []
   const labelValue = label || ''
   labelValue.split(',').forEach((text) => {
     if (text) {

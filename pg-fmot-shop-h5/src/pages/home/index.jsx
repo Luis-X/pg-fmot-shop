@@ -7,7 +7,7 @@ import {
   Image as ImageNut
 } from "@nutui/nutui-react";
 import { View, Input, Image, ScrollView } from "@tarojs/components";
-import Taro, { useLoad, useRouter, useDidShow, useDidHide } from "@tarojs/taro";
+import Taro, { useLoad, useRouter, useDidShow, useDidHide, useUnload } from "@tarojs/taro";
 import "./index.scss";
 
 import PGAlertAgree from "../../components/pgAlertAgree/index";
@@ -29,17 +29,21 @@ export default function Index() {
     if (type === 1) {
       // 活动首页浏览
       Taro.TRACKER.eventTracker('ACTIVITY_HOME_PAGE', trackData, eventId => {
-        setTrackId(eventId)
+        if (eventId) {
+          setTrackId(eventId)
+        }       
       })
     }
   }
 
   useLoad(() => {
+    console.log('home onLoad')
     Taro.WXSDK.hideOptionMenu();
     createdPage();   
   });
 
   useDidShow(() => {
+    console.log('home onShow')
     Taro.WXSDK.hideOptionMenu();
     configTracker(1, {
       activityId: actId,
@@ -48,13 +52,26 @@ export default function Index() {
   });
 
   useDidHide(() => {
-    configTracker(1, {
-      activityId: actId,
-      pointAccountId: accId,
-      id: trackId,
-      finished: true,
-    })
+    console.log('home onHide')
+    if (trackId) {
+      configTracker(1, {
+        activityId: actId,
+        pointAccountId: accId,
+        id: trackId,
+      })
+    }    
   });
+
+  useUnload(() => {
+    console.log('home onUnload')
+    if (trackId) {
+      configTracker(1, {
+        activityId: actId,
+        pointAccountId: accId,
+        id: trackId,
+      })
+    } 
+  })
 
   const createdPage = async () => {
     // const isLogin = await Taro.UTIL.checkIsLogin()
@@ -272,7 +289,7 @@ export default function Index() {
               </InfiniteLoading>
             </View>
           </PullToRefresh>
-          <PGTabBar sence='home'></PGTabBar>
+          <PGTabBar sence='home' act={actId} acc={accId}></PGTabBar>
           <PGAlertAgree></PGAlertAgree>          
         </View>
       ) : (

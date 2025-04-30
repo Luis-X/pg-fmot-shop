@@ -165,13 +165,6 @@ export default function Index() {
       informedConsentForm: activityData.informedConsentForm,
     }
     Taro.UTIL.setPGStorage('agree_info', agreeInfo)
-      
-    // 活动信息
-    const activityInfo = {
-      act: activityId,
-      acc: pointAccountId,
-    }
-    Taro.UTIL.setPGStorage('activity_info', activityInfo)
 
     // 活动类型、绑定状态    
     const activityType = activityData.activityType || '';
@@ -212,7 +205,7 @@ export default function Index() {
       } else {
         console.log("外部-未绑定");
         console.log("进入登录页");
-        Taro.ROUTER.redirectTo(`/pages/login/index?id=${activityId}&page=${actPage}`);
+        Taro.ROUTER.reLaunchTo(`/pages/login/index?id=${activityId}&page=${actPage}`);
       }
       return
     }

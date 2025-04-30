@@ -240,7 +240,7 @@ export default function Index() {
               </InfiniteLoading>                                                  
             </View>
           </PullToRefresh>
-          <PGTabBar sence='mine'></PGTabBar>
+          <PGTabBar sence='mine' act={actId} acc={accId}></PGTabBar>
           <PGAlertAgree></PGAlertAgree>
         </View>
       ) : (

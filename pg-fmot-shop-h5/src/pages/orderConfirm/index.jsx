@@ -18,6 +18,18 @@ export default function Index() {
 
   const router = useRouter()
 
+  // 订单中的，商品id
+  const configTrackerProductIds = (list) => {  
+    let productIds = []
+    list.forEach((item) => {
+      const tpId = item.tpId
+      if (tpId) {
+        productIds.push(tpId)
+      }      
+    })
+    return productIds
+  }
+
   const configTracker = (type, trackData) => {
     if (type === 1) {
       // 确认订单
@@ -45,11 +57,14 @@ export default function Index() {
 
   useDidShow(() => {
     Taro.WXSDK.hideOptionMenu();
-    configTracker(1, {
-      activityId: actId,
-      pointAccountId: accId,
-      finished: true,
-    })
+    const tpIds = configTrackerProductIds(cartList)
+    if (tpIds.length > 0) {
+      configTracker(1, {
+        activityId: actId,
+        pointAccountId: accId,
+        productIds: tpIds,
+      })
+    }   
   });
 
   const createdPage = async () => {
@@ -68,7 +83,7 @@ export default function Index() {
     requestData({
       activityId: act,
       pointAccountId: acc
-    })
+    }, 'load')
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
@@ -116,7 +131,7 @@ export default function Index() {
   };
 
   // request
-  async function requestData(query) {
+  async function requestData(query, scence) {
     const params = {
       ...query
     }
@@ -128,17 +143,28 @@ export default function Index() {
     if (res.code === 0) {
       const resData = res.data || {}
       setOrderActivityInfo(resData)
-      configConfirmOrderData();
+      configConfirmOrderData(query, scence);
     } else {
       Taro.HUD.showToastMessage(res.message)
     }   
   }
 
-  function configConfirmOrderData() {
+  function configConfirmOrderData(query, scence) {
     const orderConfirmInfo = Taro.UTIL.getPGStorage('order_confirm_info')
     const goodsList = orderConfirmInfo.goodsList || []
     setCartList(goodsList)
     checkCartStatus(goodsList);
+
+    if (scence === 'load') {
+      const tpIds = configTrackerProductIds(goodsList)
+      if (tpIds.length > 0) {
+        configTracker(1, {
+          activityId: query.activityId,
+          pointAccountId: query.pointAccountId,
+          productIds: tpIds,
+        })
+      }
+    }
   }
 
   async function requestCartChangeData(val, id) {
@@ -320,11 +346,14 @@ export default function Index() {
   const [hideConfimBtn, setHideConfimBtn] = useState(false);
 
   const clickExchange = () => {
-    configTracker(2, {
-      activityId: actId,
-      pointAccountId: accId,
-      finished: true,
-    })
+    const tpIds = configTrackerProductIds(cartList)
+    if (tpIds.length > 0) {
+      configTracker(2, {
+        activityId: actId,
+        pointAccountId: accId,
+        productIds: tpIds,
+      })
+    }
 
     // 是否选择商品
     if (cartList.length <= 0) {
@@ -339,7 +368,7 @@ export default function Index() {
     }
 
     // 是否包含虚拟商品
-    const newList = []
+    let newList = []
     cartList.forEach(item => {
       if (item.productType === 'VIRTUAL_OBJECT') {
         newList.push(item)
@@ -365,7 +394,8 @@ export default function Index() {
 
   const requestOrderConfirmData = async () => {  
 
-    const orderItems = []
+    let orderItems = []
+    let orderTpIds = []
     // 过滤虚拟商品，仅结算实物商品
     cartList.forEach(item => {
       if (item.productType === 'PHYSICAL_OBJECT') {
@@ -374,6 +404,10 @@ export default function Index() {
           quantity: item.quantity
         }
         orderItems.push(obj)
+        const tpId = item.tpId
+        if (tpId) {
+          orderTpIds.push(tpId)
+        }        
       }      
     })
 
@@ -389,24 +423,33 @@ export default function Index() {
     Taro.HUD.hideLoading()
 
     if (res.code === 0) {
-      configTracker(3, {
-        activityId: actId,
-        pointAccountId: accId,
-        finished: true,
-      })
-
       const resData = res.data || {}
+      const orderId = resData.orderId || ''
+
+      if (cartList.length > 0) {
+        configTracker(3, {
+          activityId: actId,
+          pointAccountId: accId,
+          orderId: orderId,
+          productIds: orderTpIds,
+        })
+      }
+
       Taro.HUD.showToastMessage('兑换成功')
+      
+      // 清理兑换信息，返回我的并刷新
       Taro.UTIL.clearPGStorage('order_confirm_info')
       setTimeout(() => {
         Taro.ROUTER.reLaunchTo(`/pages/mine/index?act=${actId}&acc=${accId}`);
       }, 2000);
     } else {
-      configTracker(4, {
-        activityId: actId,
-        pointAccountId: accId,
-        finished: true,
-      })
+      if (cartList.length > 0) {
+        configTracker(4, {
+          activityId: actId,
+          pointAccountId: accId,
+          productIds: orderTpIds,
+        })
+      }
 
       Taro.HUD.showToastMessage(res.message)
     }        

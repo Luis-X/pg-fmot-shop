@@ -14,7 +14,7 @@ const imgMineOn = ASSET_IMG.assetImgWithName('mine_on.png')
 
 export default function Index(props) {
 
-  const { sence } = props
+  const { sence, act, acc } = props
 
   useLoad(() => {
     console.log('tabbar loaded.')
@@ -24,17 +24,13 @@ export default function Index(props) {
     console.log('tabbar effect.') 
   }, []);
   
-  const clickTabbar = (index) => {
-    const activityInfo = Taro.UTIL.getPGStorage('activity_info')
-    const act = activityInfo.act || ''
-    const acc = activityInfo.acc || ''
-    
+  const clickTabbar = (index) => {    
     if (index === 0) {
-      Taro.ROUTER.redirectTo(`/pages/home/index?act=${act}&acc=${acc}`);   
+      Taro.ROUTER.reLaunchTo(`/pages/home/index?act=${act}&acc=${acc}`);   
     } else if (index === 1) {
-      Taro.ROUTER.redirectTo(`/pages/cart/index?act=${act}&acc=${acc}`);
+      Taro.ROUTER.reLaunchTo(`/pages/cart/index?act=${act}&acc=${acc}`);
     } else if (index === 2) {
-      Taro.ROUTER.redirectTo(`/pages/mine/index?act=${act}&acc=${acc}`);
+      Taro.ROUTER.reLaunchTo(`/pages/mine/index?act=${act}&acc=${acc}`);
     }
   }
 

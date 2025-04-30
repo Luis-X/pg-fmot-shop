@@ -314,6 +314,7 @@ class TrackDetail extends Component {
       ],
       goodsSearchList: [],
 
+      chartData: [],
       data: [],
       loadingShow: false,
       activityId: '',
@@ -368,6 +369,7 @@ class TrackDetail extends Component {
       tabIndex,
       pageNo: 0,
       data: [],
+      chartData: [],
       totalNum: 10,
       queryData: {},
     },() => {
@@ -391,6 +393,13 @@ class TrackDetail extends Component {
     }
   }
 
+  // 处理数据，添加唯一 ID
+  processData = (data) => {
+    return data.map((item, index) => ({
+      ...item,
+      uniqueId: `unique_${index}` 
+    }));
+  };
   // 人数
   requestPeopleListData = () => {
     console.log('人数')
@@ -407,8 +416,9 @@ class TrackDetail extends Component {
       if (res) {
         const respData = res.data || {};
         if (0 === respData.code) {
+          const processedData = self.processData(respData.data || []);
           self.setState({
-            data: respData.data || [],
+            data: processedData,
             totalNum: respData.data.totalElements,
           });
         } else {
@@ -437,8 +447,9 @@ class TrackDetail extends Component {
       if (res) {
         const respData = res.data || {};
         if (0 === respData.code) {
+          const processedData = self.processData(respData.data || []);
           self.setState({
-            data: respData.data || [],
+            data: processedData,
             totalNum: respData.data.totalElements,
           });
         } else {
@@ -472,7 +483,7 @@ class TrackDetail extends Component {
         const respData = res.data || {};
         if (0 === respData.code) {
           self.setState({
-            data: respData.data || [],
+            chartData: respData.data || [],
           });
         } else {
           MyAlert({ errorMsg: respData.message });
@@ -719,7 +730,8 @@ class TrackDetail extends Component {
             size="middle"
             loading={this.state.loadingShow}
             pagination={false}
-            rowKey="id"
+            // rowKey="id"
+            rowKey="uniqueId" 
             columns={
               this.filterColumns(columns)
             }
@@ -755,7 +767,7 @@ class TrackDetail extends Component {
 
   // 图表
   lineChartView = () => {
-    const dataList = this.state.data;
+    const chartDataList = this.state.chartData;
     let data = [];
     let list = [];
     let keyList = [
@@ -780,32 +792,62 @@ class TrackDetail extends Component {
       'point_57',
       'point_60',
     ];
-    dataList.forEach((item, index) => {
-      const chartMap = item || {};
-      let type = '';
-      if (item.user_action_type === 2) {
-        type = '轮播图视频观看人数';
-      } else if (item.user_action_type === 3) {
-        type = '商品详情视频观看人数';
-      }
-      keyList.forEach((key, jndex) => {
-        const pointIem = {};
-        const secondValue = (jndex + 1) * 3;
-        const value = chartMap[key] || 0;
-        pointIem.type = type;
-        pointIem.second = secondValue.toString();
-        pointIem.value = value;
-        list.push(pointIem);
+
+    if (chartDataList.length > 0) {
+      let productCarouselVideoTotalValue = 0
+      let productDetailVideoTotalValue = 0
+      
+      chartDataList.forEach((item, index) => {
+        const chartMap = item || {};
+        keyList.forEach((key, jndex) => {
+          let type = ''
+          let value = chartMap[key] || 0;
+          if (item.user_action_type === 'PRODUCT_CAROUSEL_VIDEO') {
+            type = '轮播图视频观看人数';
+            productCarouselVideoTotalValue += value;
+          } 
+          if (item.user_action_type === 'PRODUCT_DETAIL_VIDEO') {
+            type = '商品详情视频观看人数';
+            productDetailVideoTotalValue += value;
+          }          
+          const pointIem = {};
+          const secondValue = (jndex + 1) * 3;          
+          // pointIem.id = `${index}-${jndex}`;
+          pointIem.type = type;
+          pointIem.second = String(secondValue);
+          pointIem.value = Number(value);
+          list.push(pointIem);          
+        })
+                
       })
-    })
-    data = list;
-    console.log(data)
+    
+      console.log('轮播图视频观看总人数', productCarouselVideoTotalValue)
+      console.log('商品详情视频观看总人数', productDetailVideoTotalValue)  
+
+      // 增加百分比字段
+      list.forEach((item) => {
+        let value = 0
+        let totalValue = 0
+        if (item.type === '轮播图视频观看人数') {
+          value = item.value;
+          totalValue = productCarouselVideoTotalValue;                  
+        }
+        if (item.type === '商品详情视频观看人数') {
+          value = item.value;
+          totalValue = productDetailVideoTotalValue;               
+        }
+        const ratio = (value / totalValue)
+        item.percent = ratio.toFixed(2) * 100;
+      })
+      console.log(list)
+      data = list;
+    }
 
     const config = {
       data,
       height: 500,
       xField: 'second',
-      yField: 'value',
+      yField: 'percent',
       xAxis: {
         title: {
           position: 'end',

@@ -19,7 +19,7 @@ export default function Index(props) {
   // 商品详情
   const clickGoods = (item) => {
     if (scenceType === 'order-detail') {
-      // const productId = item.id || '';
+      // const productId = item.activityProductId || '';
       // const actId = act || ''
       // const accId = acc || '' 
       // Taro.ROUTER.navigateTo(`/pages/detail/index?act=${actId}&acc=${accId}&id=${productId}`);
@@ -33,7 +33,7 @@ export default function Index(props) {
     if (isDiscountPrice) {
       result = (
         <>
-          <View className='pg-order-goods-price-old'>{item.price}积分</View>
+          <View className='pg-order-goods-price-old'>{item.product.price}积分</View>
           <View className='pg-order-goods-price-wrap'>
             <View className='pg-order-goods-price'>{item.discountPrice}</View>
             <View className='pg-order-goods-price-unit'>积分</View>
@@ -43,7 +43,7 @@ export default function Index(props) {
     } else {
       result = (
         <View className='pg-order-goods-price-wrap'>
-          <View className='pg-order-goods-price'>{item.price}</View>
+          <View className='pg-order-goods-price'>{item.product.price}</View>
           <View className='pg-order-goods-price-unit'>积分</View>
         </View>
       )
@@ -60,9 +60,9 @@ export default function Index(props) {
           cartList.map((item, index) => {
             return (
               <View className='pg-order-goods-wrap' key={index}>
-                <ImageNut className='pg-order-goods-img' src={item.previewUrl} fit='cover' lazy={true} loading={true} onClick={() => clickGoods(item)}/>
+                <ImageNut className='pg-order-goods-img' src={item.product.previewUrl} fit='cover' lazy={true} loading={true} onClick={() => clickGoods(item)}/>
                 <View className='pg-order-goods-info' onClick={() => clickGoods(item)}>
-                  <View className='pg-order-goods-name'>{item.name}</View>
+                  <View className='pg-order-goods-name'>{item.product.name}</View>
                   {priceView(item)}
                   <View className='pg-order-goods-count'>{`x${item.quantity}`}</View>
                 </View>

@@ -16,6 +16,21 @@ export default function Index() {
 
   const router = useRouter()
 
+  // 订单中的，商品id
+  const configTrackerProductIds = () => {  
+    let productIds = []
+    const orderData = orderInfo.order || {} 
+    const list = orderData.orderItems || []
+    list.forEach((item) => {
+      const productData = item.product || {}
+      const tpId = productData.id
+      if (tpId) {
+        productIds.push(tpId)
+      }      
+    })
+    return productIds
+  }
+
   const configTracker = (type, trackData) => {
     if (type === 1) {
       // 订单取消
@@ -147,16 +162,20 @@ export default function Index() {
     Taro.HUD.hideLoading()
 
     if (res.code === 0) {
-      configTracker(1, {
-        activityId: actId,
-        pointAccountId: accId,
-        orderId: orderId,
-        finished: true,
-      })
-
       const resData = res.data || {}
-      Taro.HUD.showToastMessage('取消成功')      
 
+      const tpIds = configTrackerProductIds()
+      if (tpIds.length > 0) {
+        configTracker(1, {
+          activityId: actId,
+          pointAccountId: accId,
+          orderId: orderId,
+          productIds: tpIds,
+        })
+      }
+      
+      Taro.HUD.showToastMessage('取消成功')
+      
       // 返回刷新
       const orderCancelInfo = {
         needRefresh: true,

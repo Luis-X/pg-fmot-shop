@@ -221,12 +221,14 @@ export default function Index() {
     let goodsList = [];
     cartList.forEach((item) => {
       if (item.isSelect) {
+        const productData = item.product || {};
         const goods = {
+          tpId: productData.id,
           id: item.activityProductId,
-          productType: item.productType,
-          previewUrl: item.previewUrl,
-          name: item.name,
-          price: item.price,
+          productType: productData.productType,
+          previewUrl: productData.previewUrl,
+          name: productData.name,
+          price: productData.price,
           discountPrice: item.discountPrice,         
           quantity: item.quantity,
         }
@@ -260,7 +262,7 @@ export default function Index() {
     if (isDiscountPrice) {
       result = (
         <>
-          <View className='goods-price-old'>{item.price}积分</View>
+          <View className='goods-price-old'>{item.product.price}积分</View>
           <View className='goods-price-new-wrap'>
             <View className='goods-price-new'>{item.discountPrice}</View>
             <View className='goods-price-new-unit'>积分</View>
@@ -270,7 +272,7 @@ export default function Index() {
     } else {
       result = (
         <View className='goods-price-new-wrap'>
-          <View className='goods-price-new'>{item.price}</View>
+          <View className='goods-price-new'>{item.product.price}</View>
           <View className='goods-price-new-unit'>积分</View>
         </View>
       )
@@ -298,9 +300,9 @@ export default function Index() {
                     </View>
                   )
                 }
-                <ImageNut className='goods-img' src={item.previewUrl} fit='cover' lazy={false} loading={false} onClick={() => clickGoods(item)} />
+                <ImageNut className='goods-img' src={item.product.previewUrl} fit='cover' lazy={false} loading={false} onClick={() => clickGoods(item)} />
                 <View className='goods-info' onClick={() => clickGoods(item)}>
-                  <View className='goods-name'>{item.name}</View>
+                  <View className='goods-name'>{item.product.name}</View>
                   {priceView(item)}                 
                 </View>
                 <InputNumber className='goods-count' value={item.quantity} min={0} allowEmpty={false} readOnly onChange={(val) => cartNumOnChange(val, item)} />
@@ -391,7 +393,7 @@ export default function Index() {
             </View>
           </PullToRefresh>
           {toolsView()}
-          <PGTabBar sence='cart'></PGTabBar>
+          <PGTabBar sence='cart' act={actId} acc={accId}></PGTabBar>
           <PGAlertAgree></PGAlertAgree>
           {delAlertView()}
         </View>

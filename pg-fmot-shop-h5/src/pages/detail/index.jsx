@@ -8,7 +8,7 @@ import {
   Image as ImageNut,
 } from "@nutui/nutui-react";
 import { View, Video, Image, ScrollView } from "@tarojs/components";
-import Taro, { useLoad, useRouter, useDidShow, useDidHide } from "@tarojs/taro";
+import Taro, { useLoad, useRouter, useDidShow, useDidHide, useUnload } from "@tarojs/taro";
 import "./index.scss";
 
 import PGLoading from "../../components/pgLoading/index";
@@ -30,21 +30,36 @@ export default function Index() {
   const [trackId, setTrackId] = useState('')
   const [trackBannerVideoId, setTrackBannerVideoId] = useState('')
   const [trackDetailVideoId, setTrackDetailVideoId] = useState('')
+
+  const configTrackerProductIds = () => {
+    if (tpId) {
+      return [tpId]
+    } else {
+      return []
+    }
+  }
+
   const configTracker = (type, trackData) => {
     if (type === 1) {
       // 商品详情页浏览
       Taro.TRACKER.eventTracker('PRODUCT_DETAIL_PAGE', trackData, eventId => {
-        setTrackId(eventId)
+        if (eventId) {
+          setTrackId(eventId)
+        } 
       })
     } else if (type === 2) {
       // 商品轮播图视频
       Taro.TRACKER.eventTracker('PRODUCT_CAROUSEL_VIDEO', trackData, eventId => {
-        setTrackBannerVideoId(eventId)
+        if (eventId) {
+          setTrackBannerVideoId(eventId)
+        } 
       })
     } else if (type === 3) {
       // 商品详情视频
       Taro.TRACKER.eventTracker('PRODUCT_DETAIL_VIDEO', trackData, eventId => {
-        setTrackDetailVideoId(eventId)
+        if (eventId) {
+          setTrackDetailVideoId(eventId)
+        } 
       })
     } else if (type === 4) {
       // 商品详情加购物车
@@ -53,28 +68,49 @@ export default function Index() {
   }
 
   useLoad(() => {
+    console.log('detail onLoad')
     Taro.WXSDK.hideOptionMenu();
     createdPage();
   });
 
   useDidShow(() => {
+    console.log('detail onShow')
     Taro.WXSDK.hideOptionMenu();
-    configTracker(1, {
-      activityId: actId,
-      pointAccountId: accId,
-      productId: productId,
-    })  
+    const tpIds = configTrackerProductIds()
+    if (tpIds.length > 0) {
+      configTracker(1, {
+        activityId: actId,
+        pointAccountId: accId,
+        productIds: tpIds,
+      })
+    }
   });
 
   useDidHide(() => {
-    configTracker(1, {
-      activityId: actId,
-      pointAccountId: accId,
-      productId: productId,
-      id: trackId,
-      finished: true,
-    })
+    console.log('detail onHide')
+    const tpIds = configTrackerProductIds()
+    if (trackId && tpIds.length > 0) {      
+      configTracker(1, {
+        activityId: actId,
+        pointAccountId: accId,
+        productIds: tpIds,
+        id: trackId,
+      })
+    }
   });
+
+  useUnload(() => {
+    console.log('detail onUnload')
+    const tpIds = configTrackerProductIds()
+    if (trackId && tpIds.length > 0) {      
+      configTracker(1, {
+        activityId: actId,
+        pointAccountId: accId,
+        productIds: tpIds,
+        id: trackId,
+      })
+    }
+  })
 
   const createdPage = async () => {
     // const isLogin = await Taro.UTIL.checkIsLogin()
@@ -95,13 +131,14 @@ export default function Index() {
       activityId: act,
       pointAccountId: acc,
       id: id,
-    })
+    }, 'load')
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
   const [actId, setActId] = useState('');
   const [accId, setAccId] = useState('');
   const [productId, setProductId] = useState('');
+  const [tpId, setTpId] = useState('');
 
   // 商品信息
   const [goodsInfo, setGoodsInfo] = useState({});  
@@ -181,29 +218,38 @@ export default function Index() {
         // 首次播放
         console.log('首次播放-轮播')
         setPlayBannerVideoTime(3)
-        configTracker(2, {
-          activityId: actId,
-          pointAccountId: accId,
-          productId: productId,
-        }) 
+        const tpIds = configTrackerProductIds()
+        if (tpIds.length > 0) {
+          configTracker(2, {
+            activityId: actId,
+            pointAccountId: accId,
+            productIds: tpIds,
+          }) 
+        }        
       } else if (playBannerVideoTime === -1) {        
         // 完播后，播放
         console.log('完播后，播放-轮播')
         setPlayBannerVideoTime(3)
-        configTracker(2, {
-          activityId: actId,
-          pointAccountId: accId,
-          productId: productId,
-        }) 
+        const tpIds = configTrackerProductIds()
+        if (tpIds.length > 0) {
+          configTracker(2, {
+            activityId: actId,
+            pointAccountId: accId,
+            productIds: tpIds,
+          }) 
+        }   
       } else {
         // 暂停后，重新播放
         console.log('暂停后，重新播放-轮播')
-        configTracker(2, {
-          activityId: actId,
-          pointAccountId: accId,
-          productId: productId,
-          id: trackBannerVideoId,
-        }) 
+        const tpIds = configTrackerProductIds()
+        if (trackBannerVideoId && tpIds.length > 0) {
+          configTracker(2, {
+            activityId: actId,
+            pointAccountId: accId,
+            productIds: tpIds,
+            id: trackBannerVideoId,
+          }) 
+        }      
       }            
     }
     // 详情视频
@@ -212,29 +258,38 @@ export default function Index() {
         // 首次播放
         console.log('首次播放-详情')
         setPlayDetailVideoTime(3)
-        configTracker(3, {
-          activityId: actId,
-          pointAccountId: accId,
-          productId: productId,
-        }) 
+        const tpIds = configTrackerProductIds()
+        if (tpIds.length > 0) {
+          configTracker(3, {
+            activityId: actId,
+            pointAccountId: accId,
+            productIds: tpIds,
+          }) 
+        }
       } else if (playDetailVideoTime === -1) {        
         // 完播后，播放
         console.log('完播后，播放-详情')
         setPlayDetailVideoTime(3)
-        configTracker(3, {
-          activityId: actId,
-          pointAccountId: accId,
-          productId: productId,
-        }) 
+        const tpIds = configTrackerProductIds()
+        if (tpIds.length > 0) {
+          configTracker(3, {
+            activityId: actId,
+            pointAccountId: accId,
+            productIds: tpIds,
+          }) 
+        } 
       } else {
         // 暂停后，重新播放
         console.log('暂停后，重新播放-详情')
-        configTracker(3, {
-          activityId: actId,
-          pointAccountId: accId,
-          productId: productId,
-          id: trackDetailVideoId,
-        }) 
+        const tpIds = configTrackerProductIds()
+        if (trackDetailVideoId && tpIds.length > 0) {
+          configTracker(3, {
+            activityId: actId,
+            pointAccountId: accId,
+            productIds: tpIds,
+            id: trackDetailVideoId,
+          })
+        }         
       }     
     }
   }
@@ -244,22 +299,30 @@ export default function Index() {
     // 轮播视频
     if (sence === 'banner' && time > playBannerVideoTime && playBannerVideoTime >= 0) {
       setPlayBannerVideoTime(time + 3)       
-      configTracker(2, {
-        activityId: actId,
-        pointAccountId: accId,
-        productId: productId,
-        id: trackBannerVideoId,
-      }) 
+      if (trackBannerVideoId) {
+        const tpIds = configTrackerProductIds()
+        if (tpIds.length > 0) {
+          configTracker(2, {
+            activityId: actId,
+            pointAccountId: accId,
+            productIds: tpIds,
+            id: trackBannerVideoId,
+          })
+        }
+      }       
     }
     // 详情视频
     if (sence === 'detail' && time > playDetailVideoTime && playDetailVideoTime >= 0) {
-      setPlayDetailVideoTime(time + 3)       
-      configTracker(3, {
-        activityId: actId,
-        pointAccountId: accId,
-        productId: productId,
-        id: trackDetailVideoId,
-      })
+      setPlayDetailVideoTime(time + 3)
+      const tpIds = configTrackerProductIds()
+      if (trackDetailVideoId && tpIds.length > 0) {
+        configTracker(3, {
+          activityId: actId,
+          pointAccountId: accId,
+          productIds: tpIds,
+          id: trackDetailVideoId,
+        })
+      }        
     }
   }
 
@@ -268,24 +331,30 @@ export default function Index() {
     // 轮播视频
     if (sence === 'banner') {    
       setPlayBannerVideoTime(-1) 
-      configTracker(2, {
-        activityId: actId,
-        pointAccountId: accId,
-        productId: productId,
-        id: trackBannerVideoId,
-        finished: true,
-      }) 
+      const tpIds = configTrackerProductIds()
+      if (trackBannerVideoId && tpIds.length > 0) {
+        configTracker(2, {
+          activityId: actId,
+          pointAccountId: accId,
+          productIds: tpIds,
+          id: trackBannerVideoId,
+          finished: true,
+        })      
+      }      
     } 
     // 详情视频
     if (sence === 'detail') { 
       setPlayDetailVideoTime(-1)   
-      configTracker(3, {
-        activityId: actId,
-        pointAccountId: accId,
-        productId: productId,
-        id: trackDetailVideoId,
-        finished: true,
-      })
+      const tpIds = configTrackerProductIds()
+      if (trackDetailVideoId && tpIds.length > 0) {
+        configTracker(3, {
+          activityId: actId,
+          pointAccountId: accId,
+          productIds: tpIds,
+          id: trackDetailVideoId,
+          finished: true,
+        })
+      }  
     }
   }
 
@@ -299,7 +368,7 @@ export default function Index() {
   };
 
   // request
-  async function requestData(query) {
+  async function requestData(query, scence) {
     const params = {
       ...query
     }
@@ -319,6 +388,18 @@ export default function Index() {
       const resData = res.data || {}
       const productData = resData.product || {}
       const banner = productData.productCarouselImages || []
+
+      if (scence === 'load') {
+        const productOfId = productData.id || ''
+        if (productOfId) {
+          configTracker(1, {
+            activityId: query.activityId,
+            pointAccountId: query.pointAccountId,
+            productIds: [productOfId],
+          })
+        }        
+        setTpId(productOfId)
+      }
 
       setGoodsInfo(resData)
       setBannerList(banner)
@@ -404,12 +485,15 @@ export default function Index() {
   // 加入购物车
   const [cartNum, setCartNum] = useState(0);
   const clickCartAdd = () => {
-    configTracker(4, {
-      activityId: actId,
-      pointAccountId: accId,
-      productId: productId,
-      finished: true,
-    })  
+    
+    const tpIds = configTrackerProductIds()
+    if (tpIds.length > 0) {
+      configTracker(4, {
+        activityId: actId,
+        pointAccountId: accId,
+        productIds: tpIds,
+      })
+    }     
 
     let newValue = 1
     // 购物车中是否有该商品
@@ -538,6 +622,7 @@ export default function Index() {
 
     let goodsList = [];
     const goods = {
+      tpId: productData.id,
       id: goodsInfo.id,
       productType: productData.productType,
       previewUrl: productData.previewUrl,
@@ -711,7 +796,7 @@ export default function Index() {
                 className='detail-video'  
                 id='detail-video-ref'
                 src={detailVideoSource.src}
-                poster={detailVideoSource.poster}
+                // poster={detailVideoSource.poster}
                 initialTime={videoOptions.initialTime}
                 controls={videoOptions.controls}
                 autoplay={videoOptions.autoplay}

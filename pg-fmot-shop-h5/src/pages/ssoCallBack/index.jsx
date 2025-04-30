@@ -107,13 +107,6 @@ export default function Index() {
     }
     Taro.UTIL.setPGStorage('agree_info', agreeInfo)
 
-    // 活动信息
-    const activityInfo = {
-      act: activityId,
-      acc: pointAccountId,
-    }
-    Taro.UTIL.setPGStorage('activity_info', activityInfo)
-
     // 检查用户状态，跳转首页
     setTimeout(() => {
       Taro.UTIL.goToActivityPage({
