@@ -154,6 +154,7 @@ export default function Index() {
     loop: false,    
     muted: false,
     showProgress: false,
+    showCenterPlayBtn: false,
   }
 
   // 视频播放
@@ -666,6 +667,44 @@ export default function Index() {
     }
   }
 
+  const videoSwiperView = (item) => {
+    const videoImgUrl = item.videoImgUrl || ''
+    return (
+      <>
+        <Video 
+          className='swiper-video'
+          id='swiper-video-ref'
+          src={videoSource.src}
+          poster={videoSource.poster}
+          initialTime={videoOptions.initialTime}
+          controls={videoOptions.controls}
+          autoplay={videoOptions.autoplay}
+          loop={videoOptions.loop}
+          muted={videoOptions.muted}
+          showCenterPlayBtn={videoOptions.showCenterPlayBtn}
+          onPlay={(elm) => onVideoPlayEvent(elm, 'banner')}
+          onPause={(elm) => onVideoPauseEvent(elm, 'banner')}
+          onEnded={(elm) => onVideoPlayendEvent(elm, 'banner')}
+          onTimeUpdate={(elm) => onVideoTimeUpdate(elm, 'banner')}
+        />       
+        {
+          !isVideoPlay ? (
+            <>
+            {
+              videoImgUrl ? (
+                <ImageNut className='detail-swiper-poster' src={videoImgUrl} fit='contain' lazy={false} loading={false} />
+              ) : null
+            }             
+            <View className="detail-swiper-play-wrap">
+              <Image className='detail-swiper-play' mode='aspectFit' src={imgVideoPlay} onClick={() => clickPreviewVideo()}></Image>
+            </View> 
+            </>
+          ) : null
+        }               
+      </>   
+    )
+  }
+
   const swiperView = () => {
     return (
       <View className='detail-swiper-wrap'>
@@ -681,32 +720,7 @@ export default function Index() {
                 <Swiper.Item key={index} className='swiper-item' >
                   {
                     item.videoUrl && item.videoUrl.length > 0 ? (
-                      <View className='swiper-item-content'>
-                        {
-                          isVideoPlay ? (
-                            <Video 
-                              className='swiper-video'
-                              id='swiper-video-ref'
-                              src={videoSource.src}
-                              poster={videoSource.poster}
-                              initialTime={videoOptions.initialTime}
-                              controls={videoOptions.controls}
-                              autoplay={videoOptions.autoplay}
-                              loop={videoOptions.loop}
-                              muted={videoOptions.muted}
-                              onPlay={(elm) => onVideoPlayEvent(elm, 'banner')}
-                              onPause={(elm) => onVideoPauseEvent(elm, 'banner')}
-                              onEnded={(elm) => onVideoPlayendEvent(elm, 'banner')}
-                              onTimeUpdate={(elm) => onVideoTimeUpdate(elm, 'banner')}
-                            />
-                          ) : (
-                            <>
-                              <ImageNut className='swiper-img' src={item.videoImgUrl} fit='contain' lazy={false} loading={false} />
-                              <Image className='swiper-video-play' mode='aspectFit' src={imgVideoPlay} onClick={() => clickPreviewVideo()}></Image>
-                            </>
-                          )
-                        }                        
-                      </View>                    
+                      videoSwiperView(item)
                     ) : (
                       <View className='swiper-item-content'>
                         <ImageNut className='swiper-img' src={item.imgUrl} fit='contain' lazy={false} loading={false} onClick={() => clickPreviewImg(item.imgUrl)} />
@@ -783,7 +797,6 @@ export default function Index() {
 
   // 商品视频、图片
   // FIXME: 视频缺少封面
-  const rootRef = useRef(null)
   const goodsVideoAndImgView = () => {
     return (
       <>
