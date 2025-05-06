@@ -189,6 +189,13 @@ export function AddGoodsFun({
         //   return;
         // }
         console.log('上传视频时，未上传封面也可提交')
+      } else if (bannerPoster) {        
+        if (!bannerVideo) {
+          message.error('请上传视频！', 2);
+          setLoading(false);
+          return;
+        }
+        console.log('上传封面时，必须上传视频，否则无法提交')
       } else {
         if (bannerImgs.length <= 0) {
           message.error('请上传轮播图！', 2);

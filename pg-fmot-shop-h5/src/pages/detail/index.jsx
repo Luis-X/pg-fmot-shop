@@ -403,14 +403,32 @@ export default function Index() {
       }
 
       setGoodsInfo(resData)
-      setBannerList(banner)
 
-      // banner 视频
-      const videoUrl = banner[0].videoUrl || ''
-      const videoImgUrl = banner[0].videoImgUrl || ''
+      let bannerVideoUrl = ''
+      let bannerVideoImgUrl = ''
+      
+      // 过滤视频、图片
+      let bannerArray = []
+      banner.forEach((item, index) => {
+        const imgUrl = item.imgUrl || ''
+        const videoUrl = item.videoUrl || ''
+        const videoImgUrl = item.videoImgUrl || ''
+        if (videoUrl) {
+          bannerArray.push(item)
+          bannerVideoUrl = videoUrl
+          bannerVideoImgUrl = videoImgUrl
+        } else if (videoImgUrl) {
+          console.log('仅有封面，不显示')
+        } else if (imgUrl) {
+          bannerArray.push(item)
+        }
+      })
+      setBannerList(bannerArray)
+
+      // banner 视频      
       const video = {
-        src: videoUrl,
-        poster: videoImgUrl,
+        src: bannerVideoUrl,
+        poster: bannerVideoImgUrl,
         type: 'video/mp4',
       }
       setVideoSource(video)
@@ -712,6 +730,7 @@ export default function Index() {
           className='swiper-item'
           loop
           indicator={false}
+          touchable={bannerList.length > 1 ? true : false}
           onChange={onChangeSwiperItem}
         >
           {
@@ -733,7 +752,7 @@ export default function Index() {
           }
         </Swiper>
         {
-          !isVideoPlay ? (
+          bannerList && bannerList.length > 1 && !isVideoPlay ? (
             <View className="detail-swiper-slide">
               <Indicator total={bannerList.length} type="dualScreen" current={currentIndex} />
             </View>  
@@ -744,24 +763,27 @@ export default function Index() {
   }
 
   // 积分展示
-  const priceView = (product, discountPrice) => {
-    const isDiscountPrice = discountPrice;
+  const priceView = () => {
+    const isDiscount = goodsInfo.discountPrice ? true : false;
+    const discountPrice = goodsInfo.discountPrice 
+    const productData = goodsInfo.product || {}
+    const price = productData.price
     let result = null;
-    if (isDiscountPrice) {
+    if (isDiscount) {
       result = (
         <View className='detail-price-item'>
           <View className='detail-price-new-wrap'>
             <View className='detail-price-new'>{discountPrice}</View>
             <View className='detail-price-new-unit'>积分</View>
           </View>       
-          <View className='detail-price-old'>{product.price}积分</View>   
+          <View className='detail-price-old'>{price}积分</View>   
         </View>    
       )
     } else {
       result = (
         <View className='detail-price-item'>
           <View className='detail-price-new-wrap'>
-            <View className='detail-price-new'>{product.price}</View>
+            <View className='detail-price-new'>{price}</View>
             <View className='detail-price-new-unit'>积分</View>
           </View>    
         </View>
@@ -771,19 +793,20 @@ export default function Index() {
   }
   // 商品信息
   const goodsInfoView = () => {
+    const productData = goodsInfo.product || {}
     return (
       <>
         <View className='detail-price-wrap'>
           <Image className='detail-price-img' mode='aspectFill' src={imgPriceBar}></Image>
-          { priceView(goodsInfo.product, goodsInfo.discountPrice) }                    
+          {priceView()}
         </View>
         <View className='detail-name-wrap'>
-          <View className='detail-name'>{goodsInfo.product.name}</View>
+          <View className='detail-name'>{productData.name}</View>
         </View>
         <View className='detail-tag-wrap'>
           <View className='detail-tag-item'>
             {
-              Taro.UTIL.configLabelTagList(goodsInfo.product.label).map((text, index) => {
+              Taro.UTIL.configLabelTagList(productData.label).map((text, index) => {
                 return (
                   <Tag key={index} className='detail-tag-text'>{text}</Tag>
                 )

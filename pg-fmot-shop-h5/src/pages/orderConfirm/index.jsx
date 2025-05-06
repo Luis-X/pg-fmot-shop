@@ -225,14 +225,16 @@ export default function Index() {
 
   // 积分展示
   const priceView = (item) => {
-    const isDiscountPrice = item.discountPrice;
+    const isDiscount = item.discountPrice ? true : false;
+    const discountPrice = item.discountPrice 
+    const price = item.price
     let result = null;
-    if (isDiscountPrice) {
+    if (isDiscount) {
       result = (
         <>
-          <View className='goods-price-old'>{item.price}积分</View>
+          <View className='goods-price-old'>{price}积分</View>
           <View className='goods-price-new-wrap'>
-            <View className='goods-price-new'>{item.discountPrice}</View>
+            <View className='goods-price-new'>{discountPrice}</View>
             <View className='goods-price-new-unit'>积分</View>
           </View>
         </>        
@@ -240,7 +242,7 @@ export default function Index() {
     } else {
       result = (
         <View className='goods-price-new-wrap'>
-          <View className='goods-price-new'>{item.price}</View>
+          <View className='goods-price-new'>{price}</View>
           <View className='goods-price-new-unit'>积分</View>
         </View>
       )

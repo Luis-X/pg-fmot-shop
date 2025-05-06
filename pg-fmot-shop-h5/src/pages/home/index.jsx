@@ -261,7 +261,7 @@ export default function Index() {
           }
         </Swiper>
         {
-          bannerList.length > 1? (
+          bannerList && bannerList.length > 1 ? (
             <View className="home-swiper-slide">
               <Indicator total={bannerList.length} type="dualScreen" current={currentIndex} />
             </View> 

@@ -260,14 +260,17 @@ export default function Index() {
 
   // 积分展示
   const priceView = (item) => {
-    const isDiscountPrice = item.discountPrice;
+    const isDiscount = item.discountPrice ? true : false;
+    const discountPrice = item.discountPrice 
+    const productData = item.product || {}
+    const price = productData.price
     let result = null;
-    if (isDiscountPrice) {
+    if (isDiscount) {
       result = (
         <>
-          <View className='goods-price-old'>{item.product.price}积分</View>
+          <View className='goods-price-old'>{price}积分</View>
           <View className='goods-price-new-wrap'>
-            <View className='goods-price-new'>{item.discountPrice}</View>
+            <View className='goods-price-new'>{discountPrice}</View>
             <View className='goods-price-new-unit'>积分</View>
           </View>
         </>        
@@ -275,7 +278,7 @@ export default function Index() {
     } else {
       result = (
         <View className='goods-price-new-wrap'>
-          <View className='goods-price-new'>{item.product.price}</View>
+          <View className='goods-price-new'>{price}</View>
           <View className='goods-price-new-unit'>积分</View>
         </View>
       )
@@ -289,6 +292,7 @@ export default function Index() {
       <View className='cart-item-wrap'>        
       {
         cartList.map((item, index) => {
+          const productData = item.product || {}
           return (
             <View className={index === 0 ? 'goods-bg-wrap-radius' : 'goods-bg-wrap'} key={index}>           
               <View className='goods-wrap'>
@@ -303,9 +307,9 @@ export default function Index() {
                     </View>
                   )
                 }
-                <ImageNut className='goods-img' src={item.product.previewUrl} fit='cover' lazy={false} loading={false} onClick={() => clickGoods(item)} />
+                <ImageNut className='goods-img' src={productData.previewUrl} fit='cover' lazy={false} loading={false} onClick={() => clickGoods(item)} />
                 <View className='goods-info' onClick={() => clickGoods(item)}>
-                  <View className='goods-name'>{item.product.name}</View>
+                  <View className='goods-name'>{productData.name}</View>
                   {priceView(item)}                 
                 </View>
                 <InputNumber className='goods-count' value={item.quantity} min={0} allowEmpty={false} readOnly onChange={(val) => cartNumOnChange(val, item)} />

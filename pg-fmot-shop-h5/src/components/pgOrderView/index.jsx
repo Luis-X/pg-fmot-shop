@@ -28,14 +28,17 @@ export default function Index(props) {
 
   // 积分展示
   const priceView = (item) => {
-    const isDiscountPrice = item.discountPrice;
+    const isDiscount = item.discountPrice ? true : false;
+    const discountPrice = item.discountPrice 
+    const productData = item.product || {}
+    const price = productData.price
     let result = null;
-    if (isDiscountPrice) {
+    if (isDiscount) {
       result = (
         <>
-          <View className='pg-order-goods-price-old'>{item.product.price}积分</View>
+          <View className='pg-order-goods-price-old'>{price}积分</View>
           <View className='pg-order-goods-price-wrap'>
-            <View className='pg-order-goods-price'>{item.discountPrice}</View>
+            <View className='pg-order-goods-price'>{discountPrice}</View>
             <View className='pg-order-goods-price-unit'>积分</View>
           </View>
         </>        
@@ -43,7 +46,7 @@ export default function Index(props) {
     } else {
       result = (
         <View className='pg-order-goods-price-wrap'>
-          <View className='pg-order-goods-price'>{item.product.price}</View>
+          <View className='pg-order-goods-price'>{price}</View>
           <View className='pg-order-goods-price-unit'>积分</View>
         </View>
       )
@@ -58,11 +61,12 @@ export default function Index(props) {
       <>
         {
           cartList.map((item, index) => {
+            const productData = item.product || {}
             return (
               <View className='pg-order-goods-wrap' key={index}>
-                <ImageNut className='pg-order-goods-img' src={item.product.previewUrl} fit='cover' lazy={false} loading={false} onClick={() => clickGoods(item)}/>
+                <ImageNut className='pg-order-goods-img' src={productData.previewUrl} fit='cover' lazy={false} loading={false} onClick={() => clickGoods(item)}/>
                 <View className='pg-order-goods-info' onClick={() => clickGoods(item)}>
-                  <View className='pg-order-goods-name'>{item.product.name}</View>
+                  <View className='pg-order-goods-name'>{productData.name}</View>
                   {priceView(item)}
                   <View className='pg-order-goods-count'>{`x${item.quantity}`}</View>
                 </View>

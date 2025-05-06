@@ -26,23 +26,26 @@ export default function Index(props) {
   }
 
   // 积分展示
-  const priceView = (product, discountPrice) => {
-    const isDiscountPrice = discountPrice;
+  const priceView = () => {
+    const isDiscount = item.discountPrice ? true : false;
+    const discountPrice = item.discountPrice 
+    const productData = item.product || {}
+    const price = productData.price
     let result = null;
-    if (isDiscountPrice) {
+    if (isDiscount) {
       result = (
         <>
           <View className='goods-price-new-wrap'>
             <View className='goods-price-new'>{discountPrice}</View>
             <View className='goods-price-new-unit'>积分</View>
           </View>              
-          <View className='goods-price-old'>{product.price}积分</View>
+          <View className='goods-price-old'>{price}积分</View>
         </>       
       )
     } else {
       result = (
         <View className='goods-price-new-wrap'>
-          <View className='goods-price-new'>{product.price}</View>
+          <View className='goods-price-new'>{price}</View>
           <View className='goods-price-new-unit'>积分</View>
         </View>
       )
@@ -51,17 +54,17 @@ export default function Index(props) {
   }
 
   const goodsView = () => {
-    const product = item.product || {}
+    const productData = item.product || {}
     return (
       <View className='pg-goods-wrap' onClick={() => clickGoods()}>
-        <ImageNut className='goods-img' src={product.previewUrl} fit='cover' lazy={false} loading={false}/>
-        <Text className='goods-name'>{product.name}</Text>
+        <ImageNut className='goods-img' src={productData.previewUrl} fit='cover' lazy={false} loading={false}/>
+        <Text className='goods-name'>{productData.name}</Text>
         <View className='goods-price-wrap'>
-          {priceView(product, item.discountPrice)}            
+          {priceView()}
         </View>          
         <View className='goods-tag-wrap'>
           {
-            Taro.UTIL.configLabelTagList(product.label).map((text, index) => {
+            Taro.UTIL.configLabelTagList(productData.label).map((text, index) => {
               return (
                 <View key={index} className='goods-tag' plain background='#B46820'>
                   <View className='goods-tag-text'>{text}</View>
