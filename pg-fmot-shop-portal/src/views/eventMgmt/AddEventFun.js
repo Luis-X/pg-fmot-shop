@@ -155,7 +155,7 @@ export function AddEventFun({
         let startTime = Util.dateFormatter(values.beginDate)
         values.beginDate = startTime;
       }      
-      // 结束时间
+      // 截止时间
       if (values.endDate) {
         let endTime = Util.dateFormatter(values.endDate)
         values.endDate = endTime;
@@ -570,7 +570,7 @@ export function AddEventFun({
           <ProFormText
             width={'xl'}
             name="url"
-            rules={[{ required: true, message: '请填写点击跳转URL' }]}
+            rules={[{ required: false, message: '请填写点击跳转URL' }]}
             placeholder={'请填写点击跳转URL'}
           />
         </div>             
@@ -657,9 +657,9 @@ export function AddEventFun({
             showTime={true}
             format='YYYY-MM-DD HH:mm:ss'
             name="endDate"
-            label="结束时间"
-            rules={[{ required: true, message: '请选择活动结束时间' }]}
-            placeholder={'请选择活动结束时间'}
+            label="截止时间"
+            rules={[{ required: true, message: '请选择活动截止时间' }]}
+            placeholder={'请选择活动截止时间'}
             />
           </ConfigProvider>          
           <ProFormCheckbox.Group
@@ -686,10 +686,10 @@ export function AddEventFun({
             rules={[{ required: true, message: '请输入活动领取说明展示的文本内容' }]}
             placeholder={'请输入活动领取说明展示的文本内容'}
           />
-          {/* FIXME: label增加红色星号 */}
           {
             activityId ? (
               <ProFormList
+                required={true}
                 name="activityCarouselImages"
                 label="首页轮播图"             
                 creatorButtonProps={{
@@ -702,6 +702,7 @@ export function AddEventFun({
               </ProFormList>
             ) : (
               <ProFormList
+                required={true}
                 name="activityCarouselImages"
                 label="首页轮播图"             
                 creatorButtonProps={{
@@ -731,18 +732,20 @@ export function AddEventFun({
           />
           <div className='goods-edit-wrap'>
             {/* FIXME: 修改为输入框和按钮分开 */}
-            <ProFormSelect
+            <ProFormSelect              
+              required={true}
               showSearch
               debounceTime={500}
               label="活动商品"
               request={requestGoodsSearchListData}
               rules={[{ required: true, message: '请输入商品编号' }]}
               placeholder="请输入商品编号"
-              onChange={(id) => { goodsAddWithId(id); }}
+              // onChange={(id) => { goodsAddWithId(id); }}
               fieldProps={{
-                showArrow: false,
                 // labelInValue: true,
-                filterOption: false,                        
+                showArrow: false,                
+                filterOption: false,        
+                onSelect: (id) => { goodsAddWithId(id); }                
               }}
             />
             <Row>

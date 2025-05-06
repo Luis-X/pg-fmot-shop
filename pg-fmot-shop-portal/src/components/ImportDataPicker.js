@@ -173,8 +173,8 @@ export function ImportDataPicker({ show, type, onHide, updateList }) {
                   <div>
                     <span className="number">错误行：</span>
                     {value.left},
-                    <span className="email">错误值：</span>
-                    {value.middle},
+                    {/* <span className="email">错误值：</span> */}
+                    {/* {value.middle}, */}
                     <span className="reason">错误原因：</span>
                     {value.right}.
                   </div>

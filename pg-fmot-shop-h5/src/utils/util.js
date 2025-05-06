@@ -270,7 +270,7 @@ function goToActivityPage(data) {
 function configLabelTagList(label) {
   let tagList = []
   const labelValue = label || ''
-  labelValue.split(',').forEach((text) => {
+  labelValue.split('、').forEach((text) => {
     if (text) {
       tagList.push(text)
     }      

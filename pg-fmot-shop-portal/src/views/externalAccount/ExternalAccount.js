@@ -398,7 +398,7 @@ class ExternalAccount extends Component {
                   </Col>
                   <Col span={8}>
                     <Form.Item>{getFieldDecorator('pointAccountStatus',{})(
-                      <Select placeholder="请选择登录状态" style={{ width: '100%' }} options={loginStatusList}>
+                      <Select placeholder="请选择登录权限" style={{ width: '100%' }} options={loginStatusList}>
                       </Select>
                     )}
                     </Form.Item>

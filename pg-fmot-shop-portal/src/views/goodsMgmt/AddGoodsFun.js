@@ -183,11 +183,12 @@ export function AddGoodsFun({
       values.productCarouselImages = bannerQueryList;
 
       if (bannerVideo) {
-        if (!bannerPoster) {
-          message.error('请上传视频封面！', 2);
-          setLoading(false);
-          return;
-        }
+        // if (!bannerPoster) {
+        //   message.error('请上传视频封面！', 2);
+        //   setLoading(false);
+        //   return;
+        // }
+        console.log('上传视频时，未上传封面也可提交')
       } else {
         if (bannerImgs.length <= 0) {
           message.error('请上传轮播图！', 2);
@@ -410,7 +411,7 @@ export function AddGoodsFun({
             <ProFormUploadButton
               name="videoImgUrl"
               label="封面"
-              extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：100x100"
+              extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：375x375"
               rules={[{ required: false, message: '请上传封面' }]}
               max={1}
               fieldProps={{
@@ -429,7 +430,7 @@ export function AddGoodsFun({
         <ProFormUploadButton
           name="imgUrl"
           label="图片"
-          extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：100x100"
+          extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：375x375"
           rules={[{ required: false, message: '请上传商品轮播图' }]}
           fieldProps={{
             name: 'file',
@@ -448,11 +449,11 @@ export function AddGoodsFun({
 
   // 检查输入是否以逗号分隔
   const validateCommaSeparated = (rule, value) => {
-    const regex = /^[\u4e00-\u9fa5a-zA-Z0-9]+(,[\u4e00-\u9fa5a-zA-Z0-9]+)*$/;
+    const regex = /^[\u4e00-\u9fa5a-zA-Z0-9]+(、[\u4e00-\u9fa5a-zA-Z0-9]+)*$/;
     if (regex.test(value)) {
       return Promise.resolve();
     }
-    return Promise.reject(new Error('请使用,分隔商品标签'));
+    return Promise.reject(new Error('请使用、分隔商品标签'));
   };
 
   // 预览图片
@@ -557,17 +558,16 @@ export function AddGoodsFun({
             name="label"
             label="商品标签"
             rules={[
-              { required: true, message: '请输入商品标签' },
+              { required: true, message: '请输入商品标签，多个标签之间以”、“分割' },
               { validator: validateCommaSeparated }
             ]}
-            placeholder="请输入商品标签"
+            placeholder="请输入商品标签，多个标签之间以”、“分割"
           />
-          {/* FIXME: label增加红色星号 */}
           <ProFormUploadButton
             name="previewUrl"
             label="商品预览图"
-            extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：100x100"
-            rules={[{ required: true, message: '请上传商品预览图' }]}
+            extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：160x160"
+            rules={[{ required: true, message: '请上传商品预览图' }]}            
             max={1}
             fieldProps={{ 
               name: 'file',
@@ -583,6 +583,7 @@ export function AddGoodsFun({
           {
             goodsId ? (
               <ProFormList
+                required={true}
                 name="productCarouselImages"
                 label="商品轮播图"
                 creatorButtonProps={false}
@@ -596,6 +597,7 @@ export function AddGoodsFun({
               </ProFormList>
             ) : (
               <ProFormList
+                required={true}
                 name="productCarouselImages"
                 label="商品轮播图"
                 creatorButtonProps={false}
@@ -636,7 +638,7 @@ export function AddGoodsFun({
           <ProFormUploadButton
             name="longImageUrl"
             label="商品介绍长图"
-            extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：100x100"
+            extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：375x925"
             rules={[{ required: true, message: '请上传商品介绍长图' }]}
             max={1}
             fieldProps={{

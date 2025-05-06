@@ -141,7 +141,7 @@ class TrackDetail extends Component {
         },
         {
           id: '11',
-          title: '点击确认兑换人数',
+          title: '点击“确认兑换”人数',
           width: 50,
           dataIndex: 'orderConfirmExchangeCountByUser',
           key: 'orderConfirmExchangeCountByUser',
@@ -277,7 +277,7 @@ class TrackDetail extends Component {
         },
         {
           id: '11',
-          title: '点击确认兑换次数',
+          title: '点击“确认兑换”次数',
           width: 50,
           dataIndex: 'orderConfirmExchangeCount',
           key: 'orderConfirmExchangeCount',

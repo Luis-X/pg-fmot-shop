@@ -273,6 +273,10 @@ export default function Index() {
 
   const clickBanner = (item) => {
     const url = item.url;
+    if (!url) {
+      console.log('url 为空')
+      return
+    }
     Taro.ROUTER.navigateToWeb(url);
   };
 
