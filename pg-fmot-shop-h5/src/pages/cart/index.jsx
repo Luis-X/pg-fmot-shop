@@ -106,14 +106,17 @@ export default function Index() {
     let selectNumVal = 0;
     list.forEach((item) => {
       if (item.isSelect) {
-        const discountPrice = item.discountPrice 
-        const price = item.price 
-        totalNumVal += item.quantity;
-        if (discountPrice) {
-          totalAmountVal += item.quantity * discountPrice;
+        const isDiscount = item.discountPrice ? true : false;
+        const discountPrice = Number(item.discountPrice)
+        const quantity = Number(item.quantity)  
+        const productData = item.product || {}
+        const price = Number(productData.price)              
+        if (isDiscount) {
+          totalAmountVal += quantity * discountPrice;
         } else {
-          totalAmountVal += item.quantity * price;
+          totalAmountVal += quantity * price;
         }      
+        totalNumVal += quantity;
         selectNumVal += 1;
       }
     });
@@ -344,7 +347,9 @@ export default function Index() {
             </View>
           </View>              
         </View>
-        <View className='next-step-btn' onClick={clickNextStep}>下一步</View>
+        <View className='next-step-btn' onClick={clickNextStep}>
+          <View className='next-step-btn-text'>下一步</View>
+        </View>
       </View>
     )
   }

@@ -71,9 +71,8 @@ function baseRequest(url, data, method) {
             needLoginWithActId(actId)
             // resolve({})
           } else if (respData.code === -20004)  {
-            // SSO账号不存在
-            console.log("SSO账号不存在");
-            Taro.ROUTER.reLaunchTo(`/pages/disable/index?act=${actId}&status=2`);
+            // SSO账号不存在、外部账号不存在            
+            resolve(respData)
           } else if (respData.code === -20005)  {
             // 该积分账号已绑定
             // Taro.HUD.showToastMessage(respData.message)

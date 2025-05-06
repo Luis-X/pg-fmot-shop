@@ -558,10 +558,10 @@ export function AddGoodsFun({
             name="label"
             label="商品标签"
             rules={[
-              { required: true, message: '请输入商品标签，多个标签之间以”、“分割' },
+              { required: true, message: '请输入商品标签，多个标签之间以”、“分隔' },
               { validator: validateCommaSeparated }
             ]}
-            placeholder="请输入商品标签，多个标签之间以”、“分割"
+            placeholder="请输入商品标签，多个标签之间以”、“分隔"
           />
           <ProFormUploadButton
             name="previewUrl"

@@ -197,7 +197,9 @@ export default function Index() {
   const btnView = () => {
     return (
       <View className='order-detail-btn-wrap'>
-        <View className='order-detail-cancel' onClick={() => clickCancel()}>取消订单</View>
+        <View className='order-detail-cancel' onClick={() => clickCancel()}>
+          <View className='order-detail-cancel-text'>取消订单</View>
+        </View>
         <View className='order-detail-count-down-wrap'>
           <View className='order-detail-count-down'>剩余可取消时间：</View>
           <CountDown remainingTime={cancelTime} />

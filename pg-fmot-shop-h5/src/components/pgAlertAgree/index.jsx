@@ -42,7 +42,9 @@ export default function Index(props) {
     } else {
       console.log("未同意协议");
       setContentText(contentText)
-      setIsAlertShow(true)
+      setTimeout(() => {
+        setIsAlertShow(true)
+      }, 800);      
     }
   }
 
@@ -85,7 +87,9 @@ export default function Index(props) {
           <Image className='alert-img' mode='aspectFit' src={imgStar}></Image>
           <View className='text-title'>请同意协议条款</View>
           <View className='text-scroll'>{contentText}</View>              
-          <View className='confirm-btn' onClick={() => clickConfirm()}>同意</View>                              
+          <View className='confirm-btn' onClick={() => clickConfirm()}>
+            <View className='confirm-btn-text'>同意</View>
+          </View>                              
         </View>              
       </View>            
     </Overlay>

@@ -206,11 +206,15 @@
     background: #EE3A43;
     box-shadow: 0rpx 4rpx 12rpx 0rpx rgba(239,51,64,0.24);
     border-radius: 42rpx;
-    font-weight: 500;
-    font-size: 32rpx;
-    color: #FFFFFF;
-    line-height: 84rpx;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    .next-step-btn-text {
+      font-weight: 500;
+      font-size: 32rpx;
+      color: #FFFFFF;
+    }
   }   
 }
 

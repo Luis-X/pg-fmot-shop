@@ -54,7 +54,7 @@ export default function Index(props) {
     const product = item.product || {}
     return (
       <View className='pg-goods-wrap' onClick={() => clickGoods()}>
-        <ImageNut className='goods-img' src={product.previewUrl} fit='cover' lazy={true} loading={true}/>
+        <ImageNut className='goods-img' src={product.previewUrl} fit='cover' lazy={false} loading={false}/>
         <Text className='goods-name'>{product.name}</Text>
         <View className='goods-price-wrap'>
           {priceView(product, item.discountPrice)}            
@@ -63,7 +63,9 @@ export default function Index(props) {
           {
             Taro.UTIL.configLabelTagList(product.label).map((text, index) => {
               return (
-                <View key={index} className='goods-tag' plain background='#B46820'>{text}</View>
+                <View key={index} className='goods-tag' plain background='#B46820'>
+                  <View className='goods-tag-text'>{text}</View>
+                </View>
               )
             })
           }      

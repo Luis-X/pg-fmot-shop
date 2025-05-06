@@ -46,12 +46,16 @@ export default function Index(props) {
         <View className='btn-wrap'>   
           {
             cancelText && (
-              <View className='cancel-btn' onClick={() => clickCancel()}>{cancelText}</View>
+              <View className='cancel-btn' onClick={() => clickCancel()}>
+                <View className='cancel-btn-text'>{cancelText}</View>
+              </View>
             )
           }
           {
             confirmText && (
-              <View className='confirm-btn' onClick={() => clickConfirm()}>{confirmText}</View>
+              <View className='confirm-btn' onClick={() => clickConfirm()}>
+                <View className='confirm-btn-text'>{confirmText}</View>
+              </View>
             )
           }
         </View>                       
@@ -68,12 +72,16 @@ export default function Index(props) {
         <View className='btn-wrap'>   
           {
             cancelText && (
-              <View className='cancel-btn' onClick={() => clickCancel()}>{cancelText}</View>
+              <View className='cancel-btn' onClick={() => clickCancel()}>
+                <View className='cancel-btn-text'>{cancelText}</View>
+              </View>
             )
           }
           {
             confirmText && (
-              <View className='confirm-btn' onClick={() => clickConfirm()}>{confirmText}</View>
+              <View className='confirm-btn' onClick={() => clickConfirm()}>
+                <View className='confirm-btn-text'>{confirmText}</View>
+              </View>
             )
           }
         </View>                       
@@ -99,12 +107,16 @@ export default function Index(props) {
         <View className='btn-wrap'>   
           {
             cancelText && (
-              <View className='cancel-btn' onClick={() => clickCancel()}>{cancelText}</View>
+              <View className='cancel-btn' onClick={() => clickCancel()}>
+                <View className='cancel-btn-text'>{cancelText}</View>
+              </View>
             )
           }
           {
             confirmText && (
-              <View className='confirm-btn' onClick={() => clickConfirm()}>{confirmText}</View>
+              <View className='confirm-btn' onClick={() => clickConfirm()}>
+                <View className='confirm-btn-text'>{confirmText}</View>
+              </View>
             )
           }
         </View>                       

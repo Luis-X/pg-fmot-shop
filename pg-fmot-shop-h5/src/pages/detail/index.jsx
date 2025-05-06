@@ -591,7 +591,9 @@ export default function Index() {
             <View className='right-btn-add'onClick={() => clickCartAdd()}>
               <Image className='right-btn-add-img' mode='aspectFit' src={imgCartAdd}></Image>
             </View>
-            <View className='right-btn-buy'onClick={() => clickBuyNow()}>立即购买</View>
+            <View className='right-btn-buy' onClick={() => clickBuyNow()}>
+              <View className='right-btn-buy-text'>立即购买</View>
+            </View>
           </View>
         </View>
       </View>
@@ -707,7 +709,7 @@ export default function Index() {
                       </View>                    
                     ) : (
                       <View className='swiper-item-content'>
-                        <ImageNut className='swiper-img' src={item.imgUrl} fit='contain' lazy={true} loading={true} onClick={() => clickPreviewImg(item.imgUrl)} />
+                        <ImageNut className='swiper-img' src={item.imgUrl} fit='contain' lazy={false} loading={false} onClick={() => clickPreviewImg(item.imgUrl)} />
                       </View>                   
                     )
                   }                

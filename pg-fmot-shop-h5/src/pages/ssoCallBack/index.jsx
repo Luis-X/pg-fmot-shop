@@ -86,6 +86,10 @@ export default function Index() {
     if (res.code === 0) {
       const resData = res.data || {}
       userDataHandler(params, resData, actPage)
+    } else if (res.code === -20004) {
+      console.log("SSO账号不存在");
+      const actId = query.activityId || ''
+      Taro.ROUTER.reLaunchTo(`/pages/disable/index?act=${actId}&status=2`);
     } else {
       showErrMsg(res.message)
     }

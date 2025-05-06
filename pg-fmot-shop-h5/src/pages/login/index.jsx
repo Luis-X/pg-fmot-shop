@@ -75,6 +75,9 @@ export default function Index() {
     if (res.code === 0) {
       const resData = res.data || {}
       userDataHandler(resData)
+    } else if (res.code === -20004) {
+      console.log("外部账号不存在");
+      Taro.HUD.showToastMessage('账号不正确')
     } else {
       Taro.HUD.showToastMessage(res.message)
     }

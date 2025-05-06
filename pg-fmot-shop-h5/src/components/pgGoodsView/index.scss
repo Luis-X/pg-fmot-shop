@@ -8,11 +8,13 @@
   background: #ffffff;
   border-radius: 12rpx;
   .goods-img {
-    .nut-img {
-      border-radius: 12rpx 12rpx 0rpx 0rpx !important;
-    }
     width: 320rpx;
     height: 320rpx;
+    overflow: hidden !important;
+    .nut-img {
+      overflow: hidden !important;
+      border-radius: 12rpx 12rpx 0rpx 0rpx !important;
+    }   
   }
   .goods-name {
     margin-top: 22rpx;
@@ -77,13 +79,18 @@
       margin-right: 10rpx;
       padding-left: 7rpx;
       padding-right: 7rpx;
-      font-size: 18rpx;
-      color: #B46820;
-      line-height: 32rpx;
       height: 32rpx;
       border-radius: 8rpx;
-      border: 2rpx solid #B46820;
-      white-space: nowrap;
+      border: 2rpx solid #B46820;    
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;  
+      .goods-tag-text {
+        font-size: 18rpx;
+        color: #B46820;              
+        white-space: nowrap;
+      }
     }
   }
 }

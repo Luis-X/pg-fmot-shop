@@ -101,14 +101,16 @@ export default function Index() {
     let totalAmountVal = 0;
     let selectNumVal = 0;
     list.forEach((item) => {
-      const discountPrice = item.discountPrice 
-      const price = item.price 
-      totalNumVal += item.quantity;
-      if (discountPrice) {
-        totalAmountVal += item.quantity * discountPrice;
+      const isDiscount = item.discountPrice ? true : false;
+      const discountPrice = Number(item.discountPrice)
+      const quantity = Number(item.quantity)
+      const price = Number(item.price) 
+      if (isDiscount) {
+        totalAmountVal += quantity * discountPrice;
       } else {
-        totalAmountVal += item.quantity * price;
+        totalAmountVal += quantity * price;
       }      
+      totalNumVal += quantity;
       selectNumVal += 1;
     });
     totalAmountVal = parseFloat(totalAmountVal.toFixed(1));
@@ -458,7 +460,9 @@ export default function Index() {
   const btnView = () => {
     return (
       <View className='order-confirm-btn-wrap'>
-        <View className='order-confirm-ok' onClick={clickExchange}>确认兑换</View>
+        <View className='order-confirm-ok' onClick={clickExchange}>
+          <View className='order-confirm-ok-text'>确认兑换</View>
+        </View>
       </View> 
     )
   }

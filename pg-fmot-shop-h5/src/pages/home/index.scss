@@ -74,7 +74,9 @@
       height: 100%;
       background: #ffffff;
       border-radius: 40px !important;
+      overflow: hidden !important;
       .nut-img {
+        overflow: hidden !important;
         border-radius: 40px !important;
       }
     }

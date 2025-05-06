@@ -564,7 +564,7 @@ export function AddEventFun({
               onPreview: handlePreview
             }}
             title="上传文件"
-            extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：100x100"
+            extra="只能上传jpg/jpeg/png/gif文件，建议尺寸：335x130"
             action={signData.url}                  
           />
           <ProFormText
