@@ -145,6 +145,7 @@ export default function Index() {
   // 视频信息
   const [isVideoPlay, setIsVideoPlay] = useState(false);
   const [videoSource, setVideoSource] = useState({});
+  const [isDetailVideoPlay, setIsDetailVideoPlay] = useState(false);
   const [detailVideoSource, setDetailVideoSource] = useState({});
 
   const videoOptions = {
@@ -153,35 +154,61 @@ export default function Index() {
     autoplay: false,   
     loop: false,    
     muted: false,
-    showProgress: false,
+    showProgress: true,
+    showFullscreenBtn: true,
+    showPlayBtn: true,
     showCenterPlayBtn: false,
+    enableProgressGesture: false,
+    showBottomProgress: true,
   }
 
   // 视频播放
-  const clickPreviewVideo = () => {
-    videoPlay()   
+  const clickPreviewVideo = (sence) => {
+    videoPlay(sence)   
   }
 
   // 视频播放
-  const videoPlay = () => {
-    setIsVideoPlay(true)
-    console.log('videoPlay', videoSource)
-    setTimeout(() => {
-      const videoContext = Taro.createVideoContext('swiper-video-ref');
-      if (videoContext) {
-        videoContext.play();
-      }   
-    }, 500);    
+  const videoPlay = (sence) => {
+    if (sence === 'banner') {
+      setIsVideoPlay(true)
+      console.log('videoPlay', videoSource)
+      setTimeout(() => {
+        const videoContext = Taro.createVideoContext('video-ref');
+        if (videoContext) {
+          videoContext.play();
+        }   
+      }, 500); 
+    }
+    if (sence === 'detail') {
+      setIsDetailVideoPlay(true)
+      console.log('detailVideoPlay', detailVideoSource)
+      setTimeout(() => {
+        const videoContext = Taro.createVideoContext('detail-video-ref');
+        if (videoContext) {
+          videoContext.play();
+        }   
+      }, 500); 
+    }       
   }
 
   // 视频暂停
-  const videoPause = () => {
-    console.log('videoPause', videoSource)
-    const videoContext = Taro.createVideoContext('swiper-video-ref');
-    if (videoContext) {
-      videoContext.pause();
-    }   
-    setIsVideoPlay(false)
+  const videoPause = (sence) => {
+    if (sence === 'banner') {
+      console.log('videoPause', videoSource)
+      const videoContext = Taro.createVideoContext('video-ref');
+      if (videoContext) {
+        videoContext.pause();
+      }   
+      // setIsVideoPlay(false)
+    }
+    if (sence === 'detail') {
+      console.log('detailVideoPause', detailVideoSource)
+      const videoContext = Taro.createVideoContext('detail-video-ref');
+      if (videoContext) {
+        videoContext.pause();
+      }   
+      // setIsDetailVideoPlay(false)
+    }
   }
 
   // 视频播放开始~
@@ -472,9 +499,10 @@ export default function Index() {
 
       // 详情视频
       const detailVideoUrl = productData.productVideo || ''
+      const detailVideoImgUrl = ''
       const detailVideo = {
         src: detailVideoUrl,
-        poster: '',
+        poster: detailVideoImgUrl,
         type: 'video/mp4',
       }
       setDetailVideoSource(detailVideo)
@@ -715,7 +743,7 @@ export default function Index() {
         console.log('banner 0')
       } else {
         if (isVideoPlay) {
-          videoPause()
+          videoPause('banner')
         }       
       }      
       setCurrentIndex(index)
@@ -723,20 +751,14 @@ export default function Index() {
   }
 
   const videoSwiperView = (item) => {
-    const videoImgUrl = item.videoImgUrl || ''
     return (
       <>
         <Video 
           className='swiper-video'
-          id='swiper-video-ref'
+          id='video-ref'
           src={videoSource.src}
           poster={videoSource.poster}
-          initialTime={videoOptions.initialTime}
-          controls={videoOptions.controls}
-          autoplay={videoOptions.autoplay}
-          loop={videoOptions.loop}
-          muted={videoOptions.muted}
-          showCenterPlayBtn={videoOptions.showCenterPlayBtn}
+          {...videoOptions}
           onPlay={(elm) => onVideoPlayEvent(elm, 'banner')}
           onPause={(elm) => onVideoPauseEvent(elm, 'banner')}
           onEnded={(elm) => onVideoPlayendEvent(elm, 'banner')}
@@ -746,12 +768,12 @@ export default function Index() {
           !isVideoPlay ? (
             <>
             {
-              videoImgUrl ? (
-                <ImageNut className='detail-swiper-poster' src={videoImgUrl} fit='contain' lazy={false} loading={false} />
+              videoSource.poster ? (
+                <ImageNut className='video-poster' src={videoSource.poster} fit='contain' lazy={false} loading={false} />
               ) : null
             }             
-            <View className="detail-swiper-play-wrap">
-              <Image className='detail-swiper-play' mode='aspectFit' src={imgVideoPlay} onClick={() => clickPreviewVideo()}></Image>
+            <View className="video-play-wrap">
+              <Image className='video-play' mode='aspectFit' src={imgVideoPlay} onClick={() => clickPreviewVideo('banner')}></Image>
             </View> 
             </>
           ) : null
@@ -867,21 +889,31 @@ export default function Index() {
           detailVideoSource && detailVideoSource.src ? (
             <View className='detail-video-wrap'>
               <View className='detail-video-item'>
-              <Video
-                className='detail-video'  
-                id='detail-video-ref'
-                src={detailVideoSource.src}
-                // poster={detailVideoSource.poster}
-                initialTime={videoOptions.initialTime}
-                controls={videoOptions.controls}
-                autoplay={videoOptions.autoplay}
-                loop={videoOptions.loop}
-                muted={videoOptions.muted}
-                onPlay={(elm) => onVideoPlayEvent(elm, 'detail')}
-                onPause={(elm) => onVideoPauseEvent(elm, 'detail')}
-                onEnded={(elm) => onVideoPlayendEvent(elm, 'detail')}
-                onTimeUpdate={(elm) => onVideoTimeUpdate(elm, 'detail')}
-              />
+                <Video
+                  className='detail-video'  
+                  id='detail-video-ref'
+                  src={detailVideoSource.src}
+                  poster={detailVideoSource.poster}
+                  {...videoOptions}
+                  onPlay={(elm) => onVideoPlayEvent(elm, 'detail')}
+                  onPause={(elm) => onVideoPauseEvent(elm, 'detail')}
+                  onEnded={(elm) => onVideoPlayendEvent(elm, 'detail')}
+                  onTimeUpdate={(elm) => onVideoTimeUpdate(elm, 'detail')}
+                />
+                {
+                  !isDetailVideoPlay ? (
+                    <>
+                    {
+                      detailVideoSource.poster ? (
+                        <ImageNut className='video-poster' src={detailVideoSource.poster} fit='contain' lazy={false} loading={false} />
+                      ) : null
+                    }             
+                    <View className="video-play-wrap">
+                      <Image className='video-play' mode='aspectFit' src={imgVideoPlay} onClick={() => clickPreviewVideo('detail')}></Image>
+                    </View> 
+                    </>
+                  ) : null
+                } 
               </View>                        
             </View>
           ) : null
