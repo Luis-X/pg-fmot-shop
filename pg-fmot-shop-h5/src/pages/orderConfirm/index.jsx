@@ -428,7 +428,7 @@ export default function Index() {
 
     if (res.code === 0) {
       const resData = res.data || {}
-      const orderId = resData.orderId || ''
+      const orderId = resData.id || ''
 
       if (cartList.length > 0) {
         configTracker(3, {
