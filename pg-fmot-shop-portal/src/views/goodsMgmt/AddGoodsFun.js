@@ -662,16 +662,18 @@ export function AddGoodsFun({
           />
         </ProForm>
         <Modal open={previewOpen} title={null} footer={null} onCancel={handleCancel}>
-          {
-            previewImage ? (
-              <img alt="example" style={{ width: '100%' }} src={previewImage} width={500} height={500} />
-            ) : null
-          }
-          {
-            previewVideo ? (
-              <video alt="example" controls style={{ width: '100%' }} src={previewVideo} width={500} height={500} />
-            ) : null
-          }
+          <div style={{ maxHeight: '500px', overflow: 'auto' }}>
+            {
+              previewImage ? (
+                <img alt="example" style={{ width: '100%' }} src={previewImage} width={500} />
+              ) : null
+            }
+            {
+              previewVideo ? (
+                <video alt="example" controls style={{ width: '100%' }} src={previewVideo} width={500} height={500} />
+              ) : null
+            }
+          </div>
         </Modal>
       </Drawer>
     </React.Fragment>

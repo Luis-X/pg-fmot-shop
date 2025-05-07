@@ -35,7 +35,7 @@ function baseRequest(url, data, method) {
   // 1.从QA环境，获取token后，复制到本地
   // 2.注释掉goToACLAuthPage的跳转
   // 3.微信开发工具复制链接，将域名修改为：http://localhost:10086
-  // token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZC1mbW90LXNob3BwaW5nIiwiYXVkIjoicmQtZm1vdC1zaG9wcGluZyIsIm5iZiI6MTc0NTk5NzEyNSwicm9sZSI6Ind4LW1pbmktdXNlciIsImRhdGEiOiJ7fSIsImlzcyI6InJkLWZtb3Qtc2hvcHBpbmciLCJleHAiOjE3NDYwMDI1MjUsImlhdCI6MTc0NTk5NzEyNSwidXNlcklkIjoiNiJ9.UvQDdUKU7SakTUR_ejkrYE1yjNVfbTweE8jgY1bBYp4'
+  // token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZC1mbW90LXNob3BwaW5nIiwiYXVkIjoicmQtZm1vdC1zaG9wcGluZyIsIm5iZiI6MTc0NjYwMzU4OSwicm9sZSI6Ind4LW1pbmktdXNlciIsImRhdGEiOiJ7fSIsImlzcyI6InJkLWZtb3Qtc2hvcHBpbmciLCJleHAiOjE3NDY2MDg5ODksImlhdCI6MTc0NjYwMzU4OSwidXNlcklkIjoiNiJ9.tkGq-kveVnfzQm53QaJcR0NCota1vLnV6rbyZlWzOzI'
 
   const actId = data.activityId || ''
   const accId = data.pointAccountId || ''
@@ -71,20 +71,20 @@ function baseRequest(url, data, method) {
             needLoginWithActId(actId)
             // resolve({})
           } else if (respData.code === -20004)  {
-            // SSO账号不存在、外部账号不存在            
-            resolve(respData)
+            // 邮箱，是否在白名单内且未绑定过
+            Taro.ROUTER.reLaunchTo(`/pages/disable/index?act=${actId}&acc=${accId}&status=2`);            
+            // resolve(respData)
           } else if (respData.code === -20005)  {
-            // 该积分账号已绑定
-            // Taro.HUD.showToastMessage(respData.message)
-            resolve(respData)
+            // 账号，是否在白名单内且未绑定过
+            Taro.HUD.hideLoading()
+            Taro.HUD.showToastMessage('账号不正确')
+            // resolve(respData)
           } else if (respData.code === -20006)  {
             // 用户账号状态异常
-            console.log("用户账号状态异常");
-            Taro.ROUTER.reLaunchTo(`/pages/disable/index?act=${actId}&status=2`);
+            Taro.ROUTER.reLaunchTo(`/pages/disable/index?act=${actId}&acc=${accId}&status=2`);
           } else if (respData.code === -20007)  {
             // 当前不在活动时间
-            console.log("当前不在活动时间");
-            Taro.ROUTER.reLaunchTo(`/pages/disable/index?act=${actId}&status=1`);
+            Taro.ROUTER.reLaunchTo(`/pages/disable/index?act=${actId}&acc=${accId}&status=1`);
           } else {
             resolve(respData)
           }

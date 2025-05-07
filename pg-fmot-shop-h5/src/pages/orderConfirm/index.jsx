@@ -206,18 +206,24 @@ export default function Index() {
       })
       setDelAlertShow(true);
     } else {
-      if (checkLimitNum(newValue)) {
+      if (checkLimitNum(newValue, item)) {
         requestCartChangeData(newValue, productId)
       }
     }    
   }
 
   // 限购数量检测（每个商品）
-  const checkLimitNum = (val) => {
+  const checkLimitNum = (val, item) => {
+    const oldValue = item.quantity || 0;    
     const maxLimit = orderActivityInfo.maxQuantity || 0;
-    console.log('maxLimit', maxLimit);
+    console.log('maxLimit', maxLimit);  
+    console.log('oldValue', oldValue); 
     if (val > maxLimit) {
       Taro.HUD.showToastMessage('加购商品超过数量上限')
+      if (val < oldValue) {
+        console.log('减少')
+        return true;
+      }
       return false;
     }
     return true;

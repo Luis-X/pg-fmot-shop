@@ -45,7 +45,7 @@ async function eventTracker(userActionType, query, callback) {
     params.orderId = orderId
   } 
 
-  console.log(`eventTracker ${userActionType}`, params)
+  // console.log(`eventTracker ${userActionType}`, params)
 
   // 埋点上报，增加重试机制，防止上报失败
   const MAX_RETRIES = 3;
@@ -58,7 +58,7 @@ async function eventTracker(userActionType, query, callback) {
         // 成功退出循环，返回eventId
         const resData = res.data || {};
         const eventId = resData.id || '';
-        console.log(`eventTracker ${userActionType} success`);
+        // console.log(`eventTracker ${userActionType} success`);
         if (callback) {
           callback(eventId);
         }

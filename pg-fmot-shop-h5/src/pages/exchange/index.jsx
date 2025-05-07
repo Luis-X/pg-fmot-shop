@@ -127,11 +127,11 @@ export default function Index() {
 
   // 活动首页
   const clickItem = (item) => {
-    const activityId = item.activityId || '';
-    const pointAccountId = item.pointAccountId || '';
+    const actId = item.activityId || '';
+    const accId = item.pointAccountId || '';
 
     if (item.pointAccountStatus === 'LOCK') {
-      Taro.ROUTER.reLaunchTo(`/pages/disable/index?act=${activityId}&status=2`);
+      Taro.ROUTER.reLaunchTo(`/pages/disable/index?act=${actId}&acc=${accId}&status=2`);
       return
     }
 

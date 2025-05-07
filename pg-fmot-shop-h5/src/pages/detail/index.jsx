@@ -193,6 +193,14 @@ export default function Index() {
   // 视频播放暂停~
   const onVideoPauseEvent = (elm, sence) => {
     console.log('video 播放暂停', elm)
+    const targetData = elm.target || {}
+    const time = targetData.currentTime
+    if (sence === 'banner') {
+      setPlayBannerPauseTime(time)
+    }
+    if (sence === 'detail') {
+      setPlayDetailPauseTime(time)
+    }
   }
 
   // 视频播放结束~
@@ -201,16 +209,20 @@ export default function Index() {
     endVideoTracker(sence)   
   }
   
-  const onVideoTimeUpdate = (elm, sence) => {   
-    const time = elm.detail.currentTime;
+  const onVideoTimeUpdate = (elm, sence) => {  
+    // console.log('video 时间更新', elm)
+    const detailData = elm.detail || {}
+    const time = detailData.currentTime 
     // const time = Math.floor(timeValue);
-    console.log('视频播放时长: ', time);
+    // console.log('视频播放时长: ', time);    
     playingVideoTracker(sence, time)       
   };
 
 
   const [playBannerVideoTime, setPlayBannerVideoTime] = useState(0);
+  const [playBannerPauseTime, setPlayBannerPauseTime] = useState(0);
   const [playDetailVideoTime, setPlayDetailVideoTime] = useState(0);
+  const [playDetailPauseTime, setPlayDetailPauseTime] = useState(0);
   // 播放开始，上报
   const startVideoTracker = (sence, elm) => {
     // 轮播视频
@@ -218,6 +230,7 @@ export default function Index() {
       if (playBannerVideoTime === 0) {
         // 首次播放
         console.log('首次播放-轮播')
+        setPlayBannerPauseTime(0)
         setPlayBannerVideoTime(3)
         const tpIds = configTrackerProductIds()
         if (tpIds.length > 0) {
@@ -230,6 +243,7 @@ export default function Index() {
       } else if (playBannerVideoTime === -1) {        
         // 完播后，播放
         console.log('完播后，播放-轮播')
+        setPlayBannerPauseTime(0)
         setPlayBannerVideoTime(3)
         const tpIds = configTrackerProductIds()
         if (tpIds.length > 0) {
@@ -258,6 +272,7 @@ export default function Index() {
       if (playDetailVideoTime === 0) {
         // 首次播放
         console.log('首次播放-详情')
+        setPlayDetailPauseTime(0)
         setPlayDetailVideoTime(3)
         const tpIds = configTrackerProductIds()
         if (tpIds.length > 0) {
@@ -270,6 +285,7 @@ export default function Index() {
       } else if (playDetailVideoTime === -1) {        
         // 完播后，播放
         console.log('完播后，播放-详情')
+        setPlayDetailPauseTime(0)
         setPlayDetailVideoTime(3)
         const tpIds = configTrackerProductIds()
         if (tpIds.length > 0) {
@@ -296,6 +312,7 @@ export default function Index() {
   }
 
   // 播放播放中，上报（3秒1次）  
+  // FIXME: 增加duration字段
   const playingVideoTracker = (sence, time) => {
     // 轮播视频
     if (sence === 'banner' && time > playBannerVideoTime && playBannerVideoTime >= 0) {
@@ -303,11 +320,20 @@ export default function Index() {
       if (trackBannerVideoId) {
         const tpIds = configTrackerProductIds()
         if (tpIds.length > 0) {
+          let duration = 0
+          if (playBannerPauseTime > 0) {
+            const playTime = time - playBannerPauseTime            
+            duration = parseFloat(playTime.toFixed(2))
+          } else {
+            duration = parseFloat(time.toFixed(2))
+          }          
+          console.log('banner-视频实际播放时长: ', duration);
           configTracker(2, {
             activityId: actId,
             pointAccountId: accId,
             productIds: tpIds,
             id: trackBannerVideoId,
+            duration: duration,
           })
         }
       }       
@@ -317,11 +343,20 @@ export default function Index() {
       setPlayDetailVideoTime(time + 3)
       const tpIds = configTrackerProductIds()
       if (trackDetailVideoId && tpIds.length > 0) {
+        let duration = 0
+        if (playDetailPauseTime > 0) {
+          const playTime = time - playDetailPauseTime            
+          duration = parseFloat(playTime.toFixed(2))
+        } else {
+          duration = parseFloat(time.toFixed(2))
+        }
+        console.log('detail-视频实际播放时长: ', duration);
         configTracker(3, {
           activityId: actId,
           pointAccountId: accId,
           productIds: tpIds,
           id: trackDetailVideoId,
+          duration: duration,
         })
       }        
     }
@@ -331,6 +366,7 @@ export default function Index() {
   const endVideoTracker = (sence) => {
     // 轮播视频
     if (sence === 'banner') {    
+      setPlayBannerPauseTime(0)
       setPlayBannerVideoTime(-1) 
       const tpIds = configTrackerProductIds()
       if (trackBannerVideoId && tpIds.length > 0) {
@@ -345,6 +381,7 @@ export default function Index() {
     } 
     // 详情视频
     if (sence === 'detail') { 
+      setPlayDetailPauseTime(0)
       setPlayDetailVideoTime(-1)   
       const tpIds = configTrackerProductIds()
       if (trackDetailVideoId && tpIds.length > 0) {
@@ -550,7 +587,7 @@ export default function Index() {
 
     // Taro.HUD.showLoading()
     const res = await Taro.NETWORK.cartChange(params) 
-    Taro.HUD.hideLoading()
+    // Taro.HUD.hideLoading()
 
     if (res.code === 0) {
       const resData = res.data || {}

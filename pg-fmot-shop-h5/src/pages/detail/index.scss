@@ -49,6 +49,7 @@
   right: 0;
   width: 100%;
   height: 100%;
+  background: #ffffff;
 }
 .detail-swiper-play-wrap {
   z-index: 992;
@@ -188,7 +189,7 @@
 
 
 .detail-video-wrap {  
-  margin-top: 10rpx;
+  margin-bottom: 30rpx;
   width: 100vw;
   display: flex;
   flex-direction: column;
@@ -209,7 +210,6 @@
 
 
 .detail-img-wrap {
-  margin-top: 30rpx;
   width: 100vw;
   display: flex;
   flex-direction: column;

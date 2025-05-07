@@ -277,7 +277,34 @@ export default function Index() {
       console.log('url 为空')
       return
     }
+
+    // 直接跳转
     Taro.ROUTER.navigateToWeb(url);
+
+    /*
+    const host = Taro.UTIL.pgConfig().host || '';
+    if (host && url.includes(host)) {
+      try {
+        // 携带act和acc参数跳转
+        const params = new URLSearchParams({
+          act: actId,
+          acc: accId
+        });
+        // 判断 url 是否已经包含查询参数
+        const separator = url.includes('?') ? '&' : '?';
+        const finalUrl = `${url}${separator}${params.toString()}`;
+        console.log('final url', finalUrl)
+        Taro.ROUTER.navigateToWeb(finalUrl);
+      } catch (error) {
+        // 直接跳转
+        console.log('original url', url)
+        Taro.ROUTER.navigateToWeb(url);
+      }
+    } else {
+      console.log('url', url)
+      Taro.ROUTER.navigateToWeb(url);
+    }
+    */    
   };
 
   return (

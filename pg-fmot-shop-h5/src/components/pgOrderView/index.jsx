@@ -28,10 +28,9 @@ export default function Index(props) {
 
   // 积分展示
   const priceView = (item) => {
-    const isDiscount = item.discountPrice ? true : false;
-    const discountPrice = item.discountPrice 
-    const productData = item.product || {}
-    const price = productData.price
+    const isDiscount = item.hasDiscount;
+    const discountPrice = item.discountPrice
+    const price = item.originalPrice
     let result = null;
     if (isDiscount) {
       result = (
