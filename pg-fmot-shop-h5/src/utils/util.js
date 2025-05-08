@@ -29,6 +29,7 @@ export default {
 
   configLabelTagList,
   showPreviewImg,
+  getVideoBase64WithUrl,
 };
 
 function pgConfig() {
@@ -286,4 +287,49 @@ function showPreviewImg(imgUrl) {
     current: currentUrl,
     urls: urlList
   })
+}
+
+// 获取视频指定时间点的封面图的 Base64 编码
+function getVideoBase64WithUrl(url) {
+  return new Promise((resolve, reject) => {
+      const video = document.createElement("video");
+      video.setAttribute('crossorigin', 'anonymous'); // 处理跨域
+      video.setAttribute('src', url);
+      video.setAttribute('width', 375);
+      video.setAttribute('height', 375);
+      video.setAttribute('controls', 'controls');
+      video.currentTime = 1; // 设置视频播放到 1 秒的位置
+
+      const handleLoadedData = () => {
+          const canvas = document.createElement("canvas");
+          const width = video.videoWidth; // 使用视频实际宽度
+          const height = video.videoHeight; // 使用视频实际高度
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+              ctx.drawImage(video, 0, 0, width, height); // 绘制 canvas
+              const dataURL = canvas.toDataURL('image/jpeg', 0.3); // 转换为 base64
+              const img = document.createElement("img");
+              img.src = dataURL;
+              video.setAttribute('poster', dataURL);
+              resolve(dataURL);
+          } else {
+              reject(new Error('无法获取 canvas 上下文'));
+          }
+          // 移除事件监听器
+          video.removeEventListener('loadeddata', handleLoadedData);
+          video.removeEventListener('error', handleError);
+      };
+
+      const handleError = () => {
+          reject(new Error('视频加载失败'));
+          // 移除事件监听器
+          video.removeEventListener('loadeddata', handleLoadedData);
+          video.removeEventListener('error', handleError);
+      };
+
+      video.addEventListener('loadeddata', handleLoadedData);
+      video.addEventListener('error', handleError);
+  });
 }

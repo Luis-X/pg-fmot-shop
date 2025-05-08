@@ -12,6 +12,7 @@ async function eventTracker(userActionType, query, callback) {
   const id = query.id || ''                         // 埋点id  
   const productIds = query.productIds || []          // 商品id (此参数为数组)
   const orderId = query.orderId || ''               // 订单id
+  const duration = query.duration || 0              // 时长
 
   if (!activityId) {
     console.log('缺少 activityId')
@@ -44,6 +45,10 @@ async function eventTracker(userActionType, query, callback) {
   if (orderId) {
     params.orderId = orderId
   } 
+
+  if (duration) {
+    params.duration = duration
+  }
 
   // console.log(`eventTracker ${userActionType}`, params)
 

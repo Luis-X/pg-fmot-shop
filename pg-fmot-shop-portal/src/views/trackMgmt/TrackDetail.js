@@ -881,6 +881,14 @@ class TrackDetail extends Component {
       //   shapeField: 'square',
       //   sizeField: 1,
       // },
+      tooltip: {
+        formatter: (item) => {
+          return {
+            name: item.type,
+            value: `${item.percent}%`,
+          };
+        },
+      },
       interaction: {
         tooltip: {
           marker: false,

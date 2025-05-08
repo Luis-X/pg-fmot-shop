@@ -8,7 +8,7 @@ mini store for FMOT H5
 
 ###### 开发前的配置要求
 
-1. Node 14.21.3
+1. Node 16.20.2
 2. Taro 3.6.35
 
 

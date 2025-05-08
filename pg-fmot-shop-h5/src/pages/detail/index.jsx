@@ -213,178 +213,127 @@ export default function Index() {
 
   // 视频播放开始~
   const onVideoPlayEvent = (elm, sence) => {
-    console.log('video 播放开始', elm)
-    startVideoTracker(sence, elm)          
+    console.log('video-开始')
+    if (sence === 'banner') {
+      setVideoNextTrackTime(0)
+    }
+    if (sence === 'detail') {
+      setDetailVideoNextTrackTime(0)
+    }
+    startVideoTracker(sence)          
   }
 
   // 视频播放暂停~
   const onVideoPauseEvent = (elm, sence) => {
-    console.log('video 播放暂停', elm)
-    const targetData = elm.target || {}
-    const time = targetData.currentTime
-    if (sence === 'banner') {
-      setPlayBannerPauseTime(time)
-    }
-    if (sence === 'detail') {
-      setPlayDetailPauseTime(time)
-    }
+    console.log('video-暂停')        
   }
 
   // 视频播放结束~
   const onVideoPlayendEvent = (elm, sence) => {
-    console.log('video 播放结束', elm)
+    console.log('video-结束')
     endVideoTracker(sence)   
   }
   
   const onVideoTimeUpdate = (elm, sence) => {  
-    // console.log('video 时间更新', elm)
     const detailData = elm.detail || {}
     const time = detailData.currentTime 
-    // const time = Math.floor(timeValue);
-    // console.log('视频播放时长: ', time);    
+    // console.log('video-更新', time)  
     playingVideoTracker(sence, time)       
   };
 
+  // 节流函数
+  const throttle = (func, limit) => {
+    let inThrottle;
+    return function() {
+      const args = arguments;
+      const context = this;
+      if (!inThrottle) {
+        func.apply(context, args);
+        inThrottle = true;
+        setTimeout(() => inThrottle = false, limit);
+      }
+    };
+  };
 
-  const [playBannerVideoTime, setPlayBannerVideoTime] = useState(0);
-  const [playBannerPauseTime, setPlayBannerPauseTime] = useState(0);
-  const [playDetailVideoTime, setPlayDetailVideoTime] = useState(0);
-  const [playDetailPauseTime, setPlayDetailPauseTime] = useState(0);
+  // 包装 configTracker 函数，设置 1 秒的节流间隔
+  const throttledConfigTracker = throttle((type, trackData) => {
+    configTracker(type, trackData);
+  }, 1000);
+
   // 播放开始，上报
-  const startVideoTracker = (sence, elm) => {
+  const startVideoTracker = (sence) => {
     // 轮播视频
-    if (sence === 'banner') {   
-      if (playBannerVideoTime === 0) {
-        // 首次播放
-        console.log('首次播放-轮播')
-        setPlayBannerPauseTime(0)
-        setPlayBannerVideoTime(3)
-        const tpIds = configTrackerProductIds()
-        if (tpIds.length > 0) {
-          configTracker(2, {
-            activityId: actId,
-            pointAccountId: accId,
-            productIds: tpIds,
-          }) 
-        }        
-      } else if (playBannerVideoTime === -1) {        
-        // 完播后，播放
-        console.log('完播后，播放-轮播')
-        setPlayBannerPauseTime(0)
-        setPlayBannerVideoTime(3)
-        const tpIds = configTrackerProductIds()
-        if (tpIds.length > 0) {
-          configTracker(2, {
-            activityId: actId,
-            pointAccountId: accId,
-            productIds: tpIds,
-          }) 
-        }   
-      } else {
-        // 暂停后，重新播放
-        console.log('暂停后，重新播放-轮播')
-        const tpIds = configTrackerProductIds()
-        if (trackBannerVideoId && tpIds.length > 0) {
-          configTracker(2, {
-            activityId: actId,
-            pointAccountId: accId,
-            productIds: tpIds,
-            id: trackBannerVideoId,
-          }) 
-        }      
+    if (sence === 'banner') {  
+      console.log('video-轮播-上报')  
+      const tpIds = configTrackerProductIds()
+      if (tpIds.length > 0) {
+        configTracker(2, {
+          activityId: actId,
+          pointAccountId: accId,
+          productIds: tpIds,
+        }) 
       }            
     }
     // 详情视频
-    if (sence === 'detail') {
-      if (playDetailVideoTime === 0) {
-        // 首次播放
-        console.log('首次播放-详情')
-        setPlayDetailPauseTime(0)
-        setPlayDetailVideoTime(3)
-        const tpIds = configTrackerProductIds()
-        if (tpIds.length > 0) {
-          configTracker(3, {
-            activityId: actId,
-            pointAccountId: accId,
-            productIds: tpIds,
-          }) 
-        }
-      } else if (playDetailVideoTime === -1) {        
-        // 完播后，播放
-        console.log('完播后，播放-详情')
-        setPlayDetailPauseTime(0)
-        setPlayDetailVideoTime(3)
-        const tpIds = configTrackerProductIds()
-        if (tpIds.length > 0) {
-          configTracker(3, {
-            activityId: actId,
-            pointAccountId: accId,
-            productIds: tpIds,
-          }) 
-        } 
-      } else {
-        // 暂停后，重新播放
-        console.log('暂停后，重新播放-详情')
-        const tpIds = configTrackerProductIds()
-        if (trackDetailVideoId && tpIds.length > 0) {
-          configTracker(3, {
-            activityId: actId,
-            pointAccountId: accId,
-            productIds: tpIds,
-            id: trackDetailVideoId,
-          })
-        }         
-      }     
+    if (sence === 'detail') {      
+      console.log('video-详情-上报')
+      const tpIds = configTrackerProductIds()
+      if (tpIds.length > 0) {
+        configTracker(3, {
+          activityId: actId,
+          pointAccountId: accId,
+          productIds: tpIds,
+        }) 
+      }
     }
   }
 
   // 播放播放中，上报（3秒1次）  
   // FIXME: 增加duration字段
+  const [videoNextTrackTime, setVideoNextTrackTime] = useState(0);
+  const [detailVideoNextTrackTime, setDetailVideoNextTrackTime] = useState(0);
   const playingVideoTracker = (sence, time) => {
-    // 轮播视频
-    if (sence === 'banner' && time > playBannerVideoTime && playBannerVideoTime >= 0) {
-      setPlayBannerVideoTime(time + 3)       
+    // 轮播视频   
+    if (sence === 'banner' && time > videoNextTrackTime) {
+      const nextTime = Math.floor(time) + 3
+      setVideoNextTrackTime(nextTime)
       if (trackBannerVideoId) {
         const tpIds = configTrackerProductIds()
         if (tpIds.length > 0) {
-          let duration = 0
-          if (playBannerPauseTime > 0) {
-            const playTime = time - playBannerPauseTime            
-            duration = parseFloat(playTime.toFixed(2))
-          } else {
-            duration = parseFloat(time.toFixed(2))
+          const duration = parseFloat(time.toFixed(2))        
+          if (duration > 0.5) {
+            console.log('video-banner-播放时长: ', duration);
+            throttledConfigTracker(2, {
+              activityId: actId,
+              pointAccountId: accId,
+              productIds: tpIds,
+              id: trackBannerVideoId,
+              duration: duration,
+            })
           }          
-          console.log('banner-视频实际播放时长: ', duration);
-          configTracker(2, {
-            activityId: actId,
-            pointAccountId: accId,
-            productIds: tpIds,
-            id: trackBannerVideoId,
-            duration: duration,
-          })
         }
-      }       
+      }   
     }
+
     // 详情视频
-    if (sence === 'detail' && time > playDetailVideoTime && playDetailVideoTime >= 0) {
-      setPlayDetailVideoTime(time + 3)
-      const tpIds = configTrackerProductIds()
-      if (trackDetailVideoId && tpIds.length > 0) {
-        let duration = 0
-        if (playDetailPauseTime > 0) {
-          const playTime = time - playDetailPauseTime            
-          duration = parseFloat(playTime.toFixed(2))
-        } else {
-          duration = parseFloat(time.toFixed(2))
-        }
-        console.log('detail-视频实际播放时长: ', duration);
-        configTracker(3, {
-          activityId: actId,
-          pointAccountId: accId,
-          productIds: tpIds,
-          id: trackDetailVideoId,
-          duration: duration,
-        })
+    if (sence === 'detail' && time > detailVideoNextTrackTime) {
+      const nextTime = Math.floor(time) + 3
+      setDetailVideoNextTrackTime(nextTime)
+      if (trackDetailVideoId) {
+        const tpIds = configTrackerProductIds()
+        if (tpIds.length > 0) {
+          const duration = parseFloat(time.toFixed(2))
+          if (duration > 0.5) {
+            console.log('video-detail-播放时长: ', duration);
+            throttledConfigTracker(3, {
+              activityId: actId,
+              pointAccountId: accId,
+              productIds: tpIds,
+              id: trackDetailVideoId,
+              duration: duration,
+            })
+          } 
+        }               
       }        
     }
   }
@@ -392,9 +341,7 @@ export default function Index() {
   // 播放结束，上报
   const endVideoTracker = (sence) => {
     // 轮播视频
-    if (sence === 'banner') {    
-      setPlayBannerPauseTime(0)
-      setPlayBannerVideoTime(-1) 
+    if (sence === 'banner') {     
       const tpIds = configTrackerProductIds()
       if (trackBannerVideoId && tpIds.length > 0) {
         configTracker(2, {
@@ -402,14 +349,12 @@ export default function Index() {
           pointAccountId: accId,
           productIds: tpIds,
           id: trackBannerVideoId,
-          finished: true,
+          finished: true
         })      
       }      
     } 
     // 详情视频
-    if (sence === 'detail') { 
-      setPlayDetailPauseTime(0)
-      setPlayDetailVideoTime(-1)   
+    if (sence === 'detail') {  
       const tpIds = configTrackerProductIds()
       if (trackDetailVideoId && tpIds.length > 0) {
         configTracker(3, {
@@ -417,7 +362,7 @@ export default function Index() {
           pointAccountId: accId,
           productIds: tpIds,
           id: trackDetailVideoId,
-          finished: true,
+          finished: true
         })
       }  
     }
@@ -489,23 +434,45 @@ export default function Index() {
       })
       setBannerList(bannerArray)
 
-      // banner 视频      
+      // banner 视频         
       const video = {
         src: bannerVideoUrl,
         poster: bannerVideoImgUrl,
         type: 'video/mp4',
       }
       setVideoSource(video)
+      // 获取视频封面
+      // if (bannerVideoUrl && !bannerVideoImgUrl) {
+      //   try {
+      //     const imgBase64 = await Taro.UTIL.getVideoBase64WithUrl(bannerVideoUrl);
+      //     console.log('轮播-获取视频封面:', imgBase64);
+      //     video.poster = imgBase64;
+      //     setVideoSource(video)
+      //   } catch (error) {
+      //     console.error('轮播-获取视频封面失败:', error.message);
+      //   }
+      // } 
 
       // 详情视频
       const detailVideoUrl = productData.productVideo || ''
-      const detailVideoImgUrl = ''
+      const detailVideoImgUrl = ''    
       const detailVideo = {
         src: detailVideoUrl,
         poster: detailVideoImgUrl,
         type: 'video/mp4',
       }
       setDetailVideoSource(detailVideo)
+      // 获取视频封面
+      // if (detailVideoUrl && !detailVideoImgUrl) {
+      //   try {
+      //     const imgBase64 = await Taro.UTIL.getVideoBase64WithUrl(detailVideoUrl);
+      //     console.log('详情-获取视频封面:', imgBase64);
+      //     detailVideo.poster = imgBase64;
+      //     setDetailVideoSource(detailVideo)          
+      //   } catch (error) {
+      //     console.error('详情-获取视频封面失败:', error.message);
+      //   }
+      // }  
       
       // 购物车信息
       const shopCartProductCount = resData.shopCartProductCount || 0
