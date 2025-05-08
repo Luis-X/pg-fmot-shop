@@ -367,7 +367,7 @@ class OrderMgmt extends Component {
             <div className="goods-list-wrap">
               {
                 record.orderItems && record.orderItems.length > 0 && record.orderItems.map((item, index) => (
-                  <span key={index}>{`${item.code} ${item.name}*${item.quantity} ${item.price}积分`}</span>
+                  <span key={index}>{`${item.code} ${item.name}*${item.quantity} ${item.price * item.quantity}积分`}</span>
                 ))
               }
             </div>

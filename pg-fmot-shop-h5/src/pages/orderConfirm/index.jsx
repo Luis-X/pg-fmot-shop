@@ -68,12 +68,7 @@ export default function Index() {
   });
 
   const createdPage = async () => {
-    // const isLogin = await Taro.UTIL.checkIsLogin()
-    // if (!isLogin) {
-    //   return
-    // }
-
-    setIsShowPage(true);    
+    // setIsShowPage(true) 
 
     const act = router.params.act || ''
     const acc = router.params.acc || ''
@@ -140,6 +135,7 @@ export default function Index() {
 
     // Taro.HUD.showLoading()
     const res = await Taro.NETWORK.orderActivityInfo(params) 
+    setIsShowPage(true)
     Taro.HUD.hideLoading()
 
     if (res.code === 0) {

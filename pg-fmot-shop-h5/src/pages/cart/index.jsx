@@ -23,12 +23,7 @@ export default function Index() {
     Taro.WXSDK.hideOptionMenu();
   });
 
-  const createdPage = async () => {
-    // const isLogin = await Taro.UTIL.checkIsLogin()
-    // if (!isLogin) {
-    //   return
-    // }
-    
+  const createdPage = async () => {    
     setIsShowPage(true);
 
     const act = router.params.act || ''
@@ -43,6 +38,7 @@ export default function Index() {
   };
 
   const [isShowPage, setIsShowPage] = useState(false);
+  const [isFirstLoadCart, setIsFirstLoadCart] = useState(true);
   const [actId, setActId] = useState('');
   const [accId, setAccId] = useState('');
   const [orderActivityInfo, setOrderActivityInfo] = useState({})
@@ -89,6 +85,7 @@ export default function Index() {
 
       setCartList(list)
       checkCartStatus(list)
+      setIsFirstLoadCart(false)
     } else {
       Taro.HUD.showToastMessage(res.message)
     }   
@@ -295,7 +292,12 @@ export default function Index() {
   // 商品列表
   const goodsListView = () => {
     return (
-      <View className='cart-item-wrap'>        
+      <View className='cart-item-wrap'>   
+      {
+        !isFirstLoadCart && cartList.length <= 0 ? (
+          <View className='cart-empty-text'>购物车是空的</View>
+        ) : null
+      }     
       {
         cartList.map((item, index) => {
           const productData = item.product || {}

@@ -48,12 +48,7 @@ export default function Index() {
   });
 
   const createdPage = async () => {
-    // const isLogin = await Taro.UTIL.checkIsLogin()
-    // if (!isLogin) {
-    //   return
-    // }
-
-    setIsShowPage(true);
+    // setIsShowPage(true)
 
     const act = router.params.act || ''
     const acc = router.params.acc || ''    
@@ -95,6 +90,7 @@ export default function Index() {
 
     // Taro.HUD.showLoading()
     const res = await Taro.NETWORK.orderDetailInfo(params) 
+    setIsShowPage(true)
     if (onlyRefresh) {
       console.log('仅刷新')
     } else {
@@ -202,7 +198,7 @@ export default function Index() {
         </View>
         <View className='order-detail-count-down-wrap'>
           <View className='order-detail-count-down'>剩余可取消时间：</View>
-          <CountDown remainingTime={cancelTime} />
+          <CountDown remainingTime={cancelTime} onEnd={() => { setCancelTime(0) }}/>
         </View>        
       </View> 
     )

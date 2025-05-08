@@ -30,12 +30,7 @@ export default function Index() {
     Taro.WXSDK.hideOptionMenu()
   })
 
-  const createdPage = async () => {
-    // const isLogin = await Taro.UTIL.checkIsLogin()
-    // if (!isLogin) {
-    //   return
-    // }
-    
+  const createdPage = async () => {    
     setIsShowPage(true)
 
     const act = router.params.act || ''

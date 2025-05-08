@@ -27,11 +27,6 @@ export default function Index() {
   });
 
   const createdPage = async () => {
-    // const isLogin = await Taro.UTIL.checkIsLogin()
-    // if (!isLogin) {
-    //   return
-    // }
-
     setIsShowPage(true);
 
     const act = router.params.id || ''

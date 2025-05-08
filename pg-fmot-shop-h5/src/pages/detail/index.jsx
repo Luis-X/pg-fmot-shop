@@ -113,12 +113,7 @@ export default function Index() {
   })
 
   const createdPage = async () => {
-    // const isLogin = await Taro.UTIL.checkIsLogin()
-    // if (!isLogin) {
-    //   return
-    // }
-
-    setIsShowPage(true);
+    // setIsShowPage(true)
 
     const act = router.params.act || ''
     const acc = router.params.acc || ''
@@ -159,7 +154,6 @@ export default function Index() {
     showPlayBtn: true,
     showCenterPlayBtn: false,
     enableProgressGesture: false,
-    showBottomProgress: true,
   }
 
   // 视频播放
@@ -289,52 +283,64 @@ export default function Index() {
   }
 
   // 播放播放中，上报（3秒1次）  
-  // FIXME: 增加duration字段
   const [videoNextTrackTime, setVideoNextTrackTime] = useState(0);
+  const [videoStartTime, setVideoStartTime] = useState(0);
   const [detailVideoNextTrackTime, setDetailVideoNextTrackTime] = useState(0);
+  const [detailVideoStartTime, setDetailVideoStartTime] = useState(0);
   const playingVideoTracker = (sence, time) => {
+    const currentTime = Math.floor(time)
+    const nextTime = currentTime + 3
+
     // 轮播视频   
-    if (sence === 'banner' && time > videoNextTrackTime) {
-      const nextTime = Math.floor(time) + 3
-      setVideoNextTrackTime(nextTime)
+    if (sence === 'banner' && time > videoNextTrackTime) {  
+      let duration = 0    
+      if (videoNextTrackTime <= 0) {
+        console.log('video-banner-开始时间: ', currentTime);
+        setVideoStartTime(currentTime)
+      } else {
+        duration = parseFloat((time - videoStartTime).toFixed(2))
+      }
+      setVideoNextTrackTime(nextTime)      
+      console.log('video-banner-播放时长: ', duration);
+      
       if (trackBannerVideoId) {
         const tpIds = configTrackerProductIds()
-        if (tpIds.length > 0) {
-          const duration = parseFloat(time.toFixed(2))        
-          if (duration > 0.5) {
-            console.log('video-banner-播放时长: ', duration);
-            throttledConfigTracker(2, {
-              activityId: actId,
-              pointAccountId: accId,
-              productIds: tpIds,
-              id: trackBannerVideoId,
-              duration: duration,
-            })
-          }          
+        if (tpIds.length > 0 && duration > 0) {                           
+          throttledConfigTracker(2, {
+            activityId: actId,
+            pointAccountId: accId,
+            productIds: tpIds,
+            id: trackBannerVideoId,
+            duration: duration,
+          })         
         }
       }   
     }
 
     // 详情视频
-    if (sence === 'detail' && time > detailVideoNextTrackTime) {
-      const nextTime = Math.floor(time) + 3
-      setDetailVideoNextTrackTime(nextTime)
+    if (sence === 'detail' && time > detailVideoNextTrackTime) {  
+      let duration = 0    
+      if (detailVideoNextTrackTime <= 0) {
+        console.log('video-detail-开始时间: ', currentTime);
+        setDetailVideoStartTime(currentTime)
+      } else {
+        duration = parseFloat((time - detailVideoStartTime).toFixed(2))
+      }
+      setDetailVideoNextTrackTime(nextTime)      
+      console.log('video-detail-播放时长: ', duration);
+      
       if (trackDetailVideoId) {
         const tpIds = configTrackerProductIds()
-        if (tpIds.length > 0) {
-          const duration = parseFloat(time.toFixed(2))
-          if (duration > 0.5) {
-            console.log('video-detail-播放时长: ', duration);
-            throttledConfigTracker(3, {
-              activityId: actId,
-              pointAccountId: accId,
-              productIds: tpIds,
-              id: trackDetailVideoId,
-              duration: duration,
-            })
-          } 
-        }               
-      }        
+        if (tpIds.length > 0 && duration > 0) {                           
+          throttledConfigTracker(3, {
+            activityId: actId,
+            pointAccountId: accId,
+            productIds: tpIds,
+            id: trackDetailVideoId,
+            duration: duration,
+          })         
+        }
+      }  
     }
   }
 
@@ -385,7 +391,9 @@ export default function Index() {
 
     // Taro.HUD.showLoading()
     const res = await Taro.NETWORK.goodsDetail(params) 
+    setIsShowPage(true)
     Taro.HUD.hideLoading()
+    
 
     if (res.code === 0) {
 
@@ -845,7 +853,7 @@ export default function Index() {
   }
 
   // 商品视频、图片
-  // FIXME: 视频缺少封面
+  // TODO: 视频缺少封面，显示默认黑底
   const goodsVideoAndImgView = () => {
     return (
       <>
