@@ -565,7 +565,7 @@ export function AddGoodsFun({
             name="label"
             label="商品标签"
             rules={[
-              { required: true, message: '请输入商品标签，多个标签之间以”、“分隔' },
+              { required: false, message: '请输入商品标签，多个标签之间以”、“分隔' },
               { validator: validateCommaSeparated }
             ]}
             placeholder="请输入商品标签，多个标签之间以”、“分隔"
