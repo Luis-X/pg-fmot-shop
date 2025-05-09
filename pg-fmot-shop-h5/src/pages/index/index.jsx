@@ -113,6 +113,7 @@ export default function Index() {
         token: token
       }
       Taro.UTIL.setPGStorage('token_info', tokenInfo)
+      Taro.UTIL.setPGLocalStorage('token_sso', tokenInfo)
       // 我参与的活动
       Taro.UTIL.goToActivityPage({
         actId: '',
@@ -155,7 +156,8 @@ export default function Index() {
     const tokenInfo = {
       token: token
     }
-    Taro.UTIL.setPGStorage('token_info', tokenInfo)    
+    Taro.UTIL.setPGStorage('token_info', tokenInfo)   
+    Taro.UTIL.setPGLocalStorage('token_sso', tokenInfo) 
       
     // 用户信息
     const agreeInfo = {
@@ -182,9 +184,7 @@ export default function Index() {
         })
       } else {
         console.log("内部-未绑定");
-        console.log("内部-sso登录");
-        // 防止sso回跳绑定，session storage token丢失
-        Taro.UTIL.setPGLocalStorage('token_sso', tokenInfo)
+        console.log("内部-sso登录");        
         Taro.UTIL.goToSSOLoginPage({
           actId: activityId,
           actPage: actPage

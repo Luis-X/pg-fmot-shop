@@ -24,6 +24,18 @@ export default function Index() {
   }
 
   const createdPage = async () => {
+    // 防止sso回跳绑定，session storage token丢失
+    const tokenInfo = Taro.UTIL.getPGStorage('token_info') || {}
+    let token = tokenInfo.token || ''    
+    if (!token) {
+      const tokenSSO = Taro.UTIL.getPGLocalStorage('token_sso') || {}
+      const newToken = tokenSSO.token || ''
+      const newTokenInfo = {
+        token: newToken
+      }
+      Taro.UTIL.setPGStorage('token_info', newTokenInfo)
+    }
+
     const act = router.params.id || ''
     const actPage = router.params.page || ''
 
@@ -73,15 +85,6 @@ export default function Index() {
     // Taro.HUD.showLoading('绑定中...')
     const res = await Taro.NETWORK.bindActivityId(params) 
     Taro.HUD.hideLoading()
-
-    // 清除token sso，保存token info
-    const tokenSSO = Taro.UTIL.getPGLocalStorage('token_sso') || {}
-    const token = tokenSSO.token || ''
-    const tokenInfo = {
-      token: token
-    }
-    Taro.UTIL.setPGStorage('token_info', tokenInfo)
-    Taro.UTIL.clearPGStorage('token_sso')
 
     if (res.code === 0) {
       const resData = res.data || {}
