@@ -1,4 +1,6 @@
 .detail-list {
+  position: relative;
+  z-index: 1;
   width: 100w;
   height: calc(100vh - 156rpx);
   // display: flex;
@@ -77,11 +79,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  // background: orange;
   .video-play {          
     width: 100rpx;
     height: 100rpx;
-    // background: pink;
   }
 } 
 

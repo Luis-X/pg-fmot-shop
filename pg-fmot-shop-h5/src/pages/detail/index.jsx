@@ -863,17 +863,21 @@ export default function Index() {
         <View className='detail-name-wrap'>
           <View className='detail-name'>{productData.name}</View>
         </View>
-        <View className='detail-tag-wrap'>
-          <View className='detail-tag-item'>
-            {
-              Taro.UTIL.configLabelTagList(productData.label).map((text, index) => {
-                return (
-                  <Tag key={index} className='detail-tag-text'>{text}</Tag>
-                )
-              })
-            }
-          </View>          
-        </View>
+        {
+          productData.label ? (
+            <View className='detail-tag-wrap'>
+              <View className='detail-tag-item'>
+                {
+                  Taro.UTIL.configLabelTagList(productData.label).map((text, index) => {
+                    return (
+                      <Tag key={index} className='detail-tag-text'>{text}</Tag>
+                    )
+                  })
+                }
+              </View>          
+            </View>
+          ) : null
+        }        
       </>
     )
   }
