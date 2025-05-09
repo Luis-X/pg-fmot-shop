@@ -836,7 +836,7 @@ class TrackDetail extends Component {
           value = item.value;
           totalValue = productDetailVideoTotalValue;               
         }
-        const ratio = (value / totalValue)
+        const ratio = totalValue === 0 ? 0 : (value / totalValue);
         item.percent = ratio.toFixed(2) * 100;
       })
       console.log(list)

@@ -125,8 +125,11 @@ const utils = {
   dateFormatter: (dateValue) => {    
     console.log('dateFormatter', dateValue)
     // const formatValue = 'YYYY-MM-DD HH:mm:ss';
-    // return moment(new Date(dateValue)).format(formatValue);
-    return moment(new Date(dateValue)).toISOString();
+    // const result = moment(new Date(dateValue)).format(formatValue);
+    // console.log(result);
+    const result = moment(new Date(dateValue)).toISOString();
+    // console.log(result);
+    return result
   },
 
   // josn 转数组

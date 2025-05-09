@@ -165,7 +165,7 @@ export default function Index() {
   const videoPlay = (sence) => {
     if (sence === 'banner') {
       setIsVideoPlay(true)
-      console.log('videoPlay', videoSource)
+      console.log('video-banner-数据', videoSource)
       setTimeout(() => {
         const videoContext = Taro.createVideoContext('video-ref');
         if (videoContext) {
@@ -175,7 +175,7 @@ export default function Index() {
     }
     if (sence === 'detail') {
       setIsDetailVideoPlay(true)
-      console.log('detailVideoPlay', detailVideoSource)
+      console.log('video-detail-数据', detailVideoSource)
       setTimeout(() => {
         const videoContext = Taro.createVideoContext('detail-video-ref');
         if (videoContext) {
@@ -207,7 +207,7 @@ export default function Index() {
 
   // 视频播放开始~
   const onVideoPlayEvent = (elm, sence) => {
-    console.log('video-开始')
+    console.log(`video-${sence}-开始`)
     if (sence === 'banner') {
       setVideoNextTrackTime(0)
     }
@@ -219,20 +219,25 @@ export default function Index() {
 
   // 视频播放暂停~
   const onVideoPauseEvent = (elm, sence) => {
-    console.log('video-暂停')        
+    console.log(`video-${sence}-暂停`)        
   }
 
   // 视频播放结束~
   const onVideoPlayendEvent = (elm, sence) => {
-    console.log('video-结束')
+    console.log(`video-${sence}-结束`)
     endVideoTracker(sence)   
   }
   
   const onVideoTimeUpdate = (elm, sence) => {  
     const detailData = elm.detail || {}
-    const time = detailData.currentTime 
-    // console.log('video-更新', time)  
-    playingVideoTracker(sence, time)       
+    const time = detailData.currentTime || 0
+    const duration = detailData.duration || 0
+    // console.log(`video-${sence}-更新`, time, duration)  
+    if (time > 0 && duration > 0) {
+      playingVideoTracker(sence, time, duration)
+    } else {
+      console.log(`video-${sence}-更新-忽略`, time, duration)
+    }      
   };
 
   // 节流函数
@@ -256,9 +261,9 @@ export default function Index() {
 
   // 播放开始，上报
   const startVideoTracker = (sence) => {
+    console.log(`video-${sence}-开始-上报`)
     // 轮播视频
-    if (sence === 'banner') {  
-      console.log('video-轮播-上报')  
+    if (sence === 'banner') {          
       const tpIds = configTrackerProductIds()
       if (tpIds.length > 0) {
         configTracker(2, {
@@ -269,8 +274,7 @@ export default function Index() {
       }            
     }
     // 详情视频
-    if (sence === 'detail') {      
-      console.log('video-详情-上报')
+    if (sence === 'detail') {
       const tpIds = configTrackerProductIds()
       if (tpIds.length > 0) {
         configTracker(3, {
@@ -285,27 +289,32 @@ export default function Index() {
   // 播放播放中，上报（3秒1次）  
   const [videoNextTrackTime, setVideoNextTrackTime] = useState(0);
   const [videoStartTime, setVideoStartTime] = useState(0);
+  const [videoTotalTime, setVideoTotalTime] = useState(0);
   const [detailVideoNextTrackTime, setDetailVideoNextTrackTime] = useState(0);
   const [detailVideoStartTime, setDetailVideoStartTime] = useState(0);
-  const playingVideoTracker = (sence, time) => {
+  const [detailVideoTotalTime, setDetailVideoTotalTime] = useState(0);
+  const playingVideoTracker = (sence, time, totalTime) => {
     const currentTime = Math.floor(time)
     const nextTime = currentTime + 3
 
     // 轮播视频   
-    if (sence === 'banner' && time > videoNextTrackTime) {  
+    if (sence === 'banner' && time >= videoNextTrackTime) {  
       let duration = 0    
       if (videoNextTrackTime <= 0) {
-        console.log('video-banner-开始时间: ', currentTime);
+        console.log('video-banner-开始时间:', currentTime);
+        console.log('video-banner-总时间:', totalTime);
         setVideoStartTime(currentTime)
+        setVideoTotalTime(totalTime)
       } else {
         duration = parseFloat((time - videoStartTime).toFixed(2))
       }
       setVideoNextTrackTime(nextTime)      
-      console.log('video-banner-播放时长: ', duration);
+      // console.log('video-banner-播放时长: ', duration);
       
       if (trackBannerVideoId) {
         const tpIds = configTrackerProductIds()
-        if (tpIds.length > 0 && duration > 0) {                           
+        if (tpIds.length > 0 && duration > 0) {   
+          console.log('video-banner-播放时长-上报', duration);                        
           throttledConfigTracker(2, {
             activityId: actId,
             pointAccountId: accId,
@@ -318,20 +327,23 @@ export default function Index() {
     }
 
     // 详情视频
-    if (sence === 'detail' && time > detailVideoNextTrackTime) {  
+    if (sence === 'detail' && time >= detailVideoNextTrackTime) {  
       let duration = 0    
       if (detailVideoNextTrackTime <= 0) {
-        console.log('video-detail-开始时间: ', currentTime);
+        console.log('video-detail-开始时间:', currentTime);
+        console.log('video-detail-总时间:', totalTime);
         setDetailVideoStartTime(currentTime)
+        setDetailVideoTotalTime(totalTime)
       } else {
         duration = parseFloat((time - detailVideoStartTime).toFixed(2))
       }
       setDetailVideoNextTrackTime(nextTime)      
-      console.log('video-detail-播放时长: ', duration);
+      // console.log('video-detail-播放时长: ', duration);
       
       if (trackDetailVideoId) {
         const tpIds = configTrackerProductIds()
-        if (tpIds.length > 0 && duration > 0) {                           
+        if (tpIds.length > 0 && duration > 0) {     
+          console.log('video-detail-播放时长-上报', duration);                     
           throttledConfigTracker(3, {
             activityId: actId,
             pointAccountId: accId,
@@ -350,12 +362,19 @@ export default function Index() {
     if (sence === 'banner') {     
       const tpIds = configTrackerProductIds()
       if (trackBannerVideoId && tpIds.length > 0) {
+        let duration = 0  
+        if (videoStartTime <= videoTotalTime) {
+          duration = parseFloat((videoTotalTime - videoStartTime).toFixed(2))
+        }         
+        // console.log('video-banner-完播时长: ', duration);
+        console.log('video-banner-完播时长-上报', duration);
         configTracker(2, {
           activityId: actId,
           pointAccountId: accId,
           productIds: tpIds,
           id: trackBannerVideoId,
-          finished: true
+          finished: true,
+          duration: duration,
         })      
       }      
     } 
@@ -363,12 +382,19 @@ export default function Index() {
     if (sence === 'detail') {  
       const tpIds = configTrackerProductIds()
       if (trackDetailVideoId && tpIds.length > 0) {
+        let duration = 0 
+        if (detailVideoStartTime <= detailVideoTotalTime) {
+          duration = parseFloat((detailVideoTotalTime - detailVideoStartTime).toFixed(2))
+        }      
+        // console.log('video-detail-完播时长: ', duration);
+        console.log('video-detail-完播时长-上报', duration);
         configTracker(3, {
           activityId: actId,
           pointAccountId: accId,
           productIds: tpIds,
           id: trackDetailVideoId,
-          finished: true
+          finished: true,
+          duration: duration,
         })
       }  
     }

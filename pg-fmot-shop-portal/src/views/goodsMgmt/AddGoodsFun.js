@@ -456,6 +456,9 @@ export function AddGoodsFun({
 
   // 检查输入是否以逗号分隔
   const validateCommaSeparated = (rule, value) => {
+    if (!value) {
+      return Promise.resolve();
+    }
     const regex = /^[\u4e00-\u9fa5a-zA-Z0-9]+(、[\u4e00-\u9fa5a-zA-Z0-9]+)*$/;
     if (regex.test(value)) {
       return Promise.resolve();
