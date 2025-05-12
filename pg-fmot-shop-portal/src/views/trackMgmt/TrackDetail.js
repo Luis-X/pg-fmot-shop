@@ -815,7 +815,7 @@ class TrackDetail extends Component {
           // pointIem.id = `${index}-${jndex}`;
           pointIem.type = type;
           pointIem.second = String(secondValue);
-          pointIem.value = Number(value);
+          pointIem.value = value;
           list.push(pointIem);          
         })
                 
@@ -837,7 +837,7 @@ class TrackDetail extends Component {
           totalValue = productDetailVideoTotalValue;               
         }
         const ratio = totalValue === 0 ? 0 : (value / totalValue);
-        item.percent = ratio.toFixed(2) * 100;
+        item.percent = Math.round(ratio * 100);
       })
       console.log(list)
       data = list;
