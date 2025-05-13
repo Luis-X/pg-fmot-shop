@@ -46,7 +46,7 @@ async function eventTracker(userActionType, query, callback) {
     params.orderId = orderId
   } 
 
-  if (duration) {
+  if (duration > 0) {
     params.duration = duration
   }
 
