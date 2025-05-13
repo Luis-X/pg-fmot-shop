@@ -137,11 +137,16 @@ export default function Index() {
 
   // 商品信息
   const [goodsInfo, setGoodsInfo] = useState({});  
-  // 视频信息
+  // 轮播视频信息
   const [isVideoPlay, setIsVideoPlay] = useState(false);
   const [videoSource, setVideoSource] = useState({});
+  const [videoNeedGetId, setVideoNeedGetId] = useState(true);
+  const [videoIntervalId, setVideoIntervalId] = useState(null);
+  // 详情视频信息
   const [isDetailVideoPlay, setIsDetailVideoPlay] = useState(false);
   const [detailVideoSource, setDetailVideoSource] = useState({});
+  const [detailVideoNeedGetId, setDetailVideoNeedGetId] = useState(true);
+  const [detailVideoIntervalId, setDetailVideoIntervalId] = useState(null);
 
   const videoOptions = {
     initialTime: 0,
@@ -167,47 +172,66 @@ export default function Index() {
       setIsVideoPlay(true)
       // console.log('video-banner-数据', videoSource)
       setTimeout(() => {
-        const videoContext = Taro.createVideoContext('video-ref');
-        if (videoContext) {
-          videoContext.play();
-        }   
+        try {
+          const videoContext = Taro.createVideoContext('video-ref');
+          if (videoContext) {
+            videoContext.play();
+          }
+        } catch (error) {
+          console.log(`video-banner-播放失败`)
+        }           
       }, 500); 
     }
     if (sence === 'detail') {
       setIsDetailVideoPlay(true)
       // console.log('video-detail-数据', detailVideoSource)
       setTimeout(() => {
-        const videoContext = Taro.createVideoContext('detail-video-ref');
-        if (videoContext) {
-          videoContext.play();
-        }   
+        try {
+          const videoContext = Taro.createVideoContext('detail-video-ref');
+          if (videoContext) {
+            videoContext.play();
+          }   
+        } catch (error) {
+          console.log(`video-detail-播放失败`)
+        }     
       }, 500); 
     }       
   }
 
   // 视频暂停
+  const videPauseAll = (sence) => {
+    if (isVideoPlay) {
+      videoPause('banner')
+    }
+    if (isDetailVideoPlay) {
+      videoPause('detail')
+    } 
+  }
+
   const videoPause = (sence) => {
     if (sence === 'banner') {
       // console.log('videoPause', videoSource)
-      const videoContext = Taro.createVideoContext('video-ref');
-      if (videoContext) {
-        videoContext.pause();
-      }   
+      try {
+        const videoContext = Taro.createVideoContext('video-ref');
+        if (videoContext) {
+          videoContext.pause();
+        }
+      } catch (error) {
+        console.log(`video-banner-暂停失败`)
+      }         
     }
     if (sence === 'detail') {
       // console.log('detailVideoPause', detailVideoSource)
-      const videoContext = Taro.createVideoContext('detail-video-ref');
-      if (videoContext) {
-        videoContext.pause();
-      }   
+      try {
+        const videoContext = Taro.createVideoContext('detail-video-ref');
+        if (videoContext) {
+          videoContext.pause();
+        }   
+      } catch (error) {
+        console.log(`video-detail-暂停失败`)
+      }      
     }
   }
-
-  const [videoNeedGetId, setVideoNeedGetId] = useState(true);
-  const [videoIntervalId, setVideoIntervalId] = useState(null);
-
-  const [detailVideoNeedGetId, setDetailVideoNeedGetId] = useState(true);
-  const [detailVideoIntervalId, setDetailVideoIntervalId] = useState(null);
 
   // 视频播放开始~
   const onVideoPlayEvent = (elm, sence) => {
@@ -515,6 +539,7 @@ export default function Index() {
 
   // 客服
   const clickService = () => {
+    videPauseAll()
     const serviceInfo = goodsInfo.activity || {}
     Taro.UTIL.setPGStorage('service_info', serviceInfo)	
     Taro.ROUTER.navigateTo(`/pages/service/index?act=${actId}&acc=${accId}`);
@@ -522,6 +547,7 @@ export default function Index() {
 
   // 购物车
   const clickCart = () => {
+    videPauseAll()
     Taro.ROUTER.reLaunchTo(`/pages/cart/index?act=${actId}&acc=${accId}`);
   }
 
@@ -680,6 +706,7 @@ export default function Index() {
     const orderConfirmInfo = {
       goodsList: goodsList,
     }
+    videPauseAll()
     Taro.UTIL.setPGStorage('order_confirm_info', orderConfirmInfo)	
     Taro.ROUTER.navigateTo(`/pages/orderConfirm/index?act=${actId}&acc=${accId}`);
   };

@@ -66,16 +66,18 @@ export default function Index() {
               <Image className='service-bg-img' mode='aspectFill' src={imgBG}></Image> 
               <View className='service-wrap'>                
                 <View className='service-content'>
-                  {
-                    textList.map((item, index) => {
-                      return (
-                        <View className='service-content-item' key={index}>
-                          {/* <Image className='service-content-icon' mode='aspectFit' src={imgPhone}></Image> */}
-                          <View className='service-content-text'>{item}</View>
-                        </View>
-                      )
-                    })
-                  }
+                  <View className='service-scroll'>
+                    {
+                      textList.map((item, index) => {
+                        return (
+                          <View className='service-content-item' key={index}>
+                            {/* <Image className='service-content-icon' mode='aspectFit' src={imgPhone}></Image> */}
+                            <View className='service-content-text'>{item}</View>
+                          </View>
+                        )
+                      })
+                    }
+                  </View>                  
                 </View>
                 <Image className='service-img' mode='aspectFit' src={imgIcon}></Image> 
               </View>

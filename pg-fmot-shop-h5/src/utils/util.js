@@ -186,22 +186,6 @@ async function goToACLAuthPage(data) {
     console.log('缺少 actId')
   }
 
-  /*
-  // 前端拼接acl
-  let pageUrl = ''
-  if (actPage) {
-    // 指定页面
-    console.log('acl 指定页面', actPage)
-    pageUrl = `${CONFIG.aclPage}?id=${actId}&page=${actPage}`
-  } else {
-    // 默认页面
-    pageUrl = `${CONFIG.aclPage}?id=${actId}`
-  }
-  const aclAuthUrl = `${CONFIG.aclAuthUrl}${encodeURIComponent(pageUrl)}`
-  console.log(aclAuthUrl)
-  window.location.replace(aclAuthUrl)
-  */
-
   const aclAuthUrl = `${CONFIG.aclRedirectUrl}?id=${actId}&page=${actPage}`  
   // console.log(aclAuthUrl)
   clearAllPGStorage()
