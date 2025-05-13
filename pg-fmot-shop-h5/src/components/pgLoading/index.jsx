@@ -9,11 +9,11 @@ export default function Index(props) {
   const { errMsg } = props
 
   useLoad(() => {
-    console.log('loading loaded.')
+    // console.log('loading loaded.')
   })
 
   useEffect(() => {
-    console.log('loading effect.') 
+    // console.log('loading effect.') 
   }, []);
 
   return (

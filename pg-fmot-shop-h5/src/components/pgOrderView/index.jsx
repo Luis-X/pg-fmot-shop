@@ -9,11 +9,11 @@ export default function Index(props) {
   const { scenceType, orderInfo, act, acc, onClick } = props
 
   useLoad(() => {
-    console.log('order view loaded.')
+    // console.log('order view loaded.')
   })
 
   useEffect(() => {
-    console.log('order view effect.') 
+    // console.log('order view effect.') 
   }, []);
 
   // 商品详情

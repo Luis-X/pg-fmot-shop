@@ -37,13 +37,13 @@ export default function Index() {
   }
 
   useLoad(() => {
-    console.log('home onLoad')
+    // console.log('home onLoad')
     Taro.WXSDK.hideOptionMenu();
     createdPage();   
   });
 
   useDidShow(() => {
-    console.log('home onShow')
+    // console.log('home onShow')
     Taro.WXSDK.hideOptionMenu();
     configTracker(1, {
       activityId: actId,
@@ -52,7 +52,7 @@ export default function Index() {
   });
 
   useDidHide(() => {
-    console.log('home onHide')
+    // console.log('home onHide')
     if (trackId) {
       configTracker(1, {
         activityId: actId,
@@ -63,7 +63,7 @@ export default function Index() {
   });
 
   useUnload(() => {
-    console.log('home onUnload')
+    // console.log('home onUnload')
     if (trackId) {
       configTracker(1, {
         activityId: actId,
@@ -128,7 +128,7 @@ export default function Index() {
       setDataList([])
     } else {
       if (pageIndex > 0 && !hasMore) {
-        console.log('no more')
+        // console.log('no more')
         return
       }
     }

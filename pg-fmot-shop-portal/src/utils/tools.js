@@ -17,7 +17,7 @@ const tools = {
     } catch (error) {
       console.log(error)
     } 
-    console.log(result) 
+    // console.log(result) 
     return result
   },
   decodeBaseStr: (str) => {

@@ -170,7 +170,7 @@ export default function Index() {
     const productId = item.activityProductId || '';
 
     const newValue = parseInt(val || 0);
-    console.log('newValue', newValue);
+    // console.log('newValue', newValue);
 
     if (newValue <= 0) {
       setDelAlertQuery({
@@ -189,12 +189,12 @@ export default function Index() {
   const checkLimitNum = (val, item) => {
     const oldValue = item.quantity || 0;    
     const maxLimit = orderActivityInfo.maxQuantity || 0;
-    console.log('maxLimit', maxLimit);  
-    console.log('oldValue', oldValue);  
+    // console.log('maxLimit', maxLimit);  
+    // console.log('oldValue', oldValue);  
     if (val > maxLimit) {
       Taro.HUD.showToastMessage('加购商品超过数量上限')
       if (val < oldValue) {
-        console.log('减少')
+        // console.log('减少')
         return true;
       }
       return false;

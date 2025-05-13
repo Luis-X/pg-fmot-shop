@@ -141,7 +141,7 @@ export function AddEventFun({
     } catch (err) {
       message.error(err ? err : '网络请求失败, 请重试!', 2);
     }
-    console.log('---detailData---', detailData);
+    // console.log('---detailData---', detailData);
     return detailData;
   };
 
@@ -149,7 +149,7 @@ export function AddEventFun({
   const saveAndCreateEvent = (type) => {
     setLoading(true);
     form.validateFields().then((values) => {
-      console.log('处理前：', values);
+      // console.log('处理前：', values);
       // 开始时间
       if (values.beginDate) {
         let startTime = Util.dateFormatter(values.beginDate)
@@ -228,7 +228,7 @@ export function AddEventFun({
 
   // 创建
   const createHandler = (values) => {
-    console.log('处理后，创建：', values);
+    // console.log('处理后，创建：', values);
     api.eventCreate({
       ...values,
     }).then((res) => {
@@ -252,7 +252,7 @@ export function AddEventFun({
   // 保存
   // activityCarouselImages 修改需要携带id参数（后端要求）
   const saveHandler = (values) => {
-    console.log('处理后，保存：', values);
+    // console.log('处理后，保存：', values);
     const params = {
       id: activityId,
       ...values,
@@ -267,7 +267,7 @@ export function AddEventFun({
         item.id = oldItem.id;
       }
     })
-    console.log('处理id后，保存：', params);
+    // console.log('处理id后，保存：', params);
 
     api.eventSave(params).then((res) => {
       if (res) {
@@ -339,7 +339,7 @@ export function AddEventFun({
 
   // 商品搜索列表
   const requestGoodsSearchListData = async (searchData) => {
-    console.log('商品搜索列表', searchData)
+    // console.log('商品搜索列表', searchData)
     const searchText = searchData.keyWords || ''
     let list = [];
     try {
@@ -402,7 +402,7 @@ export function AddEventFun({
           newGoodsList.push(item);
         }
       });
-      console.log('selected goods', newGoodsList);
+      // console.log('selected goods', newGoodsList);
       
       setGoodsListData(newGoodsList);
       setSelectedId(null);
@@ -411,26 +411,26 @@ export function AddEventFun({
   
   // 添加商品
   const goodsAddWithId = (id) => {
-    console.log(`selected ${id}`);
+    // console.log(`selected ${id}`);
     setSelectedId(id);
   };
 
   // 删除商品
   const goodsDeleteWithId = (id) => {
-    console.log(`deleted ${id}`);
+    // console.log(`deleted ${id}`);
     const newGoodsList = goodsListData.filter((item) => item.id !== id);
     setGoodsListData(newGoodsList);
   }
 
   // 编辑商品
   const goodsEditWithId = (id, action) => {
-    console.log(`edited ${id}`);
+    // console.log(`edited ${id}`);
     action.startEditable(id)
   }
 
   // 保存商品
   const goodsSaveWithData = async (rowKey, data, row) => {
-    console.log(`编辑商品： ${rowKey}`, data, row);
+    // console.log(`编辑商品： ${rowKey}`, data, row);
     await waitTime(300);
   }
 
@@ -461,12 +461,12 @@ export function AddEventFun({
   // 1.上传图片签名
   const [signData, setSignData] = useState({})
   const requestSignData = async () => {   
-    console.log('获取签名')
+    // console.log('获取签名')
     await api.uploadFileSignPublic().then((res) => {
       if (res) {
         const respData = res.data || {};
         if (0 === respData.code) {
-          console.log('获取签名，成功', respData)
+          // console.log('获取签名，成功', respData)
           const signInfo = respData.data || {};
           setSignData(signInfo);
         } else {
@@ -482,10 +482,10 @@ export function AddEventFun({
 
   // 2.上传图片处理
   const handleImgChange = async (info) => {
-    console.log('上传信息', info);
+    // console.log('上传信息', info);
     const { status } = info.file;
     if (status === 'uploading') {
-      console.log('上传中', info);
+      // console.log('上传中', info);
       setLoading(true);
       return;
     }
@@ -493,23 +493,23 @@ export function AddEventFun({
     if (status === 'done') {
       setLoading(false);
       const resp = info.file.response;
-      console.log('上传结束', resp);
+      // console.log('上传结束', resp);
       const fileId = resp.fileId 
       const url = resp.url
       // 公有图片
       if (url) {
-        console.log('上传成功-公有', url);
+        // console.log('上传成功-公有', url);
         info.file.url = url;
         return;
       }
       // 私有图片 
       if (fileId) {     
-        console.log('上传成功-私有', fileId);  
+        // console.log('上传成功-私有', fileId);  
         console.log('通过fileId获取url', fileId);          
         const fileUrlResp = await api.uploadFileGetUrl([fileId]);
         const respData = fileUrlResp.data || {};
         if (0 === respData.code) {
-          console.log('获取url成功', respData);
+          // console.log('获取url成功', respData);
           const fileUrl = respData[fileId] || '';
           info.file.url = fileUrl;
         } else {

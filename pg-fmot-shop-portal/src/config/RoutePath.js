@@ -15,14 +15,14 @@ let RoutePath = {
 };
 
 if (isRelease) {
-  console.log('生产环境');
+  console.log('release');
   RoutePath.skId = 'NmZmOGY4NmVkZDU1NDFhNTk4M2ZmNzg2NWRlMzAxODM='
   RoutePath.SSOCallbackUrl = 'https://ministore.shenghuojia.com/portal/#/callback'
   RoutePath.SSOLoginUrl = 'https://api-shared-prd.cn-pgcloud.com/sso/v3/oauth/login?client_id=rdfmotshopping&app=rdfmotshopping&pfidpadapterid=ad..OAuth&scope=openid%20profile%20GDPR'
   RoutePath.SSOLogoutUrl = 'https://api-shared-prd.cn-pgcloud.com/sso/v3/logout?app=rdfmotshopping'
   RoutePath.H5ActivityUrl = 'https://ministore.shenghuojia.com/aclRedirect'
 } else {
-  console.log('测试环境');
+  console.log('qa');
   RoutePath.skId = 'MTIwNDdiNTQ1MThiNDI0NDhiMjBhZWIzOTRlZGNhMjQ='
   RoutePath.SSOCallbackUrl = 'https://ministore-qa.shenghuojia.com/portal/#/callback'
   RoutePath.SSOLoginUrl = 'https://api-shared-qa.cn-pgcloud.com/sso/v3/oauth/login?client_id=rdfmotshopping&app=rdfmotshopping&pfidpadapterid=ad..OAuth&scope=openid%20profile%20GDPR'
@@ -30,6 +30,6 @@ if (isRelease) {
   RoutePath.H5ActivityUrl = 'https://ministore-qa.shenghuojia.com/aclRedirect'
 }
 
-console.log('RoutePath', RoutePath)
+// console.log('RoutePath', RoutePath)
 
 export default RoutePath;

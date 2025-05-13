@@ -203,7 +203,7 @@ async function goToACLAuthPage(data) {
   */
 
   const aclAuthUrl = `${CONFIG.aclRedirectUrl}?id=${actId}&page=${actPage}`  
-  console.log(aclAuthUrl)
+  // console.log(aclAuthUrl)
   clearAllPGStorage()
   clearPGStorage('token_sso')
   window.location.replace(aclAuthUrl)
@@ -233,7 +233,7 @@ function goToSSOLoginPage(data) {
   const pageUrl = ssoLoginRedirectUri(actId, actPage)
   const ssoLoginUrl = `${CONFIG.ssoLoginUrl}&subscription-key=${decodeBaseStr(CONFIG.skId)}&redirect_uri=${encodeURIComponent(pageUrl)}`
   
-  console.log(ssoLoginUrl)
+  // console.log(ssoLoginUrl)
   clearAllPGStorage()
   window.location.replace(ssoLoginUrl)
 }

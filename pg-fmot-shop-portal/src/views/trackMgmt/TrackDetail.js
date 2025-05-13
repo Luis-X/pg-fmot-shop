@@ -402,7 +402,7 @@ class TrackDetail extends Component {
   };
   // 人数
   requestPeopleListData = () => {
-    console.log('人数')
+    // console.log('人数')
     const self = this;
     const { pageNo, pageSize, activityId } = self.state;
     self.setState({ loadingShow: true });
@@ -433,7 +433,7 @@ class TrackDetail extends Component {
 
   // 次数
   requestTimesListData = () => {
-    console.log('次数')
+    // console.log('次数')
     const self = this;
     const { pageNo, pageSize, activityId } = self.state;
     self.setState({ loadingShow: true });
@@ -464,7 +464,7 @@ class TrackDetail extends Component {
 
   // 图表
   requestChartData = () => {
-    console.log('图表')
+    // console.log('图表')
     const self = this;
     const { queryData, activityId } = self.state;
     self.setState({ loadingShow: true });
@@ -572,7 +572,7 @@ class TrackDetail extends Component {
 
   // 1.获取导出文件，任务id
   requestExportFile = (productId, userActionType) => {
-    console.log('导出文件')
+    // console.log('导出文件')
     const self = this;
     const { activityId } = self.state;
     self.setState({ loadingShow: true });
@@ -584,7 +584,7 @@ class TrackDetail extends Component {
       if (res) {
         const respData = res.data || {};
         if (0 === respData.code) {
-          console.log('导出文件，成功', respData)
+          // console.log('导出文件，成功', respData)
           const exportData = respData.data || {};
           const taskId = exportData.id || '';
           self.requestExportFileResult(taskId);
@@ -603,7 +603,7 @@ class TrackDetail extends Component {
   
   // 2.轮询查询导出结果
   requestExportFileResult = (taskId) => {
-    console.log('查询导出结果', taskId)
+    // console.log('查询导出结果', taskId)
     const self = this;    
     api.asyncTaskDetail({
       id: taskId,
@@ -611,7 +611,7 @@ class TrackDetail extends Component {
       if (res) {
         const respData = res.data || {};
         if (0 === respData.code) {
-          console.log('查询导出结果', respData)
+          // console.log('查询导出结果', respData)
           const resultData = respData.data || {};
           self.handleExportResult(resultData, taskId);
         } else {
@@ -662,7 +662,7 @@ class TrackDetail extends Component {
   
   // 4.下载导出文件
   downloadExportFile = (url) => {
-    console.log('下载导出文件', url)
+    // console.log('下载导出文件', url)
     const self = this;
     if (!url) {
       self.setState({ loadingShow: false });
@@ -819,10 +819,7 @@ class TrackDetail extends Component {
           list.push(pointIem);          
         })
                 
-      })
-    
-      console.log('轮播图视频观看总人数', productCarouselVideoTotalValue)
-      console.log('商品详情视频观看总人数', productDetailVideoTotalValue)  
+      })          
 
       // 增加百分比字段
       list.forEach((item) => {
@@ -839,8 +836,12 @@ class TrackDetail extends Component {
         const ratio = totalValue === 0 ? 0 : (value / totalValue);
         item.percent = Math.round(ratio * 100);
       })
-      console.log(list)
       data = list;
+      /*
+      console.log('轮播图视频观看总人数', productCarouselVideoTotalValue)
+      console.log('商品详情视频观看总人数', productDetailVideoTotalValue) 
+      console.log(data)
+      */
     }
 
     const config = {
@@ -981,7 +982,7 @@ class TrackDetail extends Component {
 
   // 商品搜索列表
   requestGoodsSearchListData = async (searchData) => {
-    console.log('商品搜索列表', searchData)
+    // console.log('商品搜索列表', searchData)
     const self = this;
     const { activityId } = self.state;
     const searchText = searchData.keyWords || ''

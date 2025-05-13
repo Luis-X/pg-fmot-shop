@@ -85,7 +85,6 @@ class EventMgmt extends Component {
     api.orgCodeList().then((res) => {
       if (res) {
         const respData = res.data || {};
-        console.log(respData)
         if (0 === respData.code) {
           const orgCodeDataList = respData.data || [];
           self.setState({
@@ -176,7 +175,6 @@ class EventMgmt extends Component {
       errorMsg: `您确定复制【${record.name}】吗?`,
       callbackOK: () => {
         const id = record.id;
-        console.log(id)
         this.requestCopyActivityData(id);
       },
       callbackCancel: () => {},

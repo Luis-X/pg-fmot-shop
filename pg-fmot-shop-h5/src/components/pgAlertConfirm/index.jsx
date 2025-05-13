@@ -15,11 +15,11 @@ export default function Index(props) {
   const goodsListArray = goodsList || [];
 
   useLoad(() => {
-    console.log('confirm alert loaded.')
+    // console.log('confirm alert loaded.')
   })
 
   useEffect(() => {
-    console.log('confirm alert effect.') 
+    // console.log('confirm alert effect.') 
   }, []);
 
   // 确定

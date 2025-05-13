@@ -68,13 +68,13 @@ export default function Index() {
   }
 
   useLoad(() => {
-    console.log('detail onLoad')
+    // console.log('detail onLoad')
     Taro.WXSDK.hideOptionMenu();
     createdPage();
   });
 
   useDidShow(() => {
-    console.log('detail onShow')
+    // console.log('detail onShow')
     Taro.WXSDK.hideOptionMenu();
     const tpIds = configTrackerProductIds()
     if (tpIds.length > 0) {
@@ -87,7 +87,7 @@ export default function Index() {
   });
 
   useDidHide(() => {
-    console.log('detail onHide')
+    // console.log('detail onHide')
     const tpIds = configTrackerProductIds()
     if (trackId && tpIds.length > 0) {      
       configTracker(1, {
@@ -100,7 +100,7 @@ export default function Index() {
   });
 
   useUnload(() => {
-    console.log('detail onUnload')
+    // console.log('detail onUnload')
     const tpIds = configTrackerProductIds()
     if (trackId && tpIds.length > 0) {      
       configTracker(1, {
@@ -165,7 +165,7 @@ export default function Index() {
   const videoPlay = (sence) => {
     if (sence === 'banner') {
       setIsVideoPlay(true)
-      console.log('video-banner-数据', videoSource)
+      // console.log('video-banner-数据', videoSource)
       setTimeout(() => {
         const videoContext = Taro.createVideoContext('video-ref');
         if (videoContext) {
@@ -175,7 +175,7 @@ export default function Index() {
     }
     if (sence === 'detail') {
       setIsDetailVideoPlay(true)
-      console.log('video-detail-数据', detailVideoSource)
+      // console.log('video-detail-数据', detailVideoSource)
       setTimeout(() => {
         const videoContext = Taro.createVideoContext('detail-video-ref');
         if (videoContext) {
@@ -188,7 +188,7 @@ export default function Index() {
   // 视频暂停
   const videoPause = (sence) => {
     if (sence === 'banner') {
-      console.log('videoPause', videoSource)
+      // console.log('videoPause', videoSource)
       const videoContext = Taro.createVideoContext('video-ref');
       if (videoContext) {
         videoContext.pause();
@@ -196,7 +196,7 @@ export default function Index() {
       // setIsVideoPlay(false)
     }
     if (sence === 'detail') {
-      console.log('detailVideoPause', detailVideoSource)
+      // console.log('detailVideoPause', detailVideoSource)
       const videoContext = Taro.createVideoContext('detail-video-ref');
       if (videoContext) {
         videoContext.pause();
@@ -207,7 +207,7 @@ export default function Index() {
 
   // 视频播放开始~
   const onVideoPlayEvent = (elm, sence) => {
-    console.log(`video-${sence}-开始`)
+    // console.log(`video-${sence}-开始`)
     if (sence === 'banner') {
       setVideoNextTrackTime(0)
     }
@@ -219,12 +219,12 @@ export default function Index() {
 
   // 视频播放暂停~
   const onVideoPauseEvent = (elm, sence) => {
-    console.log(`video-${sence}-暂停`)        
+    // console.log(`video-${sence}-暂停`)        
   }
 
   // 视频播放结束~
   const onVideoPlayendEvent = (elm, sence) => {
-    console.log(`video-${sence}-结束`)
+    // console.log(`video-${sence}-结束`)
     endVideoTracker(sence)   
   }
   
@@ -236,7 +236,7 @@ export default function Index() {
     if (time > 0 && duration > 0) {
       playingVideoTracker(sence, time, duration)
     } else {
-      console.log(`video-${sence}-更新-忽略`, time, duration)
+      // console.log(`video-${sence}-更新-忽略`, time, duration)
     }      
   };
 
@@ -261,7 +261,7 @@ export default function Index() {
 
   // 播放开始，上报
   const startVideoTracker = (sence) => {
-    console.log(`video-${sence}-开始-上报`)
+    // console.log(`video-${sence}-开始-上报`)
     // 轮播视频
     if (sence === 'banner') {          
       const tpIds = configTrackerProductIds()
@@ -301,8 +301,8 @@ export default function Index() {
     if (sence === 'banner' && time >= videoNextTrackTime) {  
       let duration = 0    
       if (videoNextTrackTime <= 0) {
-        console.log('video-banner-开始时间:', currentTime);
-        console.log('video-banner-总时间:', totalTime);
+        // console.log('video-banner-开始时间:', currentTime);
+        // console.log('video-banner-总时间:', totalTime);
         setVideoStartTime(currentTime)
         setVideoTotalTime(totalTime)
       } else {
@@ -314,7 +314,7 @@ export default function Index() {
       if (trackBannerVideoId) {
         const tpIds = configTrackerProductIds()
         if (tpIds.length > 0 && duration > 0) {   
-          console.log('video-banner-播放时长-上报', duration);                        
+          // console.log('video-banner-播放时长-上报', duration);                        
           throttledConfigTracker(2, {
             activityId: actId,
             pointAccountId: accId,
@@ -330,8 +330,8 @@ export default function Index() {
     if (sence === 'detail' && time >= detailVideoNextTrackTime) {  
       let duration = 0    
       if (detailVideoNextTrackTime <= 0) {
-        console.log('video-detail-开始时间:', currentTime);
-        console.log('video-detail-总时间:', totalTime);
+        // console.log('video-detail-开始时间:', currentTime);
+        // console.log('video-detail-总时间:', totalTime);
         setDetailVideoStartTime(currentTime)
         setDetailVideoTotalTime(totalTime)
       } else {
@@ -343,7 +343,7 @@ export default function Index() {
       if (trackDetailVideoId) {
         const tpIds = configTrackerProductIds()
         if (tpIds.length > 0 && duration > 0) {     
-          console.log('video-detail-播放时长-上报', duration);                     
+          // console.log('video-detail-播放时长-上报', duration);                     
           throttledConfigTracker(3, {
             activityId: actId,
             pointAccountId: accId,
@@ -367,7 +367,7 @@ export default function Index() {
           duration = parseFloat((videoTotalTime - videoStartTime).toFixed(2))
         }         
         // console.log('video-banner-完播时长: ', duration);
-        console.log('video-banner-完播时长-上报', duration);
+        // console.log('video-banner-完播时长-上报', duration);
         configTracker(2, {
           activityId: actId,
           pointAccountId: accId,
@@ -387,7 +387,7 @@ export default function Index() {
           duration = parseFloat((detailVideoTotalTime - detailVideoStartTime).toFixed(2))
         }      
         // console.log('video-detail-完播时长: ', duration);
-        console.log('video-detail-完播时长-上报', duration);
+        // console.log('video-detail-完播时长-上报', duration);
         configTracker(3, {
           activityId: actId,
           pointAccountId: accId,
@@ -588,7 +588,7 @@ export default function Index() {
     } else {
       newValue = 1
     }
-    console.log('newValue', newValue);
+    // console.log('newValue', newValue);
 
     if (checkLimitNum(newValue)) {  
       requestAddCartData(newValue)
@@ -598,7 +598,7 @@ export default function Index() {
   // 限购数量检测（每个商品）
   const checkLimitNum = (val) => {
     const maxLimit = orderActivityInfo.maxQuantity || 0;
-    console.log('maxLimit', maxLimit);
+    // console.log('maxLimit', maxLimit);
     if (val > maxLimit) {
       Taro.HUD.showToastMessage('加购商品超过数量上限')
       return false;
@@ -741,7 +741,7 @@ export default function Index() {
   const onChangeSwiperItem = (index) => {
     if (currentIndex != index) {      
       if (index === 0) {
-        console.log('banner 0')
+        // console.log('banner 0')
       } else {
         if (isVideoPlay) {
           videoPause('banner')

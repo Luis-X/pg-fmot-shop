@@ -98,7 +98,7 @@ export default function Index() {
       setDataList([])
     } else {
       if (pageIndex > 0 && !hasMore) {
-        console.log('no more')
+        // console.log('no more')
         return
       }
     }

@@ -17,11 +17,11 @@ export default function Index(props) {
   const { sence, act, acc } = props
 
   useLoad(() => {
-    console.log('tabbar loaded.')
+    // console.log('tabbar loaded.')
   })
 
   useEffect(() => {
-    console.log('tabbar effect.') 
+    // console.log('tabbar effect.') 
   }, []);
   
   const clickTabbar = (index) => {    

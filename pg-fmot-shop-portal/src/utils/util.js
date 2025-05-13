@@ -14,53 +14,54 @@ const utils = {
     if (query) {
       url += `/${query}`;
     }
-    console.log('navigationToPath', url);
+    // console.log('navigationToPath', url);
     window.location.href = url;
   },
   // 页面跳转 url
   navigationToUrl: (url) => {    
-    console.log('navigationToUrl', url);
+    // console.log('navigationToUrl', url);
     window.location.href = url;
   },
   // 页面跳转 sso 登录
   navigationToSSOLogin: () => {    
     const url = `${RoutePath.SSOLoginUrl}&subscription-key=${Tools.decodeBaseStr(RoutePath.skId)}&redirect_uri=${encodeURIComponent(RoutePath.SSOCallbackUrl)}`;
-    console.log('navigationToSSOLogin', url);
+    // console.log('navigationToSSOLogin', url);
     window.location.href = url;
   },
   // 页面跳转 sso 退出
   navigationToSSOLogout: () => {    
     const url = `${RoutePath.SSOLogoutUrl}&subscription-key=${Tools.decodeBaseStr(RoutePath.skId)}`;
-    console.log('navigationToSSOLogout', url);
+    // console.log('navigationToSSOLogout', url);
     window.location.href = url;
   },
 
   // 根据类型下载模板文件
   downloadTemplateFile: (type) => {
-    console.log(type);
+    // console.log(type);
     let url;
     let fileName = 'template.xlsx';
+    let time = moment().format('YYYYMMDDHHmmss');
     if (type === 101) {
       // 内部，账户导入模板
       url = api.internalAccountImportTemplate();
-      fileName = '内部账号_导入账号模版.xlsx';
+      fileName = `内部账号_导入账号模版${time}.xlsx`;
     } else if (type === 102) {
       // 内部，积分导入模板
       url = api.internalAccountImportTemplatePoints();
-      fileName = '内部账号_积分充值模版.xlsx';
+      fileName = `内部账号_积分充值模版${time}.xlsx`;
     } else if (type === 201) {
       // 外部，账户导入模板
       url = api.externalAccountImportTemplate();
-      fileName = '外部账号_导入账号模版.xlsx';
+      fileName = `外部账号_导入账号模版${time}.xlsx`;
     } else if (type === 202) {
       // 外部，积分导入模板
       url = api.externalAccountImportTemplatePoints();
-      fileName = '外部账号_积分充值模版.xlsx';
+      fileName = `外部账号_积分充值模版${time}.xlsx`;
     } else {
       console.error('未识别的模板类型');      
       return;
     }
-    console.log(url);
+    // console.log(url);
 
     const token = Tools.getToken();
     var xhh = new XMLHttpRequest();
@@ -90,7 +91,7 @@ const utils = {
 
   // urls转files
   imgUrlsToFiles: (imgUrls, isVideo) => {
-    console.log('imgUrlsToFiles', imgUrls);
+    // console.log('imgUrlsToFiles', imgUrls);
     let list = [];
     imgUrls.forEach((item) => {
       const url = item || '';
@@ -110,7 +111,7 @@ const utils = {
 
   // files转urls
   filesToImgUrls: (files) => {
-    console.log('filesToImgUrls', files);
+    // console.log('filesToImgUrls', files);
     let list = [];
     files.forEach((item) => {
       const url = item.url || '';
@@ -123,10 +124,9 @@ const utils = {
 
   // 时间处理
   dateFormatter: (dateValue) => {    
-    console.log('dateFormatter', dateValue)
+    // console.log('dateFormatter', dateValue)
     // const formatValue = 'YYYY-MM-DD HH:mm:ss';
     // const result = moment(new Date(dateValue)).format(formatValue);
-    // console.log(result);
     const result = moment(new Date(dateValue)).toISOString();
     // console.log(result);
     return result

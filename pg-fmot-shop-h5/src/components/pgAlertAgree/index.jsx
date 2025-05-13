@@ -10,11 +10,11 @@ const imgStar = ASSET_IMG.assetImgWithName('alert-star.png')
 
 export default function Index(props) {
   useLoad(() => {
-    console.log('agree alert loaded.')
+    // console.log('agree alert loaded.')
   })
 
   useEffect(() => {
-    console.log('agree alert effect.') 
+    // console.log('agree alert effect.') 
     checkAgreementStatus()    
   }, []);
 

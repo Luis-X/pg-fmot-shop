@@ -17,13 +17,13 @@ export function ImportDataPicker({ show, type, onHide, updateList }) {
 
   // 1.获取上传文件签名
   const requestSignData = (file, typeValue) => {
-    console.log('获取签名', file, typeValue)
+    // console.log('获取签名', file, typeValue)
     setFirmLoading(true);
     api.uploadFileSign().then((res) => {
       if (res) {
         const respData = res.data || {};
         if (0 === respData.code) {
-          console.log('获取签名，成功', respData)
+          // console.log('获取签名，成功', respData)
           const signData = respData.data || {};
           const signParams = signData.params || {}
           requestUploadFile(file, typeValue, signParams);
@@ -42,7 +42,7 @@ export function ImportDataPicker({ show, type, onHide, updateList }) {
 
   // 2.开始上传文件
   const requestUploadFile = (file, typeValue, signParams) => {
-    console.log('上传文件', file, typeValue, signParams)
+    // console.log('上传文件', file, typeValue, signParams)
     const formData = new FormData();
     formData.append('file', file, file.name);
     formData.append('subscriptionKey', signParams.subscriptionKey);
@@ -55,7 +55,7 @@ export function ImportDataPicker({ show, type, onHide, updateList }) {
         const respData = res.data || {};        
         const fileId = respData.fileId || '';
         if (fileId) {  
-          console.log('上传文件，成功', fileId)
+          // console.log('上传文件，成功', fileId)
           requestImportFile(fileId, typeValue);          
         } else {
           console.log('上传文件，错误')
@@ -72,7 +72,7 @@ export function ImportDataPicker({ show, type, onHide, updateList }) {
 
   // 3.获取导入文件，任务id
   const requestImportFile = (fileId, typeValue) => {
-    console.log('导入文件', fileId, typeValue)
+    // console.log('导入文件', fileId, typeValue)
     api.internalAccountImport({
       uploadFileId: fileId,
       type: typeValue,
@@ -80,7 +80,7 @@ export function ImportDataPicker({ show, type, onHide, updateList }) {
       if (res) {
         const respData = res.data || {};
         if (0 === respData.code) {
-          console.log('导入文件，成功', respData)
+          // console.log('导入文件，成功', respData)
           const importData = respData.data || {};
           const taskId = importData.id || '';
           requestImportFileResult(taskId);
@@ -99,14 +99,14 @@ export function ImportDataPicker({ show, type, onHide, updateList }) {
 
    // 4.轮询查询导入结果
    const requestImportFileResult = (taskId) => {
-    console.log('查询导入结果', taskId)
+    // console.log('查询导入结果', taskId)
     api.asyncTaskDetail({
       id: taskId,
     }).then((res) => {
       if (res) {
         const respData = res.data || {};
         if (0 === respData.code) {
-          console.log('查询导入结果', respData)
+          // console.log('查询导入结果', respData)
           const resultData = respData.data || {};
           handleImportResult(resultData, taskId);
         } else {

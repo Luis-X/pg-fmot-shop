@@ -135,7 +135,7 @@ export function AddGoodsFun({
     } catch (err) {
       message.error(err ? err : '网络请求失败, 请重试!', 2);
     }
-    console.log('---detailData---', detailData);
+    // console.log('---detailData---', detailData);
     return detailData;
   };
 
@@ -143,7 +143,7 @@ export function AddGoodsFun({
   const saveAndCreateGoods = (type) => {
     setLoading(true);
     form.validateFields().then((values) => {
-      console.log('处理前：', values);
+      // console.log('处理前：', values);
 
       // 预览图
       const previewFiles = values.previewUrl || [];
@@ -188,14 +188,14 @@ export function AddGoodsFun({
         //   setLoading(false);
         //   return;
         // }
-        console.log('上传视频时，未上传封面也可提交')
+        // console.log('上传视频时，未上传封面也可提交')
       } else if (bannerPoster) {        
         if (!bannerVideo) {
           message.error('请上传视频！', 2);
           setLoading(false);
           return;
         }
-        console.log('上传封面时，必须上传视频，否则无法提交')
+        // console.log('上传封面时，必须上传视频，否则无法提交')
       } else {
         if (bannerImgs.length <= 0) {
           message.error('请上传轮播图！', 2);
@@ -226,7 +226,7 @@ export function AddGoodsFun({
 
   // 创建
   const createHandler = (values) => {
-    console.log('处理后，创建：', values);    
+    // console.log('处理后，创建：', values);    
     api.goodsCreate({
       ...values,
     }).then((res) => {
@@ -250,7 +250,7 @@ export function AddGoodsFun({
   // 保存
   // productCarouselImages 修改需要携带id参数（后端要求）
   const saveHandler = (values) => {
-    console.log('处理后，保存：', values);
+    // console.log('处理后，保存：', values);
     const params = {
       id: goodsId,
       ...values,
@@ -265,7 +265,7 @@ export function AddGoodsFun({
         item.id = oldItem.id;
       }
     })
-    console.log('处理id后，保存：', params);
+    // console.log('处理id后，保存：', params);
 
     api.goodsSave(params).then((res) => {
       if (res) {
@@ -287,7 +287,7 @@ export function AddGoodsFun({
 
   // 上传图片
   const beforeUpload = async (file, type) => {
-    console.log('---file---', file);
+    // console.log('---file---', file);
     // 视频
     if (type === 'video') {
       const isAllowVideo = file.type === 'video/mp4';
@@ -318,12 +318,12 @@ export function AddGoodsFun({
   // 1.上传图片签名
   const [signData, setSignData] = useState({})
   const requestSignData = async () => {   
-    console.log('获取签名')
+    // console.log('获取签名')
     await api.uploadFileSignPublic().then((res) => {
       if (res) {
         const respData = res.data || {};
         if (0 === respData.code) {
-          console.log('获取签名，成功', respData)
+          // console.log('获取签名，成功', respData)
           const signInfo = respData.data || {};
           setSignData(signInfo);
         } else {
@@ -339,10 +339,10 @@ export function AddGoodsFun({
 
   // 2.上传图片处理
   const handleImgChange = async (info) => {
-    console.log('上传信息', info);
+    // console.log('上传信息', info);
     const { status } = info.file;
     if (status === 'uploading') {
-      console.log('上传中', info);
+      // console.log('上传中', info);
       setLoading(true);
       return;
     }
@@ -350,23 +350,23 @@ export function AddGoodsFun({
     if (status === 'done') {
       setLoading(false);
       const resp = info.file.response;
-      console.log('上传结束', resp);
+      // console.log('上传结束', resp);
       const fileId = resp.fileId 
       const url = resp.url
       // 公有图片
       if (url) {
-        console.log('上传成功-公有', url);
+        // console.log('上传成功-公有', url);
         info.file.url = url;
         return;
       }
       // 私有图片 
       if (fileId) {     
-        console.log('上传成功-私有', fileId);  
-        console.log('通过fileId获取url', fileId);          
+        // console.log('上传成功-私有', fileId);  
+        // console.log('通过fileId获取url', fileId);          
         const fileUrlResp = await api.uploadFileGetUrl([fileId]);
         const respData = fileUrlResp.data || {};
         if (0 === respData.code) {
-          console.log('获取url成功', respData);
+          // console.log('获取url成功', respData);
           const fileUrl = respData[fileId] || '';
           info.file.url = fileUrl;
         } else {

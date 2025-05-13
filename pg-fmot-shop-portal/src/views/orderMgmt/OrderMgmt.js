@@ -171,7 +171,7 @@ class OrderMgmt extends Component {
 
   // 1.获取导出文件，任务id
   requestExportFile = () => {
-    console.log('导出文件')
+    // console.log('导出文件')
     const self = this;
     const { pageNo, pageSize, queryData } = self.state;
     self.setState({ loadingShow: true });
@@ -189,7 +189,7 @@ class OrderMgmt extends Component {
       if (res) {
         const respData = res.data || {};
         if (0 === respData.code) {
-          console.log('导出文件，成功', respData)
+          // console.log('导出文件，成功', respData)
           const exportData = respData.data || {};
           const taskId = exportData.id || '';
           self.requestExportFileResult(taskId);
@@ -208,7 +208,7 @@ class OrderMgmt extends Component {
 
   // 2.轮询查询导出结果
   requestExportFileResult = (taskId) => {
-    console.log('查询导出结果', taskId)
+    // console.log('查询导出结果', taskId)
     const self = this;    
     api.asyncTaskDetail({
       id: taskId,
@@ -216,7 +216,7 @@ class OrderMgmt extends Component {
       if (res) {
         const respData = res.data || {};
         if (0 === respData.code) {
-          console.log('查询导出结果', respData)
+          // console.log('查询导出结果', respData)
           const resultData = respData.data || {};
           self.handleExportResult(resultData, taskId);
         } else {
@@ -267,7 +267,7 @@ class OrderMgmt extends Component {
 
   // 4.下载导出文件
   downloadExportFile = (url) => {
-    console.log('下载导出文件', url)
+    // console.log('下载导出文件', url)
     const self = this;
     if (!url) {
       self.setState({ loadingShow: false });
@@ -290,6 +290,16 @@ class OrderMgmt extends Component {
     });
   }
 
+  showOrderItemText = (item) => {
+    let result = '';
+    let code = item.code || '';
+    let name = item.name || '';
+    let quantity = item.quantity || 0;
+    let price = item.price || 0;
+    let total = (price * quantity).toFixed(1);
+    result = `${code} ${name}*${quantity} ${total}积分`
+    return result
+  }
 
   render() {
     const { orgCodeList, deliveryTypeList, orderStatusList } = this.state;
@@ -367,7 +377,7 @@ class OrderMgmt extends Component {
             <div className="goods-list-wrap">
               {
                 record.orderItems && record.orderItems.length > 0 && record.orderItems.map((item, index) => (
-                  <span key={index}>{`${item.code} ${item.name}*${item.quantity} ${item.price * item.quantity}积分`}</span>
+                  <span key={index}>{this.showOrderItemText(item)}</span>
                 ))
               }
             </div>

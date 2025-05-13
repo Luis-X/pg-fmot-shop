@@ -9,11 +9,11 @@ export default function Index(props) {
   const { item, act, acc } = props
 
   useLoad(() => {
-    console.log('goods view loaded.')
+    // console.log('goods view loaded.')
   })
 
   useEffect(() => {
-    console.log('goods view effect.') 
+    // console.log('goods view effect.') 
   }, []);
 
    // 商品详情

@@ -29,11 +29,11 @@ if (process.env.TARO_ENV === 'h5') {
 function App({ children }) {  
 
   useLaunch(() => {
-    console.log('App launch')
+    // console.log('App launch')
   })
 
   useUnload(() => {
-    console.log('App unload')
+    // console.log('App unload')
   })
 
   // children 是将要会渲染的页面
