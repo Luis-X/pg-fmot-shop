@@ -1,18 +1,18 @@
 import { useState } from "react";
 import {
-  PullToRefresh,
-  Radio,  
+  PullToRefresh,  
   InputNumber,
   Image as ImageNut
 } from "@nutui/nutui-react";
-import { CheckNormal, Checked } from '@nutui/icons-react'
-import { View } from "@tarojs/components";
+import { View, Image } from "@tarojs/components";
 import Taro, { useLoad, useRouter, useDidShow, useUnload } from "@tarojs/taro";
 import "./index.scss";
 
 import PGLoading from "../../components/pgLoading/index";
 import PGAlertConfirm from "../../components/pgAlertConfirm/index";
 
+import checkImg from '../../images/icon-checked.png';
+import uncheckImg from '../../images/icon-uncheck.png';
 
 export default function Index() {
 
@@ -310,26 +310,79 @@ export default function Index() {
         <View className="delivery-wrap">
           <View className='delivery-title'>请选择发货方式：</View>
           <View className='delivery-option'>
-          <Radio.Group defaultValue={deliveryType} direction='horizontal' onChange={onDeliveryChange}> 
+            {/* 二选一 */}
             {
               orderActivityInfo.deliveryType === 'BOTH' ? (
                 <>
-                  <Radio className='delivery-option-item' icon={<CheckNormal />} activeIcon={<Checked style={{ color: 'red' }} />} value='SELF_PICKUP'>线下自提</Radio>
-                  <Radio className='delivery-option-item' icon={<CheckNormal />} activeIcon={<Checked style={{ color: 'red' }} />} value='POST'>邮寄</Radio>
+                  {
+                    deliveryType === 'SELF_PICKUP'? (
+                      <View className='delivery-option-item' onClick={() => onDeliveryChange('')}>
+                        <Image className='delivery-select' mode='aspectFit' src={checkImg}></Image>
+                        <View className='delivery-text'>线下自提</View>
+                      </View>
+                    ) : (
+                      <View className='delivery-option-item' onClick={() => onDeliveryChange('SELF_PICKUP')}>
+                        <Image className='delivery-select' mode='aspectFit' src={uncheckImg}></Image>
+                        <View className='delivery-text'>线下自提</View>
+                      </View>
+                    )
+                  }
+                  {
+                    deliveryType === 'POST'? (
+                      <View className='delivery-option-item' onClick={() => onDeliveryChange('')}>
+                        <Image className='delivery-select' mode='aspectFit' src={checkImg}></Image>
+                        <View className='delivery-text'>邮寄</View>
+                      </View>
+                    ) : (
+                      <View className='delivery-option-item' onClick={() => onDeliveryChange('POST')}>
+                        <Image className='delivery-select' mode='aspectFit' src={uncheckImg}></Image>
+                        <View className='delivery-text'>邮寄</View>
+                      </View>
+                    )
+                  }
                 </>
               ) : null
             }     
+            {/* 自提 */}
             {
-              orderActivityInfo.deliveryType === 'SELF_PICKUP' ? (
-                <Radio className='delivery-option-item' icon={<CheckNormal />} activeIcon={<Checked style={{ color: 'red' }} />} value='SELF_PICKUP'>线下自提</Radio>
+              orderActivityInfo.deliveryType === 'SELF_PICKUP' ? (   
+                <>
+                  {
+                    deliveryType === 'SELF_PICKUP'? (
+                      <View className='delivery-option-item' onClick={() => onDeliveryChange('')}>
+                        <Image className='delivery-select' mode='aspectFit' src={checkImg}></Image>
+                        <View className='delivery-text'>线下自提</View>
+                      </View>
+                    ) : (
+                      <View className='delivery-option-item' onClick={() => onDeliveryChange('SELF_PICKUP')}>
+                        <Image className='delivery-select' mode='aspectFit' src={uncheckImg}></Image>
+                        <View className='delivery-text'>线下自提</View>
+                      </View>
+                    )
+                  }  
+                </>                                
               ) : null
             }    
+            {/* 邮寄 */}
             {
               orderActivityInfo.deliveryType === 'POST' ? (               
-                <Radio className='delivery-option-item' icon={<CheckNormal />} activeIcon={<Checked style={{ color: 'red' }} />} value='POST'>邮寄</Radio>
+                <>
+                  {
+                    deliveryType === 'POST'? (
+                      <View className='delivery-option-item' onClick={() => onDeliveryChange('')}>
+                        <Image className='delivery-select' mode='aspectFit' src={checkImg}></Image>
+                        <View className='delivery-text'>邮寄</View>
+                      </View>
+                    ) : (
+                      <View className='delivery-option-item' onClick={() => onDeliveryChange('POST')}>
+                        <Image className='delivery-select' mode='aspectFit' src={uncheckImg}></Image>
+                        <View className='delivery-text'>邮寄</View>
+                      </View>
+                    )
+                  }  
+                </>
               ) : null
-            }           
-          </Radio.Group>                  
+            }                     
           </View>         
         </View>               
       </View>

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { PullToRefresh, InputNumber, Image as ImageNut } from "@nutui/nutui-react";
-import { CheckNormal, Checked } from '@nutui/icons-react'
-import { View } from "@tarojs/components";
+import { View, Image } from "@tarojs/components";
 import Taro, { useLoad, useRouter, useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
@@ -9,6 +8,9 @@ import PGAlertAgree from "../../components/pgAlertAgree/index";
 import PGLoading from "../../components/pgLoading/index";
 import PGTabBar from "../../components/pgTabbar/index";
 import PGAlertConfirm from "../../components/pgAlertConfirm/index";
+
+import checkImg from '../../images/icon-checked.png';
+import uncheckImg from '../../images/icon-uncheck.png';
 
 export default function Index() {
 
@@ -306,13 +308,9 @@ export default function Index() {
               <View className='goods-wrap'>
                 {
                   item.isSelect ? (
-                    <View className='goods-select' onClick={() => clickSelectItem(false, index)}>
-                      <Checked style={{ color: "red" }} />
-                    </View>
+                    <Image className='goods-select' mode='aspectFit' src={checkImg} onClick={() => clickSelectItem(false, index)}></Image>
                   ) : (
-                    <View className='goods-select' onClick={() => clickSelectItem(true, index)}>
-                      <CheckNormal style={{ color: '#B7BED1' }} />
-                    </View>
+                    <Image className='goods-select' mode='aspectFit' src={uncheckImg} onClick={() => clickSelectItem(true, index)}></Image>
                   )
                 }
                 <ImageNut className='goods-img' src={productData.previewUrl} fit='cover' lazy={false} loading={false} onClick={() => clickGoods(item)} />
@@ -335,21 +333,20 @@ export default function Index() {
   const toolsView = () => {
     return (
       <View className='cart-tools-wrap'>            
-        <View className='total-wrap'>
-          <View className='select-wrap'>
-            {
+        <View className='total-wrap'>          
+          {
             isAllSelect ? (
-              <View className='select-all' onClick={() => clickAllSelect(false)}>
-                <Checked style={{ color: "red" }} />
+              <View className='select-wrap' onClick={() => clickAllSelect(false)}>
+                <Image className='select-all' mode='aspectFit' src={checkImg}></Image>
+                <View className='select-all-text'>全选</View>
               </View>
             ) : (
-              <View className='select-all' onClick={() => clickAllSelect(true)}>
-                <CheckNormal style={{ color: '#B7BED1' }} />
-              </View>
+              <View className='select-wrap' onClick={() => clickAllSelect(true)}>
+                <Image className='select-all' mode='aspectFit' src={uncheckImg}></Image>
+                <View className='select-all-text'>全选</View>
+              </View>              
             )
-          }
-            <View className='select-all-text'>全选</View>
-          </View>
+          }            
           <View className='total-text-wrap'>
             <View className='total-count'>{`共计${totalNum}件商品`}</View>
             <View className='total-price-wrap'>
