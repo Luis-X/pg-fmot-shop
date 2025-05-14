@@ -68,4 +68,4 @@ export const trackList = '/api/admin/userActionLog/activitySelect'              
 export const trackExport = '/api/admin/userActionLog/exportForAdmin'                                               // 导出数据
 export const trackPeopleList = '/api/admin/userActionLog/productSelect'                                            // 人数
 export const trackTimesList = '/api/admin/userActionLog/productSelect'                                             // 次数
-  export const trackChart = '/api/admin/userActionLog/productVideoViewSelect'                                        // 图表
+export const trackChart = '/api/admin/userActionLog/productVideoViewSelect'                                        // 图表

@@ -8,11 +8,6 @@ async function eventTracker(userActionType, query, callback) {
   
   const activityId = query.activityId || ''
   const pointAccountId = query.pointAccountId || ''
-  const finished = query.finished || false           // 开始不传，结束传 true
-  const id = query.id || ''                          // 埋点id  
-  const productIds = query.productIds || []          // 商品id (此参数为数组)
-  const orderId = query.orderId || ''                // 订单id
-  const duration = query.duration || 0               // 时长 (视频播放)
 
   if (!activityId) {
     console.log('缺少 activityId')
@@ -25,29 +20,8 @@ async function eventTracker(userActionType, query, callback) {
   }
 
   let params = {
-    activityId: activityId,
-    pointAccountId: pointAccountId,    
-    userActionType: userActionType,                                                            
-  }
-
-  if (finished) {
-    params.finished = finished    
-  }
-
-  if (id) {
-    params.id = id
-  }
-
-  if (productIds && productIds.length > 0) {  
-    params.productIds = productIds
-  }
-
-  if (orderId) {
-    params.orderId = orderId
-  } 
-
-  if (duration > 0) {
-    params.duration = duration
+    userActionType,
+    ...query,
   }
 
   // console.log(`eventTracker ${userActionType}`, params)
