@@ -329,12 +329,12 @@ export default function Index() {
                   }
                   {
                     deliveryType === 'POST'? (
-                      <View className='delivery-option-item' onClick={() => onDeliveryChange('')}>
+                      <View className='delivery-option-item-last' onClick={() => onDeliveryChange('')}>
                         <Image className='delivery-select' mode='aspectFit' src={checkImg}></Image>
                         <View className='delivery-text'>邮寄</View>
                       </View>
                     ) : (
-                      <View className='delivery-option-item' onClick={() => onDeliveryChange('POST')}>
+                      <View className='delivery-option-item-last' onClick={() => onDeliveryChange('POST')}>
                         <Image className='delivery-select' mode='aspectFit' src={uncheckImg}></Image>
                         <View className='delivery-text'>邮寄</View>
                       </View>

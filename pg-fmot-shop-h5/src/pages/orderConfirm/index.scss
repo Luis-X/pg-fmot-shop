@@ -195,20 +195,25 @@
       display: flex;
       flex-direction: row;
       align-items: center;
-      .delivery-option-item {
-        margin-right: 20rpx;
+      .delivery-option-item-last {
+        margin-left: 112rpx;
         display: flex;
         flex-direction: row;
         align-items: center;
-        .delivery-select {
-          margin-right: 12rpx;
-          width: 40rpx;
-          height: 40rpx;
-        }
-        .delivery-text {
-          font-size: 28rpx;
-          color: #000000;
-        }
+      }
+      .delivery-option-item {
+        display: flex;
+        flex-direction: row;
+        align-items: center;        
+      }
+      .delivery-select {
+        margin-right: 12rpx;
+        width: 40rpx;
+        height: 40rpx;
+      }
+      .delivery-text {
+        font-size: 28rpx;
+        color: #000000;
       }
     }
   }
