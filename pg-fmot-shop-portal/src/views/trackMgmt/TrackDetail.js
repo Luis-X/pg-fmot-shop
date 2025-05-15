@@ -792,8 +792,11 @@ class TrackDetail extends Component {
       'point_57',
       'point_60',
     ];
+    
+    let hasCarouselVideoLine = false
+    let hasDetailVideoLine = false
 
-    if (chartDataList.length > 0) {
+    if (chartDataList.length > 0) {            
       let productCarouselVideoTotalValue = 0
       let productDetailVideoTotalValue = 0
       
@@ -803,10 +806,12 @@ class TrackDetail extends Component {
           let type = ''
           let value = chartMap[key] || 0;
           if (item.user_action_type === 'PRODUCT_CAROUSEL_VIDEO') {
+            hasCarouselVideoLine = true;
             type = '轮播图视频观看人数';
             productCarouselVideoTotalValue += value;
           } 
           if (item.user_action_type === 'PRODUCT_DETAIL_VIDEO') {
+            hasDetailVideoLine = true
             type = '商品详情视频观看人数';
             productDetailVideoTotalValue += value;
           }          
@@ -817,8 +822,7 @@ class TrackDetail extends Component {
           pointIem.second = String(secondValue);
           pointIem.value = value;
           list.push(pointIem);          
-        })
-                
+        })                
       })          
 
       // 增加百分比字段
@@ -842,6 +846,15 @@ class TrackDetail extends Component {
       console.log('商品详情视频观看总人数', productDetailVideoTotalValue) 
       console.log(data)
       */
+    }
+
+    // 指定线的颜色
+    let dataColor = [];
+    if (hasCarouselVideoLine) {
+      dataColor.push('#1979C9');
+    }
+    if (hasDetailVideoLine) {
+      dataColor.push('#FAA219');
     }
 
     const config = {
@@ -876,7 +889,7 @@ class TrackDetail extends Component {
         position: 'bottom',
       },
       seriesField: 'type',
-      color: ['#1979C9', '#FAA219'],
+      color: dataColor,
       smooth: true,
       // point: {
       //   shapeField: 'square',
