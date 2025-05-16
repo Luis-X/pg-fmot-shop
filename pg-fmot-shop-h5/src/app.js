@@ -1,5 +1,5 @@
 import '@nutui/nutui-react/dist/style.css'
-import VConsole from 'vconsole';
+// import VConsole from 'vconsole';
 import WXSDK from 'weixin-js-sdk';
 import Taro, { useLaunch, useUnload } from '@tarojs/taro'
 import './app.scss'
@@ -20,10 +20,10 @@ Taro.NETWORK = NETWORK
 Taro.ROUTER = ROUTER
 Taro.TRACKER = TRACKER
 
-if (process.env.TARO_ENV === 'h5') {
-  const vConsole = new VConsole();
-  // vConsole.show()
-}
+// if (process.env.TARO_ENV === 'h5') {
+//   const vConsole = new VConsole();
+//   // vConsole.show()
+// }
 
 
 function App({ children }) {  

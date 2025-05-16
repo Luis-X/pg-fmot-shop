@@ -31,12 +31,6 @@ function baseRequest(url, data, method) {
     token = tokenSSO.token || ''
   }
 
-  // FIXME: 调试
-  // 1.从QA环境，获取token后，复制到本地
-  // 2.注释掉goToACLAuthPage的跳转
-  // 3.微信开发工具复制链接，将域名修改为：http://localhost:10086
-  // token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZC1mbW90LXNob3BwaW5nIiwiYXVkIjoicmQtZm1vdC1zaG9wcGluZyIsIm5iZiI6MTc0Njc3NDE2MCwicm9sZSI6Ind4LW1pbmktdXNlciIsImRhdGEiOiJ7fSIsImlzcyI6InJkLWZtb3Qtc2hvcHBpbmciLCJleHAiOjE3NDY3Nzk1NjAsImlhdCI6MTc0Njc3NDE2MCwidXNlcklkIjoiMzIifQ.SmEGwDujw30ihcDB4hE346fswIqr52U4-6kLiqZcxs4'
-
   const actId = data.activityId || ''
   const accId = data.pointAccountId || ''
 

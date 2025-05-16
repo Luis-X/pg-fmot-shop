@@ -26,3 +26,8 @@ mini store for FMOT H5
 - 进入开发项目，执行【devwebupload 对应的本地路径】--urlPrefix "https://ministore-qa.shenghuojia.com"
 - 工具会默认将 .build 路径内所有文件，上传并部署到QA环境
 
+### 四、本地调试
+1.从QA环境，获取token后，复制到本地
+2.注释掉goToACLAuthPage的跳转
+3.微信开发工具复制链接，将域名修改为：http://localhost:10086
+4.写入qa环境的token
