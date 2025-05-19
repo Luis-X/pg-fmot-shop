@@ -95,6 +95,15 @@ export const uploadFile = (param) => {
 export const uploadFilePost = (param) => {
   return client.post(URL.uploadFile, param);
 };
+// 合并文件 post
+export const uploadFileMergePost = (param) => {
+  return client.post(URL.uploadFileMerge, param);
+};
+// 检查文件 post
+export const uploadFileCheckChunkPost = (param) => {
+  return client.post(URL.uploadFileCheckCheck, param);
+};
+
 // 根据fileId获取url
 export const uploadFileGetUrl = (param) => {
   return client.post(URL.uploadFileGetUrl, param);
@@ -112,12 +121,12 @@ export const uploadFileSignChunk = (param) => {
   return client.post(URL.uploadFileSignChunk, param);
 };
 // 检查分片签名
-export const uploadFileChunkCheck = (param) => {
-  return client.post(URL.uploadFileChunkCheck, param);
+export const uploadFileSignChunkCheck = (param) => {
+  return client.post(URL.uploadFileSignChunkCheck, param);
 };
 // 合并分片签名
-export const uploadFileChunkMerge = (param) => {
-  return client.post(URL.uploadFileChunkMerge, param);
+export const uploadFileSignChunkMerge = (param) => {
+  return client.post(URL.uploadFileSignChunkMerge, param);
 };
 
 

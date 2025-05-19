@@ -1,11 +1,13 @@
 // 上传文件
 export const uploadFile = window.location.origin === 'https://ministore.shenghuojia.com' ? 'https://storage.pg.com.cn/v2/files' : 'https://storage-qa.pg.com.cn/v2/files';
+export const uploadFileMerge = window.location.origin === 'https://ministore.shenghuojia.com' ? 'https://storage.pg.com.cn/v2/files/merge' : 'https://storage-qa.pg.com.cn/v2/files/merge';
+export const uploadFileCheckCheck = window.location.origin === 'https://ministore.shenghuojia.com' ? 'https://storage.pg.com.cn/v2/files/checkChunk' : 'https://storage-qa.pg.com.cn/v2/files/checkChunk';
 export const uploadFileGetUrl = '/api/uploadFile/signature/getFileUrl'                    // 根据fileId获取url
 export const uploadFileSign = '/api/uploadFile/signature'                                 // 私有文件上传签名
 export const uploadFileSignPublic = '/api/uploadFile/signaturePublic'                     // 公共文件上传签名
 export const uploadFileSignChunk = '/api/uploadFile/signatureUploadChunkFile'             // 分片上传签名
-export const uploadFileChunkCheck = '/api/uploadFile/signatureCheckChunk'                 // 检查分片签名
-export const uploadFileChunkMerge = '/api/uploadFile/signatureMergeChunkFile'             // 合并分片签名
+export const uploadFileSignChunkCheck = '/api/uploadFile/signatureCheckChunk'                 // 检查分片签名
+export const uploadFileSignChunkMerge = '/api/uploadFile/signatureMergeChunkFile'             // 合并分片签名
 
       
 // 登录、登出

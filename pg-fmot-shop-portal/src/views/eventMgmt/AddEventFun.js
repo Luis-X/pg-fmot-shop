@@ -510,7 +510,8 @@ export function AddEventFun({
         const respData = fileUrlResp.data || {};
         if (0 === respData.code) {
           // console.log('获取url成功', respData);
-          const fileUrl = respData[fileId] || '';
+          const fileData = respData.data || {};
+          const fileUrl = fileData[fileId] || '';
           info.file.url = fileUrl;
         } else {
           console.log('获取url失败', fileId);
