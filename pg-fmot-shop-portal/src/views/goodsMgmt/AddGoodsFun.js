@@ -315,6 +315,87 @@ export function AddGoodsFun({
     return true
   };
 
+  // 1.获取分片签名
+  const requestSignChunkData = async () => {   
+    console.log('获取分片签名')
+    const params = {
+      chunkSize: '',
+      chunk: '',
+      fileMd5: '',
+    }
+    await api.uploadFileSignChunk(params).then((res) => {
+      if (res) {
+        const respData = res.data || {};
+        if (0 === respData.code) {
+          console.log('获取分片签名，成功', respData)
+          const signInfo = respData.data || {};
+          setSignData(signInfo);
+        } else {
+          console.log('获取分片签名，错误')
+          MyAlert({ errorMsg: respData.message });
+        }
+      }
+    }).catch((err) => {
+      console.log('获取分片签名，失败')
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    })
+  };
+
+  // 2.检查分片签名
+  const requestSignChunkCheckData = async () => {   
+    console.log('检查分片签名')
+    const params = {
+      chunks: '',
+      fileMd5: '',
+      type: '',
+      name: '',
+    }
+    await api.uploadFileChunkCheck(params).then((res) => {
+      if (res) {
+        const respData = res.data || {};
+        if (0 === respData.code) {
+          console.log('检查分片签名，成功', respData)
+          const signInfo = respData.data || {};
+          setSignData(signInfo);
+        } else {
+          console.log('检查分片签名，错误')
+          MyAlert({ errorMsg: respData.message });
+        }
+      }
+    }).catch((err) => {
+      console.log('检查分片签名，失败')
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    })
+  };
+
+  // 3.合并分片签名
+  const requestSignChunkMergeData = async () => {   
+    console.log('合并分片签名')
+    const params = {
+      chunks: '',
+      chunk: '',
+      fileMd5: '',
+      type: '',
+      name: '',
+    }
+    await api.uploadFileChunkMerge(params).then((res) => {
+      if (res) {
+        const respData = res.data || {};
+        if (0 === respData.code) {
+          console.log('合并分片签名，成功', respData)
+          const signInfo = respData.data || {};
+          setSignData(signInfo);
+        } else {
+          console.log('合并分片签名，错误')
+          MyAlert({ errorMsg: respData.message });
+        }
+      }
+    }).catch((err) => {
+      console.log('合并分片签名，失败')
+      message.error(err ? err : '网络请求失败, 请重试!', 2);
+    })
+  };
+
   // 1.上传图片签名
   const [signData, setSignData] = useState({})
   const requestSignData = async () => {   

@@ -108,17 +108,17 @@ export const uploadFileSignPublic = (param) => {
   return client.get(URL.uploadFileSignPublic, param);
 };
 // 分片上传签名
-// export const uploadFileSignChunk = (param) => {
-//   return client.post(URL.uploadFileSignChunk, param);
-// };
+export const uploadFileSignChunk = (param) => {
+  return client.post(URL.uploadFileSignChunk, param);
+};
 // 检查分片签名
-// export const uploadFileChunkCheck = (param) => {
-//   return client.post(URL.uploadFileChunkCheck, param);
-// };
+export const uploadFileChunkCheck = (param) => {
+  return client.post(URL.uploadFileChunkCheck, param);
+};
 // 合并分片签名
-// export const uploadFileChunkMerge = (param) => {
-//   return client.post(URL.uploadFileChunkMerge, param);
-// };
+export const uploadFileChunkMerge = (param) => {
+  return client.post(URL.uploadFileChunkMerge, param);
+};
 
 
 // 登录、登出
