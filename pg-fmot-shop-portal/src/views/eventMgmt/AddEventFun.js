@@ -449,11 +449,13 @@ export function AddEventFun({
       message.error('图片格式不是JPG/JPEG/PNG/GIF!');
       return Upload.LIST_IGNORE
     }
-    // const isAllowSize = file.size / 1024 <= 100;
-    // if (!isAllowSize) {
-    //   message.error('文件需要小于100KB!');
-    //   return Upload.LIST_IGNORE
-    // }
+    // 文件大小
+    const maxFileSize = 51 * 1024 * 1024;
+    const isAllowSize = file.size <= maxFileSize;
+    if (!isAllowSize) {
+      message.error('文件需要小于50MB!');
+      return Upload.LIST_IGNORE
+    }
     await requestSignData();
     return true
   };
@@ -772,7 +774,13 @@ export function AddEventFun({
           </div>         
         </ProForm>
         <Modal open={previewOpen} title={null} footer={null} onCancel={handleCancel}>
-          <img alt="example" style={{ width: '100%' }} src={previewImage} width={500} height={500} />
+          <div style={{ margin: '10px', maxHeight: '500px', overflow: 'auto' }}>
+            {
+              previewImage ? (
+                <img alt="example" style={{ width: '100%' }} src={previewImage} width={500} />
+              ) : null
+            }
+          </div>          
         </Modal>
       </Drawer>
     </React.Fragment>

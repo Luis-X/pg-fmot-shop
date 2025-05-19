@@ -30,4 +30,4 @@ mini store for FMOT H5
 1.从QA环境，获取token后，复制到本地
 2.注释掉goToACLAuthPage的跳转
 3.微信开发工具复制链接，将域名修改为：http://localhost:10086
-4.写入qa环境的token
+4.在/utils/request.js中的baseRequest中，写入qa环境的token

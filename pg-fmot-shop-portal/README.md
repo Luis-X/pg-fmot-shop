@@ -11,4 +11,4 @@
 ### 二、本地调试
 1.从QA环境，获取token后，复制到本地
 2.访问：http://localhost:3000/portal/#/internalAccount
-3.写入qa环境的token
+3.在/utils/tools.js中的getToken中，写入qa环境的token

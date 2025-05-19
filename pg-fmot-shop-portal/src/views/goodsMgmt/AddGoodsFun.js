@@ -304,12 +304,13 @@ export function AddGoodsFun({
         return Upload.LIST_IGNORE
       }
     }    
-    // 图片大小
-    // const isAllowSize = file.size / 1024 <= 100;
-    // if (!isAllowSize) {
-    //   message.error('文件需要小于100KB!');
-    //   return Upload.LIST_IGNORE
-    // }
+    // 文件大小
+    const maxFileSize = 51 * 1024 * 1024;
+    const isAllowSize = file.size <= maxFileSize;
+    if (!isAllowSize) {
+      message.error('文件需要小于50MB!');
+      return Upload.LIST_IGNORE
+    }
     // 刷新签名
     await requestSignData();
     return true
@@ -399,7 +400,7 @@ export function AddGoodsFun({
             <ProFormUploadButton
               name="videoUrl"
               label="视频"
-              extra="只能上传mp4文件，最好不要超过100KB"
+              extra="只能上传mp4文件，最好不要超过50MB"
               rules={[{ required: false, message: '请上传视频' }]}
               max={1}
               fieldProps={{
@@ -631,7 +632,7 @@ export function AddGoodsFun({
           <ProFormUploadButton
             name="productVideo"
             label="商品视频"
-            extra="只能上传mp4文件，最好不要超过100KB"
+            extra="只能上传mp4文件，最好不要超过50MB"
             rules={[{ required: false, message: '请上传商品视频' }]}
             max={1}
             fieldProps={{
@@ -665,7 +666,7 @@ export function AddGoodsFun({
           />
         </ProForm>
         <Modal open={previewOpen} title={null} footer={null} onCancel={handleCancel}>
-          <div style={{ maxHeight: '500px', overflow: 'auto' }}>
+          <div style={{ margin: '10px', maxHeight: '500px', overflow: 'auto' }}>
             {
               previewImage ? (
                 <img alt="example" style={{ width: '100%' }} src={previewImage} width={500} />
