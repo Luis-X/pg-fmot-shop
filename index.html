@@ -9,25 +9,24 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
             margin: 0;
             padding: 0;
             background: #000;
             color: white;
+            overflow: hidden;
         }
         #reader {
             width: 100%;
             height: 100vh;
-            margin: 0;
         }
         .controls {
             position: fixed;
-            bottom: 30px;
+            bottom: 40px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 100;
-            background: rgba(0,0,0,0.7);
-            padding: 15px 25px;
+            background: rgba(0,0,0,0.75);
+            padding: 15px 30px;
             border-radius: 12px;
             display: flex;
             gap: 15px;
@@ -44,13 +43,14 @@
         #stopBtn  { background: #f44336; color: white; }
         .status {
             position: fixed;
-            top: 20px;
+            top: 30px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 100;
             background: rgba(0,0,0,0.7);
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: 8px;
+            font-size: 16px;
         }
     </style>
 </head>
@@ -77,42 +77,32 @@
             }
         }
 
-        function onScanError(errorMessage) {
+        function onScanError() {
             // 正常忽略
         }
 
-        // 进入全屏
         function enterFullscreen() {
             const elem = document.documentElement;
-            if (elem.requestFullscreen) {
-                elem.requestFullscreen();
-            } else if (elem.webkitRequestFullscreen) {
-                elem.webkitRequestFullscreen();
-            } else if (elem.msRequestFullscreen) {
-                elem.msRequestFullscreen();
-            }
+            if (elem.requestFullscreen) elem.requestFullscreen();
+            else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+            else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
         }
 
-        // 退出全屏
         function exitFullscreen() {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
-            } else if (document.msExitFullscreen) {
-                document.msExitFullscreen();
-            }
+            if (document.exitFullscreen) document.exitFullscreen();
+            else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+            else if (document.msExitFullscreen) document.msExitFullscreen();
         }
 
-        // 开始扫描函数
+        // 开始扫描
         function startScanning() {
             if (html5QrCode) html5QrCode.clear();
 
-            html5QrCode = new Html5Qrcode("reader", { verbose: false });
+            html5QrCode = new Html5Qrcode("reader");
 
             const config = {
                 fps: 12,
-                qrbox: { width: 280, height: 280 },
+                qrbox: { width: 260, height: 260 },   // 正方形扫描框
                 aspectRatio: 1.0
             };
 
@@ -122,11 +112,9 @@
                 onScanSuccess,
                 onScanError
             ).then(() => {
-                document.getElementById("status").textContent = "📷 全屏扫描中...";
+                document.getElementById("status").innerHTML = "📷 全屏扫描中（正方形框）";
                 document.getElementById("startBtn").disabled = true;
                 document.getElementById("stopBtn").disabled = false;
-                
-                // 点击开始后进入全屏
                 enterFullscreen();
             }).catch(err => {
                 document.getElementById("status").innerHTML = 
@@ -134,7 +122,7 @@
             });
         }
 
-        // 停止扫描函数
+        // 停止扫描
         function stopScanning() {
             if (html5QrCode) {
                 html5QrCode.stop().then(() => {
@@ -142,15 +130,14 @@
                     document.getElementById("startBtn").disabled = false;
                     document.getElementById("stopBtn").disabled = true;
                     exitFullscreen();
-                }).catch(err => console.error(err));
+                });
             }
         }
 
-        // 绑定按钮
+        // 按钮事件
         document.getElementById("startBtn").addEventListener("click", startScanning);
         document.getElementById("stopBtn").addEventListener("click", stopScanning);
 
-        // 页面卸载清理
         window.onbeforeunload = () => {
             if (html5QrCode) html5QrCode.clear();
         };
