@@ -3,112 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>H5 二维码扫描</title>
+    <title>二维码扫描器</title>
+    <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    
     <style>
-        body { margin:0; font-family: Arial; text-align:center; background:#f5f5f5;}
-        #video { width:100%; max-width:400px; background:#000; }
-        button { padding:12px 24px; margin:10px; font-size:16px; }
-        #result { margin:20px; padding:15px; background:white; border-radius:8px; min-height:50px; }
-        .error { color:red; }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        #reader {
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto;
+            border: 2px solid #333;
+            border-radius: 10px;
+        }
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            margin: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        #startBtn { background: #4CAF50; color: white; }
+        #stopBtn  { background: #f44336; color: white; }
     </style>
 </head>
 <body>
-    <h1>二维码扫描</h1>
-    <video id="video" autoplay playsinline muted></video>
-    <canvas id="canvas" style="display:none;"></canvas>
+    <h1>二维码扫描器</h1>
+    
+    <div id="reader"></div>
     
     <div>
-        <button onclick="startCamera()">打开摄像头</button>
-        <button onclick="stopCamera()">停止</button>
+        <button id="startBtn">开始扫描</button>
+        <button id="stopBtn" disabled>停止扫描</button>
     </div>
-    
-    <div id="result"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
-    
     <script>
-        let video = document.getElementById('video');
-        let canvas = document.getElementById('canvas');
-        let ctx = canvas.getContext('2d');
-        let stream = null;
-        let scanning = false;
+        let html5QrCode = null;
 
-        async function startCamera() {
-            const resultDiv = document.getElementById('result');
+        function onScanSuccess(decodedText, decodedResult) {
+            // 扫描成功后弹框提示
+            const result = `
+                ✅ 扫描成功！
+                
+                内容：
+                ${decodedText}
+            `;
             
-            // 检查是否支持
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                resultDiv.innerHTML = `<span class="error">浏览器不支持摄像头API</span>`;
-                return;
-            }
-
-            try {
-                if (stream) stopCamera();
-
-                // 优先后置摄像头
-                stream = await navigator.mediaDevices.getUserMedia({
-                    video: { 
-                        facingMode: "environment",
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
-                    }
+            if (confirm(result + "\n\n是否继续扫描？")) {
+                // 点击确定后继续扫描
+                return true;
+            } else {
+                // 点击取消后停止扫描
+                html5QrCode.stop().then(() => {
+                    document.getElementById("startBtn").disabled = false;
+                    document.getElementById("stopBtn").disabled = true;
                 });
-                
-                video.srcObject = stream;
-                await video.play();
-                
-                scanning = true;
-                resultDiv.textContent = "正在扫描...";
-                scanQRCode();
-            } catch (err) {
-                console.error(err);
-                let msg = '打开摄像头失败：';
-                if (err.name === 'NotAllowedError') msg += '用户拒绝了权限';
-                else if (err.name === 'NotFoundError') msg += '未找到摄像头';
-                else if (err.message.includes('origin')) msg += '必须使用 HTTPS 或 localhost';
-                else msg += err.message;
-                
-                resultDiv.innerHTML = `<span class="error">${msg}</span>`;
             }
         }
 
-        function stopCamera() {
-            scanning = false;
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-                video.srcObject = null;
-            }
-            document.getElementById('result').textContent = '';
+        function onScanError(errorMessage) {
+            // 扫描过程中正常报错（如没对准）不处理
         }
 
-        function scanQRCode() {
-            if (!scanning) return;
-
-            if (video.readyState === video.HAVE_ENOUGH_DATA) {
-                canvas.height = video.videoHeight || 480;
-                canvas.width = video.videoWidth || 640;
-                
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const code = jsQR(imageData.data, imageData.width, imageData.height, {
-                    inversionAttempts: "dontInvert"
-                });
-
-                if (code) {
-                    document.getElementById('result').innerHTML = `
-                        ✅ <strong>扫描成功！</strong><br>
-                        <span style="color:green; font-size:18px;">${code.data}</span>
-                    `;
-                    // scanning = false; // 发现后停止扫描（可注释掉实现连续扫描）
-                }
+        // 开始扫描
+        document.getElementById("startBtn").addEventListener("click", () => {
+            if (html5QrCode) {
+                html5QrCode.clear();
             }
-            
-            requestAnimationFrame(scanQRCode);
-        }
 
-        // 可选：页面加载后自动尝试打开（推荐保留按钮手动触发）
-        // window.addEventListener('load', () => setTimeout(startCamera, 500));
+            html5QrCode = new Html5Qrcode("reader");
+
+            const config = {
+                fps: 10,
+                qrbox: { width: 250, height: 250 },   // 扫描框大小
+                aspectRatio: 1.0
+            };
+
+            html5QrCode.start(
+                { facingMode: "environment" },  // 优先使用后置摄像头
+                config,
+                onScanSuccess,
+                onScanError
+            ).then(() => {
+                document.getElementById("startBtn").disabled = true;
+                document.getElementById("stopBtn").disabled = false;
+            }).catch(err => {
+                alert("启动失败: " + err);
+            });
+        });
+
+        // 停止扫描
+        document.getElementById("stopBtn").addEventListener("click", () => {
+            if (html5QrCode) {
+                html5QrCode.stop().then(() => {
+                    document.getElementById("startBtn").disabled = false;
+                    document.getElementById("stopBtn").disabled = true;
+                }).catch(err => console.error(err));
+            }
+        });
+
+        // 页面关闭前清理
+        window.onbeforeunload = () => {
+            if (html5QrCode) html5QrCode.clear();
+        };
     </script>
 </body>
 </html>
