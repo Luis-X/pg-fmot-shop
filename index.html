@@ -11,34 +11,55 @@
             font-family: Arial, sans-serif;
             text-align: center;
             margin: 0;
-            padding: 20px;
-            background: #f5f5f5;
+            padding: 0;
+            background: #000;
+            color: white;
         }
         #reader {
             width: 100%;
-            max-width: 400px;
-            margin: 20px auto;
-            border: 2px solid #333;
-            border-radius: 10px;
+            height: 100vh;
+            margin: 0;
+        }
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            background: rgba(0,0,0,0.7);
+            padding: 15px 25px;
+            border-radius: 12px;
+            display: flex;
+            gap: 15px;
         }
         button {
-            padding: 12px 24px;
-            font-size: 16px;
-            margin: 10px;
+            padding: 14px 28px;
+            font-size: 17px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
+            min-width: 140px;
         }
         #startBtn { background: #4CAF50; color: white; }
         #stopBtn  { background: #f44336; color: white; }
+        .status {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            background: rgba(0,0,0,0.7);
+            padding: 10px 20px;
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body>
-    <h1>二维码扫描器</h1>
-    
     <div id="reader"></div>
     
-    <div>
+    <div class="status" id="status"></div>
+    
+    <div class="controls">
         <button id="startBtn">开始扫描</button>
         <button id="stopBtn" disabled>停止扫描</button>
     </div>
@@ -47,68 +68,89 @@
         let html5QrCode = null;
 
         function onScanSuccess(decodedText, decodedResult) {
-            // 扫描成功后弹框提示
-            const result = `
-                ✅ 扫描成功！
-                
-                内容：
-                ${decodedText}
-            `;
+            const result = `✅ 扫描成功！\n\n内容：${decodedText}`;
             
             if (confirm(result + "\n\n是否继续扫描？")) {
-                // 点击确定后继续扫描
                 return true;
             } else {
-                // 点击取消后停止扫描
-                html5QrCode.stop().then(() => {
-                    document.getElementById("startBtn").disabled = false;
-                    document.getElementById("stopBtn").disabled = true;
-                });
+                stopScanning();
             }
         }
 
         function onScanError(errorMessage) {
-            // 扫描过程中正常报错（如没对准）不处理
+            // 正常忽略
         }
 
-        // 开始扫描
-        document.getElementById("startBtn").addEventListener("click", () => {
-            if (html5QrCode) {
-                html5QrCode.clear();
+        // 进入全屏
+        function enterFullscreen() {
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) {
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) {
+                elem.msRequestFullscreen();
             }
+        }
 
-            html5QrCode = new Html5Qrcode("reader");
+        // 退出全屏
+        function exitFullscreen() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        }
+
+        // 开始扫描函数
+        function startScanning() {
+            if (html5QrCode) html5QrCode.clear();
+
+            html5QrCode = new Html5Qrcode("reader", { verbose: false });
 
             const config = {
-                fps: 10,
-                qrbox: { width: 250, height: 250 },   // 扫描框大小
+                fps: 12,
+                qrbox: { width: 280, height: 280 },
                 aspectRatio: 1.0
             };
 
             html5QrCode.start(
-                { facingMode: "environment" },  // 优先使用后置摄像头
+                { facingMode: "environment" },
                 config,
                 onScanSuccess,
                 onScanError
             ).then(() => {
+                document.getElementById("status").textContent = "📷 全屏扫描中...";
                 document.getElementById("startBtn").disabled = true;
                 document.getElementById("stopBtn").disabled = false;
+                
+                // 点击开始后进入全屏
+                enterFullscreen();
             }).catch(err => {
-                alert("启动失败: " + err);
+                document.getElementById("status").innerHTML = 
+                    `<span style="color:red;">启动失败: ${err}</span>`;
             });
-        });
+        }
 
-        // 停止扫描
-        document.getElementById("stopBtn").addEventListener("click", () => {
+        // 停止扫描函数
+        function stopScanning() {
             if (html5QrCode) {
                 html5QrCode.stop().then(() => {
+                    document.getElementById("status").textContent = "扫描已停止";
                     document.getElementById("startBtn").disabled = false;
                     document.getElementById("stopBtn").disabled = true;
+                    exitFullscreen();
                 }).catch(err => console.error(err));
             }
-        });
+        }
 
-        // 页面关闭前清理
+        // 绑定按钮
+        document.getElementById("startBtn").addEventListener("click", startScanning);
+        document.getElementById("stopBtn").addEventListener("click", stopScanning);
+
+        // 页面卸载清理
         window.onbeforeunload = () => {
             if (html5QrCode) html5QrCode.clear();
         };
