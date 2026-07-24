@@ -1,3 +1,154 @@
-<!doctype html><html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"><meta content="width=device-width,initial-scale=1,user-scalable=no" name="viewport"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="format-detection" content="telephone=no,address=no"><meta name="apple-mobile-web-app-status-bar-style" content="white"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><script>!function(n){function f(){var e=n.document.documentElement,w=e.getBoundingClientRect().width,x=40*w/750;e.style.fontSize=x>=40?"40px":x<=20?"20px":x+"px"}n.addEventListener("resize",(function(){f()})),f()}(window);</script><script defer="defer" src="./js/491.a1cd8443.js"></script><script defer="defer" src="./js/app.a1cd8443.js"></script><link href="./css/app.a1cd84439049db13faa6.css" rel="stylesheet"></head><body><div id="app"></div></body><style>/* video {
-    background: #fff;
-  } */</style></html>
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>html5-qrcode Demo | Official Reference</title>
+    <!-- 官方稳定CDN -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 16px;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        .btn-group {
+            margin: 12px 0;
+        }
+        button {
+            padding: 8px 16px;
+            font-size: 15px;
+            cursor: pointer;
+            margin-right: 8px;
+        }
+        #qr-reader {
+            margin: 16px 0;
+            border: 1px solid #ddd;
+        }
+        #result-area {
+            background: #f6f6f6;
+            padding: 12px;
+            min-height: 120px;
+            white-space: pre-wrap;
+            overflow-y: auto;
+        }
+        .tip {
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h2>html5-qrcode Scanner Demo</h2>
+    <p class="tip">⚠️ 必须通过 HTTP/HTTPS 访问，本地 file:// 协议无法调用摄像头</p>
+
+    <div class="btn-group">
+        <button id="startBtn">启动扫码</button>
+        <button id="stopBtn" disabled>关闭扫码</button>
+    </div>
+
+    <!-- 扫码容器 -->
+    <div id="qr-reader"></div>
+
+    <h4>运行日志 & 扫码结果</h4>
+    <div id="result-area"></div>
+
+<script>
+    // 全局对象（CDN模式，不要解构import写法）
+    const Html5QrcodeScanner = window.Html5QrcodeScanner;
+    const Html5Qrcode = window.Html5Qrcode;
+
+    const readerId = "qr-reader";
+    let scanner = null;
+    let scanning = false;
+
+    const resultArea = document.getElementById("result-area");
+    const startBtn = document.getElementById("startBtn");
+    const stopBtn = document.getElementById("stopBtn");
+
+    function log(msg) {
+        const time = new Date().toLocaleTimeString();
+        resultArea.innerHTML += `[${time}] ${msg}\n`;
+        resultArea.scrollTop = resultArea.scrollHeight;
+    }
+
+    /**
+     * 销毁扫码实例，释放摄像头
+     */
+    async function destroyScanner() {
+        if (scanner) {
+            try {
+                await scanner.clear();
+                log("✅ 摄像头资源已释放");
+            } catch (err) {
+                log(`⚠️ 释放异常: ${err.message}`);
+            }
+            scanner = null;
+        }
+        scanning = false;
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+    }
+
+    /**
+     * 初始化扫码器（参考官方推荐配置）
+     */
+    function startScan() {
+        if (scanning) {
+            log("ℹ️ 扫码正在运行中");
+            return;
+        }
+        scanning = true;
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
+
+        // 官方推荐配置
+        const config = {
+            fps: 10,
+            qrbox: { width: 250, height: 250 },
+            // 开启浏览器原生BarcodeDetector，优先加速识别
+            experimentalFeatures: {
+                useBarcodeDetector: true
+            },
+            disableFlip: false
+        };
+
+        scanner = new Html5QrcodeScanner(readerId, config, false);
+
+        // 汉化原生组件英文提示文本
+        scanner.render(
+            onScanSuccess,
+            onScanFailure
+        );
+
+        // 覆盖默认英文文案
+        setTimeout(() => {
+            const el = document.querySelector(`#${readerId}__dashboard_section_csr span`);
+            if (el) el.textContent = "将二维码放入取景框内";
+        }, 300);
+    }
+
+    // 扫码成功回调
+    async function onScanSuccess(decodedText) {
+        log(`🎉 识别成功：${decodedText}`);
+        await destroyScanner();
+    }
+
+    // 持续扫描未识别到二维码（高频回调，禁止打印日志！）
+    function onScanFailure() {
+        // 持续扫描中，无需输出日志
+    }
+
+    // 绑定按钮事件
+    startBtn.addEventListener("click", startScan);
+    stopBtn.addEventListener("click", async () => {
+        log("ℹ️ 用户主动关闭扫码");
+        await destroyScanner();
+    });
+</script>
+</body>
+</html>
