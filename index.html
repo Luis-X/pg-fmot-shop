@@ -1,30 +1,3 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>全屏 H5 二维码扫码器</title>
-    <!-- 引入 html5-qrcode 库 -->
-    <script src="https://unpkg.com/html5-qrcode"></script>
-    <!-- 引入全封装的扫码组件 JS -->
-    <script src="QrScanner.js"></script>
-</head>
-<body>
-
-    <!-- 挂载组件的容器 -->
-    <div id="scanner-app"></div>
-
-    <script>
-        // 页面加载后直接实例化，所有 UI 和功能由 JS 内部渲染与驱动
-        window.addEventListener('DOMContentLoaded', () => {
-            const scanner = new QrScanner({
-                containerId: "scanner-app",
-                onScanSuccess: (text) => {
-                    console.log("扫码成功内容:", text);
-                    // 可以在这里处理业务逻辑，例如跳转或关闭
-                }
-            });
-        });
-    </script>
-</body>
-</html>
+<!doctype html><html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"><meta content="width=device-width,initial-scale=1,user-scalable=no" name="viewport"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="format-detection" content="telephone=no,address=no"><meta name="apple-mobile-web-app-status-bar-style" content="white"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><script>!function(n){function f(){var e=n.document.documentElement,w=e.getBoundingClientRect().width,x=40*w/750;e.style.fontSize=x>=40?"40px":x<=20?"20px":x+"px"}n.addEventListener("resize",(function(){f()})),f()}(window);</script><script defer="defer" src="./js/491.dbdd321d.js"></script><script defer="defer" src="./js/app.dbdd321d.js"></script><link href="./css/app.dbdd321d689203aa94a1.css" rel="stylesheet"></head><body><div id="app"></div></body><style>/* video {
+    background: #fff;
+  } */</style></html>
