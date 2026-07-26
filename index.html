@@ -1,3 +1,226 @@
-<!doctype html><html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"><meta content="width=device-width,initial-scale=1,user-scalable=no" name="viewport"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="format-detection" content="telephone=no,address=no"><meta name="apple-mobile-web-app-status-bar-style" content="white"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><script>!function(n){function f(){var e=n.document.documentElement,w=e.getBoundingClientRect().width,x=40*w/750;e.style.fontSize=x>=40?"40px":x<=20?"20px":x+"px"}n.addEventListener("resize",(function(){f()})),f()}(window);</script><script defer="defer" src="./js/491.3da58c4c.js"></script><script defer="defer" src="./js/app.3da58c4c.js"></script><link href="./css/app.3da58c4c45e7ebb28bf4.css" rel="stylesheet"></head><body><div id="app"></div></body><style>/* video {
-    background: #fff;
-  } */</style></html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H5 扫码示例 (支持摄像头切换与闪光灯)</title>
+    <!-- 引入 html5-qrcode 库 -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        #reader {
+            width: 100%;
+            max-width: 400px;
+            height: 400px;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        button {
+            padding: 10px 18px;
+            font-size: 14px;
+            font-weight: 500;
+            border: none;
+            border-radius: 6px;
+            background-color: #007aff;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,122,255,0.2);
+            transition: background 0.2s;
+        }
+        button:active {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            width: 100%;
+            max-width: 370px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            word-break: break-all;
+            font-size: 14px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>H5 高级扫码组件</h2>
+    
+    <!-- 扫码视频渲染容器 -->
+    <div id="reader"></div>
+
+    <!-- 控制按钮区域 -->
+    <div class="controls">
+        <button id="switchBtn" onclick="switchCamera()" disabled>切换摄像头</button>
+        <button id="torchBtn" onclick="toggleTorch()" disabled>闪光灯：关</button>
+    </div>
+
+    <!-- 扫码结果展示 -->
+    <div id="result">扫描结果将显示在这里...</div>
+
+    <script>
+        let html5QrCode;
+        let cameras = [];
+        let currentCameraIndex = 0;
+        let isTorchOn = false;
+        let torchSupported = false;
+
+        // 初始化扫码实例
+        window.addEventListener('DOMContentLoaded', () => {
+            html5QrCode = new Html5Qrcode("reader");
+            startScanner();
+        });
+
+        // 启动或切换摄像头核心逻辑
+        async function startScanner() {
+            try {
+                // 1. 获取设备可用的摄像头列表
+                cameras = await Html5Qrcode.getCameras();
+                if (cameras && cameras.length > 0) {
+                    if (cameras.length > 1) {
+                        document.getElementById('switchBtn').disabled = false;
+                    }
+                    // 默认优先尝试使用后置摄像头 (通过关键词匹配或直接取索引)
+                    let rearCamera = cameras.find(cam => 
+                        cam.label.toLowerCase().includes('back') || 
+                        cam.label.toLowerCase().includes('rear') || 
+                        cam.label.toLowerCase().includes('后')
+                    );
+                    let cameraId = rearCamera ? rearCamera.id : cameras[cameras.length - 1].id;
+                    
+                    // 记录当前摄像头在数组中的索引
+                    currentCameraIndex = cameras.findIndex(cam => cam.id === cameraId);
+                    if (currentCameraIndex === -1) currentCameraIndex = 0;
+
+                    await runCamera(cameraId);
+                } else {
+                    alert("未检测到可用摄像头设备！");
+                }
+            } catch (err) {
+                console.error("获取摄像头权限或设备失败: ", err);
+                document.getElementById('result').innerText = "错误：无法访问摄像头，请确保授予权限并在 HTTPS 环境下运行。";
+            }
+        }
+
+        // 启动指定 ID 的摄像头
+        async function runCamera(cameraId) {
+            // 如果已经在运行，先停止
+            if (html5QrCode.isScanning) {
+                await html5QrCode.stop();
+            }
+
+            const config = {
+                fps: 10,
+                qrbox: { width: 250, height: 250 }
+            };
+
+            await html5QrCode.start(
+                cameraId, 
+                config,
+                (decodedText, decodedResult) => {
+                    // 成功扫码回调
+                    document.getElementById('result').innerText = `扫码成功：${decodedText}`;
+                    // 可选：扫码成功后震动或播放提示音
+                    if (navigator.vibrate) navigator.vibrate(200);
+                },
+                (errorMessage) => {
+                    // 扫码未命中时的帧错误（通常忽略，避免刷屏）
+                }
+            );
+
+            // 检查当前摄像头是否支持闪光灯 (Torch)
+            checkTorchSupport();
+        }
+
+        // 检查当前运行轨道是否支持闪光灯
+        function checkTorchSupport() {
+            try {
+                const settings = html5QrCode.getRunningTrackSettings();
+                if (settings && "torch" in settings) {
+                    torchSupported = true;
+                    const torchBtn = document.getElementById('torchBtn');
+                    torchBtn.disabled = false;
+                    isTorchOn = false;
+                    torchBtn.innerText = "闪光灯：关";
+                } else {
+                    resetTorchState();
+                }
+            } catch (e) {
+                resetTorchState();
+            }
+        }
+
+        function resetTorchState() {
+            torchSupported = false;
+            isTorchOn = false;
+            const torchBtn = document.getElementById('torchBtn');
+            torchBtn.disabled = true;
+            torchBtn.innerText = "闪光灯：不支持";
+        }
+
+        // 切换前后摄像头
+        async function switchCamera() {
+            if (!cameras || cameras.length <= 1) return;
+            
+            // 切换到下一个摄像头索引
+            currentCameraIndex = (currentCameraIndex + 1) % cameras.length;
+            const nextCameraId = cameras[currentCameraIndex].id;
+
+            // 关闭闪光灯状态
+            isTorchOn = false;
+            
+            try {
+                await runCamera(nextCameraId);
+            } catch (err) {
+                console.error("切换摄像头失败", err);
+            }
+        }
+
+        // 切换闪光灯开关
+        async function toggleTorch() {
+            if (!torchSupported) return;
+            try {
+                isTorchOn = !isTorchOn;
+                // 调用底层 applyVideoConstraints 控制硬件手电筒
+                await html5QrCode.applyVideoConstraints({
+                    advanced: [{ torch: isTorchOn }]
+                });
+                document.getElementById('torchBtn').innerText = isTorchOn ? "闪光灯：开" : "闪光灯：关";
+            } catch (err) {
+                console.error("闪光灯控制失败", err);
+                alert("当前设备或浏览器不支持控制该摄像头的闪光灯");
+            }
+        }
+    </script>
+</body>
+</html>
