@@ -191,7 +191,7 @@
                     await runCamera(defaultCameraId);
                 } else {
                     selectElem.innerHTML = '<option value="">未检测到摄像头</option>';
-                    document.getElementById('resultinnerText = "错误：未找到可用的摄像头设备。';
+                    document.getElementById('result').innerText = "错误：未找到可用的摄像头设备。";
                 }
             } catch (err) {
                 console.error("获取摄像头列表失败: ", err);
@@ -205,7 +205,6 @@
                 await html5QrCode.stop();
             }
 
-            // 全屏模式下，qrbox 可以设置得相对合适或不传（此处设置 260 匹配视觉框）
             const config = {
                 fps: 10,
                 qrbox: { width: 260, height: 260 }
