@@ -1,3 +1,36 @@
-<!doctype html><html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"><meta content="width=device-width,initial-scale=1,user-scalable=no" name="viewport"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="format-detection" content="telephone=no,address=no"><meta name="apple-mobile-web-app-status-bar-style" content="white"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><script>!function(n){function f(){var e=n.document.documentElement,w=e.getBoundingClientRect().width,x=40*w/750;e.style.fontSize=x>=40?"40px":x<=20?"20px":x+"px"}n.addEventListener("resize",(function(){f()})),f()}(window);</script><script defer="defer" src="./js/491.3312b6c7.js"></script><script defer="defer" src="./js/app.3312b6c7.js"></script><link href="./css/app.3312b6c7f6fab61cf887.css" rel="stylesheet"></head><body><div id="app"></div></body><style>/* video {
-    background: #fff;
-  } */</style></html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>一行代码扫码示例</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding-top: 100px; }
+        button { padding: 12px 24px; font-size: 16px; cursor: pointer; border-radius: 8px; background: #007aff; color: #fff; border: none; }
+    </style>
+</head>
+<body>
+
+    <!-- 1. 点击按钮：一行代码开启扫码 -->
+    <button onclick="startScan()">开始扫码</button>
+    <div id="result" style="margin-top: 20px;"></div>
+
+    <!-- 引入挂载了全局 $scan 的 JS 模块 -->
+    <script type="module" src="./scanner.js"></script>
+
+    <script>
+        // 开始扫码（一行核心调用）
+        async function startScan() {
+            try {
+                const code = await window.$scan.open();
+                document.getElementById('result').innerText = `扫码结果：${code}`;
+            } catch (err) {
+                console.log("关闭或取消扫码", err);
+            }
+        }
+
+        // 如果需要随时在外部代码中关闭扫码，可直接调用：
+        // window.$scan.close();
+    </script>
+</body>
+</html>
