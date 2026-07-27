@@ -1,15 +1,14 @@
 /**
- * 支持 React 调用的 H5 扫码组件
+ * 支持 React 及 HTML 调用的 H5 扫码组件
  */
 class QrScanner {
     constructor(options = {}) {
         this.containerId = options.containerId || "app";
         this.onScanSuccess = options.onScanSuccess || null;
+        this.onClose = options.onClose || null;
 
         this.html5QrCode = null;
         this.cameras = [];
-        this.isTorchOn = false;
-        this.torchSupported = false;
         this.isScanningActive = false;
 
         this._initDOM();
@@ -26,8 +25,7 @@ class QrScanner {
                 <select id="qr-cameraSelect" disabled>
                     <option value="">加载中...</option>
                 </select>
-                <button id="qr-torchBtn" disabled>闪光灯：关</button>
-                <button id="qr-toggleBtn" class="qr-action-btn">关闭</button>
+                <button id="qr-closeBtn" class="qr-close-btn">关闭</button>
             </div>
             <div id="qr-result">将二维码放入框内，即可自动扫描</div>
         `;
@@ -56,21 +54,27 @@ class QrScanner {
                     position: absolute; top: 20px; left: 20px; right: 20px; z-index: 10;
                     display: flex; align-items: center; gap: 10px;
                 }
-                #${this.containerId} select, #${this.containerId} button {
+                #${this.containerId} select {
+                    flex: 1;
                     padding: 10px 14px; font-size: 14px; font-weight: 500;
                     border: none; border-radius: 8px;
                     background-color: rgba(0, 0, 0, 0.6); color: white;
                     backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
                     cursor: pointer; outline: none;
+                    text-overflow: ellipsis;
                 }
-                #qr-cameraSelect { flex: 1; max-width: 40%; text-overflow: ellipsis; }
                 #qr-cameraSelect option { background-color: #333; color: white; }
-                #${this.containerId} button:active { background-color: rgba(0, 0, 0, 0.8); }
-                #${this.containerId} button:disabled, #${this.containerId} select:disabled {
+                #${this.containerId} select:disabled {
                     background-color: rgba(0, 0, 0, 0.3); color: #aaa; cursor: not-allowed;
                 }
-                .qr-action-btn { background-color: rgba(255, 59, 48, 0.8); }
-                .qr-action-btn.start { background-color: rgba(52, 199, 89, 0.8); }
+                .qr-close-btn {
+                    padding: 10px 16px; font-size: 14px; font-weight: 500;
+                    border: none; border-radius: 8px;
+                    background-color: rgba(255, 59, 48, 0.8); color: white;
+                    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+                    cursor: pointer; outline: none; white-space: nowrap;
+                }
+                .qr-close-btn:active { background-color: rgba(255, 59, 48, 1); }
 
                 #qr-result {
                     position: absolute; bottom: 30px; left: 20px; right: 20px; z-index: 10;
@@ -84,14 +88,17 @@ class QrScanner {
         }
 
         document.getElementById('qr-cameraSelect').addEventListener('change', (e) => this._handleCameraChange(e.target.value));
-        document.getElementById('qr-torchBtn').addEventListener('click', () => this.toggleTorch());
-        document.getElementById('qr-toggleBtn').addEventListener('click', () => this.toggleScannerState());
+        document.getElementById('qr-closeBtn').addEventListener('click', () => {
+            if (typeof this.onClose === 'function') {
+                this.onClose();
+            } else {
+                this.destroy();
+            }
+        });
     }
 
     _initScanner() {
-        const qrConfig = {
-            formatsToSupport: [ Html5QrcodeSupportedFormats.QR_CODE ]
-        };
+        const qrConfig = {};
         this.html5QrCode = new Html5Qrcode("qr-reader-video", qrConfig);
         this._initCameras();
     }
@@ -151,8 +158,6 @@ class QrScanner {
             );
 
             this.isScanningActive = true;
-            this._updateToggleBtnUI();
-            this._checkTorchSupport();
         } catch (err) {
             console.error("启动摄像头失败: ", err);
             this.isScanningActive = false;
@@ -165,8 +170,6 @@ class QrScanner {
                 await this.html5QrCode.stop();
             }
             this.isScanningActive = false;
-            this._resetTorchState();
-            this._updateToggleBtnUI();
         } catch (err) {
             console.error("停止扫码失败: ", err);
         }
@@ -174,80 +177,7 @@ class QrScanner {
 
     async _handleCameraChange(cameraId) {
         if (!this.isScanningActive) return;
-        this.isTorchOn = false;
         await this.start(cameraId);
-    }
-
-    async toggleTorch() {
-        if (!this.torchSupported || !this.isScanningActive) return;
-        try {
-            await this.html5QrCode.applyVideoConstraints({
-                advanced: [{ torch: !this.isTorchOn }]
-            });
-            this.isTorchOn = !this.isTorchOn;
-            this._updateTorchBtnUI();
-        } catch (err) {
-            console.error("闪光灯控制失败", err);
-        }
-    }
-
-    async toggleScannerState() {
-        const selectElem = document.getElementById('qr-cameraSelect');
-        if (this.isScanningActive) {
-            await this.stop();
-            this._setResultText("扫码已关闭，点击“开启”恢复");
-        } else {
-            const cameraId = selectElem.value;
-            if (!cameraId) return;
-            await this.start(cameraId);
-            this._setResultText("将二维码放入框内，即可自动扫描");
-        }
-    }
-
-    _checkTorchSupport() {
-        try {
-            const settings = this.html5QrCode.getRunningTrackSettings();
-            const torchBtn = document.getElementById('qr-torchBtn');
-            if (torchBtn && settings && typeof settings.torch === 'boolean') {
-                this.torchSupported = true;
-                torchBtn.disabled = false;
-                this.isTorchOn = settings.torch;
-                this._updateTorchBtnUI();
-            } else {
-                this._resetTorchState();
-            }
-        } catch (e) {
-            this._resetTorchState();
-        }
-    }
-
-    _resetTorchState() {
-        this.torchSupported = false;
-        this.isTorchOn = false;
-        const torchBtn = document.getElementById('qr-torchBtn');
-        if (torchBtn) {
-            torchBtn.disabled = true;
-            torchBtn.innerText = "闪光灯：不支持";
-        }
-    }
-
-    _updateTorchBtnUI() {
-        const torchBtn = document.getElementById('qr-torchBtn');
-        if (torchBtn) {
-            torchBtn.innerText = this.isTorchOn ? "闪光灯：开" : "闪光灯：关";
-        }
-    }
-
-    _updateToggleBtnUI() {
-        const btn = document.getElementById('qr-toggleBtn');
-        if (!btn) return;
-        if (this.isScanningActive) {
-            btn.innerText = "关闭";
-            btn.className = "qr-action-btn";
-        } else {
-            btn.innerText = "开启";
-            btn.className = "qr-action-btn start";
-        }
     }
 
     _setResultText(text) {
@@ -257,9 +187,6 @@ class QrScanner {
         }
     }
 
-    /**
-     * React 组件销毁时调用的清理方法
-     */
     async destroy() {
         await this.stop();
         if (this.html5QrCode) {
@@ -267,5 +194,36 @@ class QrScanner {
                 await this.html5QrCode.clear();
             } catch (e) {}
         }
+        const container = document.getElementById(this.containerId);
+        if (container) {
+            container.innerHTML = '';
+        }
     }
 }
+
+// ==================== 全局便捷一行调用封装 ====================
+window.openQrScanner = function(options = {}) {
+    let modal = document.getElementById('global-qr-scanner-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'global-qr-scanner-modal';
+        document.body.appendChild(modal);
+    }
+    modal.style.display = 'block';
+
+    let scanner = null;
+    scanner = new QrScanner({
+        containerId: 'global-qr-scanner-modal',
+        onScanSuccess: (text, result) => {
+            if (options.onSuccess) options.onSuccess(text, result);
+            scanner.destroy();
+            modal.style.display = 'none';
+        },
+        onClose: () => {
+            if (options.onClose) options.onClose();
+            scanner.destroy();
+            modal.style.display = 'none';
+        }
+    });
+    return scanner;
+};

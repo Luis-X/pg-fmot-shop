@@ -3,34 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>一行代码扫码示例</title>
+    <title>扫码组件调用</title>
+    <!-- 1. 引入 html5-qrcode 库 -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <!-- 2. 引入你的 QrScanner.js -->
+    <script src="QrScanner.js"></script>
     <style>
-        body { font-family: sans-serif; text-align: center; padding-top: 100px; }
-        button { padding: 12px 24px; font-size: 16px; cursor: pointer; border-radius: 8px; background: #007aff; color: #fff; border: none; }
+        body { font-family: sans-serif; text-align: center; padding-top: 120px; background: #f5f5f7; margin: 0; }
+        button { padding: 14px 28px; font-size: 16px; font-weight: 600; color: white; background: #007aff; border: none; border-radius: 12px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <!-- 1. 点击按钮：一行代码开启扫码 -->
-    <button onclick="startScan()">开始扫码</button>
-    <div id="result" style="margin-top: 20px;"></div>
+    <!-- 点击按钮：一行代码开启扫码 -->
+    <button onclick="window.openQrScanner({ onSuccess: (text) => alert('扫码结果: ' + text) })">扫一扫</button>
 
-    <!-- 引入挂载了全局 $scan 的 JS 模块 -->
-    <script type="module" src="./scanner.js"></script>
-
-    <script>
-        // 开始扫码（一行核心调用）
-        async function startScan() {
-            try {
-                const code = await window.$scan.open();
-                document.getElementById('result').innerText = `扫码结果：${code}`;
-            } catch (err) {
-                console.log("关闭或取消扫码", err);
-            }
-        }
-
-        // 如果需要随时在外部代码中关闭扫码，可直接调用：
-        // window.$scan.close();
-    </script>
 </body>
 </html>
